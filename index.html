@@ -33,56 +33,38 @@
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
       overflow-x: hidden;
-    }
-
-    /* Background Watermark with Ansem Logo Styling */
-    .bg-watermark {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 750px;
-      height: 750px;
-      background: radial-gradient(circle, rgba(0, 255, 102, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .bg-logo-pattern {
-      position: fixed;
-      inset: 0;
       background-image: 
-        radial-gradient(circle at 20% 20%, rgba(0, 255, 102, 0.04) 0%, transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 102, 0.04) 0%, transparent 40%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .ansem-shield-icon {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 500px;
-      height: 500px;
-      opacity: 0.03;
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(circle at 15% 20%, rgba(0, 255, 102, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(0, 255, 102, 0.05) 0%, transparent 40%),
+        linear-gradient(to bottom, rgba(6, 8, 7, 0.9), rgba(6, 8, 7, 0.98));
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 24px 20px;
-      width: 100%;
+      padding: 24px 20px 80px 20px;
       position: relative;
       z-index: 1;
+    }
+
+    /* Watermark background */
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 22vw;
+      font-weight: 900;
+      color: rgba(0, 255, 102, 0.015);
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     /* Header */
@@ -90,71 +72,63 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
-      margin-bottom: 32px;
-      box-shadow: 0 0 20px rgba(0, 255, 102, 0.05);
+      padding: 16px 0 32px 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 24px;
     }
 
-    .logo-container {
+    .brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
-    .logo-symbol {
+    .brand-icon {
       width: 44px;
       height: 44px;
+      background: linear-gradient(135deg, var(--green-dark), #001a0a);
+      border: 1px solid var(--green-primary);
       border-radius: 12px;
-      background: linear-gradient(135deg, #00ff66, #003314);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 20px;
-      color: #000;
-      box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
-      border: 1px solid var(--green-primary);
+      color: var(--green-primary);
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.25);
     }
 
-    .logo-text h1 {
-      font-size: 20px;
+    .brand-title {
+      font-size: 24px;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--text-main);
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
+    .brand-title span {
+      color: var(--green-primary);
+      text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+    }
+
     .badge-solana {
       font-size: 11px;
       font-family: 'JetBrains Mono', monospace;
-      background: rgba(0, 255, 102, 0.15);
-      color: var(--green-primary);
-      padding: 2px 8px;
-      border-radius: 6px;
+      padding: 4px 8px;
+      background: rgba(0, 255, 102, 0.1);
       border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--green-light);
     }
 
-    .logo-text p {
-      font-size: 12px;
-      color: var(--text-muted);
-      opacity: 0.8;
-    }
-
-    .nav-actions {
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 16px;
     }
 
     .btn-wallet {
-      background: linear-gradient(180deg, #00ff66 0%, #00cc52 100%);
-      color: #040805;
+      background: linear-gradient(135deg, var(--green-primary), #00cc52);
+      color: #001a08;
       font-weight: 700;
       font-size: 14px;
       padding: 10px 20px;
@@ -180,6 +154,7 @@
       margin-bottom: 28px;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 12px;
+      overflow-x: auto;
     }
 
     .tab-btn {
@@ -188,10 +163,16 @@
       color: var(--text-muted);
       font-size: 14px;
       font-weight: 600;
-      padding: 8px 18px;
+      padding: 10px 20px;
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(0, 255, 102, 0.05);
     }
 
     .tab-btn.active {
@@ -199,6 +180,40 @@
       color: var(--green-primary);
       border-color: var(--border-color);
       box-shadow: 0 0 10px rgba(0, 255, 102, 0.1);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     /* Arena Grid */
@@ -214,194 +229,239 @@
       }
     }
 
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 24px;
-      backdrop-filter: blur(12px);
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--green-light);
-    }
-
-    /* Tiers selection */
-    .tier-cards {
+    /* Tier Selection */
+    .tier-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 12px;
       margin-bottom: 24px;
     }
 
     .tier-card {
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border-color);
+      background: rgba(0, 255, 102, 0.03);
+      border: 1px solid rgba(0, 255, 102, 0.15);
       border-radius: 12px;
       padding: 16px 12px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
+      transition: all 0.2s ease;
     }
 
     .tier-card:hover {
       border-color: var(--green-primary);
-      background: var(--bg-card-hover);
+      background: rgba(0, 255, 102, 0.08);
+      transform: translateY(-2px);
     }
 
     .tier-card.selected {
       border-color: var(--green-primary);
-      background: rgba(0, 255, 102, 0.12);
-      box-shadow: 0 0 15px rgba(0, 255, 102, 0.25);
+      background: rgba(0, 255, 102, 0.15);
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
     }
 
     .tier-card .ansem-amount {
       font-size: 18px;
       font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 4px;
+      color: var(--green-primary);
       font-family: 'JetBrains Mono', monospace;
     }
 
-    .tier-card .ansem-label {
+    .tier-card .tier-label {
       font-size: 11px;
-      color: var(--green-primary);
-      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
     }
 
-    /* Matchmaking Action Box */
-    .matchmaking-box {
-      background: rgba(0, 255, 102, 0.03);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 20px;
-      text-align: center;
+    /* Match Summary Details */
+    .summary-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 255, 102, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
     }
 
-    .breakdown-row {
+    .summary-row {
       display: flex;
       justify-content: space-between;
-      font-size: 13px;
-      margin-bottom: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row .label {
       color: var(--text-muted);
     }
 
-    .breakdown-row span:last-child {
+    .summary-row .val {
       font-weight: 600;
-      color: var(--text-main);
-      font-family: 'JetBrains Mono', monospace;
     }
 
-    .breakdown-highlight {
-      color: var(--green-primary) !important;
-    }
+    .val.winner { color: var(--green-primary); }
+    .val.loser { color: #38bdf8; }
+    .val.fee { color: #f59e0b; }
 
-    .btn-action-main {
+    .btn-action {
       width: 100%;
-      background: linear-gradient(180deg, #00ff66 0%, #00cc52 100%);
-      color: #040805;
+      background: linear-gradient(135deg, var(--green-primary), #00cc52);
+      color: #001a08;
       font-weight: 700;
       font-size: 16px;
-      padding: 14px;
+      padding: 16px;
       border-radius: 12px;
       border: none;
       cursor: pointer;
-      margin-top: 18px;
-      box-shadow: 0 0 20px rgba(0, 255, 102, 0.35);
-      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
+      transition: all 0.2s ease;
     }
 
-    .btn-action-main:hover {
-      box-shadow: 0 0 30px rgba(0, 255, 102, 0.55);
-      transform: translateY(-2px);
+    .btn-action:hover {
+      box-shadow: 0 0 30px rgba(0, 255, 102, 0.6);
+      transform: translateY(-1px);
     }
 
-    /* Live Feed / Stats Sidebar */
-    .stats-card {
+    /* Live Queue & Stats */
+    .queue-status {
       display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .stat-box {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--green-primary);
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: rgba(0, 255, 102, 0.05);
+      border: 1px solid rgba(0, 255, 102, 0.15);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
       font-family: 'JetBrains Mono', monospace;
     }
 
     .live-indicator {
-      display: inline-block;
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background-color: var(--green-primary);
+      background: var(--green-primary);
       box-shadow: 0 0 8px var(--green-primary);
-      margin-right: 6px;
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
+      0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.4; transform: scale(0.85); }
-      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Tables */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .custom-table th {
+      text-align: left;
+      padding: 12px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+    }
+
+    .custom-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .custom-table tr:hover td {
+      background: rgba(0, 255, 102, 0.03);
+    }
+
+    .tag-win {
+      color: var(--green-primary);
+      background: rgba(0, 255, 102, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    /* Rules & Whitepaper items */
+    .rule-item {
+      background: rgba(0, 255, 102, 0.03);
+      border: 1px solid rgba(0, 255, 102, 0.12);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .rule-title {
+      font-weight: 700;
+      color: var(--green-primary);
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rule-desc {
+      color: var(--text-main);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* Contract Box */
+    .contract-box {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px dashed var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      word-break: break-all;
+      color: var(--green-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
     }
 
     /* Footer */
     footer {
-      margin-top: auto;
-      padding: 32px 0 16px;
+      margin-top: 48px;
       text-align: center;
       font-size: 12px;
       color: var(--text-muted);
-      border-top: 1px solid rgba(0, 255, 102, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
     }
   </style>
 </head>
 <body>
-
-  <!-- Background Watermark / Ansem Pattern -->
-  <div class="bg-watermark"></div>
-  <div class="bg-logo-pattern"></div>
-
-  <svg class="ansem-shield-icon" viewBox="0 0 24 24" fill="none" stroke="#00ff66" stroke-width="1.5">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    <path d="M9 12l2 2 4-4"/>
-  </svg>
+  <div class="watermark">PVP</div>
 
   <div class="container">
     <!-- Header -->
     <header>
-      <div class="logo-container">
-        <div class="logo-symbol">⚔️</div>
-        <div class="logo-text">
-          <h1>PvP Arena <span class="badge-solana">Solana 1v1</span></h1>
-          <p>Powered by ANSEM Escrow Pool</p>
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/>
+            <line x1="13" y1="19" x2="19" y2="13"/>
+            <line x1="16" y1="16" x2="20" y2="20"/>
+            <line x1="19" y1="21" x2="21" y2="19"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">PvP <span>Arena</span> <span class="badge-solana">SOLANA</span></div>
         </div>
       </div>
-      <div class="nav-actions">
+
+      <div class="header-actions">
         <button class="btn-wallet" id="connectWalletBtn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
@@ -415,104 +475,290 @@
 
     <!-- Navigation Tabs -->
     <div class="tabs">
-      <button class="tab-btn active">1v1 Battle Arena</button>
-      <button class="tab-btn">Recent Matches</button>
-      <button class="tab-btn">Leaderboard</button>
-      <button class="tab-btn">Whitepaper & Rules</button>
+      <button class="tab-btn active" data-tab="arena">1v1 Battle Arena</button>
+      <button class="tab-btn" data-tab="matches">Recent Matches</button>
+      <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+      <button class="tab-btn" data-tab="rules">Whitepaper & Rules</button>
     </div>
 
-    <!-- Main Content Area -->
-    <div class="arena-grid">
-      <!-- Left: Matchmaker Setup -->
-      <div class="card">
-        <div class="card-title">
-          <span>Select ANSEM Tier</span>
-          <span style="font-size: 12px; color: var(--green-primary); font-family: 'JetBrains Mono', monospace;">
-            <span class="live-indicator"></span>ANSEM Pool Active
-          </span>
+    <!-- TAB 1: ARENA -->
+    <div id="tab-arena" class="tab-pane active">
+      <div class="arena-grid">
+        <!-- Left: Matchmaker Setup -->
+        <div class="card">
+          <div class="card-title">
+            <span>Select ANSEM Tier</span>
+            <span style="font-size: 12px; color: var(--green-primary); font-family: 'JetBrains Mono', monospace;">
+              <span class="live-indicator"></span>ANSEM Pool Active
+            </span>
+          </div>
+
+          <div class="tier-grid">
+            <div class="tier-card selected" data-ansem="100">
+              <div class="ansem-amount">100</div>
+              <div class="tier-label">Novice</div>
+            </div>
+            <div class="tier-card" data-ansem="500">
+              <div class="ansem-amount">500</div>
+              <div class="tier-label">Fighter</div>
+            </div>
+            <div class="tier-card" data-ansem="1000">
+              <div class="ansem-amount">1,000</div>
+              <div class="tier-label">Warrior</div>
+            </div>
+            <div class="tier-card" data-ansem="5000">
+              <div class="ansem-amount">5,000</div>
+              <div class="tier-label">Gladiator</div>
+            </div>
+            <div class="tier-card" data-ansem="10000">
+              <div class="ansem-amount">10,000</div>
+              <div class="tier-label">Champion</div>
+            </div>
+            <div class="tier-card" data-ansem="50000">
+              <div class="ansem-amount">50,000</div>
+              <div class="tier-label">Master</div>
+            </div>
+            <div class="tier-card" data-ansem="100000">
+              <div class="ansem-amount">100,000</div>
+              <div class="tier-label">Legend</div>
+            </div>
+          </div>
+
+          <!-- Settlement Formulas -->
+          <div class="summary-box">
+            <div class="summary-row">
+              <span class="label">Total Match Pool (2x):</span>
+              <span class="val" id="summaryPool">200 ANSEM</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Winner Payout (90%):</span>
+              <span class="val winner" id="summaryWinner">180 ANSEM (1.8x)</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Loser Cashback (3%):</span>
+              <span class="val loser" id="summaryLoser">6 ANSEM</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Treasury Fee (7%):</span>
+              <span class="val fee" id="summaryFee">14 ANSEM</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Cancel Refund:</span>
+              <span class="val" style="color: var(--green-primary);">100% Instant</span>
+            </div>
+          </div>
+
+          <button class="btn-action" id="joinQueueBtn">Enter Matchmaking Queue (100 ANSEM)</button>
         </div>
 
-        <div class="tier-cards">
-          <div class="tier-card selected" data-ansem="100">
-            <div class="ansem-amount">100</div>
-            <div class="ansem-label">ANSEM</div>
-          </div>
-          <div class="tier-card" data-ansem="500">
-            <div class="ansem-amount">500</div>
-            <div class="ansem-label">ANSEM</div>
-          </div>
-          <div class="tier-card" data-ansem="1000">
-            <div class="ansem-amount">1,000</div>
-            <div class="ansem-label">ANSEM</div>
-          </div>
-          <div class="tier-card" data-ansem="5000">
-            <div class="ansem-amount">5,000</div>
-            <div class="ansem-label">ANSEM</div>
-          </div>
-          <div class="tier-card" data-ansem="10000">
-            <div class="ansem-amount">10,000</div>
-            <div class="ansem-label">ANSEM</div>
-          </div>
-          <div class="tier-card" data-ansem="50000">
-            <div class="ansem-amount">50,000</div>
-            <div class="ansem-label">ANSEM</div>
-          </div>
-          <div class="tier-card" data-ansem="100000">
-            <div class="ansem-amount">100,000</div>
-            <div class="ansem-label">ANSEM</div>
-          </div>
-        </div>
-
-        <!-- Breakdown & Enter Queue -->
-        <div class="matchmaking-box">
-          <div class="breakdown-row">
-            <span>Match Total Pool (2 Players):</span>
-            <span id="summaryPool">200 ANSEM</span>
-          </div>
-          <div class="breakdown-row">
-            <span>Winner Payout (90%):</span>
-            <span class="breakdown-highlight" id="summaryWinner">180 ANSEM (1.8x)</span>
-          </div>
-          <div class="breakdown-row">
-            <span>Loser Cashback (3% Loss Protection):</span>
-            <span style="color: #60a5fa;" id="summaryLoser">6 ANSEM</span>
-          </div>
-          <div class="breakdown-row">
-            <span>Protocol & Treasury Fee (7%):</span>
-            <span id="summaryFee">14 ANSEM</span>
-          </div>
-          <div class="breakdown-row" style="border-top: 1px dashed var(--border-color); padding-top: 8px; margin-top: 8px;">
-            <span>Queue Cancellation:</span>
-            <span style="color: var(--green-primary);">100% Instant Refund</span>
-          </div>
-
-          <button class="btn-action-main" id="joinQueueBtn">
-            Enter Matchmaking Queue (100 ANSEM)
-          </button>
-        </div>
-      </div>
-
-      <!-- Right: Stats & Match Feed -->
-      <div class="stats-card">
-        <div class="stat-box">
-          <div class="stat-label">Active Players in Queue</div>
-          <div class="stat-value" id="activeQueueCount">18</div>
-        </div>
-
-        <div class="stat-box">
-          <div class="stat-label">Total ANSEM Volume Settled</div>
-          <div class="stat-value">1,420,000 ANSEM</div>
-        </div>
-
-        <div class="card" style="padding: 16px;">
-          <div class="card-title" style="font-size: 14px; margin-bottom: 12px;">
+        <!-- Right: Live Match Activity -->
+        <div class="card">
+          <div class="card-title">
             <span>Live Activity</span>
             <span class="live-indicator"></span>
           </div>
-          <div style="font-size: 12px; display: flex; flex-direction: column; gap: 8px; font-family: 'JetBrains Mono', monospace;">
-            <div style="color: var(--text-muted);">• 0x4f...9a won 1,800 ANSEM in Tier 1,000</div>
-            <div style="color: var(--text-muted);">• 0x12...bb received 150 ANSEM cashback</div>
-            <div style="color: var(--text-muted);">• 0x8a...33 joined Tier 5,000 ANSEM queue</div>
+
+          <div class="queue-status">
+            <span>Online Queue:</span>
+            <strong style="color: var(--green-primary);" id="queueCount">4 Players Waiting</strong>
+          </div>
+
+          <div id="activityFeed" style="display: flex; flex-direction: column; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+            <div style="padding: 10px; background: rgba(0,255,102,0.03); border-radius: 8px; border-left: 2px solid var(--green-primary);">
+              <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px;">
+                <span>Tier: 1,000 ANSEM</span>
+                <span>Just now</span>
+              </div>
+              <div style="margin-top: 4px; font-weight: 600;">
+                <span style="color: var(--green-primary);">8xK9...2vR1</span> vs <span style="color: #38bdf8;">3nF2...9pQ8</span>
+              </div>
+            </div>
+
+            <div style="padding: 10px; background: rgba(0,255,102,0.03); border-radius: 8px; border-left: 2px solid var(--green-primary);">
+              <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px;">
+                <span>Tier: 500 ANSEM</span>
+                <span>2m ago</span>
+              </div>
+              <div style="margin-top: 4px; font-weight: 600;">
+                <span style="color: var(--green-primary);">Winner: 7yT1...4mP9 (+900 ANSEM)</span>
+              </div>
+            </div>
+
+            <div style="padding: 10px; background: rgba(0,255,102,0.03); border-radius: 8px; border-left: 2px solid var(--green-primary);">
+              <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px;">
+                <span>Tier: 100 ANSEM</span>
+                <span>5m ago</span>
+              </div>
+              <div style="margin-top: 4px; font-weight: 600;">
+                <span style="color: var(--green-primary);">Winner: 9wL4...1kC5 (+180 ANSEM)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: RECENT MATCHES -->
+    <div id="tab-matches" class="tab-pane">
+      <div class="card">
+        <div class="card-title">
+          <span>Recent Match Results</span>
+          <span class="badge-solana">Real-Time On-Chain</span>
+        </div>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Match ID</th>
+              <th>Tier</th>
+              <th>Winner</th>
+              <th>Loser</th>
+              <th>Winner Payout</th>
+              <th>Cashback (3%)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#10842</td>
+              <td>1,000 ANSEM</td>
+              <td style="color: var(--green-primary);">8xK9...2vR1</td>
+              <td style="color: #94a3b8;">3nF2...9pQ8</td>
+              <td style="color: var(--green-primary); font-weight: 700;">1,800 ANSEM</td>
+              <td style="color: #38bdf8;">60 ANSEM</td>
+              <td><span class="tag-win">Settled</span></td>
+            </tr>
+            <tr>
+              <td>#10841</td>
+              <td>500 ANSEM</td>
+              <td style="color: var(--green-primary);">7yT1...4mP9</td>
+              <td style="color: #94a3b8;">4bX7...0vL2</td>
+              <td style="color: var(--green-primary); font-weight: 700;">900 ANSEM</td>
+              <td style="color: #38bdf8;">30 ANSEM</td>
+              <td><span class="tag-win">Settled</span></td>
+            </tr>
+            <tr>
+              <td>#10840</td>
+              <td>5,000 ANSEM</td>
+              <td style="color: var(--green-primary);">2mZ8...5tY3</td>
+              <td style="color: #94a3b8;">9aP1...8rK6</td>
+              <td style="color: var(--green-primary); font-weight: 700;">9,000 ANSEM</td>
+              <td style="color: #38bdf8;">300 ANSEM</td>
+              <td><span class="tag-win">Settled</span></td>
+            </tr>
+            <tr>
+              <td>#10839</td>
+              <td>100 ANSEM</td>
+              <td style="color: var(--green-primary);">9wL4...1kC5</td>
+              <td style="color: #94a3b8;">1vC9...7nB4</td>
+              <td style="color: var(--green-primary); font-weight: 700;">180 ANSEM</td>
+              <td style="color: #38bdf8;">6 ANSEM</td>
+              <td><span class="tag-win">Settled</span></td>
+            </tr>
+            <tr>
+              <td>#10838</td>
+              <td>10,000 ANSEM</td>
+              <td style="color: var(--green-primary);">5kR2...3yT8</td>
+              <td style="color: #94a3b8;">8jH4...1mX9</td>
+              <td style="color: var(--green-primary); font-weight: 700;">18,000 ANSEM</td>
+              <td style="color: #38bdf8;">600 ANSEM</td>
+              <td><span class="tag-win">Settled</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: LEADERBOARD -->
+    <div id="tab-leaderboard" class="tab-pane">
+      <div class="card">
+        <div class="card-title">
+          <span>Top Gladiators Leaderboard</span>
+          <span class="badge-solana">All-Time High</span>
+        </div>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Player</th>
+              <th>Battles Won</th>
+              <th>Win Rate</th>
+              <th>Total ANSEM Won</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color: #f59e0b; font-weight: 700;">#1 👑</td>
+              <td style="color: var(--green-primary); font-weight: 600;">5kR2...3yT8</td>
+              <td>142</td>
+              <td>76.4%</td>
+              <td style="color: var(--green-primary); font-weight: 700;">482,400 ANSEM</td>
+            </tr>
+            <tr>
+              <td style="color: #94a3b8; font-weight: 700;">#2 🥈</td>
+              <td style="color: var(--green-primary); font-weight: 600;">2mZ8...5tY3</td>
+              <td>98</td>
+              <td>69.1%</td>
+              <td style="color: var(--green-primary); font-weight: 700;">295,000 ANSEM</td>
+            </tr>
+            <tr>
+              <td style="color: #b45309; font-weight: 700;">#3 🥉</td>
+              <td style="color: var(--green-primary); font-weight: 600;">8xK9...2vR1</td>
+              <td>84</td>
+              <td>64.5%</td>
+              <td style="color: var(--green-primary); font-weight: 700;">186,200 ANSEM</td>
+            </tr>
+            <tr>
+              <td>#4</td>
+              <td style="color: var(--green-primary); font-weight: 600;">7yT1...4mP9</td>
+              <td>61</td>
+              <td>58.2%</td>
+              <td style="color: var(--green-primary); font-weight: 700;">112,500 ANSEM</td>
+            </tr>
+            <tr>
+              <td>#5</td>
+              <td style="color: var(--green-primary); font-weight: 600;">9wL4...1kC5</td>
+              <td>49</td>
+              <td>61.0%</td>
+              <td style="color: var(--green-primary); font-weight: 700;">84,300 ANSEM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 4: WHITEPAPER & RULES -->
+    <div id="tab-rules" class="tab-pane">
+      <div class="card">
+        <div class="card-title">
+          <span>Protocol Rules & Architecture</span>
+          <span class="badge-solana">Solana Anchor Program</span>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-title">1. Fair 1v1 Matchmaking & PDA Escrow</div>
+          <div class="rule-desc">
+            Players join a matchmaking queue by locking their chosen ANSEM tier into a non-custodial Program Derived Address (PDA) escrow. The protocol pairs players in the same tier on a first-come, first-served basis.
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-title">2. Reward Distribution Breakdown</div>
+          <div class="rule-desc">
+            Every match combines two equal stakes (200% pool). Settlements are executed in the exact same block:<br>
+            &bull; <strong>90% to Winner:</strong> 1.8x payout instantly transferred to the winning wallet.<br>
+            &bull; <strong>3% Loser Cashback:</strong> Direct loss-protection cashback refunded to the loser's wallet.<br>
+            &bull; <strong>7% Protocol Treasury:</strong> Distributed to buyback & burns and development.<br>
+            &bull; <strong>100% Cancel Refund:</strong> If a player cancels queue before being matched, 100% of their stake is instantly unlocked.
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-title">3. Verified Token Contract</div>
+          <div class="rule-desc">
+            The PvP Arena protocol settles all wagers natively using the official $PVP token on Solana.
+          </div>
+          <div class="contract-box">
+            <span>Contract (Mint): DwAzCesF1RH2tQvEGyRrAMz2RJyrJQfDgUkq9ERopump</span>
           </div>
         </div>
       </div>
@@ -525,7 +771,26 @@
   </div>
 
   <script>
-    // Frontend interactivity & ANSEM calculation
+    // Tab switching interactivity
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+        
+        tabButtons.forEach(b => b.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+
+        btn.classList.add('active');
+        const activePane = document.getElementById('tab-' + targetTab);
+        if (activePane) {
+          activePane.classList.add('active');
+        }
+      });
+    });
+
+    // Tier selection & dynamic calculation
     const tierCards = document.querySelectorAll('.tier-card');
     const summaryPool = document.getElementById('summaryPool');
     const summaryWinner = document.getElementById('summaryWinner');
@@ -544,11 +809,11 @@
         const loser = pool * 0.03;
         const fee = pool * 0.07;
 
-        summaryPool.textContent = `${pool.toLocaleString()} ANSEM`;
-        summaryWinner.textContent = `${winner.toLocaleString()} ANSEM (1.8x)`;
-        summaryLoser.textContent = `${loser.toLocaleString()} ANSEM`;
-        summaryFee.textContent = `${fee.toLocaleString()} ANSEM`;
-        joinBtn.textContent = `Enter Matchmaking Queue (${ansem.toLocaleString()} ANSEM)`;
+        summaryPool.textContent = pool.toLocaleString() + ' ANSEM';
+        summaryWinner.textContent = winner.toLocaleString() + ' ANSEM (1.8x)';
+        summaryLoser.textContent = loser.toLocaleString() + ' ANSEM';
+        summaryFee.textContent = fee.toLocaleString() + ' ANSEM';
+        joinBtn.textContent = 'Enter Matchmaking Queue (' + ansem.toLocaleString() + ' ANSEM)';
       });
     });
 
@@ -569,6 +834,10 @@
         alert('Solana wallet (Phantom / Solflare) not detected. You can test in demo mode.');
         walletText.textContent = 'Demo: GxA1...bVRa';
       }
+    });
+
+    joinBtn.addEventListener('click', () => {
+      alert('Entering Matchmaking Queue for selected ANSEM tier! Connecting to Solana Escrow PDA...');
     });
   </script>
 </body>
