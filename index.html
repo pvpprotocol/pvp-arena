@@ -1,844 +1,602 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PvP Arena 1v1 — ANSEM Edition</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-main: #060807;
-      --bg-card: rgba(10, 18, 13, 0.85);
-      --bg-card-hover: rgba(14, 28, 20, 0.95);
-      --border-color: rgba(0, 255, 102, 0.2);
-      --border-glow: rgba(0, 255, 102, 0.5);
-      --green-primary: #00ff66;
-      --green-glow: #00ff88;
-      --green-dark: #003314;
-      --green-light: #80ffaa;
-      --text-main: #f0fdf4;
-      --text-muted: #86efac;
-      --text-dim: #4ade80;
-      --accent-red: #ff3366;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PvP Arena | 1v1 On-Chain Betting Protocol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0d0f;
+            --bg-secondary: #12171a;
+            --bg-card: #182024;
+            --accent-green: #00ff66;
+            --accent-green-hover: #00cc52;
+            --accent-glow: rgba(0, 255, 102, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #263339;
+            --card-radius: 16px;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
 
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-      background-image: 
-        radial-gradient(circle at 15% 20%, rgba(0, 255, 102, 0.07) 0%, transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(0, 255, 102, 0.05) 0%, transparent 40%),
-        linear-gradient(to bottom, rgba(6, 8, 7, 0.9), rgba(6, 8, 7, 0.98));
-    }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px 20px 80px 20px;
-      position: relative;
-      z-index: 1;
-    }
+        header {
+            background: rgba(18, 23, 26, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 18px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    /* Watermark background */
-    .watermark {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 22vw;
-      font-weight: 900;
-      color: rgba(0, 255, 102, 0.015);
-      pointer-events: none;
-      z-index: 0;
-      user-select: none;
-      letter-spacing: -0.05em;
-      text-transform: uppercase;
-      font-family: 'Space Grotesk', sans-serif;
-    }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    /* Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 0 32px 0;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 24px;
-    }
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #000;
+            font-size: 20px;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
 
-    .brand-icon {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, var(--green-dark), #001a0a);
-      border: 1px solid var(--green-primary);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--green-primary);
-      box-shadow: 0 0 15px rgba(0, 255, 102, 0.25);
-    }
+        .logo-text span {
+            color: var(--accent-green);
+        }
 
-    .brand-title {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-primary);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
 
-    .brand-title span {
-      color: var(--green-primary);
-      text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
-    }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-    .badge-solana {
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 4px 8px;
-      background: rgba(0, 255, 102, 0.1);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      color: var(--green-light);
-    }
+        .tab-btn.active, .tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+        .tab-btn.active {
+            color: var(--accent-green);
+            border: 1px solid var(--border-color);
+        }
 
-    .btn-wallet {
-      background: linear-gradient(135deg, var(--green-primary), #00cc52);
-      color: #001a08;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 10px 20px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
-    }
+        .wallet-btn {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
 
-    .btn-wallet:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 25px rgba(0, 255, 102, 0.5);
-    }
+        .wallet-btn:hover {
+            background: var(--accent-green-hover);
+            transform: translateY(-1px);
+        }
 
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 28px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-      overflow-x: auto;
-    }
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
 
-    .tab-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-muted);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
+        .tab-content {
+            display: none;
+        }
 
-    .tab-btn:hover {
-      color: var(--text-main);
-      background: rgba(0, 255, 102, 0.05);
-    }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
 
-    .tab-btn.active {
-      background: rgba(0, 255, 102, 0.12);
-      color: var(--green-primary);
-      border-color: var(--border-color);
-      box-shadow: 0 0 10px rgba(0, 255, 102, 0.1);
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .tab-pane {
-      display: none;
-    }
+        .hero {
+            text-align: center;
+            margin-bottom: 48px;
+        }
 
-    .tab-pane.active {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
+        .hero h1 {
+            font-size: 44px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-    /* Cards */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 24px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      margin-bottom: 24px;
-    }
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
 
-    .card-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .tier-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            padding: 28px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
 
-    /* Arena Grid */
-    .arena-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 24px;
-    }
+        .tier-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
 
-    @media (max-width: 900px) {
-      .arena-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+        .tier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-    /* Tier Selection */
-    .tier-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
+        .tier-name {
+            font-size: 20px;
+            font-weight: 700;
+        }
 
-    .tier-card {
-      background: rgba(0, 255, 102, 0.03);
-      border: 1px solid rgba(0, 255, 102, 0.15);
-      border-radius: 12px;
-      padding: 16px 12px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+        .tier-badge {
+            background: rgba(0, 255, 102, 0.1);
+            color: var(--accent-green);
+            border: 1px solid rgba(0, 255, 102, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
 
-    .tier-card:hover {
-      border-color: var(--green-primary);
-      background: rgba(0, 255, 102, 0.08);
-      transform: translateY(-2px);
-    }
+        .tier-amount {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
 
-    .tier-card.selected {
-      border-color: var(--green-primary);
-      background: rgba(0, 255, 102, 0.15);
-      box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
-    }
+        .tier-details {
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-    .tier-card .ansem-amount {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--green-primary);
-      font-family: 'JetBrains Mono', monospace;
-    }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
 
-    .tier-card .tier-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      text-transform: uppercase;
-    }
+        .detail-row span:first-child {
+            color: var(--text-secondary);
+        }
 
-    /* Match Summary Details */
-    .summary-box {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(0, 255, 102, 0.1);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-    }
+        .detail-row span:last-child {
+            font-weight: 600;
+        }
 
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
+        .join-btn {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-    .summary-row:last-child {
-      border-bottom: none;
-    }
+        .tier-card:hover .join-btn {
+            background: var(--accent-green);
+            color: #000;
+            border-color: var(--accent-green);
+        }
 
-    .summary-row .label {
-      color: var(--text-muted);
-    }
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+        }
 
-    .summary-row .val {
-      font-weight: 600;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
 
-    .val.winner { color: var(--green-primary); }
-    .val.loser { color: #38bdf8; }
-    .val.fee { color: #f59e0b; }
+        th {
+            background: var(--bg-secondary);
+            padding: 16px 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    .btn-action {
-      width: 100%;
-      background: linear-gradient(135deg, var(--green-primary), #00cc52);
-      color: #001a08;
-      font-weight: 700;
-      font-size: 16px;
-      padding: 16px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
-      transition: all 0.2s ease;
-    }
+        td {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 15px;
+        }
 
-    .btn-action:hover {
-      box-shadow: 0 0 30px rgba(0, 255, 102, 0.6);
-      transform: translateY(-1px);
-    }
+        tr:last-child td {
+            border-bottom: none;
+        }
 
-    /* Live Queue & Stats */
-    .queue-status {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      background: rgba(0, 255, 102, 0.05);
-      border: 1px solid rgba(0, 255, 102, 0.15);
-      border-radius: 10px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      font-family: 'JetBrains Mono', monospace;
-    }
+        .badge-win {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
 
-    .live-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green-primary);
-      box-shadow: 0 0 8px var(--green-primary);
-      animation: pulse 1.5s infinite;
-    }
+        .badge-cashback {
+            color: #38bdf8;
+            font-weight: 600;
+        }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-    }
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
 
-    /* Tables */
-    .custom-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-    }
+        .info-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: var(--accent-green);
+        }
 
-    .custom-table th {
-      text-align: left;
-      padding: 12px;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border-color);
-      font-weight: 600;
-    }
+        .info-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
 
-    .custom-table td {
-      padding: 14px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 24px 32px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            background: var(--bg-secondary);
+        }
 
-    .custom-table tr:hover td {
-      background: rgba(0, 255, 102, 0.03);
-    }
-
-    .tag-win {
-      color: var(--green-primary);
-      background: rgba(0, 255, 102, 0.1);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
-
-    /* Rules & Whitepaper items */
-    .rule-item {
-      background: rgba(0, 255, 102, 0.03);
-      border: 1px solid rgba(0, 255, 102, 0.12);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-
-    .rule-title {
-      font-weight: 700;
-      color: var(--green-primary);
-      font-size: 15px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .rule-desc {
-      color: var(--text-main);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    /* Contract Box */
-    .contract-box {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px dashed var(--border-color);
-      border-radius: 10px;
-      padding: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      word-break: break-all;
-      color: var(--green-light);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-top: 16px;
-    }
-
-    /* Footer */
-    footer {
-      margin-top: 48px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-muted);
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      padding-top: 24px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-  </style>
+        footer a {
+            color: var(--accent-green);
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="watermark">PVP</div>
 
-  <div class="container">
-    <!-- Header -->
     <header>
-      <div class="brand">
-        <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/>
-            <line x1="13" y1="19" x2="19" y2="13"/>
-            <line x1="16" y1="16" x2="20" y2="20"/>
-            <line x1="19" y1="21" x2="21" y2="19"/>
-          </svg>
+        <div class="logo-container">
+            <div class="logo-icon">⚔️</div>
+            <div class="logo-text">PvP <span>Arena</span></div>
         </div>
-        <div>
-          <div class="brand-title">PvP <span>Arena</span> <span class="badge-solana">SOLANA</span></div>
-        </div>
-      </div>
-
-      <div class="header-actions">
-        <button class="btn-wallet" id="connectWalletBtn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
-            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
-            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
-          </svg>
-          <span id="walletBtnText">Connect Solana</span>
-        </button>
-      </div>
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('arena')">Battle Arena</button>
+            <button class="tab-btn" onclick="switchTab('matches')">Recent Matches</button>
+            <button class="tab-btn" onclick="switchTab('leaderboard')">Leaderboard</button>
+            <button class="tab-btn" onclick="switchTab('whitepaper')">Whitepaper</button>
+        </nav>
+        <button class="wallet-btn" onclick="connectWallet()">Connect Wallet</button>
     </header>
 
-    <!-- Navigation Tabs -->
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="arena">1v1 Battle Arena</button>
-      <button class="tab-btn" data-tab="matches">Recent Matches</button>
-      <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
-      <button class="tab-btn" data-tab="rules">Whitepaper & Rules</button>
-    </div>
+    <main>
+        <!-- Arena Tab -->
+        <div id="tab-arena" class="tab-content active">
+            <div class="hero">
+                <h1>Decentralized 1v1 Battles</h1>
+                <p>Choose your entry tier, challenge gladiators on-chain, win 90% of the pool with 3% instant loss protection cashback.</p>
+            </div>
 
-    <!-- TAB 1: ARENA -->
-    <div id="tab-arena" class="tab-pane active">
-      <div class="arena-grid">
-        <!-- Left: Matchmaker Setup -->
-        <div class="card">
-          <div class="card-title">
-            <span>Select ANSEM Tier</span>
-            <span style="font-size: 12px; color: var(--green-primary); font-family: 'JetBrains Mono', monospace;">
-              <span class="live-indicator"></span>ANSEM Pool Active
-            </span>
-          </div>
+            <div class="tier-grid">
+                <!-- $1 Tier -->
+                <div class="tier-card">
+                    <div class="tier-header">
+                        <span class="tier-name">Novice</span>
+                        <span class="tier-badge">Entry Level</span>
+                    </div>
+                    <div class="tier-amount">$1.00</div>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$2.00</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1.80</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$0.06</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$0.14</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(1)">Enter Match ($1)</button>
+                </div>
 
-          <div class="tier-grid">
-            <div class="tier-card selected" data-ansem="100">
-              <div class="ansem-amount">100</div>
-              <div class="tier-label">Novice</div>
-            </div>
-            <div class="tier-card" data-ansem="500">
-              <div class="ansem-amount">500</div>
-              <div class="tier-label">Fighter</div>
-            </div>
-            <div class="tier-card" data-ansem="1000">
-              <div class="ansem-amount">1,000</div>
-              <div class="tier-label">Warrior</div>
-            </div>
-            <div class="tier-card" data-ansem="5000">
-              <div class="ansem-amount">5,000</div>
-              <div class="tier-label">Gladiator</div>
-            </div>
-            <div class="tier-card" data-ansem="10000">
-              <div class="ansem-amount">10,000</div>
-              <div class="tier-label">Champion</div>
-            </div>
-            <div class="tier-card" data-ansem="50000">
-              <div class="ansem-amount">50,000</div>
-              <div class="tier-label">Master</div>
-            </div>
-            <div class="tier-card" data-ansem="100000">
-              <div class="ansem-amount">100,000</div>
-              <div class="tier-label">Legend</div>
-            </div>
-          </div>
+                <!-- $5 Tier -->
+                <div class="tier-card">
+                    <div class="tier-header">
+                        <span class="tier-name">Fighter</span>
+                        <span class="tier-badge">Popular</span>
+                    </div>
+                    <div class="tier-amount">$5.00</div>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$10.00</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$9.00</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$0.30</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$0.70</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(5)">Enter Match ($5)</button>
+                </div>
 
-          <!-- Settlement Formulas -->
-          <div class="summary-box">
-            <div class="summary-row">
-              <span class="label">Total Match Pool (2x):</span>
-              <span class="val" id="summaryPool">200 ANSEM</span>
-            </div>
-            <div class="summary-row">
-              <span class="label">Winner Payout (90%):</span>
-              <span class="val winner" id="summaryWinner">180 ANSEM (1.8x)</span>
-            </div>
-            <div class="summary-row">
-              <span class="label">Loser Cashback (3%):</span>
-              <span class="val loser" id="summaryLoser">6 ANSEM</span>
-            </div>
-            <div class="summary-row">
-              <span class="label">Treasury Fee (7%):</span>
-              <span class="val fee" id="summaryFee">14 ANSEM</span>
-            </div>
-            <div class="summary-row">
-              <span class="label">Cancel Refund:</span>
-              <span class="val" style="color: var(--green-primary);">100% Instant</span>
-            </div>
-          </div>
+                <!-- $10 Tier -->
+                <div class="tier-card">
+                    <div class="tier-header">
+                        <span class="tier-name">Warrior</span>
+                        <span class="tier-badge">Competitive</span>
+                    </div>
+                    <div class="tier-amount">$10.00</div>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$20.00</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$18.00</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$0.60</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$1.40</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(10)">Enter Match ($10)</button>
+                </div>
 
-          <button class="btn-action" id="joinQueueBtn">Enter Matchmaking Queue (100 ANSEM)</button>
+                <!-- $50 Tier -->
+                <div class="tier-card">
+                    <div class="tier-header">
+                        <span class="tier-name">Champion</span>
+                        <span class="tier-badge">High Stakes</span>
+                    </div>
+                    <div class="tier-amount">$50.00</div>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$100.00</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$90.00</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$3.00</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$7.00</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(50)">Enter Match ($50)</button>
+                </div>
+
+                <!-- $100 Tier -->
+                <div class="tier-card">
+                    <div class="tier-header">
+                        <span class="tier-name">Master</span>
+                        <span class="tier-badge">Pro</span>
+                    </div>
+                    <div class="tier-amount">$100.00</div>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$200.00</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$180.00</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$6.00</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$14.00</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(100)">Enter Match ($100)</button>
+                </div>
+
+                <!-- $1000 Tier -->
+                <div class="tier-card">
+                    <div class="tier-header">
+                        <span class="tier-name">Titan</span>
+                        <span class="tier-badge">Legendary</span>
+                    </div>
+                    <div class="tier-amount">$1,000.00</div>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$2,000.00</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1,800.00</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$60.00</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$140.00</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(1000)">Enter Match ($1,000)</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Right: Live Match Activity -->
-        <div class="card">
-          <div class="card-title">
-            <span>Live Activity</span>
-            <span class="live-indicator"></span>
-          </div>
-
-          <div class="queue-status">
-            <span>Online Queue:</span>
-            <strong style="color: var(--green-primary);" id="queueCount">4 Players Waiting</strong>
-          </div>
-
-          <div id="activityFeed" style="display: flex; flex-direction: column; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-            <div style="padding: 10px; background: rgba(0,255,102,0.03); border-radius: 8px; border-left: 2px solid var(--green-primary);">
-              <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px;">
-                <span>Tier: 1,000 ANSEM</span>
-                <span>Just now</span>
-              </div>
-              <div style="margin-top: 4px; font-weight: 600;">
-                <span style="color: var(--green-primary);">8xK9...2vR1</span> vs <span style="color: #38bdf8;">3nF2...9pQ8</span>
-              </div>
+        <!-- Matches Tab -->
+        <div id="tab-matches" class="tab-content">
+            <div class="hero">
+                <h1>Recent Arena Battles</h1>
+                <p>Live verified on-chain 1v1 match results, winner payouts, and instant cashbacks.</p>
             </div>
-
-            <div style="padding: 10px; background: rgba(0,255,102,0.03); border-radius: 8px; border-left: 2px solid var(--green-primary);">
-              <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px;">
-                <span>Tier: 500 ANSEM</span>
-                <span>2m ago</span>
-              </div>
-              <div style="margin-top: 4px; font-weight: 600;">
-                <span style="color: var(--green-primary);">Winner: 7yT1...4mP9 (+900 ANSEM)</span>
-              </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Tier</th>
+                            <th>Gladiator (Winner)</th>
+                            <th>Opponent</th>
+                            <th>Winner Payout</th>
+                            <th>Loser Cashback</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2 mins ago</td>
+                            <td>$100.00</td>
+                            <td>0x8f...39a1</td>
+                            <td>0x2c...9e44</td>
+                            <td class="badge-win">+$180.00</td>
+                            <td class="badge-cashback">+$6.00</td>
+                        </tr>
+                        <tr>
+                            <td>8 mins ago</td>
+                            <td>$50.00</td>
+                            <td>0x7a...11bc</td>
+                            <td>0x4d...88e1</td>
+                            <td class="badge-win">+$90.00</td>
+                            <td class="badge-cashback">+$3.00</td>
+                        </tr>
+                        <tr>
+                            <td>15 mins ago</td>
+                            <td>$1,000.00</td>
+                            <td>0x3e...991a</td>
+                            <td>0x91...224b</td>
+                            <td class="badge-win">+$1,800.00</td>
+                            <td class="badge-cashback">+$60.00</td>
+                        </tr>
+                        <tr>
+                            <td>24 mins ago</td>
+                            <td>$10.00</td>
+                            <td>0x11...88c2</td>
+                            <td>0x55...33a1</td>
+                            <td class="badge-win">+$18.00</td>
+                            <td class="badge-cashback">+$0.60</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            <div style="padding: 10px; background: rgba(0,255,102,0.03); border-radius: 8px; border-left: 2px solid var(--green-primary);">
-              <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px;">
-                <span>Tier: 100 ANSEM</span>
-                <span>5m ago</span>
-              </div>
-              <div style="margin-top: 4px; font-weight: 600;">
-                <span style="color: var(--green-primary);">Winner: 9wL4...1kC5 (+180 ANSEM)</span>
-              </div>
+        <!-- Leaderboard Tab -->
+        <div id="tab-leaderboard" class="tab-content">
+            <div class="hero">
+                <h1>Gladiator Leaderboard</h1>
+                <p>Top arena combatants ranked by total wins and net USD earnings.</p>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 2: RECENT MATCHES -->
-    <div id="tab-matches" class="tab-pane">
-      <div class="card">
-        <div class="card-title">
-          <span>Recent Match Results</span>
-          <span class="badge-solana">Real-Time On-Chain</span>
-        </div>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Match ID</th>
-              <th>Tier</th>
-              <th>Winner</th>
-              <th>Loser</th>
-              <th>Winner Payout</th>
-              <th>Cashback (3%)</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#10842</td>
-              <td>1,000 ANSEM</td>
-              <td style="color: var(--green-primary);">8xK9...2vR1</td>
-              <td style="color: #94a3b8;">3nF2...9pQ8</td>
-              <td style="color: var(--green-primary); font-weight: 700;">1,800 ANSEM</td>
-              <td style="color: #38bdf8;">60 ANSEM</td>
-              <td><span class="tag-win">Settled</span></td>
-            </tr>
-            <tr>
-              <td>#10841</td>
-              <td>500 ANSEM</td>
-              <td style="color: var(--green-primary);">7yT1...4mP9</td>
-              <td style="color: #94a3b8;">4bX7...0vL2</td>
-              <td style="color: var(--green-primary); font-weight: 700;">900 ANSEM</td>
-              <td style="color: #38bdf8;">30 ANSEM</td>
-              <td><span class="tag-win">Settled</span></td>
-            </tr>
-            <tr>
-              <td>#10840</td>
-              <td>5,000 ANSEM</td>
-              <td style="color: var(--green-primary);">2mZ8...5tY3</td>
-              <td style="color: #94a3b8;">9aP1...8rK6</td>
-              <td style="color: var(--green-primary); font-weight: 700;">9,000 ANSEM</td>
-              <td style="color: #38bdf8;">300 ANSEM</td>
-              <td><span class="tag-win">Settled</span></td>
-            </tr>
-            <tr>
-              <td>#10839</td>
-              <td>100 ANSEM</td>
-              <td style="color: var(--green-primary);">9wL4...1kC5</td>
-              <td style="color: #94a3b8;">1vC9...7nB4</td>
-              <td style="color: var(--green-primary); font-weight: 700;">180 ANSEM</td>
-              <td style="color: #38bdf8;">6 ANSEM</td>
-              <td><span class="tag-win">Settled</span></td>
-            </tr>
-            <tr>
-              <td>#10838</td>
-              <td>10,000 ANSEM</td>
-              <td style="color: var(--green-primary);">5kR2...3yT8</td>
-              <td style="color: #94a3b8;">8jH4...1mX9</td>
-              <td style="color: var(--green-primary); font-weight: 700;">18,000 ANSEM</td>
-              <td style="color: #38bdf8;">600 ANSEM</td>
-              <td><span class="tag-win">Settled</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- TAB 3: LEADERBOARD -->
-    <div id="tab-leaderboard" class="tab-pane">
-      <div class="card">
-        <div class="card-title">
-          <span>Top Gladiators Leaderboard</span>
-          <span class="badge-solana">All-Time High</span>
-        </div>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Player</th>
-              <th>Battles Won</th>
-              <th>Win Rate</th>
-              <th>Total ANSEM Won</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="color: #f59e0b; font-weight: 700;">#1 👑</td>
-              <td style="color: var(--green-primary); font-weight: 600;">5kR2...3yT8</td>
-              <td>142</td>
-              <td>76.4%</td>
-              <td style="color: var(--green-primary); font-weight: 700;">482,400 ANSEM</td>
-            </tr>
-            <tr>
-              <td style="color: #94a3b8; font-weight: 700;">#2 🥈</td>
-              <td style="color: var(--green-primary); font-weight: 600;">2mZ8...5tY3</td>
-              <td>98</td>
-              <td>69.1%</td>
-              <td style="color: var(--green-primary); font-weight: 700;">295,000 ANSEM</td>
-            </tr>
-            <tr>
-              <td style="color: #b45309; font-weight: 700;">#3 🥉</td>
-              <td style="color: var(--green-primary); font-weight: 600;">8xK9...2vR1</td>
-              <td>84</td>
-              <td>64.5%</td>
-              <td style="color: var(--green-primary); font-weight: 700;">186,200 ANSEM</td>
-            </tr>
-            <tr>
-              <td>#4</td>
-              <td style="color: var(--green-primary); font-weight: 600;">7yT1...4mP9</td>
-              <td>61</td>
-              <td>58.2%</td>
-              <td style="color: var(--green-primary); font-weight: 700;">112,500 ANSEM</td>
-            </tr>
-            <tr>
-              <td>#5</td>
-              <td style="color: var(--green-primary); font-weight: 600;">9wL4...1kC5</td>
-              <td>49</td>
-              <td>61.0%</td>
-              <td style="color: var(--green-primary); font-weight: 700;">84,300 ANSEM</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- TAB 4: WHITEPAPER & RULES -->
-    <div id="tab-rules" class="tab-pane">
-      <div class="card">
-        <div class="card-title">
-          <span>Protocol Rules & Architecture</span>
-          <span class="badge-solana">Solana Anchor Program</span>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Gladiator</th>
+                            <th>Matches Played</th>
+                            <th>Win Rate</th>
+                            <th>Total Earned (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🏆 #1</td>
+                            <td>0x3e...991a</td>
+                            <td>142</td>
+                            <td>78.2%</td>
+                            <td class="badge-win">$24,580.00</td>
+                        </tr>
+                        <tr>
+                            <td>🥈 #2</td>
+                            <td>0x8f...39a1</td>
+                            <td>98</td>
+                            <td>71.4%</td>
+                            <td class="badge-win">$12,340.00</td>
+                        </tr>
+                        <tr>
+                            <td>🥉 #3</td>
+                            <td>0x7a...11bc</td>
+                            <td>116</td>
+                            <td>64.5%</td>
+                            <td class="badge-win">$8,920.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="rule-item">
-          <div class="rule-title">1. Fair 1v1 Matchmaking & PDA Escrow</div>
-          <div class="rule-desc">
-            Players join a matchmaking queue by locking their chosen ANSEM tier into a non-custodial Program Derived Address (PDA) escrow. The protocol pairs players in the same tier on a first-come, first-served basis.
-          </div>
+        <!-- Whitepaper Tab -->
+        <div id="tab-whitepaper" class="tab-content">
+            <div class="info-card">
+                <h3>1. Protocol Architecture</h3>
+                <p>PvP Arena is a non-custodial, peer-to-peer 1v1 wagering protocol. Combatants lock equal entry stakes into a smart escrow contract. Match resolution uses verifiable randomness to ensure transparent and tamper-proof outcomes.</p>
+            </div>
+            <div class="info-card">
+                <h3>2. Fair Tokenomics & Reward Split</h3>
+                <p>Every match pool is distributed transparently:</p>
+                <p>• <strong>90% to Winner:</strong> The victorious gladiator receives 1.8x of their original stake.</p>
+                <p>• <strong>3% Loss Protection Cashback:</strong> The defeated player receives an instant 3% cashback rebate.</p>
+                <p>• <strong>7% Protocol Fee:</strong> Dedicated to platform maintenance and automated token buyback & burn.</p>
+            </div>
+            <div class="info-card">
+                <h3>3. Robinhood Chain Token</h3>
+                <p>Official Utility Token ($PVP) Contract Address on Robinhood Chain:</p>
+                <p><code style="background:var(--bg-primary); padding:6px 12px; border-radius:6px; color:var(--accent-green)">0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3</code></p>
+            </div>
         </div>
+    </main>
 
-        <div class="rule-item">
-          <div class="rule-title">2. Reward Distribution Breakdown</div>
-          <div class="rule-desc">
-            Every match combines two equal stakes (200% pool). Settlements are executed in the exact same block:<br>
-            &bull; <strong>90% to Winner:</strong> 1.8x payout instantly transferred to the winning wallet.<br>
-            &bull; <strong>3% Loser Cashback:</strong> Direct loss-protection cashback refunded to the loser's wallet.<br>
-            &bull; <strong>7% Protocol Treasury:</strong> Distributed to buyback & burns and development.<br>
-            &bull; <strong>100% Cancel Refund:</strong> If a player cancels queue before being matched, 100% of their stake is instantly unlocked.
-          </div>
-        </div>
-
-        <div class="rule-item">
-          <div class="rule-title">3. Verified Token Contract</div>
-          <div class="rule-desc">
-            The PvP Arena protocol settles all wagers natively using the official $PVP token on Solana.
-          </div>
-          <div class="contract-box">
-            <span>Contract (Mint): DwAzCesF1RH2tQvEGyRrAMz2RJyrJQfDgUkq9ERopump</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
     <footer>
-      <p>PvP Arena Solana Protocol &bull; 100% ANSEM Settled &bull; Non-Custodial PDA Escrow</p>
+        <p>&copy; 2026 PvP Arena Protocol. Powered by Robinhood Chain. <a href="https://pvpprotocol.github.io/pvp-arena/">Official Website</a></p>
     </footer>
-  </div>
 
-  <script>
-    // Tab switching interactivity
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetTab = btn.getAttribute('data-tab');
-        
-        tabButtons.forEach(b => b.classList.remove('active'));
-        tabPanes.forEach(p => p.classList.remove('active'));
-
-        btn.classList.add('active');
-        const activePane = document.getElementById('tab-' + targetTab);
-        if (activePane) {
-          activePane.classList.add('active');
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
         }
-      });
-    });
 
-    // Tier selection & dynamic calculation
-    const tierCards = document.querySelectorAll('.tier-card');
-    const summaryPool = document.getElementById('summaryPool');
-    const summaryWinner = document.getElementById('summaryWinner');
-    const summaryLoser = document.getElementById('summaryLoser');
-    const summaryFee = document.getElementById('summaryFee');
-    const joinBtn = document.getElementById('joinQueueBtn');
-
-    tierCards.forEach(card => {
-      card.addEventListener('click', () => {
-        tierCards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        
-        const ansem = parseFloat(card.dataset.ansem);
-        const pool = ansem * 2;
-        const winner = pool * 0.9;
-        const loser = pool * 0.03;
-        const fee = pool * 0.07;
-
-        summaryPool.textContent = pool.toLocaleString() + ' ANSEM';
-        summaryWinner.textContent = winner.toLocaleString() + ' ANSEM (1.8x)';
-        summaryLoser.textContent = loser.toLocaleString() + ' ANSEM';
-        summaryFee.textContent = fee.toLocaleString() + ' ANSEM';
-        joinBtn.textContent = 'Enter Matchmaking Queue (' + ansem.toLocaleString() + ' ANSEM)';
-      });
-    });
-
-    // Wallet Connect simulation / Web3 hook
-    const walletBtn = document.getElementById('connectWalletBtn');
-    const walletText = document.getElementById('walletBtnText');
-
-    walletBtn.addEventListener('click', async () => {
-      if (window.solana && window.solana.isPhantom) {
-        try {
-          const resp = await window.solana.connect();
-          const pubkey = resp.publicKey.toString();
-          walletText.textContent = pubkey.slice(0, 4) + '...' + pubkey.slice(-4);
-        } catch (e) {
-          console.error(e);
+        function connectWallet() {
+            alert('Connecting wallet... Please select Web3 Wallet.');
         }
-      } else {
-        alert('Solana wallet (Phantom / Solflare) not detected. You can test in demo mode.');
-        walletText.textContent = 'Demo: GxA1...bVRa';
-      }
-    });
 
-    joinBtn.addEventListener('click', () => {
-      alert('Entering Matchmaking Queue for selected ANSEM tier! Connecting to Solana Escrow PDA...');
-    });
-  </script>
+        function enterMatch(tier) {
+            alert('Entering $' + tier + ' Battle Queue. Confirming transaction...');
+        }
+    </script>
 </body>
 </html>
