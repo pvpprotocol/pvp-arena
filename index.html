@@ -245,7 +245,7 @@
 
     </div>
 
-    <!-- 2. 2048 SKILL VAULTS TAB -->
+        <!-- 2. 2048 SKILL VAULTS TAB -->
     <div id="tab-vault2048" class="tab-content hidden space-y-6">
       
       <!-- SPECIAL PERK BANNER -->
@@ -265,104 +265,270 @@
       <!-- GAME & TIERS GRID -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- LEFT COLUMN: TIER SELECTION -->
-        <div class="lg:col-span-5 space-y-3">
-          <h3 class="font-black text-white font-mono text-base mb-2">SELECT TOURNAMENT TIER</h3>
-          
-          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="glass-panel p-4 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all flex items-center justify-between">
-            <div>
+        <!-- LEFT COLUMN: TIER SELECTION & BATCH TICKET PURCHASE -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-black text-white font-mono text-base">SELECT TOURNAMENT TIER</h3>
+            <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-1 rounded-lg" id="user-tickets-badge">🎟️ <span id="tickets-count">1</span> Attempt Ready</span>
+          </div>
+
+          <!-- TIER 1 -->
+          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="glass-panel p-4 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all space-y-3">
+            <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="font-mono font-black text-white text-lg">$1.00 TIER</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300">ACTIVE TIER</span>
+                <span id="tier-tag-1" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300">ACTIVE TIER</span>
               </div>
-              <p class="text-xs text-slate-400 mt-1">24h Pool: <span class="text-white font-mono font-bold">$420.00 USDC</span></p>
-              <p class="text-xs text-emerald-400 font-mono font-bold">Top Reward (80%): $336.00 USDC</p>
+              <span class="text-xs text-emerald-400 font-mono font-bold">Top Prize: $336.00 USDC</span>
             </div>
-            <div class="flex flex-col gap-1.5">
-              <button onclick="buy2048Ticket(1, 'USDC')" class="px-3 py-1.5 rounded-lg bg-cyan-500 text-black text-xs font-mono font-bold hover:bg-cyan-400">1 USDC</button>
-              <button onclick="buy2048Ticket(1, 'PVP')" class="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-mono font-bold hover:bg-purple-500">2x with $PVP</button>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>24h Pool: <strong class="text-white font-mono">$420.00 USDC</strong></span>
+              <span>Entry: <strong>$1.00 / ticket</strong></span>
             </div>
-          </div>
-
-          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-emerald-500/40 cursor-pointer transition-all flex items-center justify-between">
-            <div>
-              <span class="font-mono font-black text-white text-lg">$5.00 TIER</span>
-              <p class="text-xs text-slate-400 mt-1">24h Pool: <span class="text-white font-mono font-bold">$1,150.00 USDC</span></p>
-              <p class="text-xs text-emerald-400 font-mono font-bold">Top Reward (80%): $920.00 USDC</p>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <button onclick="buy2048Ticket(5, 'USDC')" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-black text-xs font-mono font-bold hover:bg-emerald-400">5 USDC</button>
-              <button onclick="buy2048Ticket(5, 'PVP')" class="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-mono font-bold hover:bg-purple-500">2x with $PVP</button>
-            </div>
-          </div>
-
-          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-blue-500/40 cursor-pointer transition-all flex items-center justify-between">
-            <div>
-              <span class="font-mono font-black text-white text-lg">$10.00 TIER</span>
-              <p class="text-xs text-slate-400 mt-1">24h Pool: <span class="text-white font-mono font-bold">$2,800.00 USDC</span></p>
-              <p class="text-xs text-emerald-400 font-mono font-bold">Top Reward (80%): $2,240.00 USDC</p>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <button onclick="buy2048Ticket(10, 'USDC')" class="px-3 py-1.5 rounded-lg bg-blue-500 text-white text-xs font-mono font-bold hover:bg-blue-400">10 USDC</button>
-              <button onclick="buy2048Ticket(10, 'PVP')" class="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-mono font-bold hover:bg-purple-500">2x with $PVP</button>
-            </div>
-          </div>
-
-          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-purple-500/40 cursor-pointer transition-all flex items-center justify-between">
-            <div>
-              <span class="font-mono font-black text-white text-lg">$100.00 TIER</span>
-              <p class="text-xs text-slate-400 mt-1">24h Pool: <span class="text-white font-mono font-bold">$8,400.00 USDC</span></p>
-              <p class="text-xs text-emerald-400 font-mono font-bold">Top Reward (80%): $6,720.00 USDC</p>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <button onclick="buy2048Ticket(100, 'USDC')" class="px-3 py-1.5 rounded-lg bg-purple-500 text-white text-xs font-mono font-bold hover:bg-purple-400">100 USDC</button>
-              <button onclick="buy2048Ticket(100, 'PVP')" class="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-mono font-bold hover:bg-purple-500">2x with $PVP</button>
+            
+            <!-- QUANTITY SELECTOR & BUY BUTTONS -->
+            <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
+                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+                <div class="flex items-center gap-2">
+                  <button onclick="adjust2048Qty(1, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
+                  <input type="number" id="qty-2048-1" value="1" min="1" max="100" onchange="update2048Price(1)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
+                  <button onclick="adjust2048Qty(1, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
+                  <div class="flex gap-1 pl-1">
+                    <button onclick="set2048Qty(1, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
+                    <button onclick="set2048Qty(1, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  </div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="buy2048Ticket(1, 'USDC')" id="buy-btn-usdc-1" class="py-2 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-mono font-black transition-all text-center">
+                  BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="lbl-cost-usdc-1">1.00</span>)
+                </button>
+                <button onclick="buy2048Ticket(1, 'PVP')" id="buy-btn-pvp-1" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP (<span id="lbl-qty-pvp-1">2</span> ATTEMPTS 🔥)
+                </button>
+              </div>
             </div>
           </div>
 
-          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-amber-500/40 cursor-pointer transition-all flex items-center justify-between">
-            <div>
-              <span class="font-mono font-black text-white text-lg">$1,000 TIER</span>
-              <p class="text-xs text-slate-400 mt-1">24h Pool: <span class="text-white font-mono font-bold">$15,000.00 USDC</span></p>
-              <p class="text-xs text-emerald-400 font-mono font-bold">Top Reward (80%): $12,000.00 USDC</p>
+          <!-- TIER 5 -->
+          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-emerald-500/40 cursor-pointer transition-all space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-black text-white text-lg">$5.00 TIER</span>
+                <span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300">ACTIVE TIER</span>
+              </div>
+              <span class="text-xs text-emerald-400 font-mono font-bold">Top Prize: $920.00 USDC</span>
             </div>
-            <div class="flex flex-col gap-1.5">
-              <button onclick="buy2048Ticket(1000, 'USDC')" class="px-3 py-1.5 rounded-lg bg-amber-500 text-black text-xs font-mono font-bold hover:bg-amber-400">1,000 USDC</button>
-              <button onclick="buy2048Ticket(1000, 'PVP')" class="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-mono font-bold hover:bg-purple-500">2x with $PVP</button>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>24h Pool: <strong class="text-white font-mono">$1,150.00 USDC</strong></span>
+              <span>Entry: <strong>$5.00 / ticket</strong></span>
+            </div>
+            
+            <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
+                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+                <div class="flex items-center gap-2">
+                  <button onclick="adjust2048Qty(5, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
+                  <input type="number" id="qty-2048-5" value="1" min="1" max="100" onchange="update2048Price(5)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
+                  <button onclick="adjust2048Qty(5, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
+                  <div class="flex gap-1 pl-1">
+                    <button onclick="set2048Qty(5, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
+                    <button onclick="set2048Qty(5, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  </div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="buy2048Ticket(5, 'USDC')" id="buy-btn-usdc-5" class="py-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-mono font-black transition-all text-center">
+                  BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="lbl-cost-usdc-5">5.00</span>)
+                </button>
+                <button onclick="buy2048Ticket(5, 'PVP')" id="buy-btn-pvp-5" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP (<span id="lbl-qty-pvp-5">2</span> ATTEMPTS 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 10 -->
+          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-blue-500/40 cursor-pointer transition-all space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-black text-white text-lg">$10.00 TIER</span>
+                <span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300">ACTIVE TIER</span>
+              </div>
+              <span class="text-xs text-emerald-400 font-mono font-bold">Top Prize: $2,240.00 USDC</span>
+            </div>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>24h Pool: <strong class="text-white font-mono">$2,800.00 USDC</strong></span>
+              <span>Entry: <strong>$10.00 / ticket</strong></span>
+            </div>
+            
+            <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
+                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+                <div class="flex items-center gap-2">
+                  <button onclick="adjust2048Qty(10, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
+                  <input type="number" id="qty-2048-10" value="1" min="1" max="100" onchange="update2048Price(10)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
+                  <button onclick="adjust2048Qty(10, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
+                  <div class="flex gap-1 pl-1">
+                    <button onclick="set2048Qty(10, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
+                    <button onclick="set2048Qty(10, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  </div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="buy2048Ticket(10, 'USDC')" id="buy-btn-usdc-10" class="py-2 px-3 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-xs font-mono font-black transition-all text-center">
+                  BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="lbl-cost-usdc-10">10.00</span>)
+                </button>
+                <button onclick="buy2048Ticket(10, 'PVP')" id="buy-btn-pvp-10" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP (<span id="lbl-qty-pvp-10">2</span> ATTEMPTS 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 100 -->
+          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-purple-500/40 cursor-pointer transition-all space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-black text-white text-lg">$100.00 TIER</span>
+                <span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300">ACTIVE TIER</span>
+              </div>
+              <span class="text-xs text-emerald-400 font-mono font-bold">Top Prize: $6,720.00 USDC</span>
+            </div>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>24h Pool: <strong class="text-white font-mono">$8,400.00 USDC</strong></span>
+              <span>Entry: <strong>$100.00 / ticket</strong></span>
+            </div>
+            
+            <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
+                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+                <div class="flex items-center gap-2">
+                  <button onclick="adjust2048Qty(100, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
+                  <input type="number" id="qty-2048-100" value="1" min="1" max="100" onchange="update2048Price(100)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
+                  <button onclick="adjust2048Qty(100, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
+                  <div class="flex gap-1 pl-1">
+                    <button onclick="set2048Qty(100, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
+                    <button onclick="set2048Qty(100, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  </div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="buy2048Ticket(100, 'USDC')" id="buy-btn-usdc-100" class="py-2 px-3 rounded-xl bg-purple-500 hover:bg-purple-400 text-white text-xs font-mono font-black transition-all text-center">
+                  BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="lbl-cost-usdc-100">100.00</span>)
+                </button>
+                <button onclick="buy2048Ticket(100, 'PVP')" id="buy-btn-pvp-100" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP (<span id="lbl-qty-pvp-100">2</span> ATTEMPTS 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 1000 -->
+          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-amber-500/40 cursor-pointer transition-all space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-black text-white text-lg">$1,000 TIER</span>
+                <span id="tier-tag-1000" class="hidden px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300">ACTIVE TIER</span>
+              </div>
+              <span class="text-xs text-emerald-400 font-mono font-bold">Top Prize: $12,000.00 USDC</span>
+            </div>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>24h Pool: <strong class="text-white font-mono">$15,000.00 USDC</strong></span>
+              <span>Entry: <strong>$1,000.00 / ticket</strong></span>
+            </div>
+            
+            <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
+                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+                <div class="flex items-center gap-2">
+                  <button onclick="adjust2048Qty(1000, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
+                  <input type="number" id="qty-2048-1000" value="1" min="1" max="100" onchange="update2048Price(1000)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
+                  <button onclick="adjust2048Qty(1000, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
+                  <div class="flex gap-1 pl-1">
+                    <button onclick="set2048Qty(1000, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
+                    <button onclick="set2048Qty(1000, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  </div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="buy2048Ticket(1000, 'USDC')" id="buy-btn-usdc-1000" class="py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-mono font-black transition-all text-center">
+                  BUY <span id="lbl-qty-usdc-1000">1</span> TICKET ($<span id="lbl-cost-usdc-1000">1,000.00</span>)
+                </button>
+                <button onclick="buy2048Ticket(1000, 'PVP')" id="buy-btn-pvp-1000" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP (<span id="lbl-qty-pvp-1000">2</span> ATTEMPTS 🔥)
+                </button>
+              </div>
             </div>
           </div>
 
         </div>
 
         <!-- RIGHT COLUMN: 2048 PLAYABLE HERO BOARD -->
-        <div class="lg:col-span-7 glass-panel p-6 rounded-3xl border border-white/10 flex flex-col items-center">
-          <div class="w-full flex items-center justify-between mb-4">
+        <div class="lg:col-span-7 glass-panel p-6 rounded-3xl border border-white/10 flex flex-col items-center relative">
+          
+          <!-- HEADER & STATS -->
+          <div class="w-full flex items-center justify-between mb-4 flex-wrap gap-2">
             <div>
-              <span class="text-xs text-slate-400 font-mono">Active Run Record:</span>
+              <span class="text-xs text-slate-400 font-mono">Active Run Metric:</span>
               <p class="text-xs text-cyan-400 font-mono font-bold">Single High Score (No Accumulation)</p>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
               <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 font-mono text-center">
-                <span class="text-[10px] text-slate-400 block">SCORE</span>
-                <span id="game-score" class="text-base font-black text-white">0</span>
+                <span class="text-[10px] text-slate-400 block">CURRENT SCORE</span>
+                <span id="game-score" class="text-lg font-black text-white">0</span>
               </div>
               <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 font-mono text-center">
                 <span class="text-[10px] text-slate-400 block">BEST RECORD</span>
-                <span id="game-best" class="text-base font-black text-amber-400">3,240</span>
+                <span id="game-best" class="text-lg font-black text-amber-400">3,240</span>
               </div>
-              <button onclick="init2048Game()" class="p-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 font-mono text-xs font-bold">↻ RESET</button>
+              <button onclick="startNew2048Game()" class="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all">↻ NEW GAME</button>
             </div>
           </div>
 
-          <!-- THE 4X4 GRID -->
-          <div class="grid-2048" id="board-container">
-            <!-- Tiles rendered dynamically by JS -->
+          <!-- THE 4X4 PLAYABLE GRID -->
+          <div class="relative w-full flex justify-center">
+            <div class="grid-2048 relative" id="board-container" tabindex="0">
+              <!-- Tiles rendered dynamically by JS -->
+            </div>
+
+            <!-- GAME OVER OVERLAY -->
+            <div id="game-over-overlay" class="hidden absolute inset-0 bg-slate-950/90 rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-4 backdrop-blur-sm z-20">
+              <span class="text-4xl">🎮</span>
+              <div>
+                <h3 class="text-2xl font-black text-white font-mono">ROUND COMPLETED</h3>
+                <p class="text-xs text-slate-400 mt-1">Single Run High Score Recorded Onchain</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900 border border-white/10 font-mono">
+                <span class="text-xs text-slate-400">Final Score:</span>
+                <span id="overlay-final-score" class="text-2xl font-black text-cyan-400 block">0</span>
+              </div>
+              <div class="flex gap-3">
+                <button onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400">PLAY AGAIN</button>
+                <button onclick="switchTab('leaderboard'); setLeaderboardCategory('2048');" class="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-mono font-bold text-xs hover:bg-slate-700">VIEW LEADERBOARD</button>
+              </div>
+            </div>
           </div>
 
-          <div class="w-full flex justify-between items-center mt-4 text-xs font-mono text-slate-400">
-            <span>Use Arrow Keys or Swipe to Play</span>
-            <span class="text-emerald-400">1 Free Ticket Ready</span>
+          <!-- CONTROLS & D-PAD FOR MOBILE / TOUCH -->
+          <div class="w-full flex flex-col items-center mt-4 space-y-3">
+            <div class="w-full flex justify-between items-center text-xs font-mono text-slate-400">
+              <span>⌨️ Use Arrow Keys / WASD or Swipe</span>
+              <span class="text-emerald-400 font-bold" id="board-status-text">🎮 Active Game Ready</span>
+            </div>
+
+            <!-- ON-SCREEN D-PAD -->
+            <div class="grid grid-cols-3 gap-2 w-48 pt-2">
+              <div></div>
+              <button onclick="handle2048Move('up')" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/10 text-white font-mono font-black text-sm flex items-center justify-center active:scale-95 transition-all">▲</button>
+              <div></div>
+              <button onclick="handle2048Move('left')" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/10 text-white font-mono font-black text-sm flex items-center justify-center active:scale-95 transition-all">◀</button>
+              <button onclick="handle2048Move('down')" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/10 text-white font-mono font-black text-sm flex items-center justify-center active:scale-95 transition-all">▼</button>
+              <button onclick="handle2048Move('right')" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/10 text-white font-mono font-black text-sm flex items-center justify-center active:scale-95 transition-all">▶</button>
+            </div>
           </div>
+
         </div>
 
       </div>
@@ -645,7 +811,7 @@
           </ul>
         </div>
 
-        <!-- SECTION 2 -->
+                        <!-- SECTION 2 -->
         <div class="space-y-4 border-t border-white/10 pt-8">
           <h2 class="text-xl font-bold text-white font-mono">2. 2048 Skill Vaults & 24 Hour UTC Tournament Cycle</h2>
           <p class="text-sm text-slate-300 leading-relaxed">
@@ -654,7 +820,7 @@
           <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
             <li><strong class="text-white">Single High Score Record (No Accumulation):</strong> Scores from multiple games are never summed together. Only a player highest single run record qualifies.</li>
             <li><strong class="text-white">Unlimited Ticket Purchases:</strong> Players may buy as many attempts as desired to improve their top record.</li>
-            <li><strong class="text-white">Special $PVP Token Perk:</strong> Buy tickets using the native $PVP token and get 2x tickets (2 game attempts) per 1 ticket fee!</li>
+            <li><strong class="text-white">SPECIAL $PVP PERK: 2X TICKETS BONUS:</strong> Buy tickets using the native $PVP token and get 2x tickets (2 game attempts) per 1 ticket fee!</li>
             <li><strong class="text-white">Reward Distribution:</strong> 80% of the entire tier vault is transferred to the top verified record holder, with 20% allocated as protocol fee.</li>
           </ul>
         </div>
@@ -705,7 +871,7 @@
         btn.classList.add('active');
       }
 
-      if (tabId === 'vault2048') render2048();
+      if (tabId === 'vault2048') { if (board[0].every(x => x === 0)) startNew2048Game(); else render2048(); }
       if (tabId === 'jackpot') renderJackpotSubmissions();
       if (tabId === 'leaderboard') updateLeaderboardUI();
       if (tabId === 'history') updateHistoryUI();
@@ -1039,7 +1205,7 @@
 
     // INITIAL LOAD
     window.addEventListener("DOMContentLoaded", () => {
-      render2048();
+      startNew2048Game();
       updateJackpotTimer();
       renderJackpotSubmissions();
       updateLeaderboardUI();
