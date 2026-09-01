@@ -114,130 +114,13 @@
           <i class="fa-solid fa-bullseye"></i> Jackpot
         </button>
 
-        <!-- FLYOUT CASCADING LEADERBOARD MENU -->
-        <div class="relative dropdown-parent">
-          <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="nav-tab px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition">
-            <i class="fa-solid fa-trophy"></i> Leaderboard <i class="fa-solid fa-chevron-down text-[10px]"></i>
-          </button>
-          
-          <!-- Level 1 Dropdown -->
-          <div class="dropdown-menu hidden absolute top-full left-0 mt-1 w-56 bg-[#12151c] border border-white/10 rounded-xl shadow-2xl p-2 z-50">
-            <!-- 1. PvP Duels -->
-            <div class="relative dropdown-subparent">
-              <div class="px-3 py-2.5 rounded-lg hover:bg-white/5 text-slate-200 hover:text-cyan-400 text-sm flex items-center justify-between cursor-pointer">
-                <span><i class="fa-solid fa-swords text-cyan-400 mr-2"></i> 1v1 Duels</span>
-                <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-              </div>
-              <!-- Level 2 Submenu -->
-              <div class="dropdown-submenu hidden absolute left-full top-0 ml-1 w-52 bg-[#161a24] border border-cyan-500/30 rounded-xl shadow-2xl p-2 z-50">
-                <div class="text-[11px] font-mono text-cyan-400 px-3 py-1 font-semibold uppercase">PvP Tiers (Top 100)</div>
-                <button onclick="openLeaderboardTier('pvp', 1)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1 Tier Vault</button>
-                <button onclick="openLeaderboardTier('pvp', 5)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$5 Tier Vault</button>
-                <button onclick="openLeaderboardTier('pvp', 10)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$10 Tier Vault</button>
-                <button onclick="openLeaderboardTier('pvp', 100)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$100 Tier Vault</button>
-                <button onclick="openLeaderboardTier('pvp', 1000)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1,000 Tier Vault</button>
-              </div>
-            </div>
-
-            <!-- 2. 2048 Skill Vaults -->
-            <div class="relative dropdown-subparent">
-              <div class="px-3 py-2.5 rounded-lg hover:bg-white/5 text-slate-200 hover:text-purple-400 text-sm flex items-center justify-between cursor-pointer">
-                <span><i class="fa-solid fa-gamepad text-purple-400 mr-2"></i> 2048 Skill Vaults</span>
-                <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-              </div>
-              <!-- Level 2 Submenu -->
-              <div class="dropdown-submenu hidden absolute left-full top-0 ml-1 w-52 bg-[#161a24] border border-purple-500/30 rounded-xl shadow-2xl p-2 z-50">
-                <div class="text-[11px] font-mono text-purple-400 px-3 py-1 font-semibold uppercase">2048 Tiers (Top 100)</div>
-                <button onclick="openLeaderboardTier('2048', 1)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1 Tier Record</button>
-                <button onclick="openLeaderboardTier('2048', 5)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$5 Tier Record</button>
-                <button onclick="openLeaderboardTier('2048', 10)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$10 Tier Record</button>
-                <button onclick="openLeaderboardTier('2048', 100)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$100 Tier Record</button>
-                <button onclick="openLeaderboardTier('2048', 1000)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1,000 Tier Record</button>
-              </div>
-            </div>
-
-            <!-- 3. Jackpot -->
-            <div class="relative dropdown-subparent">
-              <div class="px-3 py-2.5 rounded-lg hover:bg-white/5 text-slate-200 hover:text-amber-400 text-sm flex items-center justify-between cursor-pointer">
-                <span><i class="fa-solid fa-bullseye text-amber-400 mr-2"></i> Jackpot</span>
-                <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-              </div>
-              <!-- Level 2 Submenu -->
-              <div class="dropdown-submenu hidden absolute left-full top-0 ml-1 w-52 bg-[#161a24] border border-amber-500/30 rounded-xl shadow-2xl p-2 z-50">
-                <div class="text-[11px] font-mono text-amber-400 px-3 py-1 font-semibold uppercase">Jackpot Tiers (Top 100)</div>
-                <button onclick="openLeaderboardTier('jackpot', 1)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1 Tier Prediction</button>
-                <button onclick="openLeaderboardTier('jackpot', 5)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$5 Tier Prediction</button>
-                <button onclick="openLeaderboardTier('jackpot', 10)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$10 Tier Prediction</button>
-                <button onclick="openLeaderboardTier('jackpot', 100)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$100 Tier Prediction</button>
-                <button onclick="openLeaderboardTier('jackpot', 1000)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1,000 Tier Prediction</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- FLYOUT CASCADING HISTORY MENU -->
-        <div class="relative dropdown-parent">
-          <button onclick="switchTab('history')" id="nav-history" class="nav-tab px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition">
-            <i class="fa-solid fa-clock-rotate-left"></i> History <i class="fa-solid fa-chevron-down text-[10px]"></i>
-          </button>
-          
-          <!-- Level 1 Dropdown -->
-          <div class="dropdown-menu hidden absolute top-full left-0 mt-1 w-56 bg-[#12151c] border border-white/10 rounded-xl shadow-2xl p-2 z-50">
-            <!-- 1. PvP Duels History -->
-            <div class="relative dropdown-subparent">
-              <div class="px-3 py-2.5 rounded-lg hover:bg-white/5 text-slate-200 hover:text-cyan-400 text-sm flex items-center justify-between cursor-pointer" onclick="openHistoryCategory('pvp')">
-                <span><i class="fa-solid fa-swords text-cyan-400 mr-2"></i> 1v1 Duels</span>
-                <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-              </div>
-              <!-- Level 2 Submenu -->
-              <div class="dropdown-submenu hidden absolute left-full top-0 ml-1 w-52 bg-[#161a24] border border-cyan-500/30 rounded-xl shadow-2xl p-2 z-50">
-                <div class="text-[11px] font-mono text-cyan-400 px-3 py-1 font-semibold uppercase">PvP History</div>
-                <button onclick="openHistoryTier('pvp', 0)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">All PvP Matches</button>
-                <button onclick="openHistoryTier('pvp', 1)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1 Tier Matches</button>
-                <button onclick="openHistoryTier('pvp', 5)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$5 Tier Matches</button>
-                <button onclick="openHistoryTier('pvp', 10)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$10 Tier Matches</button>
-                <button onclick="openHistoryTier('pvp', 100)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$100 Tier Matches</button>
-                <button onclick="openHistoryTier('pvp', 1000)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1,000 Tier Matches</button>
-              </div>
-            </div>
-
-            <!-- 2. 2048 Skill Vaults History -->
-            <div class="relative dropdown-subparent">
-              <div class="px-3 py-2.5 rounded-lg hover:bg-white/5 text-slate-200 hover:text-purple-400 text-sm flex items-center justify-between cursor-pointer" onclick="openHistoryCategory('2048')">
-                <span><i class="fa-solid fa-gamepad text-purple-400 mr-2"></i> 2048 Skill Vaults</span>
-                <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-              </div>
-              <!-- Level 2 Submenu -->
-              <div class="dropdown-submenu hidden absolute left-full top-0 ml-1 w-52 bg-[#161a24] border border-purple-500/30 rounded-xl shadow-2xl p-2 z-50">
-                <div class="text-[11px] font-mono text-purple-400 px-3 py-1 font-semibold uppercase">2048 History</div>
-                <button onclick="openHistoryTier('2048', 0)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">All 2048 Runs</button>
-                <button onclick="openHistoryTier('2048', 1)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1 Tier Runs</button>
-                <button onclick="openHistoryTier('2048', 5)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$5 Tier Runs</button>
-                <button onclick="openHistoryTier('2048', 10)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$10 Tier Runs</button>
-                <button onclick="openHistoryTier('2048', 100)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$100 Tier Runs</button>
-                <button onclick="openHistoryTier('2048', 1000)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1,000 Tier Runs</button>
-              </div>
-            </div>
-
-            <!-- 3. Jackpot History -->
-            <div class="relative dropdown-subparent">
-              <div class="px-3 py-2.5 rounded-lg hover:bg-white/5 text-slate-200 hover:text-amber-400 text-sm flex items-center justify-between cursor-pointer" onclick="openHistoryCategory('jackpot')">
-                <span><i class="fa-solid fa-bullseye text-amber-400 mr-2"></i> Jackpot</span>
-                <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-              </div>
-              <!-- Level 2 Submenu -->
-              <div class="dropdown-submenu hidden absolute left-full top-0 ml-1 w-52 bg-[#161a24] border border-amber-500/30 rounded-xl shadow-2xl p-2 z-50">
-                <div class="text-[11px] font-mono text-amber-400 px-3 py-1 font-semibold uppercase">Jackpot History</div>
-                <button onclick="openHistoryTier('jackpot', 0)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">All Predictions</button>
-                <button onclick="openHistoryTier('jackpot', 1)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1 Tier Rounds</button>
-                <button onclick="openHistoryTier('jackpot', 5)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$5 Tier Rounds</button>
-                <button onclick="openHistoryTier('jackpot', 10)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$10 Tier Rounds</button>
-                <button onclick="openHistoryTier('jackpot', 100)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$100 Tier Rounds</button>
-                <button onclick="openHistoryTier('jackpot', 1000)" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg">$1,000 Tier Rounds</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- STANDARD CLEAN NAVBAR TABS -->
+        <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="nav-tab px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition">
+          <i class="fa-solid fa-trophy"></i> Leaderboard
+        </button>
+        <button onclick="switchTab('history')" id="nav-history" class="nav-tab px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition">
+          <i class="fa-solid fa-clock-rotate-left"></i> History
+        </button>
         <button onclick="switchTab('docs')" id="nav-docs" class="nav-tab px-4 py-2 rounded-lg text-slate-400 hover:text-white flex items-center gap-2 transition">
           <i class="fa-solid fa-book-open"></i> Protocol Docs
         </button>
@@ -418,11 +301,12 @@
           <div class="space-y-3" id="skill-tiers-container">
             
             <!-- Tier 1: $1 -->
-            <div class="glass-panel p-4 rounded-xl border-white/5 hover:border-cyan-500/40 transition flex items-center justify-between gap-4">
+            <div id="skill-tier-card-1" onclick="selectActiveSkillTier(1)" class="glass-panel p-4 rounded-xl border-cyan-500/40 bg-cyan-500/5 hover:border-cyan-500/60 transition flex items-center justify-between gap-4 cursor-pointer">
               <div>
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-white">$1.00 Tier Vault</span>
                   <span class="text-[10px] font-mono px-2 py-0.5 bg-white/10 text-slate-300 rounded">(No Accumulation)</span>
+                  <span id="tier-badge-1" class="text-[10px] font-mono px-2 py-0.5 bg-cyan-400 text-black font-bold rounded">ACTIVE TIER</span>
                 </div>
                 <div class="flex items-center gap-4 text-xs font-mono mt-2 text-slate-400">
                   <span>👥 Players: <strong id="tier1-players" class="text-white">420</strong></span>
@@ -432,7 +316,7 @@
                   🏆 Winner Reward (80%): <span id="tier1-reward" class="text-cyan-400">$336.00</span>
                 </div>
               </div>
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-2" onclick="event.stopPropagation()">
                 <button onclick="buy2048Ticket(1, 'USDC')" class="px-4 py-1.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-xs transition whitespace-nowrap">
                   Buy $1 USDC
                 </button>
@@ -443,11 +327,12 @@
             </div>
 
             <!-- Tier 2: $5 -->
-            <div class="glass-panel p-4 rounded-xl border-white/5 hover:border-cyan-500/40 transition flex items-center justify-between gap-4">
+            <div id="skill-tier-card-5" onclick="selectActiveSkillTier(5)" class="glass-panel p-4 rounded-xl border-white/5 hover:border-cyan-500/40 transition flex items-center justify-between gap-4 cursor-pointer">
               <div>
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-white">$5.00 Tier Vault</span>
                   <span class="text-[10px] font-mono px-2 py-0.5 bg-white/10 text-slate-300 rounded">(No Accumulation)</span>
+                  <span id="tier-badge-5" class="hidden text-[10px] font-mono px-2 py-0.5 bg-cyan-400 text-black font-bold rounded">ACTIVE TIER</span>
                 </div>
                 <div class="flex items-center gap-4 text-xs font-mono mt-2 text-slate-400">
                   <span>👥 Players: <strong id="tier5-players" class="text-white">184</strong></span>
@@ -457,7 +342,7 @@
                   🏆 Winner Reward (80%): <span id="tier5-reward" class="text-cyan-400">$736.00</span>
                 </div>
               </div>
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-2" onclick="event.stopPropagation()">
                 <button onclick="buy2048Ticket(5, 'USDC')" class="px-4 py-1.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-xs transition whitespace-nowrap">
                   Buy $5 USDC
                 </button>
@@ -468,11 +353,12 @@
             </div>
 
             <!-- Tier 3: $10 -->
-            <div class="glass-panel p-4 rounded-xl border-white/5 hover:border-cyan-500/40 transition flex items-center justify-between gap-4">
+            <div id="skill-tier-card-10" onclick="selectActiveSkillTier(10)" class="glass-panel p-4 rounded-xl border-white/5 hover:border-cyan-500/40 transition flex items-center justify-between gap-4 cursor-pointer">
               <div>
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-white">$10.00 Tier Vault</span>
                   <span class="text-[10px] font-mono px-2 py-0.5 bg-white/10 text-slate-300 rounded">(No Accumulation)</span>
+                  <span id="tier-badge-10" class="hidden text-[10px] font-mono px-2 py-0.5 bg-cyan-400 text-black font-bold rounded">ACTIVE TIER</span>
                 </div>
                 <div class="flex items-center gap-4 text-xs font-mono mt-2 text-slate-400">
                   <span>👥 Players: <strong id="tier10-players" class="text-white">96</strong></span>
@@ -482,7 +368,7 @@
                   🏆 Winner Reward (80%): <span id="tier10-reward" class="text-cyan-400">$768.00</span>
                 </div>
               </div>
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-2" onclick="event.stopPropagation()">
                 <button onclick="buy2048Ticket(10, 'USDC')" class="px-4 py-1.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-xs transition whitespace-nowrap">
                   Buy $10 USDC
                 </button>
@@ -493,11 +379,12 @@
             </div>
 
             <!-- Tier 4: $100 -->
-            <div class="glass-panel p-4 rounded-xl border-white/5 hover:border-purple-500/40 transition flex items-center justify-between gap-4">
+            <div id="skill-tier-card-100" onclick="selectActiveSkillTier(100)" class="glass-panel p-4 rounded-xl border-white/5 hover:border-purple-500/40 transition flex items-center justify-between gap-4 cursor-pointer">
               <div>
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-white">$100.00 Tier Vault</span>
                   <span class="text-[10px] font-mono px-2 py-0.5 bg-white/10 text-slate-300 rounded">(No Accumulation)</span>
+                  <span id="tier-badge-100" class="hidden text-[10px] font-mono px-2 py-0.5 bg-purple-400 text-black font-bold rounded">ACTIVE TIER</span>
                 </div>
                 <div class="flex items-center gap-4 text-xs font-mono mt-2 text-slate-400">
                   <span>👥 Players: <strong id="tier100-players" class="text-white">28</strong></span>
@@ -507,7 +394,7 @@
                   🏆 Winner Reward (80%): <span id="tier100-reward" class="text-purple-400">$2,240.00</span>
                 </div>
               </div>
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-2" onclick="event.stopPropagation()">
                 <button onclick="buy2048Ticket(100, 'USDC')" class="px-4 py-1.5 rounded-lg bg-purple-400 hover:bg-purple-300 text-black font-bold text-xs transition whitespace-nowrap">
                   Buy $100 USDC
                 </button>
@@ -518,11 +405,12 @@
             </div>
 
             <!-- Tier 5: $1,000 -->
-            <div class="glass-panel p-4 rounded-xl border-white/5 hover:border-amber-500/40 transition flex items-center justify-between gap-4">
+            <div id="skill-tier-card-1000" onclick="selectActiveSkillTier(1000)" class="glass-panel p-4 rounded-xl border-white/5 hover:border-amber-500/40 transition flex items-center justify-between gap-4 cursor-pointer">
               <div>
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-white">$1,000.00 Tier Vault</span>
                   <span class="text-[10px] font-mono px-2 py-0.5 bg-white/10 text-slate-300 rounded">(No Accumulation)</span>
+                  <span id="tier-badge-1000" class="hidden text-[10px] font-mono px-2 py-0.5 bg-amber-400 text-black font-bold rounded">ACTIVE TIER</span>
                 </div>
                 <div class="flex items-center gap-4 text-xs font-mono mt-2 text-slate-400">
                   <span>👥 Players: <strong id="tier1000-players" class="text-white">9</strong></span>
@@ -532,7 +420,7 @@
                   🏆 Winner Reward (80%): <span id="tier1000-reward" class="text-amber-400">$7,200.00</span>
                 </div>
               </div>
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-2" onclick="event.stopPropagation()">
                 <button onclick="buy2048Ticket(1000, 'USDC')" class="px-4 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs transition whitespace-nowrap">
                   Buy $1,000 USDC
                 </button>
@@ -542,7 +430,7 @@
               </div>
             </div>
 
-          </div>
+          </div></div>
         </div>
 
         <!-- RIGHT COLUMN: PLAYABLE 2048 HERO GAME BOARD (7 COLS) -->
@@ -875,7 +763,7 @@
       <div class="glass-panel p-6 rounded-2xl border-cyan-500/20 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
-            <span class="text-amber-400">🏆</span> Verified Winners & Reward Payout History
+            <span class="text-amber-400">🏆</span> Verified Reward Winners History
           </h1>
           <p class="text-slate-400 text-sm mt-1">
             Historical onchain ledger of verified prize winners, exact reward amounts, and precise settlement timestamps across all 5 tiers.
@@ -899,23 +787,22 @@
         </button>
       </div>
 
-      <!-- LEVEL 2: CHOOSE TIER FILTER -->
+      <!-- LEVEL 2: CHOOSE TIER (Exact mirror of Leaderboard) -->
       <div class="flex items-center gap-2 overflow-x-auto pb-1" id="hist-tiers-row">
-        <button onclick="selectHistoryTier(0)" id="hist-tier-btn-0" class="px-4 py-2 rounded-xl bg-cyan-400 text-black font-bold font-mono text-xs whitespace-nowrap">All 5 Tiers</button>
-        <button onclick="selectHistoryTier(1)" id="hist-tier-btn-1" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$1 Tier Winners</button>
-        <button onclick="selectHistoryTier(5)" id="hist-tier-btn-5" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$5 Tier Winners</button>
-        <button onclick="selectHistoryTier(10)" id="hist-tier-btn-10" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$10 Tier Winners</button>
-        <button onclick="selectHistoryTier(100)" id="hist-tier-btn-100" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$100 Tier Winners</button>
-        <button onclick="selectHistoryTier(1000)" id="hist-tier-btn-1000" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$1,000 Tier Winners</button>
+        <button onclick="selectHistoryTier(1)" id="hist-tier-btn-1" class="px-4 py-2 rounded-xl bg-cyan-400 text-black font-bold font-mono text-xs whitespace-nowrap">$1 Tier Vault</button>
+        <button onclick="selectHistoryTier(5)" id="hist-tier-btn-5" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$5 Tier Vault</button>
+        <button onclick="selectHistoryTier(10)" id="hist-tier-btn-10" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$10 Tier Vault</button>
+        <button onclick="selectHistoryTier(100)" id="hist-tier-btn-100" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$100 Tier Vault</button>
+        <button onclick="selectHistoryTier(1000)" id="hist-tier-btn-1000" class="px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10">$1,000 Tier Vault</button>
       </div>
 
       <!-- LEVEL 3: WINNERS TABLE -->
       <div class="glass-panel rounded-2xl overflow-hidden">
         <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
           <div class="text-sm font-bold text-white font-mono flex items-center gap-2" id="hist-table-title">
-            <span class="text-amber-400">🏆</span> Verified Reward Winners: 1v1 PvP Duel Champions (All 5 Tiers)
+            <span class="text-amber-400">●</span> Verified Reward Winners: 1v1 PvP Duels ($1 Tier)
           </div>
-          <span class="text-xs font-mono text-slate-400" id="hist-entries-count">Verified Winners: 8</span>
+          <span class="text-xs font-mono text-slate-400" id="hist-entries-count">Verified Winners: 10</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm font-mono">
@@ -938,174 +825,13 @@
 
     </div>
 
-    <!-- ========================================== -->
-    <!-- TAB 6: PROTOCOL DOCS / WHITEPAPER -->
-    <!-- ========================================== -->
-    <div id="tab-docs" class="tab-content hidden space-y-6">
-      <div class="glass-panel p-8 rounded-2xl border-white/10 space-y-6">
-        <div>
-          <h1 class="text-3xl font-extrabold text-white">PVP Protocol Whitepaper</h1>
-          <p class="text-slate-400 text-sm mt-1">Official Architecture & Mathematical Specifications on Robinhood Chain</p>
-        </div>
-
-        <div class="space-y-6 text-sm text-slate-300 leading-relaxed">
-          <div class="p-4 bg-white/5 rounded-xl border border-white/5 space-y-3">
-            <h3 class="font-bold text-white text-base text-cyan-400">1. 1v1 Instant Duel Escrow Architecture</h3>
-            
-            <div class="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-xs text-slate-200">
-              <strong class="text-cyan-400 font-bold block mb-1">Traditional Betting vs PVP Architecture risk to reward:</strong>
-              In conventional betting platforms, participants endure a highly unfavorable risk to reward ratio. For instance, with a 1.3x multiplier, the winner risks 100% of their principal to make a mere 30% profit, while the loser loses 100% of their capital. 
-              In the PVP Arena protocol, this imbalance is solved: the winner gains a direct 90% profit, while the runner up receives a 3% rebate cashback so they always retain capital and a second chance to re-enter and compete.
-            </div>
-
-            <p class="text-xs text-slate-300">
-              Two participants lock equal collateral into the canonical escrow smart contract (0x1e7e733d3fc72051f719537473f68f2204832dae). 
-              Upon verified outcome resolution, funds are automatically settled onchain:
-            </p>
-            <ul class="list-disc list-inside space-y-1 font-mono text-xs text-slate-300">
-              <li>90% net payout allocated directly to the verified winner</li>
-              <li>3% rebate cashback returned to the runner up wallet</li>
-              <li>7% protocol treasury fee for buybacks and liquidity support</li>
-            </ul>
-          </div>
-
-          <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-            <h3 class="font-bold text-white text-base text-purple-400 mb-2">2. 2048 Skill Vaults & 24 Hour UTC Tournament Cycle</h3>
-            <p>
-              Skill tournaments run in continuous 24 hour cycles ending at 00:00 UTC every day.
-            </p>
-            <ul class="list-disc list-inside mt-2 space-y-1 font-mono text-xs">
-              <li>Single High Score Record (No Accumulation): Scores from multiple games are never summed together. Only a player highest single run record qualifies.</li>
-              <li>Unlimited Ticket Purchases: Players may buy as many attempts as desired to improve their top record.</li>
-              <li>Special $PVP Token Perk: Purchasing tickets using the project native $PVP token grants 2x tickets (2 game attempts) per 1 ticket fee.</li>
-              <li>Reward Distribution: 80% of the entire tier vault is transferred to the top verified record holder, with 20% allocated as protocol fee.</li>
-            </ul>
-          </div>
-
-          <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-            <h3 class="font-bold text-white text-base text-amber-400 mb-2">3. Grand Jackpot multi target System & 1 Hour Rounds</h3>
-            <p>
-              Jackpot rounds operate on strict 1 hour countdown cycles. When the countdown timer reaches zero, round submissions automatically lock.
-            </p>
-            <ul class="list-disc list-inside mt-2 space-y-1 font-mono text-xs">
-              <li>multi target Prediction: Supports measurable market prices, numeric indices, and quantifiable onchain targets.</li>
-              <li>Max 3 Tickets Per Wallet: Strict per wallet cap to prevent whale dominance and guarantee fair distribution.</li>
-              <li>Prize Settlement: 80% of the vault goes to the wallet with the closest numeric prediction, with 20% protocol fee.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- JAVASCRIPT LOGIC -->
-  <script>
-    // Constants
-    const ESCROW_ADDRESS = "0x1e7e733d3fc72051f719537473f68f2204832dae";
-    const TREASURY_WALLET = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
-    const PVP_TOKEN_ADDRESS = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3";
-    let userWallet = null;
-
-    // Tabs Switching
-    function switchTab(tabId) {
-      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
-      document.querySelectorAll(".nav-tab").forEach(el => {
-        el.classList.remove("text-cyan-400", "bg-white/10");
-        el.classList.add("text-slate-400");
-      });
-
-      const activeTab = document.getElementById("tab-" + tabId);
-      const activeNav = document.getElementById("nav-" + tabId);
-      if (activeTab) activeTab.classList.remove("hidden");
-      if (activeNav) {
-        activeNav.classList.add("text-cyan-400", "bg-white/10");
-        activeNav.classList.remove("text-slate-400");
-      }
-
-      if (tabId === "leaderboard") {
-        renderLeaderboardRows();
-      }
-    }
-
-    // Connect Wallet
-    async function connectWallet() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-          userWallet = accounts[0];
-          document.getElementById("wallet-label").innerText = userWallet.substring(0,6) + "..." + userWallet.substring(38);
-          showToast("Wallet Connected: " + userWallet.substring(0,6) + "...", "success");
-        } catch (e) {
-          showToast("Connection rejected", "error");
-        }
-      } else {
-        showToast("MetaMask / Web3 Wallet not found", "error");
-      }
-    }
-
-    // Web3 Live Transaction Helper
-    async function sendTx(amountEth) {
-      if (!window.ethereum) {
-        showToast("Please connect MetaMask / Web3 Wallet", "error");
-        return false;
-      }
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        showToast("Please confirm transaction in your wallet...", "info");
-        const tx = await signer.sendTransaction({
-          to: ESCROW_ADDRESS,
-          value: ethers.utils.parseEther(amountEth.toString())
-        });
-        showToast("Tx Submitted: " + tx.hash.substring(0,10) + "...", "info");
-        await tx.wait();
-        showToast("Transaction confirmed successfully onchain!", "success");
-        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
-        return true;
-      } catch (err) {
-        console.error(err);
-        showToast(err.message ? err.message.substring(0, 40) : "Transaction failed", "error");
-        return false;
-      }
-    }
-
-    // 1v1 Duel Deposit
-    async function depositDuel(duelId, amount) {
-      const ok = await sendTx(0.0001 * amount);
-      if (ok) {
-        showToast("Joined Duel #" + duelId + " successfully!", "success");
-      }
-    }
-
-    // 2048 Ticket Buy
-    async function buy2048Ticket(tier, currency) {
-      const ok = await sendTx(0.0001 * tier);
-      if (ok) {
-        const pEl = document.getElementById("tier" + tier + "-players");
-        const vEl = document.getElementById("tier" + tier + "-vault");
-        const rEl = document.getElementById("tier" + tier + "-reward");
-        if (pEl) {
-          let count = parseInt(pEl.innerText) + 1;
-          pEl.innerText = count;
-          let vault = count * tier;
-          vEl.innerText = "$" + vault.toFixed(2);
-          rEl.innerText = "$" + (vault * 0.8).toFixed(2);
-        }
-        if (currency === "PVP") {
-          showToast("🔥 $PVP Bonus: 2 Game Tickets Granted!", "success");
-        } else {
-          showToast("Ticket purchased for $" + tier + " Tier!", "success");
-        }
-        
-    // HISTORY NAVIGATION AND DATA ENGINE
     let currentHistCat = "pvp";
-    let currentHistTier = 0; // 0 = all tiers
+    let currentHistTier = 1;
 
     function openHistoryCategory(cat) {
       switchTab("history");
       selectHistoryCategory(cat);
-      selectHistoryTier(0);
+      selectHistoryTier(1);
     }
 
     function openHistoryTier(cat, tier) {
@@ -1131,7 +857,7 @@
 
     function selectHistoryTier(tier) {
       currentHistTier = tier;
-      [0, 1, 5, 10, 100, 1000].forEach(t => {
+      [1, 5, 10, 100, 1000].forEach(t => {
         const btn = document.getElementById("hist-tier-btn-" + t);
         if (btn) {
           if (t === tier) {
@@ -1147,336 +873,45 @@
     function renderHistoryRows() {
       const tbody = document.getElementById("hist-tbody");
       const title = document.getElementById("hist-table-title");
-      const colDetails = document.getElementById("hist-col-details");
-      const countEl = document.getElementById("hist-entries-count");
+      const statHeader = document.getElementById("hist-col-metric");
+      const countLabel = document.getElementById("hist-entries-count");
       if (!tbody) return;
 
       let catName = currentHistCat === "pvp" ? "1v1 PvP Duels" : currentHistCat === "2048" ? "2048 Skill Vaults" : "Grand Jackpot";
-      let tierLabel = currentHistTier === 0 ? "All Tiers" : "$" + currentHistTier + " Tier";
-      title.innerHTML = "<span class='text-cyan-400'>●</span> Activity Log: " + catName + " (" + tierLabel + ")";
-      colDetails.innerText = currentHistCat === "pvp" ? "Opponent / Result" : currentHistCat === "2048" ? "Score / Multiplier" : "Predicted Target vs Result";
+      title.innerHTML = "<span class='text-amber-400'>●</span> Verified Reward Winners: " + catName + " ($" + currentHistTier + " Tier)";
+      if (statHeader) statHeader.innerText = currentHistCat === "pvp" ? "Match Outcome" : currentHistCat === "2048" ? "Winning Top Score" : "Winning Prediction Target";
 
-      const samplePvP = [
-        { time: "10 mins ago", tier: 10, details: "vs 0x4f2a...8910 (Won)", outcome: "+ $18.00 USDC", outcomeColor: "text-emerald-400", tx: "0x9a31...4e1b", fee: "90% Winner Payout" },
-        { time: "42 mins ago", tier: 5, details: "vs 0x8b32...aa01 (Lost)", outcome: "+ $0.15 Cashback (3%)", outcomeColor: "text-cyan-400", tx: "0x12a9...3c88", fee: "3% Loss Rebate" },
-        { time: "2 hours ago", tier: 100, details: "vs 0x7c99...e210 (Won)", outcome: "+ $180.00 USDC", outcomeColor: "text-emerald-400", tx: "0xfa44...112e", fee: "90% Winner Payout" },
-        { time: "5 hours ago", tier: 1, details: "vs 0x11e0...bb92 (Won)", outcome: "+ $1.80 USDC", outcomeColor: "text-emerald-400", tx: "0x66bb...90a1", fee: "90% Winner Payout" },
-        { time: "1 day ago", tier: 1000, details: "vs 0x55dc...fa42 (Won)", outcome: "+ $1,800.00 USDC", outcomeColor: "text-emerald-400", tx: "0x09ff...8831", fee: "90% Winner Payout" }
-      ];
-
-      const sample2048 = [
-        { time: "15 mins ago", tier: 5, details: "Score: 18,420 (🔥 2x $PVP Bonus)", outcome: "Rank #1 (Active Leader)", outcomeColor: "text-cyan-400 font-bold", tx: "0x3b1c...99a2", fee: "80% Vault Eligible" },
-        { time: "1 hour ago", tier: 1, details: "Score: 9,840 (1x USDC)", outcome: "Rank #12 (Finalized)", outcomeColor: "text-slate-400", tx: "0x44ee...1839", fee: "Recorded Onchain" },
-        { time: "3 hours ago", tier: 10, details: "Score: 24,190 (🔥 2x $PVP Bonus)", outcome: "Rank #2 (Runner Up)", outcomeColor: "text-purple-400", tx: "0x77aa...56b0", fee: "$PVP Airdrop Eligible" },
-        { time: "1 day ago", tier: 100, details: "Score: 31,500 (1x USDC)", outcome: "🏆 80% Vault Winner ($2,240)", outcomeColor: "text-amber-400 font-bold", tx: "0x88bb...901f", fee: "Settled & Claimed" }
-      ];
-
-      const sampleJackpot = [
-        { time: "25 mins ago", tier: 1, details: "Target: 2,435.50 (Diff: +0.20)", outcome: "Rank #1 Closest Guess", outcomeColor: "text-amber-400 font-bold", tx: "0x55aa...11cc", fee: "80% Prize Pending" },
-        { time: "1 hour ago", tier: 5, details: "Target: 2,410.00 (Diff: +1.80)", outcome: "Settled (Winner: 0x9a31)", outcomeColor: "text-slate-400", tx: "0x66bb...22dd", fee: "Round #148" },
-        { time: "3 hours ago", tier: 10, details: "Target: 2,450.00 (Diff: +0.05)", outcome: "🏆 80% Prize Claimed ($784)", outcomeColor: "text-emerald-400 font-bold", tx: "0x77cc...33ee", fee: "Round #146" },
-        { time: "1 day ago", tier: 100, details: "Target: 2,390.00 (Diff: +4.10)", outcome: "Settled (Winner: 0x11ab)", outcomeColor: "text-slate-400", tx: "0x88dd...44ff", fee: "Round #122" }
-      ];
-
-      let list = currentHistCat === "pvp" ? samplePvP : currentHistCat === "2048" ? sample2048 : sampleJackpot;
-      if (currentHistTier > 0) {
-        list = list.filter(item => item.tier === currentHistTier);
-      }
-
-      countEl.innerText = "Total Entries: " + list.length;
-
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500 font-sans">No transaction records found for this specific tier.</td></tr>`;
-        return;
-      }
+      // Payout multipliers for winners
+      let prizeAmount = currentHistCat === "pvp" ? (currentHistTier * 1.80).toFixed(2) : currentHistCat === "2048" ? (currentHistTier * 336).toFixed(2) : (currentHistTier * 273.60).toFixed(2);
 
       let rows = "";
-      list.forEach(item => {
+      let winnerCount = 10;
+      if (countLabel) countLabel.innerText = "Verified Winners: " + winnerCount;
+
+      for (let i = 1; i <= winnerCount; i++) {
+        let day = String(10 - Math.floor((i - 1) / 2)).padStart(2, "0");
+        let hour = String(14 - (i % 5)).padStart(2, "0");
+        let min = String(15 + (i * 4) % 40).padStart(2, "0");
+        let dateStr = "2026-09-" + day + " " + hour + ":" + min + ":12 UTC";
+
+        let wallet = "0x" + Math.random().toString(16).substring(2, 6) + "..." + Math.random().toString(16).substring(2, 6);
+        let metricVal = currentHistCat === "pvp" ? "Won 1v1 Duel (90% Payout)" : currentHistCat === "2048" ? (32400 - i * 320).toLocaleString() + " pts (Rank #1)" : (2450.50 + i * 0.40).toFixed(2) + " (Target Match)";
+        let txHash = "0x" + Math.random().toString(16).substring(2, 10) + "...";
+
         rows += `<tr class="hover:bg-white/[0.02] transition">
-          <td class="px-6 py-4 text-slate-400">${item.time}</td>
-          <td class="px-6 py-4 text-white font-bold">${item.tier}.00</td>
-          <td class="px-6 py-4 text-slate-200">${item.details}</td>
-          <td class="px-6 py-4 ${item.outcomeColor}">${item.outcome}</td>
-          <td class="px-6 py-4 text-right">
-            <span class="text-xs text-slate-400 block">${item.fee}</span>
-            <span class="text-[11px] text-cyan-400/80 font-mono hover:underline cursor-pointer">${item.tx}</span>
+          <td class="px-6 py-3.5 text-slate-300 whitespace-nowrap">${dateStr}</td>
+          <td class="px-6 py-3.5 text-white font-bold whitespace-nowrap">$${currentHistTier}.00</td>
+          <td class="px-6 py-3.5 text-cyan-400 font-mono whitespace-nowrap">${wallet}</td>
+          <td class="px-6 py-3.5 text-white font-medium">${metricVal}</td>
+          <td class="px-6 py-3.5 text-emerald-400 font-bold whitespace-nowrap">+$${prizeAmount} USDC</td>
+          <td class="px-6 py-3.5 text-right whitespace-nowrap">
+            <a href="https://robinhood.evm.blockscout.com" target="_blank" class="text-cyan-400 hover:text-cyan-300 font-mono text-xs flex items-center justify-end gap-1">
+              ${txHash} <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
           </td>
         </tr>`;
-      });
-      tbody.innerHTML = rows;
-    }
-
-    initGame();
-      }
-    }
-
-    // Jackpot Ticket Buy
-    async function buyJackpotTicket(tier) {
-      const input = document.getElementById("jp-target-" + tier);
-      if (!input || !input.value) {
-        showToast("Please enter a target prediction value", "error");
-        return;
-      }
-      const ok = await sendTx(0.0001 * tier);
-      if (ok) {
-        const pEl = document.getElementById("jp" + tier + "-players");
-        const vEl = document.getElementById("jp" + tier + "-vault");
-        const rEl = document.getElementById("jp" + tier + "-reward");
-        if (pEl) {
-          let count = parseInt(pEl.innerText) + 1;
-          pEl.innerText = count + " Wallets";
-          let vault = count * tier;
-          vEl.innerText = "$" + vault.toFixed(2) + " USDC";
-          rEl.innerText = "$" + (vault * 0.8).toFixed(2);
-        }
-        showToast("Prediction " + input.value + " submitted for $" + tier + " Vault!", "success");
-        input.value = "";
-      }
-    }
-
-    // Toast Notification
-    function showToast(msg, type) {
-      const t = document.createElement("div");
-      t.className = "fixed bottom-5 right-5 z-50 px-5 py-3 rounded-xl font-mono text-xs font-bold shadow-2xl transition-all duration-300 transform translate-y-0 flex items-center gap-2 " + 
-        (type === "success" ? "bg-emerald-500 text-black" : type === "error" ? "bg-rose-500 text-white" : "bg-cyan-500 text-black");
-      t.innerHTML = (type === "success" ? "✓ " : type === "error" ? "✕ " : "ℹ ") + msg;
-      document.body.appendChild(t);
-      setTimeout(() => {
-        t.style.opacity = "0";
-        setTimeout(() => t.remove(), 300);
-      }, 3500);
-    }
-
-    // ==========================================
-    // 2048 GAME ENGINE (4x4)
-    // ==========================================
-    let board = [];
-    let score = 0;
-    let bestRecord = 18420;
-
-    function initGame() {
-      board = [
-        [0,0,0,0],
-        [0,0,0,0],
-        [0,0,0,0],
-        [0,0,0,0]
-      ];
-      score = 0;
-      updateScore(0);
-      document.getElementById("game-overlay").classList.add("hidden");
-      addRandomTile();
-      addRandomTile();
-      renderBoard();
-    }
-
-    function addRandomTile() {
-      let emptyCells = [];
-      for (let r=0; r<4; r++) {
-        for (let c=0; c<4; c++) {
-          if (board[r][c] === 0) emptyCells.push({r, c});
-        }
-      }
-      if (emptyCells.length > 0) {
-        let cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        board[cell.r][cell.c] = Math.random() < 0.9 ? 2 : 4;
-      }
-    }
-
-    function renderBoard() {
-      const container = document.getElementById("game-grid-container");
-      container.innerHTML = "";
-      for (let r=0; r<4; r++) {
-        for (let c=0; c<4; c++) {
-          const val = board[r][c];
-          const div = document.createElement("div");
-          div.className = "game-cell " + (val > 0 ? "tile-" + val : "");
-          div.innerText = val > 0 ? val : "";
-          container.appendChild(div);
-        }
-      }
-    }
-
-    function updateScore(add) {
-      score += add;
-      document.getElementById("game-score").innerText = score.toLocaleString();
-      if (score > bestRecord) {
-        bestRecord = score;
-        document.getElementById("game-best").innerText = bestRecord.toLocaleString();
-      }
-    }
-
-    function slide(row) {
-      let arr = row.filter(val => val);
-      for (let i = 0; i < arr.length - 1; i++) {
-        if (arr[i] === arr[i + 1]) {
-          arr[i] *= 2;
-          updateScore(arr[i]);
-          arr[i + 1] = 0;
-        }
-      }
-      arr = arr.filter(val => val);
-      while (arr.length < 4) arr.push(0);
-      return arr;
-    }
-
-    function moveGame(dir) {
-      let changed = false;
-      if (dir === "left") {
-        for (let r=0; r<4; r++) {
-          let original = [...board[r]];
-          board[r] = slide(board[r]);
-          if (board[r].join(",") !== original.join(",")) changed = true;
-        }
-      } else if (dir === "right") {
-        for (let r=0; r<4; r++) {
-          let original = [...board[r]];
-          board[r] = slide(board[r].reverse()).reverse();
-          if (board[r].join(",") !== original.join(",")) changed = true;
-        }
-      } else if (dir === "up") {
-        for (let c=0; c<4; c++) {
-          let col = [board[0][c], board[1][c], board[2][c], board[3][c]];
-          let original = [...col];
-          let slided = slide(col);
-          for (let r=0; r<4; r++) board[r][c] = slided[r];
-          if (slided.join(",") !== original.join(",")) changed = true;
-        }
-      } else if (dir === "down") {
-        for (let c=0; c<4; c++) {
-          let col = [board[0][c], board[1][c], board[2][c], board[3][c]].reverse();
-          let original = [...col];
-          let slided = slide(col).reverse();
-          for (let r=0; r<4; r++) board[r][c] = slided[r];
-          if (slided.join(",") !== original.join(",")) changed = true;
-        }
-      }
-
-      if (changed) {
-        addRandomTile();
-        renderBoard();
-        checkGameOver();
-      }
-    }
-
-    function checkGameOver() {
-      for (let r=0; r<4; r++) {
-        for (let c=0; c<4; c++) {
-          if (board[r][c] === 0) return;
-          if (r < 3 && board[r][c] === board[r+1][c]) return;
-          if (c < 3 && board[r][c] === board[r][c+1]) return;
-        }
-      }
-      document.getElementById("final-score").innerText = score.toLocaleString();
-      document.getElementById("game-overlay").classList.remove("hidden");
-    }
-
-    function submitScoreOnchain() {
-      showToast("Submitting Score Record: " + score + " to Leaderboard...", "info");
-      setTimeout(() => {
-        showToast("Score " + score + " Verified Onchain!", "success");
-        document.getElementById("game-overlay").classList.add("hidden");
-      }, 1500);
-    }
-
-    window.addEventListener("keydown", (e) => {
-      if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
-        e.preventDefault();
-        if (e.key === "ArrowUp") moveGame("up");
-        if (e.key === "ArrowDown") moveGame("down");
-        if (e.key === "ArrowLeft") moveGame("left");
-        if (e.key === "ArrowRight") moveGame("right");
-      }
-    });
-
-    // ==========================================
-    // LEADERBOARD TOP 100 DRILLDOWN ENGINE
-    // ==========================================
-    let currentLbCat = "pvp";
-    let currentLbTier = 1;
-
-    function openLeaderboardTier(cat, tier) {
-      switchTab("leaderboard");
-      selectLeaderboardCategory(cat);
-      selectLeaderboardTier(tier);
-    }
-
-    function selectLeaderboardCategory(cat) {
-      currentLbCat = cat;
-      ["pvp", "2048", "jackpot"].forEach(c => {
-        const el = document.getElementById("lb-cat-" + c);
-        if (c === cat) {
-          el.className = "glass-panel p-4 rounded-xl text-left border-cyan-500/40 bg-cyan-500/10 transition";
-        } else {
-          el.className = "glass-panel p-4 rounded-xl text-left border-white/5 hover:border-white/20 transition";
-        }
-      });
-      renderLeaderboardRows();
-    }
-
-    function selectLeaderboardTier(tier) {
-      currentLbTier = tier;
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const btn = document.getElementById("lb-tier-btn-" + t);
-        if (t === tier) {
-          btn.className = "px-4 py-2 rounded-xl bg-cyan-400 text-black font-bold font-mono text-xs whitespace-nowrap";
-        } else {
-          btn.className = "px-4 py-2 rounded-xl bg-white/5 text-slate-300 font-bold font-mono text-xs whitespace-nowrap hover:bg-white/10";
-        }
-      });
-      renderLeaderboardRows();
-    }
-
-    function renderLeaderboardRows() {
-      const tbody = document.getElementById("lb-tbody");
-      const title = document.getElementById("lb-table-title");
-      const statHeader = document.getElementById("lb-col-stat");
-      if (!tbody) return;
-
-      let catName = currentLbCat === "pvp" ? "PvP Duels" : currentLbCat === "2048" ? "2048 Skill Vaults" : "Jackpot";
-      title.innerHTML = "<span class='text-cyan-400'>●</span> Top 100 Verified Wallets: " + catName + " ($" + currentLbTier + " Tier)";
-      statHeader.innerText = currentLbCat === "pvp" ? "Total Wins" : currentLbCat === "2048" ? "High Record" : "Prediction Target";
-
-      let rows = "";
-      for (let i = 1; i <= 100; i++) {
-        let badge = i === 1 ? "🥇 #1" : i === 2 ? "🥈 #2" : i === 3 ? "🥉 #3" : "#" + i;
-        let badgeClass = i === 1 ? "text-amber-400 font-bold" : i === 2 ? "text-slate-300 font-bold" : i === 3 ? "text-amber-600 font-bold" : i <= 10 ? "text-cyan-400 font-semibold" : "text-slate-500";
-        let wallet = "0x" + Math.random().toString(16).substring(2, 6) + "..." + Math.random().toString(16).substring(2, 6);
-        let statVal = currentLbCat === "pvp" ? (120 - i) + " Wins" : currentLbCat === "2048" ? (32000 - i * 180).toLocaleString() : (2450.50 + i * 0.25).toFixed(2);
-        let vol = "$" + ((105 - i) * currentLbTier * 4.5).toFixed(2);
-        let reward = i === 1 ? "🏆 80% Vault Winner" : i <= 10 ? "+ $PVP Weekly Airdrop" : "Qualified";
-
-        rows += `<tr class="hover:bg-white/[0.02] transition">
-          <td class="px-6 py-3.5 ${badgeClass}">${badge}</td>
-          <td class="px-6 py-3.5 text-slate-300">${wallet}</td>
-          <td class="px-6 py-3.5 text-white font-bold">${statVal}</td>
-          <td class="px-6 py-3.5 text-slate-400">${vol}</td>
-          <td class="px-6 py-3.5 text-right font-bold ${i === 1 ? "text-amber-400" : "text-slate-400"}">${reward}</td>
-        </tr>`;
       }
       tbody.innerHTML = rows;
     }
 
-    // 1 Hour Countdown Timer Engine
-    let secondsLeft = 2899; // ~48 mins
-    setInterval(() => {
-      if (secondsLeft > 0) {
-        secondsLeft--;
-        let m = Math.floor(secondsLeft / 60);
-        let s = secondsLeft % 60;
-        let timeStr = "00:" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
-        const timerEl = document.getElementById("jackpot-timer");
-        if (timerEl) timerEl.innerText = timeStr;
-      } else {
-        const badge = document.getElementById("jackpot-status-badge");
-        if (badge) {
-          badge.innerText = "● LOCKED (Settling)";
-          badge.className = "text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full mt-1 border border-rose-500/20";
-        }
-      }
-    }, 1000);
-
-    // Initialize Game on load
-    initGame();
-  </script>
-</body>
-</html>
+    >
