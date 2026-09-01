@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PvP Arena | 1v1 On-Chain Betting Protocol</title>
+    <title>PvP Arena | 1v1 Onchain Fast Crypto Betting Protocol</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,6 +13,9 @@
             --accent-green: #00ff66;
             --accent-green-hover: #00cc52;
             --accent-glow: rgba(0, 255, 102, 0.2);
+            --accent-purple: #a855f7;
+            --accent-purple-glow: rgba(168, 85, 247, 0.2);
+            --accent-blue: #38bdf8;
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
@@ -36,7 +39,7 @@
         }
 
         header {
-            background: rgba(18, 23, 26, 0.8);
+            background: rgba(18, 23, 26, 0.85);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             padding: 18px 32px;
@@ -55,16 +58,16 @@
         }
 
         .logo-icon {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             background: var(--accent-green);
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             color: #000;
-            font-size: 20px;
+            font-size: 22px;
             box-shadow: 0 0 15px var(--accent-glow);
         }
 
@@ -149,22 +152,100 @@
 
         .hero {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 40px;
         }
 
         .hero h1 {
-            font-size: 44px;
+            font-size: 42px;
             font-weight: 700;
             margin-bottom: 12px;
         }
 
         .hero p {
             color: var(--text-secondary);
-            font-size: 18px;
-            max-width: 600px;
+            font-size: 17px;
+            max-width: 700px;
             margin: 0 auto;
         }
 
+        /* Fast Mode Selector */
+        .mode-selector-container {
+            margin-bottom: 36px;
+        }
+
+        .section-label {
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .mode-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--card-radius);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .mode-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .mode-card.active {
+            border-color: var(--accent-green);
+            background: rgba(0, 255, 102, 0.04);
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.15);
+        }
+
+        .mode-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .mode-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .mode-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .mode-tag {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .mode-card.active .mode-tag {
+            background: rgba(0, 255, 102, 0.15);
+            color: var(--accent-green);
+        }
+
+        /* Tier Grid */
         .tier-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -176,7 +257,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--card-radius);
-            padding: 28px;
+            padding: 26px;
             position: relative;
             transition: all 0.3s ease;
         }
@@ -191,11 +272,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .tier-name {
-            font-size: 20px;
+            font-size: 19px;
             font-weight: 700;
         }
 
@@ -210,16 +291,29 @@
         }
 
         .tier-amount {
-            font-size: 36px;
+            font-size: 34px;
             font-weight: 700;
             color: var(--accent-green);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+        }
+
+        .selected-mode-indicator {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--accent-blue);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--border-color);
         }
 
         .tier-details {
             border-top: 1px solid var(--border-color);
-            padding-top: 16px;
-            margin-bottom: 24px;
+            padding-top: 14px;
+            margin-bottom: 20px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -262,6 +356,7 @@
             border: 1px solid var(--border-color);
             border-radius: var(--card-radius);
             overflow: hidden;
+            margin-bottom: 32px;
         }
 
         table {
@@ -272,14 +367,14 @@
 
         th {
             background: var(--bg-secondary);
-            padding: 16px 24px;
+            padding: 16px 20px;
             font-size: 14px;
             color: var(--text-secondary);
             border-bottom: 1px solid var(--border-color);
         }
 
         td {
-            padding: 18px 24px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border-color);
             font-size: 15px;
         }
@@ -294,8 +389,27 @@
         }
 
         .badge-cashback {
-            color: #38bdf8;
+            color: var(--accent-blue);
             font-weight: 600;
+        }
+
+        .badge-loss {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        .badge-resilience {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 28px 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .info-card {
@@ -314,8 +428,48 @@
 
         .info-card p {
             color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 16px;
+            line-height: 1.7;
+            margin-bottom: 14px;
+            font-size: 15px;
+        }
+
+        .highlight-box {
+            background: rgba(0, 255, 102, 0.05);
+            border-left: 4px solid var(--accent-green);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: var(--text-primary);
+        }
+
+        .purple-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .purple-box p {
+            margin-bottom: 0;
+            color: #e9d5ff;
+        }
+
+        .warn-box {
+            background: rgba(248, 113, 113, 0.08);
+            border-left: 4px solid #f87171;
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .warn-box p {
+            margin-bottom: 0;
+            color: #fca5a5;
         }
 
         footer {
@@ -353,10 +507,50 @@
         <!-- Arena Tab -->
         <div id="tab-arena" class="tab-content active">
             <div class="hero">
-                <h1>Decentralized 1v1 Battles</h1>
-                <p>Choose your entry tier, challenge gladiators on-chain, win 90% of the pool with 3% instant loss protection cashback.</p>
+                <h1>Fast 1v1 Crypto Prediction Duels</h1>
+                <p>Pick a fast-resolution market (15M to 1H candles), select your stake tier ($1 to $1,000), challenge a peer onchain, and win 90% net multiplier with 3% instant loss protection.</p>
             </div>
 
+            <!-- Fast Crypto Battle Market Selector -->
+            <div class="mode-selector-container">
+                <div class="section-label">⚡ Step 1: Select Fast Resolution Market</div>
+                <div class="modes-grid">
+                    <!-- Market 1 -->
+                    <div class="mode-card active" onclick="selectMarket('btc-1h-candle', 'BTC 1-Hour Green vs Red')">
+                        <div class="mode-icon">🪙</div>
+                        <div class="mode-title">BTC 1H Green vs Red</div>
+                        <div class="mode-desc">Will Bitcoin close positive (Green) or negative (Red) in the next 1-hour candle?</div>
+                        <span class="mode-tag">⏱️ 1-Hour Resolution</span>
+                    </div>
+
+                    <!-- Market 2 -->
+                    <div class="mode-card" onclick="selectMarket('btc-15m-flash', 'BTC 15-Min Flash Duel')">
+                        <div class="mode-icon">⚡</div>
+                        <div class="mode-title">BTC 15-Min Flash Duel</div>
+                        <div class="mode-desc">Ultra-fast 15-minute price direction duel between Bull and Bear.</div>
+                        <span class="mode-tag">⚡ Ultra Fast 15M</span>
+                    </div>
+
+                    <!-- Market 3 -->
+                    <div class="mode-card" onclick="selectMarket('eth-1h-candle', 'ETH 1-Hour Bull vs Bear')">
+                        <div class="mode-icon">🔷</div>
+                        <div class="mode-title">ETH 1H Bull vs Bear</div>
+                        <div class="mode-desc">Predict Ethereum 1-hour candle direction against your peer.</div>
+                        <span class="mode-tag">⏱️ 1-Hour Resolution</span>
+                    </div>
+
+                    <!-- Market 4 -->
+                    <div class="mode-card" onclick="selectMarket('sol-30m-race', 'SOL 30-Min Speed Race')">
+                        <div class="mode-icon">🚀</div>
+                        <div class="mode-title">SOL 30-Min Speed Race</div>
+                        <div class="mode-desc">Fast 30-minute Solana candle close prediction. Green wins over Red.</div>
+                        <span class="mode-tag">🎯 30-Min Resolution</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tier Grid -->
+            <div class="section-label">💰 Step 2: Choose Stake Tier (Available for all fast markets)</div>
             <div class="tier-grid">
                 <!-- $1 Tier -->
                 <div class="tier-card">
@@ -364,14 +558,17 @@
                         <span class="tier-name">Novice</span>
                         <span class="tier-badge">Entry Level</span>
                     </div>
-                    <div class="tier-amount">$1.00</div>
+                    <div class="tier-amount">$1</div>
+                    <div class="selected-mode-indicator" id="ind-1">
+                        🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
+                    </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$2.00</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$2</span></div>
                         <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1.80</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$0.06</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.06</span></div>
                         <div class="detail-row"><span>Protocol Fee (7%):</span><span>$0.14</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(1)">Enter Match ($1)</button>
+                    <button class="join-btn" onclick="enterMatch(1)">Enter Duel ($1)</button>
                 </div>
 
                 <!-- $5 Tier -->
@@ -380,14 +577,17 @@
                         <span class="tier-name">Fighter</span>
                         <span class="tier-badge">Popular</span>
                     </div>
-                    <div class="tier-amount">$5.00</div>
+                    <div class="tier-amount">$5</div>
+                    <div class="selected-mode-indicator" id="ind-5">
+                        🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
+                    </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$10.00</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$9.00</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$0.30</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$10</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$9</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.30</span></div>
                         <div class="detail-row"><span>Protocol Fee (7%):</span><span>$0.70</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(5)">Enter Match ($5)</button>
+                    <button class="join-btn" onclick="enterMatch(5)">Enter Duel ($5)</button>
                 </div>
 
                 <!-- $10 Tier -->
@@ -396,14 +596,17 @@
                         <span class="tier-name">Warrior</span>
                         <span class="tier-badge">Competitive</span>
                     </div>
-                    <div class="tier-amount">$10.00</div>
+                    <div class="tier-amount">$10</div>
+                    <div class="selected-mode-indicator" id="ind-10">
+                        🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
+                    </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$20.00</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$18.00</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$0.60</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$20</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$18</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.60</span></div>
                         <div class="detail-row"><span>Protocol Fee (7%):</span><span>$1.40</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(10)">Enter Match ($10)</button>
+                    <button class="join-btn" onclick="enterMatch(10)">Enter Duel ($10)</button>
                 </div>
 
                 <!-- $50 Tier -->
@@ -412,14 +615,17 @@
                         <span class="tier-name">Champion</span>
                         <span class="tier-badge">High Stakes</span>
                     </div>
-                    <div class="tier-amount">$50.00</div>
-                    <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$100.00</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$90.00</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$3.00</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$7.00</span></div>
+                    <div class="tier-amount">$50</div>
+                    <div class="selected-mode-indicator" id="ind-50">
+                        🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(50)">Enter Match ($50)</button>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$100</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$90</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$3</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$7</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(50)">Enter Duel ($50)</button>
                 </div>
 
                 <!-- $100 Tier -->
@@ -428,14 +634,17 @@
                         <span class="tier-name">Master</span>
                         <span class="tier-badge">Pro</span>
                     </div>
-                    <div class="tier-amount">$100.00</div>
-                    <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$200.00</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$180.00</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$6.00</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$14.00</span></div>
+                    <div class="tier-amount">$100</div>
+                    <div class="selected-mode-indicator" id="ind-100">
+                        🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(100)">Enter Match ($100)</button>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$200</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$180</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$6</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$14</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(100)">Enter Duel ($100)</button>
                 </div>
 
                 <!-- $1000 Tier -->
@@ -444,14 +653,17 @@
                         <span class="tier-name">Titan</span>
                         <span class="tier-badge">Legendary</span>
                     </div>
-                    <div class="tier-amount">$1,000.00</div>
-                    <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$2,000.00</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1,800.00</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:#38bdf8">$60.00</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$140.00</span></div>
+                    <div class="tier-amount">$1,000</div>
+                    <div class="selected-mode-indicator" id="ind-1000">
+                        🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(1000)">Enter Match ($1,000)</button>
+                    <div class="tier-details">
+                        <div class="detail-row"><span>Total Pool:</span><span>$2,000</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1,800</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$60</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$140</span></div>
+                    </div>
+                    <button class="join-btn" onclick="enterMatch(1000)">Enter Duel ($1,000)</button>
                 </div>
             </div>
         </div>
@@ -459,52 +671,57 @@
         <!-- Matches Tab -->
         <div id="tab-matches" class="tab-content">
             <div class="hero">
-                <h1>Recent Arena Battles</h1>
-                <p>Live verified on-chain 1v1 match results, winner payouts, and instant cashbacks.</p>
+                <h1>Recent Fast Arena Battles</h1>
+                <p>Live verified onchain 1v1 fast prediction results, winner payouts, and instant loss cashbacks.</p>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Time</th>
+                            <th>Market</th>
                             <th>Tier</th>
-                            <th>Gladiator (Winner)</th>
-                            <th>Opponent</th>
+                            <th>Winner (Gladiator)</th>
+                            <th>Defeated</th>
                             <th>Winner Payout</th>
                             <th>Loser Cashback</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>2 mins ago</td>
-                            <td>$100.00</td>
+                            <td>1 min ago</td>
+                            <td><span class="mode-tag">BTC 1H Green</span></td>
+                            <td>$100</td>
                             <td>0x8f...39a1</td>
                             <td>0x2c...9e44</td>
-                            <td class="badge-win">+$180.00</td>
-                            <td class="badge-cashback">+$6.00</td>
+                            <td class="badge-win">+$180</td>
+                            <td class="badge-cashback">+$6</td>
                         </tr>
                         <tr>
-                            <td>8 mins ago</td>
-                            <td>$50.00</td>
+                            <td>5 mins ago</td>
+                            <td><span class="mode-tag">SOL 30M Green</span></td>
+                            <td>$50</td>
                             <td>0x7a...11bc</td>
                             <td>0x4d...88e1</td>
-                            <td class="badge-win">+$90.00</td>
-                            <td class="badge-cashback">+$3.00</td>
+                            <td class="badge-win">+$90</td>
+                            <td class="badge-cashback">+$3</td>
                         </tr>
                         <tr>
-                            <td>15 mins ago</td>
-                            <td>$1,000.00</td>
+                            <td>14 mins ago</td>
+                            <td><span class="mode-tag">BTC 15M Bull</span></td>
+                            <td>$1,000</td>
                             <td>0x3e...991a</td>
                             <td>0x91...224b</td>
-                            <td class="badge-win">+$1,800.00</td>
-                            <td class="badge-cashback">+$60.00</td>
+                            <td class="badge-win">+$1,800</td>
+                            <td class="badge-cashback">+$60</td>
                         </tr>
                         <tr>
-                            <td>24 mins ago</td>
-                            <td>$10.00</td>
+                            <td>22 mins ago</td>
+                            <td><span class="mode-tag">ETH 1H Bear</span></td>
+                            <td>$10</td>
                             <td>0x11...88c2</td>
                             <td>0x55...33a1</td>
-                            <td class="badge-win">+$18.00</td>
+                            <td class="badge-win">+$18</td>
                             <td class="badge-cashback">+$0.60</td>
                         </tr>
                     </tbody>
@@ -515,41 +732,83 @@
         <!-- Leaderboard Tab -->
         <div id="tab-leaderboard" class="tab-content">
             <div class="hero">
-                <h1>Gladiator Leaderboard</h1>
-                <p>Top arena combatants ranked by total wins and net USD earnings.</p>
+                <h1>Dual Arena Leaderboards</h1>
+                <p>Rewarding top champions with weekly prize pools AND compensating top resilient gladiators who fight through high losses.</p>
             </div>
+
+            <!-- Top Champions (Most Wins) -->
+            <div class="section-title">🏆 Top Champions (Weekly Win Rewards Pool)</div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Rank</th>
                             <th>Gladiator</th>
-                            <th>Matches Played</th>
+                            <th>Total Wins</th>
                             <th>Win Rate</th>
-                            <th>Total Earned (USD)</th>
+                            <th>Weekly Reward Pool</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>🏆 #1</td>
+                            <td>🥇 1st Place</td>
                             <td>0x3e...991a</td>
-                            <td>142</td>
-                            <td>78.2%</td>
-                            <td class="badge-win">$24,580.00</td>
+                            <td>142 Wins</td>
+                            <td class="badge-win">78.2%</td>
+                            <td class="badge-win">+5,000 $PVP (40% Pool)</td>
                         </tr>
                         <tr>
-                            <td>🥈 #2</td>
+                            <td>🥈 2nd Place</td>
                             <td>0x8f...39a1</td>
-                            <td>98</td>
-                            <td>71.4%</td>
-                            <td class="badge-win">$12,340.00</td>
+                            <td>98 Wins</td>
+                            <td class="badge-win">71.4%</td>
+                            <td class="badge-win">+3,000 $PVP (25% Pool)</td>
                         </tr>
                         <tr>
-                            <td>🥉 #3</td>
+                            <td>🥉 3rd Place</td>
                             <td>0x7a...11bc</td>
-                            <td>116</td>
-                            <td>64.5%</td>
-                            <td class="badge-win">$8,920.00</td>
+                            <td>85 Wins</td>
+                            <td class="badge-win">64.5%</td>
+                            <td class="badge-win">+1,500 $PVP (15% Pool)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Resilience Leaderboard (Top 3 Most Losses - Rewarded) -->
+            <div class="section-title" style="color:var(--accent-purple);">🛡️ Iron Heart Leaderboard (Top 3 Most Losses - Resilience Rewards)</div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Gladiator</th>
+                            <th>Losses Suffered</th>
+                            <th>Activity Volume</th>
+                            <th>Weekly Bad Luck Reward</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🎖️ #1 Resilient</td>
+                            <td>0x55...33a1</td>
+                            <td>64 Losses</td>
+                            <td>$4,800</td>
+                            <td class="badge-resilience">+2,500 $PVP Special Grant</td>
+                        </tr>
+                        <tr>
+                            <td>🎖️ #2 Resilient</td>
+                            <td>0x2c...9e44</td>
+                            <td>49 Losses</td>
+                            <td>$3,200</td>
+                            <td class="badge-resilience">+1,500 $PVP Special Grant</td>
+                        </tr>
+                        <tr>
+                            <td>🎖️ #3 Resilient</td>
+                            <td>0x91...224b</td>
+                            <td>38 Losses</td>
+                            <td>$2,400</td>
+                            <td class="badge-resilience">+1,000 $PVP Special Grant</td>
                         </tr>
                     </tbody>
                 </table>
@@ -559,20 +818,87 @@
         <!-- Whitepaper Tab -->
         <div id="tab-whitepaper" class="tab-content">
             <div class="info-card">
-                <h3>1. Protocol Architecture</h3>
-                <p>PvP Arena is a non-custodial, peer-to-peer 1v1 wagering protocol. Combatants lock equal entry stakes into a smart escrow contract. Match resolution uses verifiable randomness to ensure transparent and tamper-proof outcomes.</p>
+                <h3>1. The Core Problem in Traditional Betting</h3>
+                <div class="warn-box">
+                    <p><strong>Unfair Risk to Reward Ratio:</strong> In conventional bookmakers and online casinos, users face completely asymmetric math against the house. For instance, when betting on a low risk 1.3x multiplier, the winner only captures a tiny <strong>+0.3x profit</strong>, while the losing player suffers an absolute <strong>100% loss (0x payout)</strong>.</p>
+                </div>
+                <p>This predatory structure forces players to risk their entire capital for meager returns, guaranteeing that the mathematical edge drains user balances over time.</p>
             </div>
+
             <div class="info-card">
-                <h3>2. Fair Tokenomics & Reward Split</h3>
-                <p>Every match pool is distributed transparently:</p>
-                <p>• <strong>90% to Winner:</strong> The victorious gladiator receives 1.8x of their original stake.</p>
-                <p>• <strong>3% Loss Protection Cashback:</strong> The defeated player receives an instant 3% cashback rebate.</p>
-                <p>• <strong>7% Protocol Fee:</strong> Dedicated to platform maintenance and automated token buyback & burn.</p>
+                <h3>2. The PvP Arena Solution: Pure Peer to Peer</h3>
+                <p>To eliminate unfair house edges and deliver maximum profitability with downside risk mitigation, <strong>PvP Arena</strong> was architected exclusively as a <strong>1v1 Player vs Player (P2P)</strong> protocol:</p>
+                
+                <div class="highlight-box">
+                    <p><strong>Superior Math & Asymmetric Rewards:</strong></p>
+                    <p style="margin-top:8px;">• <strong>Winner Multiplier (+0.9x Net Profit / 1.8x Return):</strong> The victor claims 90% of the entire 2 player prize pool, generating a massive <strong>+0.9x net profit</strong> on their stake (e.g., $100 entry wins $180 total).</p>
+                    <p style="margin-top:6px;">• <strong>Loser Loss Protection (+0.03x Cashback):</strong> The defeated combatant never walks away with zero. The smart contract automatically refunds a <strong>3% cashback rebate</strong> directly to the player wallet.</p>
+                    <p style="margin-top:6px;">• <strong>Transparent Protocol Fee (7%):</strong> A minimal 7% fee covers decentralized infrastructure, reward pools, and automated token buyback & burn mechanisms.</p>
+                </div>
             </div>
+
             <div class="info-card">
-                <h3>3. Robinhood Chain Token</h3>
-                <p>Official Utility Token ($PVP) Contract Address on Robinhood Chain:</p>
-                <p><code style="background:var(--bg-primary); padding:6px 12px; border-radius:6px; color:var(--accent-green)">0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3</code></p>
+                <h3>3. Innovative Leaderboard Reward System (Dual Pool Incentive)</h3>
+                <p>Unlike traditional casinos that punish losing streaks, PvP Arena incentivizes active participants through two separate weekly reward mechanisms funded by protocol fees:</p>
+                
+                <div class="highlight-box">
+                    <p><strong>🏆 Champion Leaderboard (Most Wins):</strong></p>
+                    <p style="margin-top:6px;">The top gladiators with the highest number of verified wins share a dedicated weekly prize pool paid out in $PVP tokens.</p>
+                </div>
+
+                <div class="purple-box">
+                    <p><strong>🛡️ Iron Heart & Bad Luck Protection (Top 3 Most Losses):</strong></p>
+                    <p style="margin-top:6px;">We believe in empowering active community gladiators. The <strong>Top 3 players with the most losses each week</strong> receive exclusive <strong>Resilience Grants & $PVP Airdrop Rewards</strong>. This compensates active players, cushions losing streaks, and ensures our most dedicated fighters stay in the game.</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>4. Comparison: Traditional Betting vs. PvP Arena</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Traditional House Betting (1.3x)</th>
+                                <th>PvP Arena 1v1 Protocol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Opponent</strong></td>
+                                <td>The House (Hidden Edge & Limits)</td>
+                                <td class="badge-win">Direct Peer (100% Onchain Escrow)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Winner Net Profit</strong></td>
+                                <td class="badge-loss">+0.30x (Only 30% Gain)</td>
+                                <td class="badge-win">+0.90x (90% Pure Gain / 1.8x Return)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Defeated Payout</strong></td>
+                                <td class="badge-loss">0.00x (Total Capital Loss)</td>
+                                <td class="badge-cashback">+0.03x (Instant 3% Loss Protection)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Top Loser Treatment</strong></td>
+                                <td class="badge-loss">Zero Compensation / Banned</td>
+                                <td class="badge-resilience">Weekly Resilience Rewards for Top 3 Losses</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Trust & Execution</strong></td>
+                                <td>Centralized & Censurable</td>
+                                <td class="badge-win">Noncustodial Smart Contract Escrow</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>5. Robinhood Chain Token Utility</h3>
+                <p>The native utility token powers protocol governance, automated buybacks from the 7% fee pool, and VIP high roller tier unlocks on Robinhood Chain.</p>
+                <p>Contract Address (CA):</p>
+                <p><code style="background:var(--bg-primary); padding:8px 16px; border-radius:8px; color:var(--accent-green); font-size:15px; display:inline-block; border:1px solid var(--border-color);">0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3</code></p>
             </div>
         </div>
     </main>
@@ -582,6 +908,18 @@
     </footer>
 
     <script>
+        let currentMarketName = 'BTC 1-Hour Green vs Red';
+
+        function selectMarket(marketId, marketName) {
+            currentMarketName = marketName;
+            document.querySelectorAll('.mode-card').forEach(card => card.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.active-market-name').forEach(el => {
+                el.innerText = marketName;
+            });
+        }
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -591,11 +929,11 @@
         }
 
         function connectWallet() {
-            alert('Connecting wallet... Please select Web3 Wallet.');
+            alert('Connecting Web3 Wallet to Robinhood Chain...');
         }
 
         function enterMatch(tier) {
-            alert('Entering $' + tier + ' Battle Queue. Confirming transaction...');
+            alert('Entering $' + tier + ' Fast Duel for [' + currentMarketName + ']. Confirming onchain escrow transaction...');
         }
     </script>
 </body>
