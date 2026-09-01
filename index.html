@@ -461,18 +461,72 @@
         /* 2048 Game Layout */
         .game-layout {
             display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 24px;
+            grid-template-columns: 340px 1fr;
+            gap: 28px;
             margin-top: 20px;
             margin-bottom: 32px;
             align-items: start;
+        }
+
+        .tier-compact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tier-card-compact {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            transition: border-color 0.15s ease;
+        }
+
+        .tier-card-compact:hover {
+            border-color: var(--accent);
+        }
+
+        .tier-compact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .tier-compact-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .tier-compact-badge {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            background: rgba(46, 186, 198, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .tier-compact-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .tier-compact-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
         }
 
         .game-board-container {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-default);
             border-radius: var(--radius-md);
-            padding: 20px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -480,18 +534,20 @@
 
         .game-header {
             width: 100%;
+            max-width: 440px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .score-box {
             background: var(--bg-surface-elevated);
             border: 1px solid var(--border-default);
-            padding: 6px 14px;
+            padding: 8px 18px;
             border-radius: var(--radius-sm);
             text-align: center;
+            min-width: 130px;
         }
 
         .score-label {
@@ -501,21 +557,21 @@
         }
 
         .score-val {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--accent);
         }
 
         .grid-2048 {
-            width: 300px;
-            height: 300px;
+            width: 440px;
+            height: 440px;
             background-color: var(--bg-page);
             border: 2px solid var(--border-default);
             border-radius: var(--radius-md);
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-gap: 8px;
-            padding: 8px;
+            grid-gap: 10px;
+            padding: 10px;
             position: relative;
         }
 
@@ -525,7 +581,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--text-primary);
             transition: all 0.1s ease;
@@ -537,18 +593,19 @@
         .tile[data-val="16"] { background: #1b5368; color: var(--accent); }
         .tile[data-val="32"] { background: #1c667a; color: #fff; }
         .tile[data-val="64"] { background: #1e7b8f; color: #fff; }
-        .tile[data-val="128"] { background: #2ebac6; color: #0b111a; font-size: 18px; }
-        .tile[data-val="256"] { background: #38cdd9; color: #0b111a; font-size: 18px; }
-        .tile[data-val="512"] { background: #5ce0eb; color: #0b111a; font-size: 18px; }
-        .tile[data-val="1024"] { background: #87eaf2; color: #0b111a; font-size: 15px; }
-        .tile[data-val="2048"] { background: #bdf5f8; color: #0b111a; font-size: 15px; box-shadow: 0 0 15px var(--accent); }
+        .tile[data-val="128"] { background: #2ebac6; color: #0b111a; font-size: 24px; }
+        .tile[data-val="256"] { background: #38cdd9; color: #0b111a; font-size: 24px; }
+        .tile[data-val="512"] { background: #5ce0eb; color: #0b111a; font-size: 24px; }
+        .tile[data-val="1024"] { background: #87eaf2; color: #0b111a; font-size: 20px; }
+        .tile[data-val="2048"] { background: #bdf5f8; color: #0b111a; font-size: 20px; box-shadow: 0 0 15px var(--accent); }
 
         .game-controls {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin-top: 16px;
+            gap: 8px;
+            margin-top: 20px;
             width: 100%;
+            max-width: 440px;
         }
 
         .btn-ctrl {
@@ -933,95 +990,95 @@
             <div class="section-desc">Each tier has its own independent vault and dedicated leaderboard! When you buy a ticket for a tier ($1, $5, $10, $100, $1,000), you compete exclusively in that tier's tournament for 80% of its prize pool. Scores never accumulate — only your single highest run record is submitted.</div>
 
             <div class="game-layout">
-                <!-- 5 Skill Tiers (Left Side) -->
+                <!-- 5 Compact Skill Tiers (Left Side) -->
                 <div>
-                    <div class="section-header">
-                        <div class="section-title">Select 2048 Tournament Tier</div>
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <div class="section-title" style="font-size: 16px;">Select Tier & Buy Ticket</div>
                     </div>
-                    <div class="grid-3" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 0;">
+                    <div class="tier-compact-list">
                         <!-- $1 Tier -->
-                        <div class="card-box">
-                            <div class="card-top"><span class="card-title">$1 Skill Vault</span><span class="card-tag accent">Level 1</span></div>
-                            <div class="card-price">$1 <span>USDC / $PVP</span></div>
-                            <div class="card-specs">
-                                <div class="spec-item"><span class="label">Vault Pool</span><span class="val accent">$420 USDC</span></div>
-                                <div class="spec-item"><span class="label">Record Holder (80%)</span><span class="val accent">$336 USDC</span></div>
-                                <div class="spec-item"><span class="label">Tier Top Record</span><span class="val">14,820 pts</span></div>
-                                <div class="spec-item"><span class="label">$PVP Advantage</span><span class="val text-accent">2 Attempts / Ticket</span></div>
+                        <div class="tier-card-compact">
+                            <div class="tier-compact-header">
+                                <span class="tier-compact-title">$1 Skill Vault</span>
+                                <span class="tier-compact-badge">Prize: $336</span>
                             </div>
-                            <div class="payment-toggle">
-                                <button class="btn-toggle active" id="btn-usdc-1" onclick="setCurrency(1, 'USDC')">Pay USDC (1 Try)</button>
-                                <button class="btn-toggle" id="btn-pvp-1" onclick="setCurrency(1, 'PVP')">Pay $PVP (2 Tries)</button>
+                            <div class="tier-compact-stats">
+                                <span>Pool: $420 USDC</span>
+                                <span>Top: 14,820 pts</span>
                             </div>
-                            <button class="btn-action" onclick="enter2048Tournament(1)">Buy $1 Ticket & Submit</button>
+                            <div class="payment-toggle" style="margin-bottom: 6px;">
+                                <button class="btn-toggle active" id="btn-usdc-1" onclick="setCurrency(1, 'USDC')">USDC (1 Try)</button>
+                                <button class="btn-toggle" id="btn-pvp-1" onclick="setCurrency(1, 'PVP')">$PVP (2 Tries)</button>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 12px; font-size: 13px;" onclick="enter2048Tournament(1)">Buy $1 Ticket & Submit</button>
                         </div>
 
                         <!-- $5 Tier -->
-                        <div class="card-box">
-                            <div class="card-top"><span class="card-title">$5 Skill Vault</span><span class="card-tag accent">Level 2</span></div>
-                            <div class="card-price">$5 <span>USDC / $PVP</span></div>
-                            <div class="card-specs">
-                                <div class="spec-item"><span class="label">Vault Pool</span><span class="val accent">$1,650 USDC</span></div>
-                                <div class="spec-item"><span class="label">Record Holder (80%)</span><span class="val accent">$1,320 USDC</span></div>
-                                <div class="spec-item"><span class="label">Tier Top Record</span><span class="val">22,410 pts</span></div>
-                                <div class="spec-item"><span class="label">$PVP Advantage</span><span class="val text-accent">2 Attempts / Ticket</span></div>
+                        <div class="tier-card-compact">
+                            <div class="tier-compact-header">
+                                <span class="tier-compact-title">$5 Skill Vault</span>
+                                <span class="tier-compact-badge">Prize: $1,320</span>
                             </div>
-                            <div class="payment-toggle">
-                                <button class="btn-toggle active" id="btn-usdc-5" onclick="setCurrency(5, 'USDC')">Pay USDC (1 Try)</button>
-                                <button class="btn-toggle" id="btn-pvp-5" onclick="setCurrency(5, 'PVP')">Pay $PVP (2 Tries)</button>
+                            <div class="tier-compact-stats">
+                                <span>Pool: $1,650 USDC</span>
+                                <span>Top: 22,410 pts</span>
                             </div>
-                            <button class="btn-action" onclick="enter2048Tournament(5)">Buy $5 Ticket & Submit</button>
+                            <div class="payment-toggle" style="margin-bottom: 6px;">
+                                <button class="btn-toggle active" id="btn-usdc-5" onclick="setCurrency(5, 'USDC')">USDC (1 Try)</button>
+                                <button class="btn-toggle" id="btn-pvp-5" onclick="setCurrency(5, 'PVP')">$PVP (2 Tries)</button>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 12px; font-size: 13px;" onclick="enter2048Tournament(5)">Buy $5 Ticket & Submit</button>
                         </div>
 
                         <!-- $10 Tier -->
-                        <div class="card-box">
-                            <div class="card-top"><span class="card-title">$10 Skill Vault</span><span class="card-tag accent">Level 3</span></div>
-                            <div class="card-price">$10 <span>USDC / $PVP</span></div>
-                            <div class="card-specs">
-                                <div class="spec-item"><span class="label">Vault Pool</span><span class="val accent">$3,900 USDC</span></div>
-                                <div class="spec-item"><span class="label">Record Holder (80%)</span><span class="val accent">$3,120 USDC</span></div>
-                                <div class="spec-item"><span class="label">Tier Top Record</span><span class="val">31,050 pts</span></div>
-                                <div class="spec-item"><span class="label">$PVP Advantage</span><span class="val text-accent">2 Attempts / Ticket</span></div>
+                        <div class="tier-card-compact">
+                            <div class="tier-compact-header">
+                                <span class="tier-compact-title">$10 Skill Vault</span>
+                                <span class="tier-compact-badge">Prize: $3,120</span>
                             </div>
-                            <div class="payment-toggle">
-                                <button class="btn-toggle active" id="btn-usdc-10" onclick="setCurrency(10, 'USDC')">Pay USDC (1 Try)</button>
-                                <button class="btn-toggle" id="btn-pvp-10" onclick="setCurrency(10, 'PVP')">Pay $PVP (2 Tries)</button>
+                            <div class="tier-compact-stats">
+                                <span>Pool: $3,900 USDC</span>
+                                <span>Top: 31,050 pts</span>
                             </div>
-                            <button class="btn-action" onclick="enter2048Tournament(10)">Buy $10 Ticket & Submit</button>
+                            <div class="payment-toggle" style="margin-bottom: 6px;">
+                                <button class="btn-toggle active" id="btn-usdc-10" onclick="setCurrency(10, 'USDC')">USDC (1 Try)</button>
+                                <button class="btn-toggle" id="btn-pvp-10" onclick="setCurrency(10, 'PVP')">$PVP (2 Tries)</button>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 12px; font-size: 13px;" onclick="enter2048Tournament(10)">Buy $10 Ticket & Submit</button>
                         </div>
 
                         <!-- $100 Tier -->
-                        <div class="card-box">
-                            <div class="card-top"><span class="card-title">$100 Skill Vault</span><span class="card-tag accent">Level 4</span></div>
-                            <div class="card-price">$100 <span>USDC / $PVP</span></div>
-                            <div class="card-specs">
-                                <div class="spec-item"><span class="label">Vault Pool</span><span class="val accent">$12,500 USDC</span></div>
-                                <div class="spec-item"><span class="label">Record Holder (80%)</span><span class="val accent">$10,000 USDC</span></div>
-                                <div class="spec-item"><span class="label">Tier Top Record</span><span class="val">48,920 pts</span></div>
-                                <div class="spec-item"><span class="label">$PVP Advantage</span><span class="val text-accent">2 Attempts / Ticket</span></div>
+                        <div class="tier-card-compact">
+                            <div class="tier-compact-header">
+                                <span class="tier-compact-title">$100 Skill Vault</span>
+                                <span class="tier-compact-badge">Prize: $10,000</span>
                             </div>
-                            <div class="payment-toggle">
-                                <button class="btn-toggle active" id="btn-usdc-100" onclick="setCurrency(100, 'USDC')">Pay USDC (1 Try)</button>
-                                <button class="btn-toggle" id="btn-pvp-100" onclick="setCurrency(100, 'PVP')">Pay $PVP (2 Tries)</button>
+                            <div class="tier-compact-stats">
+                                <span>Pool: $12,500 USDC</span>
+                                <span>Top: 48,920 pts</span>
                             </div>
-                            <button class="btn-action" onclick="enter2048Tournament(100)">Buy $100 Ticket & Submit</button>
+                            <div class="payment-toggle" style="margin-bottom: 6px;">
+                                <button class="btn-toggle active" id="btn-usdc-100" onclick="setCurrency(100, 'USDC')">USDC (1 Try)</button>
+                                <button class="btn-toggle" id="btn-pvp-100" onclick="setCurrency(100, 'PVP')">$PVP (2 Tries)</button>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 12px; font-size: 13px;" onclick="enter2048Tournament(100)">Buy $100 Ticket & Submit</button>
                         </div>
 
                         <!-- $1,000 Tier -->
-                        <div class="card-box" style="grid-column: span 2;">
-                            <div class="card-top"><span class="card-title">$1,000 Grand Master Vault</span><span class="card-tag accent">High Stakes</span></div>
-                            <div class="card-price">$1,000 <span>USDC / $PVP</span></div>
-                            <div class="card-specs">
-                                <div class="spec-item"><span class="label">Vault Pool</span><span class="val accent">$35,000 USDC</span></div>
-                                <div class="spec-item"><span class="label">Record Holder (80%)</span><span class="val accent">$28,000 USDC</span></div>
-                                <div class="spec-item"><span class="label">Tier Top Record</span><span class="val">64,280 pts</span></div>
-                                <div class="spec-item"><span class="label">$PVP Advantage</span><span class="val text-accent">2 Attempts / Ticket</span></div>
+                        <div class="tier-card-compact">
+                            <div class="tier-compact-header">
+                                <span class="tier-compact-title">$1,000 Skill Vault</span>
+                                <span class="tier-compact-badge">Prize: $28,000</span>
                             </div>
-                            <div class="payment-toggle">
-                                <button class="btn-toggle active" id="btn-usdc-1000" onclick="setCurrency(1000, 'USDC')">Pay USDC (1 Try)</button>
-                                <button class="btn-toggle" id="btn-pvp-1000" onclick="setCurrency(1000, 'PVP')">Pay $PVP (2 Tries)</button>
+                            <div class="tier-compact-stats">
+                                <span>Pool: $35,000 USDC</span>
+                                <span>Top: 64,280 pts</span>
                             </div>
-                            <button class="btn-action" onclick="enter2048Tournament(1000)">Buy $1,000 Ticket & Submit</button>
+                            <div class="payment-toggle" style="margin-bottom: 6px;">
+                                <button class="btn-toggle active" id="btn-usdc-1000" onclick="setCurrency(1000, 'USDC')">USDC (1 Try)</button>
+                                <button class="btn-toggle" id="btn-pvp-1000" onclick="setCurrency(1000, 'PVP')">$PVP (2 Tries)</button>
+                            </div>
+                            <button class="btn-action" style="padding: 8px 12px; font-size: 13px;" onclick="enter2048Tournament(1000)">Buy $1,000 Ticket & Submit</button>
                         </div>
                     </div>
                 </div>
@@ -1505,6 +1562,7 @@
     <!-- Logic & 2048 Script -->
     <script>
         const PROTOCOL_TREASURY = '0xd8c09b380e1d8120aac2188653b68f1209ee883c';
+        const ESCROW_CONTRACT_ADDRESS = '0x1e7e733d3fc72051f719537473f68f2204832dae'; // Deployed PvPArenaEscrow on Robinhood Chain
         let currentMarket = 'BTC 1-Hour Green vs Red';
         let connectedAccount = null;
         const userTicketPurchases = {};
