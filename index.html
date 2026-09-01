@@ -208,7 +208,7 @@
             <span class="text-cyan-400">⚔️</span> 1v1 Instant Duel Arenas
           </h1>
           <p class="text-slate-400 text-sm mt-1">
-            Escrow contract <span class="font-mono text-cyan-400 text-xs bg-black/40 px-2 py-0.5 rounded">0x1e7e...2dae</span> | 90% winner, 3% rebate cashback, 7% protocol treasury.
+            Escrow contract <span class="font-mono text-cyan-400 text-xs bg-black/40 px-2 py-0.5 rounded">0x1e7e...2dae</span> | Winner takes 90% profit, loser receives 3% rebate cashback for a second chance to compete.
           </p>
         </div>
         <button onclick="openCreateDuelModal()" class="px-6 py-3 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-sm transition glow-cyan flex items-center gap-2 justify-center">
@@ -860,16 +860,23 @@
         </div>
 
         <div class="space-y-6 text-sm text-slate-300 leading-relaxed">
-          <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-            <h3 class="font-bold text-white text-base text-cyan-400 mb-2">1. 1v1 Instant Duel Escrow Architecture</h3>
-            <p>
+          <div class="p-4 bg-white/5 rounded-xl border border-white/5 space-y-3">
+            <h3 class="font-bold text-white text-base text-cyan-400">1. 1v1 Instant Duel Escrow Architecture</h3>
+            
+            <div class="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-xs text-slate-200">
+              <strong class="text-cyan-400 font-bold block mb-1">Traditional Betting vs PVP Architecture Risk-to-Reward:</strong>
+              In conventional betting platforms, participants endure a highly unfavorable risk-to-reward ratio. For instance, with a 1.3x multiplier, the winner risks 100% of their principal to make a mere 30% profit, while the loser loses 100% of their capital. 
+              In the PVP Arena protocol, this imbalance is solved: the winner gains a direct 90% profit, while the runner-up receives a 3% rebate cashback so they always retain capital and a second chance to re-enter and compete.
+            </div>
+
+            <p class="text-xs text-slate-300">
               Two participants lock equal collateral into the canonical escrow smart contract (0x1e7e733d3fc72051f719537473f68f2204832dae). 
-              Upon verified outcome resolution, funds are automatically distributed as follows:
+              Upon verified outcome resolution, funds are automatically settled onchain:
             </p>
-            <ul class="list-disc list-inside mt-2 space-y-1 font-mono text-xs">
-              <li>90% allocated directly to the verified winner</li>
+            <ul class="list-disc list-inside space-y-1 font-mono text-xs text-slate-300">
+              <li>90% net payout allocated directly to the verified winner</li>
               <li>3% rebate cashback returned to the runner-up wallet</li>
-              <li>7% protocol treasury fee for buybacks and rewards</li>
+              <li>7% protocol treasury fee for buybacks and liquidity support</li>
             </ul>
           </div>
 
