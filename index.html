@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PvP Arena | 1v1 Onchain Fast Crypto Betting Protocol</title>
+    <title>PvP Arena | 1v1 Onchain Fast Crypto Betting Protocol (USDC)</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -111,6 +111,12 @@
             border: 1px solid var(--border-color);
         }
 
+        .wallet-btn-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .wallet-btn {
             background: var(--accent-green);
             color: #000;
@@ -121,11 +127,33 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 0 12px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .wallet-btn:hover {
             background: var(--accent-green-hover);
             transform: translateY(-1px);
+        }
+
+        .wallet-btn.connected {
+            background: var(--bg-card);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.15);
+        }
+
+        .wallet-dot {
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+        }
+
+        .wallet-btn.connected .wallet-dot {
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
         }
 
         main {
@@ -166,6 +194,20 @@
             font-size: 17px;
             max-width: 700px;
             margin: 0 auto;
+        }
+
+        .usdc-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 14px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }
 
         /* Fast Mode Selector */
@@ -295,6 +337,15 @@
             font-weight: 700;
             color: var(--accent-green);
             margin-bottom: 16px;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .tier-currency {
+            font-size: 16px;
+            color: var(--accent-blue);
+            font-weight: 700;
         }
 
         .selected-mode-indicator {
@@ -446,6 +497,19 @@
             color: var(--text-primary);
         }
 
+        .blue-box {
+            background: rgba(56, 189, 248, 0.08);
+            border-left: 4px solid var(--accent-blue);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .blue-box p {
+            margin-bottom: 0;
+            color: #bae6fd;
+        }
+
         .purple-box {
             background: rgba(168, 85, 247, 0.08);
             border-left: 4px solid var(--accent-purple);
@@ -500,7 +564,12 @@
             <button class="tab-btn" onclick="switchTab('leaderboard')">Leaderboard</button>
             <button class="tab-btn" onclick="switchTab('whitepaper')">Whitepaper</button>
         </nav>
-        <button class="wallet-btn" onclick="connectWallet()">Connect Wallet</button>
+        <div class="wallet-btn-container">
+            <button id="walletBtn" class="wallet-btn" onclick="connectWallet()">
+                <span class="wallet-dot"></span>
+                <span id="walletBtnText">Connect Wallet</span>
+            </button>
+        </div>
     </header>
 
     <main>
@@ -508,22 +577,23 @@
         <div id="tab-arena" class="tab-content active">
             <div class="hero">
                 <h1>Fast 1v1 Crypto Prediction Duels</h1>
-                <p>Pick a fast-resolution market (15M to 1H candles), select your stake tier ($1 to $1,000), challenge a peer onchain, and win 90% net multiplier with 3% instant loss protection.</p>
+                <p>Pick a fast 1v1 prediction duel, select your USDC stake tier ($1 to $1,000), challenge a peer onchain, and win 90% net multiplier with 3% instant loss protection.</p>
+                <div class="usdc-badge">💵 Powered by USDC Escrow (Robinhood Chain)</div>
             </div>
 
-            <!-- Fast Crypto Battle Market Selector -->
+            <!-- Fast Crypto Battle Selector -->
             <div class="mode-selector-container">
-                <div class="section-label">⚡ Step 1: Select Fast Resolution Market</div>
+                <div class="section-label">⚡ Step 1: Select Fast Resolution Duel</div>
                 <div class="modes-grid">
-                    <!-- Market 1 -->
+                    <!-- Duel 1 -->
                     <div class="mode-card active" onclick="selectMarket('btc-1h-candle', 'BTC 1-Hour Green vs Red')">
                         <div class="mode-icon">🪙</div>
                         <div class="mode-title">BTC 1H Green vs Red</div>
-                        <div class="mode-desc">Will Bitcoin close positive (Green) or negative (Red) in the next 1-hour candle?</div>
+                        <div class="mode-desc">Will Bitcoin close positive (Green) or negative (Red) in the next 1-hour timeframe?</div>
                         <span class="mode-tag">⏱️ 1-Hour Resolution</span>
                     </div>
 
-                    <!-- Market 2 -->
+                    <!-- Duel 2 -->
                     <div class="mode-card" onclick="selectMarket('btc-15m-flash', 'BTC 15-Min Flash Duel')">
                         <div class="mode-icon">⚡</div>
                         <div class="mode-title">BTC 15-Min Flash Duel</div>
@@ -531,26 +601,26 @@
                         <span class="mode-tag">⚡ Ultra Fast 15M</span>
                     </div>
 
-                    <!-- Market 3 -->
+                    <!-- Duel 3 -->
                     <div class="mode-card" onclick="selectMarket('eth-1h-candle', 'ETH 1-Hour Bull vs Bear')">
                         <div class="mode-icon">🔷</div>
                         <div class="mode-title">ETH 1H Bull vs Bear</div>
-                        <div class="mode-desc">Predict Ethereum 1-hour candle direction against your peer.</div>
+                        <div class="mode-desc">Predict Ethereum 1-hour direction against your peer.</div>
                         <span class="mode-tag">⏱️ 1-Hour Resolution</span>
                     </div>
 
-                    <!-- Market 4 -->
+                    <!-- Duel 4 -->
                     <div class="mode-card" onclick="selectMarket('sol-30m-race', 'SOL 30-Min Speed Race')">
                         <div class="mode-icon">🚀</div>
                         <div class="mode-title">SOL 30-Min Speed Race</div>
-                        <div class="mode-desc">Fast 30-minute Solana candle close prediction. Green wins over Red.</div>
+                        <div class="mode-desc">Fast 30-minute Solana price direction prediction. Green wins over Red.</div>
                         <span class="mode-tag">🎯 30-Min Resolution</span>
                     </div>
                 </div>
             </div>
 
             <!-- Tier Grid -->
-            <div class="section-label">💰 Step 2: Choose Stake Tier (Available for all fast markets)</div>
+            <div class="section-label">💰 Step 2: Choose USDC Stake Tier</div>
             <div class="tier-grid">
                 <!-- $1 Tier -->
                 <div class="tier-card">
@@ -558,17 +628,17 @@
                         <span class="tier-name">Novice</span>
                         <span class="tier-badge">Entry Level</span>
                     </div>
-                    <div class="tier-amount">$1</div>
+                    <div class="tier-amount">$1 <span class="tier-currency">USDC</span></div>
                     <div class="selected-mode-indicator" id="ind-1">
                         🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$2</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1.80</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.06</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$0.14</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$2 USDC</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1.80 USDC</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.06 USDC</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$0.14 USDC</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(1)">Enter Duel ($1)</button>
+                    <button class="join-btn" onclick="enterMatch(1)">Enter Duel (1 USDC)</button>
                 </div>
 
                 <!-- $5 Tier -->
@@ -577,17 +647,17 @@
                         <span class="tier-name">Fighter</span>
                         <span class="tier-badge">Popular</span>
                     </div>
-                    <div class="tier-amount">$5</div>
+                    <div class="tier-amount">$5 <span class="tier-currency">USDC</span></div>
                     <div class="selected-mode-indicator" id="ind-5">
                         🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$10</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$9</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.30</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$0.70</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$10 USDC</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$9 USDC</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.30 USDC</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$0.70 USDC</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(5)">Enter Duel ($5)</button>
+                    <button class="join-btn" onclick="enterMatch(5)">Enter Duel (5 USDC)</button>
                 </div>
 
                 <!-- $10 Tier -->
@@ -596,17 +666,17 @@
                         <span class="tier-name">Warrior</span>
                         <span class="tier-badge">Competitive</span>
                     </div>
-                    <div class="tier-amount">$10</div>
+                    <div class="tier-amount">$10 <span class="tier-currency">USDC</span></div>
                     <div class="selected-mode-indicator" id="ind-10">
                         🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$20</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$18</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.60</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$1.40</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$20 USDC</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$18 USDC</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$0.60 USDC</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$1.40 USDC</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(10)">Enter Duel ($10)</button>
+                    <button class="join-btn" onclick="enterMatch(10)">Enter Duel (10 USDC)</button>
                 </div>
 
                 <!-- $50 Tier -->
@@ -615,17 +685,17 @@
                         <span class="tier-name">Champion</span>
                         <span class="tier-badge">High Stakes</span>
                     </div>
-                    <div class="tier-amount">$50</div>
+                    <div class="tier-amount">$50 <span class="tier-currency">USDC</span></div>
                     <div class="selected-mode-indicator" id="ind-50">
                         🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$100</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$90</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$3</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$7</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$100 USDC</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$90 USDC</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$3 USDC</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$7 USDC</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(50)">Enter Duel ($50)</button>
+                    <button class="join-btn" onclick="enterMatch(50)">Enter Duel (50 USDC)</button>
                 </div>
 
                 <!-- $100 Tier -->
@@ -634,17 +704,17 @@
                         <span class="tier-name">Master</span>
                         <span class="tier-badge">Pro</span>
                     </div>
-                    <div class="tier-amount">$100</div>
+                    <div class="tier-amount">$100 <span class="tier-currency">USDC</span></div>
                     <div class="selected-mode-indicator" id="ind-100">
                         🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$200</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$180</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$6</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$14</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$200 USDC</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$180 USDC</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$6 USDC</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$14 USDC</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(100)">Enter Duel ($100)</button>
+                    <button class="join-btn" onclick="enterMatch(100)">Enter Duel (100 USDC)</button>
                 </div>
 
                 <!-- $1000 Tier -->
@@ -653,17 +723,17 @@
                         <span class="tier-name">Titan</span>
                         <span class="tier-badge">Legendary</span>
                     </div>
-                    <div class="tier-amount">$1,000</div>
+                    <div class="tier-amount">$1,000 <span class="tier-currency">USDC</span></div>
                     <div class="selected-mode-indicator" id="ind-1000">
                         🎯 <span class="active-market-name">BTC 1-Hour Green vs Red</span>
                     </div>
                     <div class="tier-details">
-                        <div class="detail-row"><span>Total Pool:</span><span>$2,000</span></div>
-                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1,800</span></div>
-                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$60</span></div>
-                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$140</span></div>
+                        <div class="detail-row"><span>Total Pool:</span><span>$2,000 USDC</span></div>
+                        <div class="detail-row"><span>Winner Prize (90%):</span><span style="color:var(--accent-green)">$1,800 USDC</span></div>
+                        <div class="detail-row"><span>Loss Cashback (3%):</span><span style="color:var(--accent-blue)">$60 USDC</span></div>
+                        <div class="detail-row"><span>Protocol Fee (7%):</span><span>$140 USDC</span></div>
                     </div>
-                    <button class="join-btn" onclick="enterMatch(1000)">Enter Duel ($1,000)</button>
+                    <button class="join-btn" onclick="enterMatch(1000)">Enter Duel (1,000 USDC)</button>
                 </div>
             </div>
         </div>
@@ -672,14 +742,14 @@
         <div id="tab-matches" class="tab-content">
             <div class="hero">
                 <h1>Recent Fast Arena Battles</h1>
-                <p>Live verified onchain 1v1 fast prediction results, winner payouts, and instant loss cashbacks.</p>
+                <p>Live verified onchain 1v1 fast prediction results, winner payouts, and instant loss cashbacks in USDC.</p>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Time</th>
-                            <th>Market</th>
+                            <th>Duel</th>
                             <th>Tier</th>
                             <th>Winner (Gladiator)</th>
                             <th>Defeated</th>
@@ -691,38 +761,38 @@
                         <tr>
                             <td>1 min ago</td>
                             <td><span class="mode-tag">BTC 1H Green</span></td>
-                            <td>$100</td>
+                            <td>$100 USDC</td>
                             <td>0x8f...39a1</td>
                             <td>0x2c...9e44</td>
-                            <td class="badge-win">+$180</td>
-                            <td class="badge-cashback">+$6</td>
+                            <td class="badge-win">+$180 USDC</td>
+                            <td class="badge-cashback">+$6 USDC</td>
                         </tr>
                         <tr>
                             <td>5 mins ago</td>
                             <td><span class="mode-tag">SOL 30M Green</span></td>
-                            <td>$50</td>
+                            <td>$50 USDC</td>
                             <td>0x7a...11bc</td>
                             <td>0x4d...88e1</td>
-                            <td class="badge-win">+$90</td>
-                            <td class="badge-cashback">+$3</td>
+                            <td class="badge-win">+$90 USDC</td>
+                            <td class="badge-cashback">+$3 USDC</td>
                         </tr>
                         <tr>
                             <td>14 mins ago</td>
                             <td><span class="mode-tag">BTC 15M Bull</span></td>
-                            <td>$1,000</td>
+                            <td>$1,000 USDC</td>
                             <td>0x3e...991a</td>
                             <td>0x91...224b</td>
-                            <td class="badge-win">+$1,800</td>
-                            <td class="badge-cashback">+$60</td>
+                            <td class="badge-win">+$1,800 USDC</td>
+                            <td class="badge-cashback">+$60 USDC</td>
                         </tr>
                         <tr>
                             <td>22 mins ago</td>
                             <td><span class="mode-tag">ETH 1H Bear</span></td>
-                            <td>$10</td>
+                            <td>$10 USDC</td>
                             <td>0x11...88c2</td>
                             <td>0x55...33a1</td>
-                            <td class="badge-win">+$18</td>
-                            <td class="badge-cashback">+$0.60</td>
+                            <td class="badge-win">+$18 USDC</td>
+                            <td class="badge-cashback">+$0.60 USDC</td>
                         </tr>
                     </tbody>
                 </table>
@@ -793,21 +863,21 @@
                             <td>🎖️ #1 Resilient</td>
                             <td>0x55...33a1</td>
                             <td>64 Losses</td>
-                            <td>$4,800</td>
+                            <td>$4,800 USDC</td>
                             <td class="badge-resilience">+2,500 $PVP Special Grant</td>
                         </tr>
                         <tr>
                             <td>🎖️ #2 Resilient</td>
                             <td>0x2c...9e44</td>
                             <td>49 Losses</td>
-                            <td>$3,200</td>
+                            <td>$3,200 USDC</td>
                             <td class="badge-resilience">+1,500 $PVP Special Grant</td>
                         </tr>
                         <tr>
                             <td>🎖️ #3 Resilient</td>
                             <td>0x91...224b</td>
                             <td>38 Losses</td>
-                            <td>$2,400</td>
+                            <td>$2,400 USDC</td>
                             <td class="badge-resilience">+1,000 $PVP Special Grant</td>
                         </tr>
                     </tbody>
@@ -826,19 +896,36 @@
             </div>
 
             <div class="info-card">
-                <h3>2. The PvP Arena Solution: Pure Peer to Peer</h3>
-                <p>To eliminate unfair house edges and deliver maximum profitability with downside risk mitigation, <strong>PvP Arena</strong> was architected exclusively as a <strong>1v1 Player vs Player (P2P)</strong> protocol:</p>
+                <h3>2. The PvP Arena Solution: Pure Peer to Peer in USDC</h3>
+                <p>To eliminate unfair house edges and deliver maximum profitability with zero price volatility during duels, <strong>PvP Arena</strong> operates directly in <strong>USDC</strong> as a <strong>1v1 Player vs Player (P2P)</strong> protocol:</p>
                 
                 <div class="highlight-box">
                     <p><strong>Superior Math & Asymmetric Rewards:</strong></p>
-                    <p style="margin-top:8px;">• <strong>Winner Multiplier (+0.9x Net Profit / 1.8x Return):</strong> The victor claims 90% of the entire 2 player prize pool, generating a massive <strong>+0.9x net profit</strong> on their stake (e.g., $100 entry wins $180 total).</p>
-                    <p style="margin-top:6px;">• <strong>Loser Loss Protection (+0.03x Cashback):</strong> The defeated combatant never walks away with zero. The smart contract automatically refunds a <strong>3% cashback rebate</strong> directly to the player wallet.</p>
+                    <p style="margin-top:8px;">• <strong>Winner Multiplier (+0.9x Net Profit / 1.8x Return):</strong> The victor claims 90% of the entire 2 player USDC pool, generating a massive <strong>+0.9x net profit</strong> on their stake (e.g., 100 USDC entry wins 180 USDC total).</p>
+                    <p style="margin-top:6px;">• <strong>Loser Loss Protection (+0.03x Cashback):</strong> The defeated combatant never walks away with zero. The smart contract automatically refunds a <strong>3% USDC cashback rebate</strong> directly to the player wallet.</p>
                     <p style="margin-top:6px;">• <strong>Transparent Protocol Fee (7%):</strong> A minimal 7% fee covers decentralized infrastructure, reward pools, and automated token buyback & burn mechanisms.</p>
                 </div>
             </div>
 
             <div class="info-card">
-                <h3>3. Innovative Leaderboard Reward System (Dual Pool Incentive)</h3>
+                <h3>3. Escrow & Matchmaking Mechanics: 100% Capital Safety</h3>
+                <p>Every duel in PvP Arena is secured through decentralized smart contract escrows with strict fund safety guarantees:</p>
+
+                <div class="blue-box">
+                    <p><strong>🔒 Trustless Deposit & Flexible Cancellation:</strong></p>
+                    <p style="margin-top:8px;">• <strong>Safe Escrow Custody:</strong> When the first player creates or joins a battle, their entry USDC is safely deposited into the onchain escrow contract.</p>
+                    <p style="margin-top:6px;">• <strong>100% Refund Before Match:</strong> As long as the second opponent has not entered the match, Player 1 retains full ownership and can cancel the battle queue at any time to withdraw 100% of their deposited USDC with zero penalties or locked balances.</p>
+                </div>
+
+                <div class="warn-box">
+                    <p><strong>⚔️ Match Lock & Noncustodial Settlement:</strong></p>
+                    <p style="margin-top:8px;">• <strong>Instant Duel Lock:</strong> The exact moment the second player enters and matches the stake, the duel is officially locked onchain. Neither party can withdraw or exit until the match timeframe concludes.</p>
+                    <p style="margin-top:6px;">• <strong>Automated Payout:</strong> Once the verified outcome is finalized, the contract automatically executes the payouts: 90% of the total pool to the winner and 3% cashback to the defeated participant in USDC.</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>4. Innovative Leaderboard Reward System (Dual Pool Incentive)</h3>
                 <p>Unlike traditional casinos that punish losing streaks, PvP Arena incentivizes active participants through two separate weekly reward mechanisms funded by protocol fees:</p>
                 
                 <div class="highlight-box">
@@ -853,14 +940,14 @@
             </div>
 
             <div class="info-card">
-                <h3>4. Comparison: Traditional Betting vs. PvP Arena</h3>
+                <h3>5. Comparison: Traditional Betting vs. PvP Arena</h3>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>Feature</th>
                                 <th>Traditional House Betting (1.3x)</th>
-                                <th>PvP Arena 1v1 Protocol</th>
+                                <th>PvP Arena 1v1 Protocol (USDC)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -880,6 +967,16 @@
                                 <td class="badge-cashback">+0.03x (Instant 3% Loss Protection)</td>
                             </tr>
                             <tr>
+                                <td><strong>Fund Cancellation</strong></td>
+                                <td class="badge-loss">No Refund Once Placed</td>
+                                <td class="badge-win">100% Full Refund Before Opponent Joins</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Asset Volatility</strong></td>
+                                <td class="badge-loss">High Risk Fluctuations</td>
+                                <td class="badge-win">Stable USDC Currency ($1 Pegged)</td>
+                            </tr>
+                            <tr>
                                 <td><strong>Top Loser Treatment</strong></td>
                                 <td class="badge-loss">Zero Compensation / Banned</td>
                                 <td class="badge-resilience">Weekly Resilience Rewards for Top 3 Losses</td>
@@ -895,7 +992,7 @@
             </div>
 
             <div class="info-card">
-                <h3>5. Robinhood Chain Token Utility</h3>
+                <h3>6. Robinhood Chain Token Utility</h3>
                 <p>The native utility token powers protocol governance, automated buybacks from the 7% fee pool, and VIP high roller tier unlocks on Robinhood Chain.</p>
                 <p>Contract Address (CA):</p>
                 <p><code style="background:var(--bg-primary); padding:8px 16px; border-radius:8px; color:var(--accent-green); font-size:15px; display:inline-block; border:1px solid var(--border-color);">0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3</code></p>
@@ -909,6 +1006,7 @@
 
     <script>
         let currentMarketName = 'BTC 1-Hour Green vs Red';
+        let userWalletAddress = null;
 
         function selectMarket(marketId, marketName) {
             currentMarketName = marketName;
@@ -928,12 +1026,78 @@
             document.getElementById('tab-' + tabName).classList.add('active');
         }
 
-        function connectWallet() {
-            alert('Connecting Web3 Wallet to Robinhood Chain...');
+        // Standard Web3 Wallet Connection (MetaMask, Rabby, Coinbase Wallet, Trust Wallet, Phantom, OKX, etc.)
+        async function connectWallet() {
+            if (userWalletAddress) {
+                // If already connected, clicking prompts disconnect or shows status
+                if (confirm("Wallet connected: " + userWalletAddress + "\nDo you want to disconnect?")) {
+                    userWalletAddress = null;
+                    updateWalletUI(null);
+                }
+                return;
+            }
+
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    if (accounts && accounts.length > 0) {
+                        userWalletAddress = accounts[0];
+                        updateWalletUI(userWalletAddress);
+                    }
+                } catch (err) {
+                    if (err.code === 4001) {
+                        alert('Connection request was rejected in your wallet.');
+                    } else {
+                        alert('Error connecting wallet: ' + (err.message || err));
+                    }
+                }
+            } else if (typeof window.solana !== 'undefined' && window.solana.isPhantom) {
+                // Fallback for Phantom Solana
+                try {
+                    const resp = await window.solana.connect();
+                    userWalletAddress = resp.publicKey.toString();
+                    updateWalletUI(userWalletAddress);
+                } catch (err) {
+                    alert('Phantom connection rejected.');
+                }
+            } else {
+                alert('No Web3 wallet extension found (MetaMask, Rabby, Phantom, Coinbase Wallet, etc.). Please install a Web3 wallet extension in your browser.');
+            }
+        }
+
+        function updateWalletUI(address) {
+            const btn = document.getElementById('walletBtn');
+            const btnText = document.getElementById('walletBtnText');
+            if (address) {
+                const shortAddr = address.substring(0, 6) + '...' + address.substring(address.length - 4);
+                btn.classList.add('connected');
+                btnText.innerText = shortAddr;
+            } else {
+                btn.classList.remove('connected');
+                btnText.innerText = 'Connect Wallet';
+            }
+        }
+
+        // Listen for wallet account changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', function (accounts) {
+                if (accounts.length > 0) {
+                    userWalletAddress = accounts[0];
+                    updateWalletUI(userWalletAddress);
+                } else {
+                    userWalletAddress = null;
+                    updateWalletUI(null);
+                }
+            });
         }
 
         function enterMatch(tier) {
-            alert('Entering $' + tier + ' Fast Duel for [' + currentMarketName + ']. Confirming onchain escrow transaction...');
+            if (!userWalletAddress) {
+                alert('Please connect your Web3 wallet (MetaMask, Rabby, etc.) first!');
+                connectWallet();
+                return;
+            }
+            alert('Gladiator: ' + userWalletAddress + '\nEntering ' + tier + ' USDC Fast Duel for [' + currentMarketName + '].\nStep 1: Approving USDC spending...\nStep 2: Depositing to Onchain Escrow...');
         }
     </script>
 </body>
