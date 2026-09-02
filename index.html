@@ -2462,6 +2462,12 @@
         category: "CRYPTO", 
         title: "Will BTC Daily Candle Close GREEN?", 
         desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green).",
+        deadlineDesc: "Daily UTC 00:00 Close",
+        getDeadline: function() {
+          const now = new Date();
+          const target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+          return target.getTime();
+        },
         optA: "YES",
         optALabel: "YES",
         optASub: "Green Close",
@@ -2474,6 +2480,12 @@
         category: "ROBINHOOD", 
         title: "Will Robinhood Chain Daily Revenue Exceed $1,000,000 Tomorrow?", 
         desc: "Robinhood Chain cumulative on-chain fee revenue surpasses $1,000,000 USD tomorrow.",
+        deadlineDesc: "Tomorrow UTC 23:59:59",
+        getDeadline: function() {
+          const now = new Date();
+          const target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 23, 59, 59));
+          return target.getTime();
+        },
         optA: "YES",
         optALabel: "YES",
         optASub: "> $1M Revenue",
@@ -2487,6 +2499,26 @@
     let selectedDuelTier = 5;
     let selectedDuelOption = 'YES';
 
+    function getQuestionDeadline(qId) {
+      const q = DUEL_QUESTIONS.find(x => x.id === qId) || DUEL_QUESTIONS[0];
+      if (typeof q.getDeadline === 'function') return q.getDeadline();
+      return Date.now() + 24 * 3600 * 1000;
+    }
+
+    function formatRemainingTime(deadlineMs) {
+      const diff = (deadlineMs || 0) - Date.now();
+      if (diff <= 0) return { expired: true, text: "DEADLINE PASSED", short: "EXPIRED" };
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      return { 
+        expired: false, 
+        text: `${hours.toString().padStart(2, '0')}h ${mins.toString().padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`,
+        short: `${hours}h ${mins}m`,
+        diff 
+      };
+    }
+
     function renderDuelQuestions() {
       const grid = document.getElementById("duel-questions-grid");
       if (!grid) return;
@@ -2497,18 +2529,28 @@
         const borderClass = isSelected ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-500/50" : "border-white/10 bg-slate-900/60 hover:border-cyan-500/40";
         const dotClass = isSelected ? "bg-cyan-400 animate-pulse" : "bg-slate-600";
         const numBadge = `<div class="w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-sm font-mono flex items-center justify-center shrink-0 transition-all">${idx + 1}</div>`;
-        
+        const qDeadline = getQuestionDeadline(q.id);
+        const timeObj = formatRemainingTime(qDeadline);
+
         const qHtml = `
           <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
             ${numBadge}
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.category}</span>
-                <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
-                ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide">Selected</span>' : ''}
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.category}</span>
+                  <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
+                  ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide">Selected</span>' : ''}
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center gap-1">
+                  ⏳ <span class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span>
+                </span>
               </div>
               <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
               <p class="text-[10px] text-slate-400 font-mono mt-1 line-clamp-1">${q.desc}</p>
+              <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center gap-2">
+                <span>Cutoff: <span class="text-slate-300 font-semibold">${q.deadlineDesc || '24h Cycle'}</span></span>
+              </div>
             </div>
           </div>
         `;
@@ -2598,12 +2640,15 @@
       const oppositeOpt = selectedDuelOption === 'YES' ? 'NO' : 'YES';
       const optColor = selectedDuelOption === 'YES' ? 'text-emerald-400' : 'text-rose-400';
       const oppColor = oppositeOpt === 'YES' ? 'text-emerald-400' : 'text-rose-400';
+      const qDeadline = getQuestionDeadline(q.id);
+      const timeObj = formatRemainingTime(qDeadline);
 
       summaryEl.innerHTML = `
         <span class="text-white font-bold">#${q.id} ${q.title}</span> • 
-        You Pick: <span class="${optColor} font-bold">${selectedDuelOption}</span> • 
-        Opponent Takes: <span class="${oppColor} font-bold">${oppositeOpt}</span> • 
-        Stake: <span class="text-cyan-400 font-bold">${selectedDuelTier} USDG</span>
+        Pick: <span class="${optColor} font-bold">${selectedDuelOption}</span> • 
+        Opponent: <span class="${oppColor} font-bold">${oppositeOpt}</span> • 
+        Stake: <span class="text-cyan-400 font-bold">${selectedDuelTier} USDG</span> • 
+        <span class="text-amber-300 font-bold">⏳ Deadline: <span id="summary-deadline-timer">${timeObj.text}</span></span>
       `;
     }
 
@@ -2648,14 +2693,7 @@
     function handleIncomingDuel(duelData) {
       if (!duelData || !duelData.id) return;
       saveLocalDuel(duelData);
-
-      if (duelData.status === 'cancelled') {
-        const row = document.getElementById(`duel-row-${duelData.id}`);
-        if (row) row.remove();
-        updateDuelCounter();
-      } else {
-        renderDuelCard(duelData);
-      }
+      renderDuelCard(duelData);
     }
 
     function renderAllDuels() {
@@ -2721,6 +2759,44 @@
       });
     }
 
+    // Ticking interval to update live countdown timers across all cards
+    setInterval(() => {
+      // 1. Update questions grid timers
+      DUEL_QUESTIONS.forEach(q => {
+        const el = document.querySelector(`.q-timer-display[data-qid="${q.id}"]`);
+        if (el) {
+          const qDeadline = getQuestionDeadline(q.id);
+          const timeObj = formatRemainingTime(qDeadline);
+          el.textContent = timeObj.text;
+        }
+      });
+
+      // 2. Update summary timer
+      const summaryTimerEl = document.getElementById("summary-deadline-timer");
+      if (summaryTimerEl) {
+        const qDeadline = getQuestionDeadline(selectedDuelQuestionId);
+        const timeObj = formatRemainingTime(qDeadline);
+        summaryTimerEl.textContent = timeObj.text;
+      }
+
+      // 3. Update duel card timers in the lobby
+      const cardTimers = document.querySelectorAll(".duel-card-deadline-timer");
+      cardTimers.forEach(el => {
+        const dl = parseInt(el.getAttribute("data-deadline") || "0", 10);
+        if (dl > 0) {
+          const timeObj = formatRemainingTime(dl);
+          el.textContent = timeObj.text;
+          const cardId = el.getAttribute("data-duel-id");
+          if (timeObj.expired && cardId) {
+            const store = getLocalDuels();
+            if (store[cardId] && store[cardId].status === 'open') {
+              renderDuelCard(store[cardId]);
+            }
+          }
+        }
+      });
+    }, 1000);
+
     function renderDuelCard(duelData) {
       const container = document.getElementById("duels-list-container");
       if (!container) return;
@@ -2748,134 +2824,139 @@
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
       const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
 
-      const questionText = duelData.questionText || "Will Bitcoin stay above $65,000 this month?";
+      const questionText = duelData.questionText || "Will BTC Daily Candle Close GREEN?";
       const creatorOption = duelData.creatorOption || "YES";
       const requiredOpponentOption = duelData.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
       const creatorColor = creatorOption === "YES" ? "text-emerald-400" : "text-rose-400";
       const opponentColor = requiredOpponentOption === "YES" ? "text-emerald-400" : "text-rose-400";
 
+      const duelDeadline = duelData.deadline || (Date.now() + 24 * 3600 * 1000);
+      const isExpired = Date.now() >= duelDeadline;
+      const timeObj = formatRemainingTime(duelDeadline);
+
       let statusBadge = "";
       let actionSection = "";
       let cardBgClass = "bg-cyan-950/20 border-cyan-500/30";
 
-      // STATUS 1: OPEN (Waiting for an opponent to accept with opposite side)
+      // STATUS 1: OPEN (Waiting for an opponent before deadline)
       if (duelData.status === 'open') {
-        if (isCreator) {
-          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT (${requiredOpponentOption})</span>`;
-          actionSection = `
-            <div class="flex items-center gap-2">
-              ${statusBadge}
-              <button onclick="cancelDuel('${duelData.id}', ${duelData.tier})" class="px-3 py-2 rounded-xl bg-rose-500/20 text-rose-300 font-bold border border-rose-500/40 hover:bg-rose-500 hover:text-white transition-all text-xs shadow-md shadow-rose-500/20 flex items-center gap-1">
-                <span>✕</span> CANCEL
-              </button>
-            </div>`;
+        if (isExpired) {
+          // EXPIRED / UNMATCHED: Submissions closed
+          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED (DEADLINE PASSED)</span>`;
+          if (isCreator) {
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <button onclick="cancelDuel('${duelData.id}', ${duelData.tier})" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold text-xs shadow-md shadow-amber-500/30 hover:brightness-110 flex items-center gap-1">
+                  💰 RECLAIM DEPOSIT
+                </button>
+              </div>
+            `;
+          } else {
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <span class="px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-white/10 text-xs font-bold font-mono">CLOSED</span>
+              </div>
+            `;
+          }
         } else {
-          actionSection = `
-            <div class="flex items-center gap-2">
-              <button id="accept-btn-${duelData.id}" onclick="acceptDuel('${duelData.id}', ${duelData.tier})" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs rounded-xl shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-1.5">
-                <span>⚔️</span> ACCEPT DUEL: TAKE [${requiredOpponentOption}] (${duelData.tier} USDG)
+          // ACTIVE AND OPEN
+          if (isCreator) {
+            statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT (${requiredOpponentOption})</span>`;
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <button onclick="cancelDuel('${duelData.id}', ${duelData.tier})" class="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 text-xs font-bold font-mono transition-all">CANCEL</button>
+              </div>
+            `;
+          } else {
+            actionSection = `
+              <button onclick="acceptDuel('${duelData.id}', ${duelData.tier})" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black text-xs font-mono uppercase tracking-wider transition-all shadow-md shadow-cyan-500/20 active:scale-95 flex items-center gap-1.5">
+                ⚔️ ACCEPT: TAKE [${requiredOpponentOption}] (${duelData.tier} USDG)
               </button>
-            </div>`;
+            `;
+          }
         }
       } 
-      // STATUS 2: IN PROGRESS / WAITING RESULTS (Locked 1v1 battle!)
+      // STATUS 2: IN PROGRESS / WAITING OUTCOME (Strict 1v1 Locked)
       else if (duelData.status === 'in_progress') {
-        cardBgClass = "bg-gradient-to-r from-amber-950/40 via-slate-900/80 to-purple-950/40 border-amber-500/50 shadow-lg shadow-amber-500/10";
-        statusBadge = `
-          <span class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> WAITING OUTCOME (1v1 BATTLE)
-          </span>`;
+        cardBgClass = "bg-indigo-950/30 border-indigo-500/40";
+        statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 text-xs flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> WAITING OUTCOME (1v1 BATTLE)</span>`;
 
         if (isParticipant) {
           actionSection = `
-            <div class="flex flex-wrap items-center gap-2">
-              ${statusBadge}
-              <button onclick="resolveDuelMatch('${duelData.id}', '${creatorOption}')" class="px-3.5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
-                <span>⚡</span> ${creatorOption} WON
-              </button>
-              <button onclick="resolveDuelMatch('${duelData.id}', '${requiredOpponentOption}')" class="px-3.5 py-2 bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
-                <span>⚡</span> ${requiredOpponentOption} WON
-              </button>
-            </div>`;
-        } else {
-          // Locked for all other wallets (Third-party visitors cannot accept)
-          actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
-              <span class="text-[11px] text-amber-400/90 font-medium bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">🔒 Match Locked (1v1 In Progress)</span>
-            </div>`;
-        }
-      } 
-      // STATUS 3: COMPLETED (Winner and Loser resolved)
-      else if (duelData.status === 'completed') {
-        const isWinner = userAddress && duelData.winner && (userAddress.toLowerCase() === duelData.winner.toLowerCase());
-        const isLoser = userAddress && duelData.loser && (userAddress.toLowerCase() === duelData.loser.toLowerCase());
-        
-        cardBgClass = isWinner 
-          ? "bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-emerald-950/30 border-emerald-500/60 shadow-lg shadow-emerald-500/20"
-          : "bg-slate-900/90 border-slate-700/60";
-
-        const winnerShort = duelData.winner ? (duelData.winner.slice(0, 6) + "..." + duelData.winner.slice(-4)) : "0xWinner";
-        const loserShort = duelData.loser ? (duelData.loser.slice(0, 6) + "..." + duelData.loser.slice(-4)) : "0xRunnerUp";
-        const winningOpt = duelData.winningOption || "YES";
-
-        statusBadge = `
-          <span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 text-xs flex items-center gap-1.5">
-            <span>🏆</span> RESULT: [${winningOpt}] WON
-          </span>`;
-
-        actionSection = `
-          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            ${statusBadge}
-            <div class="text-right text-xs">
-              <p class="font-bold ${isWinner ? 'text-emerald-400' : 'text-white'}">Winner: ${isWinner ? '👑 YOU (+'+duelData.payout+' USDG)' : winnerShort + ' (+' + duelData.payout + ' USDG)'}</p>
-              <p class="text-[11px] text-slate-400">Runner-up: ${isLoser ? 'YOU (3% Cashback)' : loserShort + ' (3% Cashback)'}</p>
+              <button onclick="resolveDuelOutcome('${duelData.id}')" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-white font-extrabold text-xs font-mono tracking-wider transition-all shadow-md shadow-indigo-500/20 flex items-center gap-1">
+                ⚡ RESOLVE RESULT
+              </button>
             </div>
-          </div>`;
+          `;
+        } else {
+          actionSection = `
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 font-mono text-xs border border-white/10">🔒 1v1 LOCKED</span>
+              ${statusBadge}
+            </div>
+          `;
+        }
+      }
+      // STATUS 3: COMPLETED
+      else if (duelData.status === 'completed') {
+        cardBgClass = "bg-emerald-950/20 border-emerald-500/30";
+        const shortWinner = duelData.winner ? (duelData.winner.slice(0, 6) + "..." + duelData.winner.slice(-4)) : "Winner";
+        const isWinner = userAddress && duelData.winner && (userAddress.toLowerCase() === duelData.winner.toLowerCase());
+        
+        statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 text-xs">🏆 COMPLETED</span>`;
+        actionSection = `
+          <div class="flex items-center gap-2 font-mono text-xs">
+            ${statusBadge}
+            <span class="text-emerald-400 font-bold">${isWinner ? '🎉 YOU WON +' + duelData.payout + ' USDG!' : 'Winner: ' + shortWinner}</span>
+          </div>
+        `;
       }
 
-      // Construct players label with their specific prediction
-      let playersDisplay = "";
-      if (duelData.status === 'open') {
-        playersDisplay = isCreator 
-          ? `Your Match: Took [<span class="${creatorColor} font-bold">${creatorOption}</span>]` 
-          : `Opponent: ${shortCreator} (Took [<span class="${creatorColor} font-bold">${creatorOption}</span>] • Needs [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>])`;
-      } else {
-        const p1Label = (userAddress && duelData.creator && userAddress.toLowerCase() === duelData.creator.toLowerCase()) ? "You" : shortCreator;
-        const p2Label = (userAddress && duelData.opponent && userAddress.toLowerCase() === duelData.opponent.toLowerCase()) ? "You" : shortOpponent;
-        playersDisplay = `<span class="text-white">${p1Label} [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span> <span class="text-amber-400 font-black mx-1">VS</span> <span class="text-white">${p2Label} [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>`;
-      }
-
-      const duelHtml = `
-        <div id="duel-row-${duelData.id}" class="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all ${cardBgClass} border rounded-2xl my-2">
-          <div class="flex items-start sm:items-center gap-3.5">
-            <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass} shrink-0 text-xs sm:text-sm">${duelData.tier} USDG</span>
-            <div class="space-y-1">
-              <h4 class="font-black text-white text-xs sm:text-sm font-mono flex items-center gap-2">
-                <span>❓ ${questionText}</span>
-                ${duelData.status !== 'completed' ? '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>' : ''}
-              </h4>
-              <div class="font-mono text-xs text-slate-300">
-                ${playersDisplay}
+      const cardHtml = `
+        <div id="duel-row-${duelData.id}" class="p-4 rounded-2xl border ${cardBgClass} transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-slate-900/80 border border-white/10 flex flex-col items-center justify-center shrink-0">
+              <span class="text-[10px] text-slate-400 font-mono uppercase font-bold">TIER</span>
+              <span class="text-sm font-black font-mono text-cyan-400">$${duelData.tier}</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-mono font-bold text-white">${questionText}</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${duelData.tier} USDG</span>
+                ${isCreator ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">Your Match</span>' : ''}
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                  ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
+                </span>
               </div>
-              <p class="text-[11px] text-slate-400 font-mono">Match ID: ${duelData.id} • Winner takes ${(duelData.tier * 1.8).toFixed(2)} USDG • 3% Cashback</p>
+              <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
+                <span>P1: <span class="text-slate-200">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
+                <span class="text-slate-600 font-bold">VS</span>
+                <span>P2: <span class="text-slate-200">${duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent'}</span> [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>
+                <span class="text-slate-500">•</span>
+                <span class="text-emerald-400 font-semibold">Prize: $${duelData.payout} USDG</span>
+              </div>
             </div>
           </div>
-          <div class="shrink-0">
+          <div class="shrink-0 flex items-center gap-2 justify-end">
             ${actionSection}
           </div>
         </div>
       `;
 
-      const existing = document.getElementById(`duel-row-${duelData.id}`);
-      if (existing) {
-        existing.outerHTML = duelHtml;
+      const existingRow = document.getElementById(`duel-row-${duelData.id}`);
+      if (existingRow) {
+        existingRow.outerHTML = cardHtml;
       } else {
-        container.insertAdjacentHTML("afterbegin", duelHtml);
+        container.insertAdjacentHTML("afterbegin", cardHtml);
       }
       updateDuelCounter();
     }
-
+    
     async function createDuel() {
       if (!isConnected) {
         await connectWallet();
@@ -2885,10 +2966,18 @@
         return;
       }
 
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const qDeadline = getQuestionDeadline(q.id);
+
+      // STRICT DEADLINE ENFORCEMENT: Cannot submit requests after deadline!
+      if (Date.now() >= qDeadline) {
+        showToast("⚠️ Submissions closed for this question! Deadline has passed.", "warning");
+        return;
+      }
+
       const btn = document.getElementById("create-duel-btn");
       if (btn) btn.disabled = true;
 
-      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
       const oppositeOption = selectedDuelOption === 'YES' ? 'NO' : 'YES';
 
       try {
@@ -2911,6 +3000,7 @@
         tier: selectedDuelTier,
         creator: userAddress,
         status: 'open',
+        deadline: qDeadline,
         payout: (selectedDuelTier * 1.8).toFixed(2),
         cashback: (selectedDuelTier * 0.03).toFixed(2),
         createdAt: Date.now()
@@ -2919,7 +3009,7 @@
       await broadcastDuel(newDuel);
       renderDuelCard(newDuel);
       if (btn) btn.disabled = false;
-      showToast(`🎉 Duel Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent to take [${oppositeOption}].`, "success");
+      showToast(`🎉 Duel Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Closes at deadline.`, "success");
     }
 
     async function acceptDuel(duelId, tier) {
@@ -2934,23 +3024,31 @@
       const store = getLocalDuels();
       let duelData = store[duelId];
 
-      // 1. Strict P2P validation: Only 1 person can accept
+      // 1. Strict Deadline Check
+      if (duelData && duelData.deadline && Date.now() >= duelData.deadline) {
+        showToast("⚠️ This duel deadline has expired and can no longer be accepted!", "warning");
+        renderDuelCard(duelData);
+        return;
+      }
+
+      // 2. Strict P2P validation: Only 1 person can accept
       if (duelData && duelData.status !== 'open') {
         showToast("⚠️ This duel has already been accepted by another player!", "warning");
         return;
       }
 
-      // 2. Prevent creator from accepting their own match
+      // 3. Prevent creator from accepting their own match
       if (duelData && duelData.creator && userAddress && duelData.creator.toLowerCase() === userAddress.toLowerCase()) {
         showToast("⚠️ You cannot accept your own duel match!", "warning");
         return;
       }
 
-      // 3. Immediately lock the match across all wallets so no one else can click Accept!
+      // 4. Immediately lock the match across all wallets so no one else can click Accept!
       if (!duelData) {
         duelData = { 
           id: duelId, 
           tier: tier, 
+          deadline: Date.now() + 24 * 3600 * 1000,
           payout: (tier * 1.8).toFixed(2), 
           cashback: (tier * 0.03).toFixed(2), 
           createdAt: Date.now() 
