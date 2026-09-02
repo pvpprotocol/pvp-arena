@@ -245,7 +245,7 @@
 
     </div>
 
-        <!-- 2. 2048 SKILL VAULTS TAB -->
+            <!-- 2. 2048 SKILL VAULTS TAB -->
     <div id="tab-vault2048" class="tab-content hidden space-y-6">
       
       <!-- SPECIAL PERK BANNER -->
@@ -265,7 +265,7 @@
       <!-- GAME & TIERS GRID -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- LEFT COLUMN: TIER SELECTION & BATCH TICKET PURCHASE -->
+        <!-- LEFT COLUMN: TIER SELECTION & TICKET PURCHASE -->
         <div class="lg:col-span-5 space-y-4">
           <div class="flex items-center justify-between">
             <h3 class="font-black text-white font-mono text-base">SELECT TOURNAMENT TIER</h3>
@@ -277,7 +277,7 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="font-mono font-black text-white text-lg">$1.00 TIER</span>
-                <span id="tier-tag-1" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300">ACTIVE TIER</span>
+                <span id="tier-tag-1" class=" px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300">ACTIVE TIER</span>
               </div>
               <span class="text-xs text-emerald-400 font-mono font-bold">Top Prize: $336.00 USDC</span>
             </div>
@@ -286,33 +286,30 @@
               <span>Entry: <strong>$1.00 / ticket</strong></span>
             </div>
             
-            <!-- QUANTITY SELECTOR & BUY BUTTONS -->
+            <!-- QUANTITY (UP/DOWN ARROWS) & BUY BUTTONS -->
             <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
-                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+              <div class="flex items-center justify-between bg-slate-900/80 px-3 py-1.5 rounded-xl border border-white/10">
+                <span class="text-xs font-mono text-slate-300">Ticket Quantity:</span>
                 <div class="flex items-center gap-2">
-                  <button onclick="adjust2048Qty(1, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
-                  <input type="number" id="qty-2048-1" value="1" min="1" max="100" onchange="update2048Price(1)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
-                  <button onclick="adjust2048Qty(1, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
-                  <div class="flex gap-1 pl-1">
-                    <button onclick="set2048Qty(1, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
-                    <button onclick="set2048Qty(1, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-16 px-2 py-1 bg-slate-950 border border-white/20 rounded-lg text-center font-mono font-bold text-white text-sm focus:outline-none focus:border-cyan-400" />
+                  <div class="flex gap-1">
+                    
+                    
                   </div>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <button onclick="buy2048Ticket(1, 'USDC')" id="buy-btn-usdc-1" class="py-2 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-mono font-black transition-all text-center">
+                <button onclick="buy2048Ticket(1, 'USDC')" id="buy-btn-usdc-1" class="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-mono font-black transition-all text-center">
                   BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="lbl-cost-usdc-1">1.00</span>)
                 </button>
-                <button onclick="buy2048Ticket(1, 'PVP')" id="buy-btn-pvp-1" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP (<span id="lbl-qty-pvp-1">2</span> ATTEMPTS 🔥)
+                <button onclick="buy2048Ticket(1, 'PVP')" id="buy-btn-pvp-1" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP ($<span id="lbl-cost-pvp-1">1.00</span> • <span id="lbl-qty-pvp-1">2</span> ATTEMPTS 🔥)
                 </button>
               </div>
             </div>
           </div>
-
           <!-- TIER 5 -->
-          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-emerald-500/40 cursor-pointer transition-all space-y-3">
+          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="font-mono font-black text-white text-lg">$5.00 TIER</span>
@@ -325,32 +322,30 @@
               <span>Entry: <strong>$5.00 / ticket</strong></span>
             </div>
             
+            <!-- QUANTITY (UP/DOWN ARROWS) & BUY BUTTONS -->
             <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
-                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+              <div class="flex items-center justify-between bg-slate-900/80 px-3 py-1.5 rounded-xl border border-white/10">
+                <span class="text-xs font-mono text-slate-300">Ticket Quantity:</span>
                 <div class="flex items-center gap-2">
-                  <button onclick="adjust2048Qty(5, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
-                  <input type="number" id="qty-2048-5" value="1" min="1" max="100" onchange="update2048Price(5)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
-                  <button onclick="adjust2048Qty(5, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
-                  <div class="flex gap-1 pl-1">
-                    <button onclick="set2048Qty(5, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
-                    <button onclick="set2048Qty(5, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-16 px-2 py-1 bg-slate-950 border border-white/20 rounded-lg text-center font-mono font-bold text-white text-sm focus:outline-none focus:border-cyan-400" />
+                  <div class="flex gap-1">
+                    
+                    
                   </div>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <button onclick="buy2048Ticket(5, 'USDC')" id="buy-btn-usdc-5" class="py-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-mono font-black transition-all text-center">
+                <button onclick="buy2048Ticket(5, 'USDC')" id="buy-btn-usdc-5" class="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-mono font-black transition-all text-center">
                   BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="lbl-cost-usdc-5">5.00</span>)
                 </button>
-                <button onclick="buy2048Ticket(5, 'PVP')" id="buy-btn-pvp-5" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP (<span id="lbl-qty-pvp-5">2</span> ATTEMPTS 🔥)
+                <button onclick="buy2048Ticket(5, 'PVP')" id="buy-btn-pvp-5" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP ($<span id="lbl-cost-pvp-5">5.00</span> • <span id="lbl-qty-pvp-5">2</span> ATTEMPTS 🔥)
                 </button>
               </div>
             </div>
           </div>
-
           <!-- TIER 10 -->
-          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-blue-500/40 cursor-pointer transition-all space-y-3">
+          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="font-mono font-black text-white text-lg">$10.00 TIER</span>
@@ -363,32 +358,30 @@
               <span>Entry: <strong>$10.00 / ticket</strong></span>
             </div>
             
+            <!-- QUANTITY (UP/DOWN ARROWS) & BUY BUTTONS -->
             <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
-                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+              <div class="flex items-center justify-between bg-slate-900/80 px-3 py-1.5 rounded-xl border border-white/10">
+                <span class="text-xs font-mono text-slate-300">Ticket Quantity:</span>
                 <div class="flex items-center gap-2">
-                  <button onclick="adjust2048Qty(10, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
-                  <input type="number" id="qty-2048-10" value="1" min="1" max="100" onchange="update2048Price(10)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
-                  <button onclick="adjust2048Qty(10, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
-                  <div class="flex gap-1 pl-1">
-                    <button onclick="set2048Qty(10, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
-                    <button onclick="set2048Qty(10, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-16 px-2 py-1 bg-slate-950 border border-white/20 rounded-lg text-center font-mono font-bold text-white text-sm focus:outline-none focus:border-cyan-400" />
+                  <div class="flex gap-1">
+                    
+                    
                   </div>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <button onclick="buy2048Ticket(10, 'USDC')" id="buy-btn-usdc-10" class="py-2 px-3 rounded-xl bg-blue-500 hover:bg-blue-400 text-white text-xs font-mono font-black transition-all text-center">
+                <button onclick="buy2048Ticket(10, 'USDC')" id="buy-btn-usdc-10" class="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-mono font-black transition-all text-center">
                   BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="lbl-cost-usdc-10">10.00</span>)
                 </button>
-                <button onclick="buy2048Ticket(10, 'PVP')" id="buy-btn-pvp-10" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP (<span id="lbl-qty-pvp-10">2</span> ATTEMPTS 🔥)
+                <button onclick="buy2048Ticket(10, 'PVP')" id="buy-btn-pvp-10" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP ($<span id="lbl-cost-pvp-10">10.00</span> • <span id="lbl-qty-pvp-10">2</span> ATTEMPTS 🔥)
                 </button>
               </div>
             </div>
           </div>
-
           <!-- TIER 100 -->
-          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-purple-500/40 cursor-pointer transition-all space-y-3">
+          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="font-mono font-black text-white text-lg">$100.00 TIER</span>
@@ -401,35 +394,33 @@
               <span>Entry: <strong>$100.00 / ticket</strong></span>
             </div>
             
+            <!-- QUANTITY (UP/DOWN ARROWS) & BUY BUTTONS -->
             <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
-                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+              <div class="flex items-center justify-between bg-slate-900/80 px-3 py-1.5 rounded-xl border border-white/10">
+                <span class="text-xs font-mono text-slate-300">Ticket Quantity:</span>
                 <div class="flex items-center gap-2">
-                  <button onclick="adjust2048Qty(100, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
-                  <input type="number" id="qty-2048-100" value="1" min="1" max="100" onchange="update2048Price(100)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
-                  <button onclick="adjust2048Qty(100, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
-                  <div class="flex gap-1 pl-1">
-                    <button onclick="set2048Qty(100, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
-                    <button onclick="set2048Qty(100, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-16 px-2 py-1 bg-slate-950 border border-white/20 rounded-lg text-center font-mono font-bold text-white text-sm focus:outline-none focus:border-cyan-400" />
+                  <div class="flex gap-1">
+                    
+                    
                   </div>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <button onclick="buy2048Ticket(100, 'USDC')" id="buy-btn-usdc-100" class="py-2 px-3 rounded-xl bg-purple-500 hover:bg-purple-400 text-white text-xs font-mono font-black transition-all text-center">
+                <button onclick="buy2048Ticket(100, 'USDC')" id="buy-btn-usdc-100" class="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-mono font-black transition-all text-center">
                   BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="lbl-cost-usdc-100">100.00</span>)
                 </button>
-                <button onclick="buy2048Ticket(100, 'PVP')" id="buy-btn-pvp-100" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP (<span id="lbl-qty-pvp-100">2</span> ATTEMPTS 🔥)
+                <button onclick="buy2048Ticket(100, 'PVP')" id="buy-btn-pvp-100" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP ($<span id="lbl-cost-pvp-100">100.00</span> • <span id="lbl-qty-pvp-100">2</span> ATTEMPTS 🔥)
                 </button>
               </div>
             </div>
           </div>
-
           <!-- TIER 1000 -->
-          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-amber-500/40 cursor-pointer transition-all space-y-3">
+          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="font-mono font-black text-white text-lg">$1,000 TIER</span>
+                <span class="font-mono font-black text-white text-lg">$1,000.00 TIER</span>
                 <span id="tier-tag-1000" class="hidden px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300">ACTIVE TIER</span>
               </div>
               <span class="text-xs text-emerald-400 font-mono font-bold">Top Prize: $12,000.00 USDC</span>
@@ -439,25 +430,24 @@
               <span>Entry: <strong>$1,000.00 / ticket</strong></span>
             </div>
             
+            <!-- QUANTITY (UP/DOWN ARROWS) & BUY BUTTONS -->
             <div class="pt-2 border-t border-white/5 flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-xl border border-white/10">
-                <span class="text-[11px] font-mono text-slate-400 pl-2">Quantity:</span>
+              <div class="flex items-center justify-between bg-slate-900/80 px-3 py-1.5 rounded-xl border border-white/10">
+                <span class="text-xs font-mono text-slate-300">Ticket Quantity:</span>
                 <div class="flex items-center gap-2">
-                  <button onclick="adjust2048Qty(1000, -1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">-</button>
-                  <input type="number" id="qty-2048-1000" value="1" min="1" max="100" onchange="update2048Price(1000)" class="w-12 text-center bg-transparent font-mono font-bold text-white text-sm focus:outline-none" />
-                  <button onclick="adjust2048Qty(1000, 1)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono font-bold flex items-center justify-center">+</button>
-                  <div class="flex gap-1 pl-1">
-                    <button onclick="set2048Qty(1000, 5)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300">5x</button>
-                    <button onclick="set2048Qty(1000, 10)" class="px-2 py-1 text-[10px] font-mono rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">10x</button>
+                  <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-16 px-2 py-1 bg-slate-950 border border-white/20 rounded-lg text-center font-mono font-bold text-white text-sm focus:outline-none focus:border-cyan-400" />
+                  <div class="flex gap-1">
+                    
+                    
                   </div>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <button onclick="buy2048Ticket(1000, 'USDC')" id="buy-btn-usdc-1000" class="py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-mono font-black transition-all text-center">
+                <button onclick="buy2048Ticket(1000, 'USDC')" id="buy-btn-usdc-1000" class="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-mono font-black transition-all text-center">
                   BUY <span id="lbl-qty-usdc-1000">1</span> TICKET ($<span id="lbl-cost-usdc-1000">1,000.00</span>)
                 </button>
-                <button onclick="buy2048Ticket(1000, 'PVP')" id="buy-btn-pvp-1000" class="py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP (<span id="lbl-qty-pvp-1000">2</span> ATTEMPTS 🔥)
+                <button onclick="buy2048Ticket(1000, 'PVP')" id="buy-btn-pvp-1000" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
+                  $PVP ($<span id="lbl-cost-pvp-1000">1,000.00</span> • <span id="lbl-qty-pvp-1000">2</span> ATTEMPTS 🔥)
                 </button>
               </div>
             </div>
@@ -489,7 +479,7 @@
 
           <!-- THE 4X4 PLAYABLE GRID -->
           <div class="relative w-full flex justify-center">
-            <div class="grid-2048 relative" id="board-container" tabindex="0">
+            <div class="grid-2048 relative" id="board-container">
               <!-- Tiles rendered dynamically by JS -->
             </div>
 
@@ -511,21 +501,21 @@
             </div>
           </div>
 
-          <!-- CONTROLS & D-PAD FOR MOBILE / TOUCH -->
+          <!-- CONTROLS & D-PAD FOR MOBILE / TOUCH / MOUSE -->
           <div class="w-full flex flex-col items-center mt-4 space-y-3">
             <div class="w-full flex justify-between items-center text-xs font-mono text-slate-400">
-              <span>⌨️ Use Arrow Keys / WASD or Swipe</span>
-              <span class="text-emerald-400 font-bold" id="board-status-text">🎮 Active Game Ready</span>
+              <span>⌨️ Use Arrow Keys / WASD or Click Buttons Below</span>
+              <span class="text-emerald-400 font-bold" id="board-status-text">🎮 Ready To Play</span>
             </div>
 
-            <!-- ON-SCREEN D-PAD -->
-            <div class="grid grid-cols-3 gap-2 w-48 pt-2">
+            <!-- ON-SCREEN D-PAD BUTTONS (UP, LEFT, DOWN, RIGHT) -->
+            <div class="grid grid-cols-3 gap-2 w-48 pt-1">
               <div></div>
-              <button onclick="handle2048Move('up')" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/10 text-white font-mono font-black text-sm flex items-center justify-center active:scale-95 transition-all">▲</button>
+              <button onclick="handle2048Move('up')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▲</button>
               <div></div>
-              <button onclick="handle2048Move('left')" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/10 text-white font-mono font-black text-sm flex items-center justify-center active:scale-95 transition-all">◀</button>
-              <button onclick="handle2048Move('down')" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/10 text-white font-mono font-black text-sm flex items-center justify-center active:scale-95 transition-all">▼</button>
-              <button onclick="handle2048Move('right')" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-white/10 text-white font-mono font-black text-sm flex items-center justify-center active:scale-95 transition-all">▶</button>
+              <button onclick="handle2048Move('left')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">◀</button>
+              <button onclick="handle2048Move('down')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▼</button>
+              <button onclick="handle2048Move('right')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▶</button>
             </div>
           </div>
 
@@ -871,7 +861,7 @@
         btn.classList.add('active');
       }
 
-      if (tabId === 'vault2048') { if (board[0].every(x => x === 0)) startNew2048Game(); else render2048(); }
+      if (tabId === 'vault2048') { if (board2048[0].every(function(x) { return x === 0; })) startNew2048Game(); else render2048(); }
       if (tabId === 'jackpot') renderJackpotSubmissions();
       if (tabId === 'leaderboard') updateLeaderboardUI();
       if (tabId === 'history') updateHistoryUI();
@@ -1021,22 +1011,51 @@
       selected2048Tier = tier;
       [1, 5, 10, 100, 1000].forEach(t => {
         const card = document.getElementById('tier-card-2048-' + t);
+        const tag = document.getElementById('tier-tag-' + t);
         if (card) {
           if (t === tier) {
-            card.className = 'glass-panel p-4 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all flex items-center justify-between';
+            card.className = 'glass-panel p-4 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all space-y-3';
+            if (tag) tag.classList.remove('hidden');
           } else {
-            card.className = 'glass-panel p-4 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all flex items-center justify-between';
+            card.className = 'glass-panel p-4 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all space-y-3';
+            if (tag) tag.classList.add('hidden');
           }
         }
       });
     }
 
+    
+    function update2048Price(tier) {
+      const qtyInput = document.getElementById("qty-2048-" + tier);
+      if (!qtyInput) return;
+      let qty = parseInt(qtyInput.value) || 1;
+      if (qty < 1) { qty = 1; qtyInput.value = 1; }
+      if (qty > 100) { qty = 100; qtyInput.value = 100; }
+
+      const totalCost = (qty * tier).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const pvpAttempts = qty * 2;
+
+      const lblQtyUsdc = document.getElementById("lbl-qty-usdc-" + tier);
+      const lblCostUsdc = document.getElementById("lbl-cost-usdc-" + tier);
+      const lblQtyPvp = document.getElementById("lbl-qty-pvp-" + tier);
+      const lblCostPvp = document.getElementById("lbl-cost-pvp-" + tier);
+
+      if (lblQtyUsdc) lblQtyUsdc.innerText = qty;
+      if (lblCostUsdc) lblCostUsdc.innerText = totalCost;
+      if (lblQtyPvp) lblQtyPvp.innerText = pvpAttempts;
+      if (lblCostPvp) lblCostPvp.innerText = totalCost;
+    }
+
     function buy2048Ticket(tier, currency) {
       select2048Tier(tier);
-      if (currency === 'PVP') {
-        alert('Purchased $' + tier + ' Tier attempt using $PVP Token! 2X TICKETS BONUS ACTIVATED (2 Game Attempts Granted)');
+      const qtyInput = document.getElementById("qty-2048-" + tier);
+      const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+      const totalCost = (qty * tier).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (currency === "PVP") {
+        const attempts = qty * 2;
+        alert("Purchased " + qty + " ticket(s) ($" + totalCost + ") using native $PVP token! 2X BONUS: " + attempts + " Game Attempts Granted.");
       } else {
-        alert('Purchased 1 attempt for $' + tier + ' USDC in 2048 Skill Vaults!');
+        alert("Purchased " + qty + " ticket(s) for $" + totalCost + " USDC in 2048 Skill Vaults!");
       }
     }
 
