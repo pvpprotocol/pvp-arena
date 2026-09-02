@@ -723,7 +723,7 @@
             <span class="text-xs font-mono font-bold text-cyan-400 tracking-wider">LIVE 1 HOUR ROUND</span>
           </div>
           <h2 class="text-2xl font-black text-white font-mono">GRAND JACKPOT MULTI TARGET</h2>
-          <p class="text-xs text-slate-300 mt-1">Predict the target price/index. 80% of vault settles to the closest prediction. Max 3 tickets per wallet.</p>
+          <p class="text-xs text-slate-300 mt-1">Predict the target outcome before the round entry countdown locks. 80% net vault awarded to correct predictions (split equally on multiple winners). If no winner, pool value rolls over to the next round. Max 3 tickets per wallet.</p>
         </div>
 
         <div class="flex items-center gap-4">
@@ -1058,14 +1058,17 @@
         </div>
 
         <div class="space-y-4 border-t border-white/10 pt-8">
-          <h2 class="text-xl font-bold text-white font-mono">3. Grand Jackpot Multi Target System & 1 Hour Rounds</h2>
+          <h2 class="text-xl font-bold text-white font-mono">3. Grand Jackpot Multi Target System & Round Lifecycle</h2>
           <p class="text-sm text-slate-300 leading-relaxed">
-            Jackpot rounds operate on strict 1 hour countdown cycles. When the countdown timer reaches zero, round submissions automatically lock.
+            Jackpot pools operate on strict round countdown cycles with dedicated participation windows. When the countdown timer reaches zero, round submissions automatically lock for verifiable settlement.
           </p>
           <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
-            <li><strong class="text-white">Multi Target Prediction:</strong> Supports measurable market prices, numeric indices, and quantifiable onchain targets.</li>
-            <li><strong class="text-white">Max 3 Tickets Per Wallet:</strong> Strict per wallet cap to prevent whale dominance and guarantee fair distribution.</li>
-            <li><strong class="text-white">Prize Settlement:</strong> 80% of the vault goes to the wallet with the closest numeric prediction, with 20% protocol fee.</li>
+            <li><strong class="text-white">Fixed Entry Countdown:</strong> Participants have a defined time window to enter each tier before the round timer expires.</li>
+            <li><strong class="text-white">Correct Prediction Reward:</strong> The reward is distributed to any participant who provides the correct outcome prediction for the round.</li>
+            <li><strong class="text-white">Prize Pool Rollover (Unclaimed Vaults):</strong> If no participant provides a correct prediction, 100% of the vault's USD value is preserved and carried over to boost the next jackpot round.</li>
+            <li><strong class="text-white">Equal Split for Multiple Winners:</strong> If multiple participants predict the correct target, the net prize pool is split equally among all winning participants.</li>
+            <li><strong class="text-white">Reward & Fee Structure:</strong> 80% of the vault is distributed as the net prize reward, with 20% allocated as protocol fee (consistent with standard platform fee economics).</li>
+            <li><strong class="text-white">Max 3 Tickets Per Wallet:</strong> Strict per-wallet cap to prevent whale dominance and guarantee fair distribution.</li>
           </ul>
         </div>
 
