@@ -1593,26 +1593,33 @@
       }, 1000);
     }
 
-    function renderJackpotSubmissions() {
+        function renderJackpotSubmissions() {
       const tbody = document.getElementById("jackpot-submissions-body");
       if (!tbody) return;
       tbody.innerHTML = "";
 
-      const filtered = selectedJackpotFilter === 'all' 
-        ? liveSubmissions 
-        : liveSubmissions.filter(s => s.tier === Number(selectedJackpotFilter));
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">No predictions for this tier yet</td></tr>`;
+      if (liveSubmissions.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center py-10 text-slate-400 font-mono">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <span class="text-2xl">🎯</span>
+                <span class="text-xs font-bold text-slate-300">No predictions recorded yet</span>
+                <span class="text-[10px] text-slate-500">Be the first player to submit a prediction in this round ($1, $5, $10, $100, $1,000 Tiers)!</span>
+              </div>
+            </td>
+          </tr>
+        `;
         return;
       }
 
-      filtered.forEach(s => {
+      liveSubmissions.forEach(s => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-white/5 transition-all";
+        const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `$${s.tier} Tier`;
         tr.innerHTML = `
           <td class="p-3.5 text-slate-400">${s.time}</td>
-          <td class="p-3.5 font-bold text-cyan-400">$${s.tier} Tier</td>
+          <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-amber-400' : 'text-cyan-400'}">${tierDisplay}</td>
           <td class="p-3.5 font-bold text-white">${s.wallet}</td>
           <td class="p-3.5 text-emerald-400 font-bold">${s.target}</td>
           <td class="p-3.5 text-center font-bold text-slate-300">${s.ticketNum}</td>
@@ -1622,22 +1629,6 @@
       });
     }
 
-    function filterJackpotSubmissions(tier) {
-      selectedJackpotFilter = tier;
-      ['all', 1, 5, 10, 100, 1000].forEach(t => {
-        const btn = document.getElementById('filter-btn-' + t);
-        if (btn) {
-          if (t === tier || (t === 'all' && tier === 'all')) {
-            btn.className = 'px-3 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
-          } else {
-            btn.className = 'px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10';
-          }
-        }
-      });
-      renderJackpotSubmissions();
-    }
-
-    
     function updateJackpotDynamicUI() {
       [1, 5, 10, 100, 1000].forEach(t => {
         const pCount = jackpotTierStats[t] ? jackpotTierStats[t].tickets : 0;
