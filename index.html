@@ -2451,20 +2451,140 @@
 
     // 10 ACTIVE BINARY DUEL QUESTIONS
     const DUEL_QUESTIONS = [
-      { id: 1, icon: "₿", category: "CRYPTO", title: "Will Bitcoin (BTC) stay above $65,000 this month?", desc: "BTC price holds above $65,000 support level on major feeds." },
-      { id: 2, icon: "Ξ", category: "CRYPTO", title: "Will Ethereum (ETH) trade above $2,500 by end of week?", desc: "ETH breaks and sustains above $2,500 mark before weekly close." },
-      { id: 3, icon: "🏹", category: "ROBINHOOD", title: "Will Robinhood Chain daily transaction count break 100,000?", desc: "Robinhood Chain onchain activity crosses 100,000 daily transactions." },
-      { id: 4, icon: "◎", category: "CRYPTO", title: "Will Solana (SOL) outperform Ethereum in 7-day gains?", desc: "SOL percentage return exceeds ETH over the next 7-day window." },
-      { id: 5, icon: "🪙", category: "COMMODITIES", title: "Will Gold (XAU) maintain above $2,500/oz?", desc: "Spot Gold remains above $2,500/oz threshold throughout the week." },
-      { id: 6, icon: "🔵", category: "BASE", title: "Will Base daily active addresses cross 2,000,000?", desc: "Base network registers over 2M unique active addresses in 24 hours." },
-      { id: 7, icon: "📈", category: "EQUITIES", title: "Will Robinhood AAPL tokenized stock close green this Friday?", desc: "Apple tokenized shares finish Friday regular session with positive return." },
-      { id: 8, icon: "🎮", category: "ARENA", title: "Will any player achieve a 2048 tile in the Arena today?", desc: "At least one participant scores a verified 2048 tile in the 1v1 skill games." },
-      { id: 9, icon: "🏦", category: "MACRO", title: "Will the Federal Reserve cut interest rates at the next FOMC?", desc: "FOMC official policy announcement initiates benchmark rate reduction." },
-      { id: 10, icon: "🌐", category: "MARKET", title: "Will total crypto market cap break $2.5 Trillion this month?", desc: "Aggregated crypto market capitalization surpasses $2.5T threshold." }
+      { 
+        id: 1, 
+        icon: "₿", 
+        category: "CRYPTO", 
+        title: "کندل روزانه بیت‌کوین سبز بسته می‌شود یا قرمز؟ (Will BTC Daily Candle Close GREEN or RED?)", 
+        desc: "پیش‌بینی بسته شدن کندل روزانه بیت‌کوین (UTC 00:00) به صورت صعودی (سبز) یا نزولی (قرمز).",
+        optA: "GREEN",
+        optALabel: "GREEN (سبز 🟢)",
+        optASub: "Bullish Close",
+        optB: "RED",
+        optBLabel: "RED (قرمز 🔴)",
+        optBSub: "Bearish Close"
+      },
+      { 
+        id: 2, 
+        icon: "Ξ", 
+        category: "CRYPTO", 
+        title: "کندل روزانه اتریوم سبز بسته می‌شود یا قرمز؟ (Will ETH Daily Candle Close GREEN or RED?)", 
+        desc: "پیش‌بینی بسته شدن کندل روزانه اتریوم به صورت صعودی (سبز) یا نزولی (قرمز).",
+        optA: "GREEN",
+        optALabel: "GREEN (سبز 🟢)",
+        optASub: "Bullish Close",
+        optB: "RED",
+        optBLabel: "RED (قرمز 🔴)",
+        optBSub: "Bearish Close"
+      },
+      { 
+        id: 3, 
+        icon: "₿", 
+        category: "CRYPTO", 
+        title: "آیا بیت‌کوین این هفته بالای ۶۵,۰۰۰ دلار باقی می‌ماند؟ (Will BTC Stay Above $65,000?)", 
+        desc: "حفظ سطح حمایتی ۶۵ هزار دلار توسط بیت‌کوین تا پایان هفته جاری.",
+        optA: "YES",
+        optALabel: "YES (بله 🟢)",
+        optASub: "Above $65,000",
+        optB: "NO",
+        optBLabel: "NO (خیر 🔴)",
+        optBSub: "Below $65,000"
+      },
+      { 
+        id: 4, 
+        icon: "🏹", 
+        category: "ROBINHOOD", 
+        title: "آیا تراکنش‌های روزانه رابین‌هود چین بالای ۱۰۰,۰۰۰ تراکنش ثبت می‌شود؟", 
+        desc: "ثبت بیش از ۱۰۰ هزار تراکنش درون‌زنجیره‌ای در ۲۴ ساعت آینده در شبکه رابین‌هود.",
+        optA: "YES",
+        optALabel: "YES (بله 🟢)",
+        optASub: "> 100k Txs",
+        optB: "NO",
+        optBLabel: "NO (خیر 🔴)",
+        optBSub: "< 100k Txs"
+      },
+      { 
+        id: 5, 
+        icon: "◎", 
+        category: "CRYPTO", 
+        title: "عملکرد ۲۴ ساعته سولانا بهتر خواهد بود یا اتریوم؟ (SOL vs ETH Outperformance)", 
+        desc: "درصد بازدهی مثبت سولانا در ۲۴ ساعت آینده نسبت به اتریوم بیشتر خواهد بود.",
+        optA: "SOL",
+        optALabel: "SOL (سولانا 🟢)",
+        optASub: "SOL Outperforms",
+        optB: "ETH",
+        optBLabel: "ETH (اتریوم 🔴)",
+        optBSub: "ETH Outperforms"
+      },
+      { 
+        id: 6, 
+        icon: "🪙", 
+        category: "COMMODITIES", 
+        title: "آیا انس جهانی طلا امروز بالای ۲,۵۰۰ دلار بسته می‌شود؟ (Gold > $2,500)", 
+        desc: "قیمت لحظه‌ای انس طلا (XAU/USD) در پایان معاملات روزانه بالای ۲۵۰۰ دلار.",
+        optA: "YES",
+        optALabel: "YES (بله 🟢)",
+        optASub: "Above $2,500",
+        optB: "NO",
+        optBLabel: "NO (خیر 🔴)",
+        optBSub: "Below $2,500"
+      },
+      { 
+        id: 7, 
+        icon: "🔵", 
+        category: "BASE", 
+        title: "آیا آدرس‌های فعال روزانه شبکه بیس از مرز ۲ میلیون عبور می‌کند؟", 
+        desc: "ثبت بیش از ۲ میلیون والت فعال روزانه در شبکه لایه دو بیس.",
+        optA: "YES",
+        optALabel: "YES (بله 🟢)",
+        optASub: "> 2M Users",
+        optB: "NO",
+        optBLabel: "NO (خیر 🔴)",
+        optBSub: "< 2M Users"
+      },
+      { 
+        id: 8, 
+        icon: "📈", 
+        category: "EQUITIES", 
+        title: "کندل روزانه سهام توکنیزه اپل (AAPL) سبز بسته می‌شود یا قرمز؟", 
+        desc: "بسته شدن کندل روزانه سهام توکنیزه شرکت اپل در پلتفرم رابین‌هود به صورت مثبت یا منفی.",
+        optA: "GREEN",
+        optALabel: "GREEN (سبز 🟢)",
+        optASub: "Positive Close",
+        optB: "RED",
+        optBLabel: "RED (قرمز 🔴)",
+        optBSub: "Negative Close"
+      },
+      { 
+        id: 9, 
+        icon: "🎮", 
+        category: "ARENA", 
+        title: "آیا در بازی ۲۰۴۸ آرنا امروز بازیکنی به تایل ۲۰۴۸ دست می‌یابد؟", 
+        desc: "ثبت رکورد دستیابی به تایل ۲۰۴۸ توسط بازیکنان در لیدربورد مهارت.",
+        optA: "YES",
+        optALabel: "YES (بله 🟢)",
+        optASub: "Achieved",
+        optB: "NO",
+        optBLabel: "NO (خیر 🔴)",
+        optBSub: "Not Achieved"
+      },
+      { 
+        id: 10, 
+        icon: "🌐", 
+        category: "MARKET", 
+        title: "آیا مارکت‌کپ کل بازار کریپتو بالای ۲.۵ تریلیون دلار تثبیت می‌شود؟", 
+        desc: "تثبیت ارزش کل بازار ارزهای دیجیتال بالای سطح ۲.۵ تریلیون دلار در این ماه.",
+        optA: "YES",
+        optALabel: "YES (بله 🟢)",
+        optASub: "> $2.5T Cap",
+        optB: "NO",
+        optBLabel: "NO (خیر 🔴)",
+        optBSub: "< $2.5T Cap"
+      }
     ];
 
     let selectedDuelQuestionId = 1;
-    let selectedDuelOption = 'YES';
+    let selectedDuelOption = 'GREEN';
     let selectedDuelTier = 5;
 
     function renderDuelQuestions() {
@@ -2495,27 +2615,62 @@
         `;
         grid.insertAdjacentHTML("beforeend", qHtml);
       });
+      updateOptionButtonsUI();
       updateDuelSummary();
     }
 
     function selectDuelQuestion(qId) {
       selectedDuelQuestionId = qId;
+      const q = DUEL_QUESTIONS.find(x => x.id === qId) || DUEL_QUESTIONS[0];
+      selectedDuelOption = q.optA;
       renderDuelQuestions();
+    }
+
+    function updateOptionButtonsUI() {
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const btnA = document.getElementById("opt-btn-yes");
+      const btnB = document.getElementById("opt-btn-no");
+
+      if (btnA) {
+        btnA.setAttribute("onclick", `selectDuelOption('${q.optA}')`);
+        btnA.innerHTML = `
+          <span class="text-lg">🟢</span>
+          <span>${q.optALabel}</span>
+          <span class="text-[10px] font-normal text-emerald-400/90">${q.optASub}</span>
+        `;
+      }
+
+      if (btnB) {
+        btnB.setAttribute("onclick", `selectDuelOption('${q.optB}')`);
+        btnB.innerHTML = `
+          <span class="text-lg">🔴</span>
+          <span>${q.optBLabel}</span>
+          <span class="text-[10px] font-normal text-slate-400">${q.optBSub}</span>
+        `;
+      }
+
+      applyOptionStyles(q);
     }
 
     function selectDuelOption(opt) {
       selectedDuelOption = opt;
-      const btnYes = document.getElementById("opt-btn-yes");
-      const btnNo = document.getElementById("opt-btn-no");
-
-      if (opt === 'YES') {
-        if (btnYes) btnYes.className = "p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]";
-        if (btnNo) btnNo.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]";
-      } else {
-        if (btnYes) btnYes.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-emerald-500/50 hover:text-emerald-300 hover:scale-[1.02]";
-        if (btnNo) btnNo.className = "p-3.5 rounded-xl border border-rose-500/80 bg-rose-500/20 text-rose-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02]";
-      }
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      applyOptionStyles(q);
       updateDuelSummary();
+    }
+
+    function applyOptionStyles(q) {
+      const btnA = document.getElementById("opt-btn-yes");
+      const btnB = document.getElementById("opt-btn-no");
+      if (!btnA || !btnB) return;
+
+      if (selectedDuelOption === q.optA) {
+        btnA.className = "p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]";
+        btnB.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]";
+      } else {
+        btnA.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-emerald-500/50 hover:text-emerald-300 hover:scale-[1.02]";
+        btnB.className = "p-3.5 rounded-xl border border-rose-500/80 bg-rose-500/20 text-rose-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02]";
+      }
     }
 
     function selectDuelTier(tier) {
@@ -2545,13 +2700,15 @@
       const summaryEl = document.getElementById("duel-summary-text");
       if (!summaryEl) return;
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
-      const optColor = selectedDuelOption === 'YES' ? 'text-emerald-400' : 'text-rose-400';
-      const oppositeOpt = selectedDuelOption === 'YES' ? 'NO' : 'YES';
+      const oppositeOpt = selectedDuelOption === q.optA ? q.optB : q.optA;
+      const isGreen = selectedDuelOption === q.optA;
+      const optColor = isGreen ? 'text-emerald-400' : 'text-rose-400';
+      const oppColor = !isGreen ? 'text-emerald-400' : 'text-rose-400';
 
       summaryEl.innerHTML = `
         <span class="text-white">${q.title}</span> • 
         You Pick: <span class="${optColor} font-bold">${selectedDuelOption}</span> • 
-        Opponent Takes: <span class="text-slate-300 font-bold">${oppositeOpt}</span> • 
+        Opponent Takes: <span class="${oppColor} font-bold">${oppositeOpt}</span> • 
         Stake: <span class="text-cyan-400 font-bold">${selectedDuelTier} USDG</span>
       `;
     }
@@ -2838,7 +2995,7 @@
       if (btn) btn.disabled = true;
 
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
-      const oppositeOption = selectedDuelOption === 'YES' ? 'NO' : 'YES';
+      const oppositeOption = (selectedDuelOption === q.optA) ? q.optB : q.optA;
 
       try {
         let txHash = await executeOnchainPayment(selectedDuelTier, "USDG", `Create Duel Tier ${selectedDuelTier}.00 [${selectedDuelOption}]`);
