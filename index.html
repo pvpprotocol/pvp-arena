@@ -1285,8 +1285,8 @@
     // WEB3 & WALLET CONNECTION
     let isConnected = false;
     let userAddress = null;
-    const ROBINHOOD_CHAIN_ID = "0x1237"; // 4663 in hex
-    const ESCROW_CONTRACT = "0x1e7e733d3fc72051f719537473f68f2204832dae";
+    var ROBINHOOD_CHAIN_ID = "0x2710"; // 4663 in hex
+    var ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
 
     async function connectWallet() {
       const btnText = document.getElementById("walletBtnText");
@@ -1376,9 +1376,9 @@
 
     
     // ONCHAIN TRANSACTION EXECUTOR (ROBINHOOD CHAIN)
-    const USDG_TOKEN_ADDRESS = "0x89C6F61b4A5eb14397B1C82A2E4459648939c0fa"; // Official USDG on Robinhood Chain
-    const PVP_TOKEN_ADDRESS = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3"; // Native $PVP token
-    const ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
+    var USDG_TOKEN_ADDRESS = "0x89C6F61b4A5eb14397B1C82A2E4459648939c0fa"; // Official USDG on Robinhood Chain
+    var PVP_TOKEN_ADDRESS = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3"; // Native $PVP token
+    var ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
 
     async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry") {
       if (!window.ethereum) {
