@@ -2692,7 +2692,11 @@
         if (duelData.status === 'cancelled') {
           delete store[duelData.id];
         } else {
-          store[duelData.id] = duelData;
+          const existing = store[duelData.id] || {};
+          store[duelData.id] = { ...existing, ...duelData };
+          // Ensure valid tier and payout
+          if (!store[duelData.id].tier) store[duelData.id].tier = 1;
+          if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
         }
         localStorage.setItem('pvp_active_duels_store_v7', JSON.stringify(store));
       } catch(e) {}
@@ -2870,31 +2874,41 @@
       const emptyMsg = document.getElementById("no-duels-msg");
       if (emptyMsg) emptyMsg.remove();
 
-      if (duelData.status === 'cancelled') {
-        const existing = document.getElementById(`duel-row-${duelData.id}`);
-        if (existing) {
-          existing.remove();
-          updateDuelCounter();
+      if (!duelData || !duelData.id || duelData.status === 'cancelled') {
+        if (duelData && duelData.id) {
+          const existing = document.getElementById(`duel-row-${duelData.id}`);
+          if (existing) {
+            existing.remove();
+            updateDuelCounter();
+          }
         }
         return;
       }
 
+      // Merge with locally stored full object if partial update arrived
+      const store = getLocalDuels();
+      if (store[duelData.id]) {
+        duelData = { ...store[duelData.id], ...duelData };
+      }
+
+      const safeTier = (duelData.tier !== undefined && duelData.tier !== null) ? Number(duelData.tier) : 1;
+      const safePayout = duelData.payout ? duelData.payout : (safeTier * 1.8).toFixed(2);
+      const questionText = duelData.questionText || "Will BTC Daily Candle Close GREEN?";
+      const creatorOption = duelData.creatorOption || "YES";
+      const requiredOpponentOption = duelData.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
+      const creatorColor = creatorOption === "YES" ? "text-emerald-400" : "text-rose-400";
+      const opponentColor = requiredOpponentOption === "YES" ? "text-emerald-400" : "text-rose-400";
+
       const isCreator = userAddress && duelData.creator && (userAddress.toLowerCase() === duelData.creator.toLowerCase());
       const isOpponent = userAddress && duelData.opponent && (userAddress.toLowerCase() === duelData.opponent.toLowerCase());
       const isParticipant = isCreator || isOpponent;
-      const isVip = duelData.tier >= 1000;
+      const isVip = safeTier >= 1000;
       const tierBadgeClass = isVip 
         ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
         : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
 
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
       const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
-
-      const questionText = duelData.questionText || "Will BTC Daily Candle Close GREEN?";
-      const creatorOption = duelData.creatorOption || "YES";
-      const requiredOpponentOption = duelData.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
-      const creatorColor = creatorOption === "YES" ? "text-emerald-400" : "text-rose-400";
-      const opponentColor = requiredOpponentOption === "YES" ? "text-emerald-400" : "text-rose-400";
 
       const duelDeadline = duelData.deadline || (Date.now() + 24 * 3600 * 1000);
       const isExpired = Date.now() >= duelDeadline;
@@ -2908,12 +2922,12 @@
       if (duelData.status === 'open') {
         if (isExpired) {
           // EXPIRED / UNMATCHED: Submissions closed
-          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED (DEADLINE PASSED)</span>`;
+          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
           if (isCreator) {
             actionSection = `
               <div class="flex items-center gap-2">
                 ${statusBadge}
-                <button onclick="cancelDuel('${duelData.id}', ${duelData.tier})" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold text-xs shadow-md shadow-amber-500/30 hover:brightness-110 flex items-center gap-1">
+                <button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold text-xs shadow-md shadow-amber-500/30 hover:brightness-110 flex items-center gap-1">
                   💰 RECLAIM DEPOSIT
                 </button>
               </div>
@@ -2929,17 +2943,18 @@
         } else {
           // ACTIVE AND OPEN
           if (isCreator) {
-            statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT (${requiredOpponentOption})</span>`;
+            // Clean, dedicated waiting box without any undefined text
+            statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-2 shadow-sm"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
             actionSection = `
               <div class="flex items-center gap-2">
                 ${statusBadge}
-                <button onclick="cancelDuel('${duelData.id}', ${duelData.tier})" class="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 text-xs font-bold font-mono transition-all">CANCEL</button>
+                <button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 text-xs font-bold font-mono transition-all">CANCEL</button>
               </div>
             `;
           } else {
             actionSection = `
-              <button onclick="acceptDuel('${duelData.id}', ${duelData.tier})" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black text-xs font-mono uppercase tracking-wider transition-all shadow-md shadow-cyan-500/20 active:scale-95 flex items-center gap-1.5">
-                ⚔️ ACCEPT: TAKE [${requiredOpponentOption}] (${duelData.tier} USDG)
+              <button onclick="acceptDuel('${duelData.id}', ${safeTier})" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black text-xs font-mono uppercase tracking-wider transition-all shadow-md shadow-cyan-500/20 active:scale-95 flex items-center gap-1.5">
+                ⚔️ ACCEPT: TAKE [${requiredOpponentOption}] (${safeTier} USDG)
               </button>
             `;
           }
@@ -2948,7 +2963,7 @@
       // STATUS 2: IN PROGRESS / WAITING OUTCOME (Strict 1v1 Locked)
       else if (duelData.status === 'in_progress') {
         cardBgClass = "bg-indigo-950/30 border-indigo-500/40";
-        statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 text-xs flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> WAITING OUTCOME (1v1 BATTLE)</span>`;
+        statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> WAITING OUTCOME (1v1 BATTLE)</span>`;
 
         if (isParticipant) {
           actionSection = `
@@ -2978,7 +2993,7 @@
         actionSection = `
           <div class="flex items-center gap-2 font-mono text-xs">
             ${statusBadge}
-            <span class="text-emerald-400 font-bold">${isWinner ? '🎉 YOU WON +' + duelData.payout + ' USDG!' : 'Winner: ' + shortWinner}</span>
+            <span class="text-emerald-400 font-bold">${isWinner ? '🎉 YOU WON +' + safePayout + ' USDG!' : 'Winner: ' + shortWinner}</span>
           </div>
         `;
       }
@@ -2988,12 +3003,12 @@
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-xl bg-slate-900/80 border border-white/10 flex flex-col items-center justify-center shrink-0">
               <span class="text-[10px] text-slate-400 font-mono uppercase font-bold">TIER</span>
-              <span class="text-sm font-black font-mono text-cyan-400">$${duelData.tier}</span>
+              <span class="text-sm font-black font-mono text-cyan-400">$${safeTier}</span>
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-mono font-bold text-white">${questionText}</span>
-                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${duelData.tier} USDG</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${safeTier} USDG</span>
                 ${isCreator ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">Your Match</span>' : ''}
                 <span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                   ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
@@ -3004,25 +3019,25 @@
                 <span class="text-slate-600 font-bold">VS</span>
                 <span>P2: <span class="text-slate-200">${duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent'}</span> [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>
                 <span class="text-slate-500">•</span>
-                <span class="text-emerald-400 font-semibold">Prize: $${duelData.payout} USDG</span>
+                <span class="text-emerald-400 font-semibold">Prize: $${safePayout} USDG</span>
               </div>
             </div>
           </div>
-          <div class="shrink-0 flex items-center gap-2 justify-end">
+          <div class="shrink-0 flex items-center gap-2">
             ${actionSection}
           </div>
         </div>
       `;
 
-      const existingRow = document.getElementById(`duel-row-${duelData.id}`);
-      if (existingRow) {
-        existingRow.outerHTML = cardHtml;
+      const existingEl = document.getElementById(`duel-row-${duelData.id}`);
+      if (existingEl) {
+        existingEl.outerHTML = cardHtml;
       } else {
         container.insertAdjacentHTML("afterbegin", cardHtml);
       }
       updateDuelCounter();
     }
-    
+
     async function createDuel() {
       if (!isConnected) {
         await connectWallet();
