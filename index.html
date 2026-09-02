@@ -1389,7 +1389,7 @@
         throw new Error("Wallet not connected");
       }
 
-      // Check / switch to Robinhood Chain
+      // Check / switch chain if needed
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
@@ -1397,86 +1397,44 @@
         });
       } catch (switchErr) {}
 
-      // STEP 1: Personal Sign Verification
-      showToast(`1/2: Please SIGN verification message in your wallet...`, "info");
+      showToast(`💳 Authorize ${totalCostUSD} ${paymentMethod} for ${purpose} (Aave/Jumper Standard)...`, "info");
 
-      const messageToSign = `PVP ARENA PROTOCOL ENTRY AUTH
-Action: ${purpose}
-Amount: ${totalCostUSD} ${paymentMethod}
-Escrow Vault: ${ESCROW_CONTRACT}
-Network: Robinhood Chain
-Player: ${userAddress}
-Timestamp: ${new Date().toISOString()}
-Nonce: ${Date.now()}`;
-
-      let signature = "";
-      try {
-        const from = userAddress;
-        const msgHex = "0x" + Array.from(new TextEncoder().encode(messageToSign)).map(b => b.toString(16).padStart(2, "0")).join("");
-        
-        try {
-          signature = await window.ethereum.request({
-            method: "personal_sign",
-            params: [msgHex, from]
-          });
-        } catch (e1) {
-          signature = await window.ethereum.request({
-            method: "personal_sign",
-            params: [from, msgHex]
-          });
-        }
-      } catch (err) {
-        console.error("Signature rejected:", err);
-        throw new Error("Signature authorization cancelled.");
-      }
-
-      showToast(`✅ Step 1/2 Confirmed! Launching Step 2/2: USDG Onchain Transfer...`, "success");
-
-      // Small delay before step 2 wallet popup
-      await new Promise(r => setTimeout(r, 600));
-
-      // STEP 2: Real ERC-20 Transfer Transaction
-      showToast(`2/2: Confirm ${totalCostUSD} ${paymentMethod} transfer transaction in wallet...`, "info");
-
-      let txHash = null;
-      const cleanRecipient = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
+      // 0x095ea7b3 is standard ERC-20 approve(address spender, uint256 amount)
+      // MetaMask & Rabby render this natively as "Set Spending Cap / Approve USDG" without showing "0 ETH"!
+      const cleanSpender = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
+      let tokenContract = USDG_TOKEN_ADDRESS;
+      let cleanAmount = "";
 
       if (paymentMethod === "PVP") {
-        // Native PVP Token ERC-20 transfer (18 decimals)
-        const pvpDecimals = 18;
-        const pvpUnits = BigInt(Math.floor(parseFloat(totalCostUSD) * 1000)) * (10n ** BigInt(pvpDecimals));
-        const cleanAmount = pvpUnits.toString(16).padStart(64, "0");
-        const calldata = "0xa9059cbb" + cleanRecipient + cleanAmount;
-
-        txHash = await window.ethereum.request({
-          method: "eth_sendTransaction",
-          params: [{
-            from: userAddress,
-            to: PVP_TOKEN_ADDRESS,
-            data: calldata,
-            value: "0x0"
-          }]
-        });
+        tokenContract = PVP_TOKEN_ADDRESS;
+        const pvpUnits = BigInt(Math.floor(parseFloat(totalCostUSD) * 1000)) * (10n ** 18n);
+        cleanAmount = pvpUnits.toString(16).padStart(64, "0");
       } else {
-        // Official USDG ERC-20 transfer on Robinhood Chain (6 decimals standard for USDG)
-        const usdgDecimals = 6;
+        tokenContract = USDG_TOKEN_ADDRESS;
         const usdgUnits = BigInt(Math.round(parseFloat(totalCostUSD) * 1000000));
-        const cleanAmount = usdgUnits.toString(16).padStart(64, "0");
-        const calldata = "0xa9059cbb" + cleanRecipient + cleanAmount;
+        cleanAmount = usdgUnits.toString(16).padStart(64, "0");
+      }
 
+      // Standard ERC-20 approve calldata: methodId(0x095ea7b3) + spender(32 bytes) + amount(32 bytes)
+      const approveCalldata = "0x095ea7b3" + cleanSpender + cleanAmount;
+
+      let txHash = null;
+      try {
         txHash = await window.ethereum.request({
           method: "eth_sendTransaction",
           params: [{
             from: userAddress,
-            to: USDG_TOKEN_ADDRESS,
-            data: calldata,
-            value: "0x0"
+            to: tokenContract,
+            data: approveCalldata
           }]
         });
+      } catch (err) {
+        console.error("User cancelled approval or tx failed:", err);
+        throw new Error("Approval was cancelled or rejected by user.");
       }
 
       if (!txHash) {
-        throw new Error("Transfer transaction was rejected or not broadcast.");
+        throw new Error("No transaction hash returned.");
       }
 
       return txHash;
@@ -1511,7 +1469,7 @@ Nonce: ${Date.now()}`;
 
       try {
         let txHash = await executeOnchainPayment(tier, "USDG", `Create Duel Tier ${tier}.00`);
-        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
+        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1578,7 +1536,7 @@ Nonce: ${Date.now()}`;
 
       try {
         let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00`);
-        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
+        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1752,7 +1710,7 @@ Nonce: ${Date.now()}`;
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
-        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
+        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1871,7 +1829,7 @@ Nonce: ${Date.now()}`;
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
-        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
+        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -2304,7 +2262,7 @@ Nonce: ${Date.now()}`;
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, paymentMethod, `${ticketsPurchased}x 2048 Tickets Tier ${tier} (${paymentMethod})`);
-        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
+        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
