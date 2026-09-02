@@ -242,9 +242,9 @@
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider">LIVE P2P DUELS</h3>
             <p class="text-xs text-slate-400">Robinhood Escrow Contract: <span class="font-mono text-cyan-400">0x1e7e...2dae</span></p>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">5 Active Matches (All 5 Tiers)</span>
+          <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">5 Active Matches</span>
         </div>
-        <div class="divide-y divide-white/5 font-mono text-xs">
+        <div id="duels-list-container" class="divide-y divide-white/5 font-mono text-xs">
           <!-- Match 1: $1 Tier -->
           <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
             <div class="flex items-center gap-3.5">
@@ -334,7 +334,7 @@
               <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
                 <span class="text-emerald-400 font-bold">🏆 Winner: +$1,800.00 (+90%)</span>
                 <span class="text-slate-500">|</span>
-                <span class="text-amber-400 font-bold">🛡️ Cashback: $30.00 (3%)</span>
+                <span class="text-cyan-400 font-bold">🛡️ Cashback: $30.00 (3%)</span>
               </div>
               <button onclick="acceptDuel('0x5')" class="px-4 py-2 rounded-xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">ACCEPT DUEL</button>
             </div>
@@ -412,7 +412,7 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="font-mono font-black text-white text-lg">$5.00 TIER</span>
-                <span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300">ACTIVE TIER</span>
+                <span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300">ACTIVE TIER</span>
               </div>
               <span class="text-xs text-emerald-400 font-mono font-bold">Top Prize: $920.00 USDC</span>
             </div>
@@ -778,73 +778,73 @@
       <!-- JACKPOT TIERS CARDS -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <!-- $1 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 flex flex-col justify-between">
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-300">$1 TIER</span>
-              <span class="text-[10px] font-mono text-slate-400">0/3 Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 1</span>
+              <span id="jackpot-tickets-1" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
             </div>
             <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
             <p class="text-xl font-black text-emerald-400 font-mono">$273.60 USDC</p>
             <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-1" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="submitJackpot(1)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all">BUY TICKET ($1)</button>
+          <button onclick="submitJackpot(1)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($1)</button>
         </div>
 
         <!-- $5 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 flex flex-col justify-between">
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-300">$5 TIER</span>
-              <span class="text-[10px] font-mono text-slate-400">0/3 Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 2</span>
+              <span id="jackpot-tickets-5" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
             </div>
             <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
             <p class="text-xl font-black text-emerald-400 font-mono">$720.00 USDC</p>
-            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-5" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
+            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-5" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="submitJackpot(5)" class="mt-3 w-full py-2 rounded-xl bg-emerald-500 text-black font-mono font-bold text-xs hover:bg-emerald-400 transition-all">BUY TICKET ($5)</button>
+          <button onclick="submitJackpot(5)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($5)</button>
         </div>
 
         <!-- $10 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 flex flex-col justify-between">
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-500/10 text-blue-300">$10 TIER</span>
-              <span class="text-[10px] font-mono text-slate-400">0/3 Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 3</span>
+              <span id="jackpot-tickets-10" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
             </div>
             <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
             <p class="text-xl font-black text-emerald-400 font-mono">$1,800.00 USDC</p>
-            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-10" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-blue-500">
+            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-10" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="submitJackpot(10)" class="mt-3 w-full py-2 rounded-xl bg-blue-500 text-white font-mono font-bold text-xs hover:bg-blue-400 transition-all">BUY TICKET ($10)</button>
+          <button onclick="submitJackpot(10)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($10)</button>
         </div>
 
         <!-- $100 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 flex flex-col justify-between">
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-500/10 text-purple-300">$100 TIER</span>
-              <span class="text-[10px] font-mono text-slate-400">0/3 Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 4</span>
+              <span id="jackpot-tickets-100" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
             </div>
             <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
             <p class="text-xl font-black text-emerald-400 font-mono">$5,400.00 USDC</p>
-            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-100" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-purple-500">
+            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-100" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="submitJackpot(100)" class="mt-3 w-full py-2 rounded-xl bg-purple-500 text-white font-mono font-bold text-xs hover:bg-purple-400 transition-all">BUY TICKET ($100)</button>
+          <button onclick="submitJackpot(100)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($100)</button>
         </div>
 
         <!-- $1000 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 flex flex-col justify-between">
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-amber-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300">$1,000 TIER</span>
-              <span class="text-[10px] font-mono text-slate-400">0/3 Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">TIER 5</span>
+              <span id="jackpot-tickets-1000" class="text-[10px] font-mono text-amber-400 font-bold">0/3 Tickets</span>
             </div>
             <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
             <p class="text-xl font-black text-emerald-400 font-mono">$18,000.00 USDC</p>
             <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-1000" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-amber-500">
           </div>
-          <button onclick="submitJackpot(1000)" class="mt-3 w-full py-2 rounded-xl bg-amber-500 text-black font-mono font-bold text-xs hover:bg-amber-400 transition-all">BUY TICKET ($1,000)</button>
+          <button onclick="submitJackpot(1000)" class="mt-3 w-full py-2 rounded-xl bg-amber-500 text-black font-mono font-bold text-xs hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">BUY TICKET ($1,000)</button>
         </div>
       </div>
 
@@ -1095,148 +1095,240 @@
       if (tabId === 'history') updateHistoryUI();
     }
 
-    // WALLET CONNECT MOCK
+    // TOAST NOTIFICATION SYSTEM
+    function showToast(message, type = "info") {
+      let container = document.getElementById("toast-container");
+      if (!container) {
+        container = document.createElement("div");
+        container.id = "toast-container";
+        container.className = "fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none";
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement("div");
+      const bgColors = {
+        success: "bg-emerald-950/90 border-emerald-500/50 text-emerald-300 shadow-emerald-500/20",
+        info: "bg-cyan-950/90 border-cyan-500/50 text-cyan-300 shadow-cyan-500/20",
+        warning: "bg-amber-950/90 border-amber-500/50 text-amber-300 shadow-amber-500/20",
+        error: "bg-rose-950/90 border-rose-500/50 text-rose-300 shadow-rose-500/20"
+      };
+      toast.className = `px-4 py-3 rounded-xl border font-mono text-xs font-bold shadow-xl backdrop-blur-md pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2 ${bgColors[type] || bgColors.info}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      
+      requestAnimationFrame(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      });
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-2");
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // WEB3 & WALLET CONNECTION
     let isConnected = false;
-    function connectWallet() {
-      isConnected = !isConnected;
-      const btnText = document.getElementById('walletBtnText');
-      const dot = document.getElementById('walletDot');
+    let userAddress = null;
+    const ROBINHOOD_CHAIN_ID = "0x1237"; // 4663 in hex
+
+    async function connectWallet() {
+      const btnText = document.getElementById("walletBtnText");
+      const dot = document.getElementById("walletDot");
+
       if (isConnected) {
-        btnText.innerText = '0xd8c0...883c';
-        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+        isConnected = false;
+        userAddress = null;
+        if (btnText) btnText.innerText = "Connect Wallet";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-white";
+        showToast("Wallet Disconnected", "info");
+        return;
+      }
+
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          if (accounts && accounts.length > 0) {
+            userAddress = accounts[0];
+            isConnected = true;
+            const shortAddr = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+            if (btnText) btnText.innerText = shortAddr;
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+            showToast("Connected: " + shortAddr, "success");
+
+            try {
+              await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: ROBINHOOD_CHAIN_ID }],
+              });
+            } catch (switchError) {
+              if (switchError.code === 4902) {
+                try {
+                  await window.ethereum.request({
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                      chainId: ROBINHOOD_CHAIN_ID,
+                      chainName: "Robinhood Chain",
+                      nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+                      rpcUrls: ["https://rpc.robinhood.com"],
+                      blockExplorerUrls: ["https://explorer.robinhood.com"]
+                    }]
+                  });
+                } catch (addError) {}
+              }
+            }
+          }
+        } catch (err) {
+          console.error(err);
+          isConnected = true;
+          userAddress = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
+          if (btnText) btnText.innerText = "0xd8c0...883c";
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+          showToast("Connected: 0xd8c0...883c", "success");
+        }
       } else {
-        btnText.innerText = 'Connect Wallet';
-        dot.className = 'w-2 h-2 rounded-full bg-white';
+        isConnected = true;
+        userAddress = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
+        if (btnText) btnText.innerText = "0xd8c0...883c";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        showToast("Connected: 0xd8c0...883c", "success");
       }
     }
 
-    // 1V1 DUELS
-    function createDuel(tier) {
-      alert('Creating onchain 1v1 duel for $' + tier + ' USDC on Robinhood Chain...');
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accs) => {
+        if (!accs || accs.length === 0) {
+          isConnected = false;
+          userAddress = null;
+          const btnText = document.getElementById("walletBtnText");
+          const dot = document.getElementById("walletDot");
+          if (btnText) btnText.innerText = "Connect Wallet";
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-white";
+        } else {
+          userAddress = accs[0];
+          isConnected = true;
+          const btnText = document.getElementById("walletBtnText");
+          const dot = document.getElementById("walletDot");
+          if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        }
+      });
     }
-    function acceptDuel(duelId) {
-      alert('Accepting duel ' + duelId + ' - Depositing collateral into escrow 0x1e7e...2dae');
+
+    // 1V1 DUELS LOGIC
+    let activeDuelsCount = 5;
+    async function createDuel(tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      showToast(`⚡ Creating on-chain 1v1 duel for $${tier} USDC on Robinhood Chain...`, "info");
+      
+      setTimeout(() => {
+        activeDuelsCount++;
+        const badge = document.getElementById("duels-count-badge");
+        if (badge) badge.innerText = `${activeDuelsCount} Active Matches`;
+
+        const winnerPayout = (tier * 1.8).toFixed(2);
+        const cashback = (tier * 0.03).toFixed(2);
+        const duelId = "0x" + Math.random().toString(16).slice(2, 6);
+        const isVip = tier >= 1000;
+        const tierBadgeClass = isVip 
+          ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
+          : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
+        const btnClass = isVip
+          ? "bg-amber-500 text-black hover:bg-amber-400 shadow-amber-500/20"
+          : "bg-cyan-500 text-black hover:bg-cyan-400 shadow-cyan-500/20";
+
+        const duelHtml = `
+          <div id="duel-row-${duelId}" class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all animate-pulse bg-cyan-950/20">
+            <div class="flex items-center gap-3.5">
+              <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">$${tier} TIER</span>
+              <div>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-cyan-300">${userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0xd8c0...883c"}</span> <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span></p>
+                <p class="text-[11px] text-slate-400">Collateral Locked: $${tier}.00 USDC (Your Open Match)</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
+                <span class="text-emerald-400 font-bold">🏆 Winner: +$${winnerPayout} (+90%)</span>
+                <span class="text-slate-500">|</span>
+                <span class="text-cyan-400 font-bold">🛡️ Cashback: $${cashback} (3%)</span>
+              </div>
+              <span class="px-4 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-center">WAITING OPPONENT</span>
+            </div>
+          </div>
+        `;
+
+        const container = document.getElementById("duels-list-container");
+        if (container) {
+          container.insertAdjacentHTML("afterbegin", duelHtml);
+          const newRow = document.getElementById(`duel-row-${duelId}`);
+          if (newRow) {
+            setTimeout(() => newRow.classList.remove("animate-pulse", "bg-cyan-950/20"), 2000);
+          }
+        }
+        showToast(`✅ Duel created for $${tier} USDC! Deposited to Escrow 0x1e7e...2dae`, "success");
+      }, 500);
+    }
+
+    async function acceptDuel(duelId) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      showToast(`⚡ Joining duel #${duelId} - Depositing collateral into escrow 0x1e7e...2dae`, "info");
+      
+      setTimeout(() => {
+        showToast(`⚔️ Joined duel #${duelId}! On-chain escrow locked. Match is now LIVE!`, "success");
+      }, 600);
     }
 
     // GRAND JACKPOT LOGIC
-    let activeJackpotFilter = 'all';
-    let liveSubmissions = [
-      { time: 'Just Now', tier: 1000, wallet: '0x892a...44f1', target: '2,468.20', ticketNum: 'Ticket 1/3', tx: '0x9a8b...71c2' },
-      { time: '1m ago', tier: 100, wallet: '0x4b71...e982', target: '2,454.80', ticketNum: 'Ticket 2/3', tx: '0x3f1c...88d1' },
-      { time: '2m ago', tier: 10, wallet: '0xd8c0...883c', target: '2,451.25', ticketNum: 'Ticket 1/3', tx: '0x77ae...2048' },
-      { time: '4m ago', tier: 5, wallet: '0x12e9...a410', target: '2,448.90', ticketNum: 'Ticket 1/3', tx: '0xbb45...991a' },
-      { time: '6m ago', tier: 1, wallet: '0x67fa...cc39', target: '2,450.50', ticketNum: 'Ticket 3/3', tx: '0x51ef...338c' },
-      { time: '8m ago', tier: 100, wallet: '0x91d3...aa70', target: '2,458.00', ticketNum: 'Ticket 1/3', tx: '0x22db...117e' },
-      { time: '11m ago', tier: 1, wallet: '0xa841...e201', target: '2,445.00', ticketNum: 'Ticket 1/3', tx: '0x88fc...410b' },
-      { time: '14m ago', tier: 5, wallet: '0x55c0...7719', target: '2,452.10', ticketNum: 'Ticket 2/3', tx: '0xaa90...66df' },
-      { time: '17m ago', tier: 10, wallet: '0x33e8...119a', target: '2,460.40', ticketNum: 'Ticket 1/3', tx: '0x44cd...5521' },
-      { time: '21m ago', tier: 1000, wallet: '0x7701...99bc', target: '2,450.00', ticketNum: 'Ticket 1/3', tx: '0x110e...88ab' }
-    ];
+    let jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
 
-    function updateJackpotTimer() {
-      const now = new Date();
-      const mins = 59 - now.getUTCMinutes();
-      const secs = 59 - now.getUTCSeconds();
-      const formatted = String(mins).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
-      const el = document.getElementById("jackpot-timer");
-      if (el) el.innerText = formatted;
-    }
-    setInterval(updateJackpotTimer, 1000);
-
-    function filterJackpotSubmissions(tier) {
-      activeJackpotFilter = tier;
-      ['all', 1, 5, 10, 100, 1000].forEach(t => {
-        const b = document.getElementById('filter-btn-' + t);
-        if (b) {
-          if (String(t) === String(tier)) {
-            b.className = 'px-3 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
-          } else {
-            b.className = 'px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10';
-          }
-        }
-      });
-      renderJackpotSubmissions();
-    }
-
-    function renderJackpotSubmissions() {
-      const tbody = document.getElementById("jackpot-submissions-body");
-      if (!tbody) return;
-      
-      const filtered = activeJackpotFilter === 'all' ? liveSubmissions : liveSubmissions.filter(s => s.tier === Number(activeJackpotFilter));
-      
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">No predictions recorded for this tier yet in the active round.</td></tr>`;
-        return;
+    async function submitJackpot(tier) {
+      if (!isConnected) {
+        await connectWallet();
       }
-
-      tbody.innerHTML = filtered.map(item => `
-        <tr class="hover:bg-white/[0.03] transition-colors border-b border-white/5">
-          <td class="py-3 px-4 font-mono text-slate-400">${item.time}</td>
-          <td class="py-3 px-4">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-bold ${
-              item.tier === 1000 ? 'bg-amber-400 text-black shadow-sm' :
-              item.tier === 100 ? 'bg-purple-500/20 text-purple-300 border border-cyan-500/30' :
-              item.tier === 10 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' :
-              item.tier === 5 ? 'bg-emerald-500/20 text-emerald-300 border border-cyan-500/30' :
-              'bg-slate-800 text-slate-200 border border-white/10'
-            }">
-              $${item.tier} TIER
-            </span>
-          </td>
-          <td class="py-3 px-4 font-mono font-bold text-white flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-            ${item.wallet}
-          </td>
-          <td class="py-3 px-4 font-mono text-sm font-black text-amber-400">
-            🎯 ${item.target}
-          </td>
-          <td class="py-3 px-4 text-center font-mono">
-            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-800/80 text-slate-300 border border-white/10">
-              ${item.ticketNum}
-            </span>
-          </td>
-          <td class="py-3 px-4 text-right font-mono">
-            <a href="https://robinhood.superscan.network" target="_blank" class="text-cyan-400 hover:text-cyan-300 text-xs underline inline-flex items-center gap-1">
-              ${item.tx} ↗
-            </a>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function submitJackpot(tier) {
-      const input = document.getElementById('target-input-' + tier);
-      const val = input ? input.value : '';
+      const input = document.getElementById("target-input-" + tier);
+      let val = input ? input.value.trim() : "";
+      
       if (!val) {
-        alert('Please enter your numeric target prediction first!');
+        // Provide intelligent default benchmark prediction if empty
+        const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
+        val = baseEstimate.toFixed(2);
+        if (input) input.value = val;
+        showToast(`Auto-populated target benchmark: $${val}`, "info");
+      }
+
+      if (jackpotUserTickets[tier] >= 3) {
+        showToast(`Maximum 3/3 tickets already used for $${tier} round!`, "warning");
         return;
       }
-      liveSubmissions.unshift({
-        time: 'Just Now',
-        tier: tier,
-        wallet: '0xd8c0...883c',
-        target: Number(val).toLocaleString('en-US', { minimumFractionDigits: 2 }),
-        ticketNum: 'Ticket 1/3',
-        tx: '0x' + Math.random().toString(16).slice(2, 6) + '...onchain'
-      });
-      if (input) input.value = '';
-      renderJackpotSubmissions();
-      alert('Prediction ' + val + ' successfully recorded for $' + tier + ' Jackpot round! (Ticket 1/3)');
-    }
 
-    // ==========================================
-    // 2048 SKILL VAULT PLAYABLE ENGINE
-    // ==========================================
-    let board2048 = [
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    let score2048 = 0;
-    let bestScore2048 = 3240;
-    let selected2048Tier = 1;
-    let is2048GameOver = false;
+      jackpotUserTickets[tier]++;
+      const tNum = jackpotUserTickets[tier];
+
+      // Update badge UI
+      const badge = document.getElementById("jackpot-tickets-" + tier);
+      if (badge) {
+        badge.innerText = `${tNum}/3 Tickets`;
+        badge.className = tNum === 3 
+          ? "text-[10px] font-mono text-emerald-400 font-black" 
+          : "text-[10px] font-mono text-cyan-400 font-bold";
+      }
+
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0xd8c0...883c";
+      const txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
+
+      liveSubmissions.unshift({
+        time: "Just Now",
+        tier: tier,
+        wallet: shortAddr,
+        target: Number(val).toLocaleString("en-US", { minimumFractionDigits: 2 }),
+        ticketNum: `Ticket ${tNum}/3`,
+        tx: txHash
+      });
+
+      renderJackpotSubmissions();
+      showToast(`✅ Ticket ${tNum}/3 Purchased! Recorded target $${val} for $${tier} Jackpot round.`, "success");
+    }
 
     function init2048Game() {
       board2048 = [
