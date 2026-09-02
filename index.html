@@ -1382,16 +1382,25 @@
 
     async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry") {
       if (!window.ethereum) {
-        showToast("⚠️ Web3 wallet not detected. Using simulated signature mode.", "warning");
+        showToast("⚠️ Web3 wallet not detected. Using simulated mode.", "warning");
         return "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
       }
       if (!userAddress) {
         throw new Error("Wallet not connected");
       }
 
-      showToast(`✍️ Sign authorization for ${totalCostUSD} ${paymentMethod} (${purpose})...`, "info");
+      // Check / switch to Robinhood Chain
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: ROBINHOOD_CHAIN_ID }],
+        });
+      } catch (switchErr) {}
 
-      const messageToSign = `PVP ARENA PROTOCOL AUTH
+      // STEP 1: Personal Sign Verification
+      showToast(`1/2: Please SIGN verification message in your wallet...`, "info");
+
+      const messageToSign = `PVP ARENA PROTOCOL ENTRY AUTH
 Action: ${purpose}
 Amount: ${totalCostUSD} ${paymentMethod}
 Escrow Vault: ${ESCROW_CONTRACT}
@@ -1418,14 +1427,59 @@ Nonce: ${Date.now()}`;
         }
       } catch (err) {
         console.error("Signature rejected:", err);
-        throw new Error("Signature request cancelled by user.");
+        throw new Error("Signature authorization cancelled.");
       }
 
-      if (!signature) {
-        throw new Error("No signature returned.");
+      showToast(`✅ Step 1/2 Confirmed! Launching Step 2/2: USDG Onchain Transfer...`, "success");
+
+      // Small delay before step 2 wallet popup
+      await new Promise(r => setTimeout(r, 600));
+
+      // STEP 2: Real ERC-20 Transfer Transaction
+      showToast(`2/2: Confirm ${totalCostUSD} ${paymentMethod} transfer transaction in wallet...`, "info");
+
+      let txHash = null;
+      const cleanRecipient = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
+
+      if (paymentMethod === "PVP") {
+        // Native PVP Token ERC-20 transfer (18 decimals)
+        const pvpDecimals = 18;
+        const pvpUnits = BigInt(Math.floor(parseFloat(totalCostUSD) * 1000)) * (10n ** BigInt(pvpDecimals));
+        const cleanAmount = pvpUnits.toString(16).padStart(64, "0");
+        const calldata = "0xa9059cbb" + cleanRecipient + cleanAmount;
+
+        txHash = await window.ethereum.request({
+          method: "eth_sendTransaction",
+          params: [{
+            from: userAddress,
+            to: PVP_TOKEN_ADDRESS,
+            data: calldata,
+            value: "0x0"
+          }]
+        });
+      } else {
+        // Official USDG ERC-20 transfer on Robinhood Chain (6 decimals standard for USDG)
+        const usdgDecimals = 6;
+        const usdgUnits = BigInt(Math.round(parseFloat(totalCostUSD) * 1000000));
+        const cleanAmount = usdgUnits.toString(16).padStart(64, "0");
+        const calldata = "0xa9059cbb" + cleanRecipient + cleanAmount;
+
+        txHash = await window.ethereum.request({
+          method: "eth_sendTransaction",
+          params: [{
+            from: userAddress,
+            to: USDG_TOKEN_ADDRESS,
+            data: calldata,
+            value: "0x0"
+          }]
+        });
       }
 
-      return signature;
+      if (!txHash) {
+        throw new Error("Transfer transaction was rejected or not broadcast.");
+      }
+
+      return txHash;
     }
     
     async function requestSafeSignature(messageText) {
@@ -1457,7 +1511,7 @@ Nonce: ${Date.now()}`;
 
       try {
         let txHash = await executeOnchainPayment(tier, "USDG", `Create Duel Tier ${tier}.00`);
-        showToast(`✅ Signature Verified: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
+        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1524,7 +1578,7 @@ Nonce: ${Date.now()}`;
 
       try {
         let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00`);
-        showToast(`✅ Signature Verified: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
+        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1698,7 +1752,7 @@ Nonce: ${Date.now()}`;
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
-        showToast(`✅ Signature Verified: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
+        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1817,7 +1871,7 @@ Nonce: ${Date.now()}`;
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
-        showToast(`✅ Signature Verified: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
+        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -2250,7 +2304,7 @@ Nonce: ${Date.now()}`;
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, paymentMethod, `${ticketsPurchased}x 2048 Tickets Tier ${tier} (${paymentMethod})`);
-        showToast(`✅ Signature Verified: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
+        showToast(`✅ Signature & USDG Transfer Broadcast: ${txHash.slice(0, 10)}...`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
