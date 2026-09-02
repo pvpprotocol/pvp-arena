@@ -4001,41 +4001,102 @@ Nonce: ${Date.now()}`;
 
 <script>
 
-    // === GunDB Realtime Global P2P Sync ===
+    // === MULTI-CHANNEL REALTIME SYNC (GunDB + BroadcastChannel + LocalStorage) ===
     let gun = null;
     let duelsRelay = null;
+    let duelBroadcast = null;
+
     try {
       if (typeof Gun !== 'undefined') {
-        gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://gundb.relay.peer.ooo/gun']);
-        duelsRelay = gun.get('pvp-arena-global-duels-v2');
+        gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://peer.wallie.io/gun', 'https://gundb.relay.peer.ooo/gun']);
+        duelsRelay = gun.get('pvp-arena-global-duels-v3');
       }
-    } catch (e) {
-      console.warn("GunDB Init notice:", e);
+    } catch(e) {
+      console.warn("Gun init:", e);
     }
 
-    function syncDuelToRelay(duelData) {
-      if (duelsRelay && duelData && duelData.id) {
-        duelsRelay.get(duelData.id).put(JSON.stringify(duelData));
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        duelBroadcast = new BroadcastChannel('pvp_duels_channel');
+        duelBroadcast.onmessage = (event) => {
+          if (event.data) {
+            handleIncomingDuel(event.data);
+          }
+        };
       }
+    } catch(e) {}
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'pvp_latest_duel' && e.newValue) {
+        try {
+          const d = JSON.parse(e.newValue);
+          handleIncomingDuel(d);
+        } catch(err){}
+      }
+    });
+
+    function getLocalDuels() {
+      try {
+        return JSON.parse(localStorage.getItem('pvp_active_duels_store') || '{}');
+      } catch(e) { return {}; }
+    }
+
+    function saveLocalDuel(duelData) {
+      try {
+        const store = getLocalDuels();
+        if (duelData.status === 'open') {
+          store[duelData.id] = duelData;
+        } else {
+          delete store[duelData.id];
+        }
+        localStorage.setItem('pvp_active_duels_store', JSON.stringify(store));
+        localStorage.setItem('pvp_latest_duel', JSON.stringify(duelData));
+      } catch(e) {}
+    }
+
+    function broadcastDuel(duelData) {
+      saveLocalDuel(duelData);
+      if (duelBroadcast) {
+        try { duelBroadcast.postMessage(duelData); } catch(e){}
+      }
+      if (duelsRelay && duelData && duelData.id) {
+        try { duelsRelay.get(duelData.id).put(JSON.stringify(duelData)); } catch(e){}
+      }
+    }
+
+    function handleIncomingDuel(duelData) {
+      if (!duelData || !duelData.id) return;
+      if (duelData.status === 'accepted' || duelData.status === 'cancelled') {
+        const row = document.getElementById(`duel-row-${duelData.id}`);
+        if (row) row.remove();
+        return;
+      }
+      renderDuelCard(duelData);
     }
 
     function initGlobalDuelsListener() {
-      if (!duelsRelay) return;
-      duelsRelay.map().on((dataStr, duelId) => {
-        if (!dataStr) return;
-        try {
-          const duelData = typeof dataStr === 'string' ? JSON.parse(dataStr) : dataStr;
-          if (duelData && duelData.id && duelData.creator) {
-            renderGlobalDuelRow(duelData);
-          }
-        } catch(err) {
-          console.error("Sync parse err:", err);
-        }
+      // 1. Load from localStorage
+      const localStore = getLocalDuels();
+      Object.values(localStore).forEach(d => {
+        if (d && d.status === 'open') renderDuelCard(d);
       });
+
+      // 2. Load from GunDB
+      if (duelsRelay) {
+        duelsRelay.map().on((dataStr, id) => {
+          if (!dataStr) return;
+          try {
+            const d = typeof dataStr === 'string' ? JSON.parse(dataStr) : dataStr;
+            if (d && d.id) {
+              handleIncomingDuel(d);
+            }
+          } catch(err){}
+        });
+      }
     }
 
-    function renderGlobalDuelRow(duelData) {
-      const container = document.getElementById("duels-list-container") || document.getElementById("active-duels-list");
+    function renderDuelCard(duelData) {
+      const container = document.getElementById("duels-list-container");
       if (!container) return;
 
       const emptyMsg = document.getElementById("no-duels-msg");
@@ -4043,7 +4104,7 @@ Nonce: ${Date.now()}`;
 
       const existing = document.getElementById(`duel-row-${duelData.id}`);
       if (existing) {
-        if (duelData.status === 'accepted' || duelData.status === 'cancelled') {
+        if (duelData.status && duelData.status !== 'open') {
           existing.remove();
         }
         return;
@@ -4051,39 +4112,132 @@ Nonce: ${Date.now()}`;
 
       if (duelData.status && duelData.status !== 'open') return;
 
+      const isCreator = userAddress && duelData.creator && (userAddress.toLowerCase() === duelData.creator.toLowerCase());
       const isVip = duelData.tier >= 1000;
       const tierBadgeClass = isVip 
         ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
         : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
 
+      let actionSection = "";
+      if (isCreator) {
+        actionSection = `
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT
+            </span>
+            <button onclick="cancelDuel('${duelData.id}', ${duelData.tier})" class="px-3 py-2 rounded-xl bg-rose-500/20 text-rose-300 font-bold border border-rose-500/40 hover:bg-rose-500 hover:text-white transition-all text-xs shadow-md shadow-rose-500/20 flex items-center gap-1">
+              <span>✕</span> CANCEL
+            </button>
+          </div>`;
+      } else {
+        actionSection = `
+          <div class="flex items-center gap-2">
+            <button onclick="acceptDuel('${duelData.id}', ${duelData.tier})" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs rounded-xl shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-1.5">
+              <span>⚔️</span> ACCEPT DUEL (${duelData.tier} USDG)
+            </button>
+          </div>`;
+      }
+
       const duelHtml = `
         <div id="duel-row-${duelData.id}" class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all bg-cyan-950/20 border border-cyan-500/30 rounded-2xl my-2">
           <div class="flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-sm">
-              ⚔️
-            </div>
+            <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">${duelData.tier} USDG</span>
             <div>
-              <div class="flex items-center gap-2">
-                <span class="text-white font-semibold text-sm">${duelData.creator.slice(0,6)}...${duelData.creator.slice(-4)}</span>
-                <span class="px-2 py-0.5 text-xs rounded-full border ${tierBadgeClass}">${duelData.tier} USDG</span>
-              </div>
-              <div class="text-xs text-slate-400 mt-0.5">Prize: ${duelData.payout} USDG • Live Match</div>
+              <p class="font-bold text-white flex items-center gap-2">
+                ${isCreator ? "Your Match" : "Opponent: " + duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)}
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              </p>
+              <p class="text-[11px] text-slate-400">Prize Pool: ${duelData.payout} USDG • Collateral Locked: ${duelData.tier} USDG</p>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="acceptDuel('${duelData.id}', ${duelData.tier})" class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold text-xs rounded-xl shadow-lg shadow-cyan-500/20 transition-all">
-              Accept Duel
-            </button>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
+              <span class="text-emerald-400 font-bold">🏆 Winner: +${duelData.payout} (+90%)</span>
+              <span class="text-slate-500">|</span>
+              <span class="text-cyan-400 font-bold">🛡️ Cashback: ${duelData.cashback || (duelData.tier * 0.03).toFixed(2)} (3%)</span>
+            </div>
+            ${actionSection}
           </div>
-        </div>`;
+        </div>
+      `;
 
       container.insertAdjacentHTML("afterbegin", duelHtml);
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      setTimeout(initGlobalDuelsListener, 500);
-    });
+    async function createDuel(tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
 
-</script>
+      try {
+        let txHash = await executeOnchainPayment(tier, "USDG", `Create Duel Tier ${tier}.00`);
+        showToast(`✅ Entry Authorization & Deposit Successful!`, "success");
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Transaction rejected or cancelled.", "error");
+        return;
+      }
+
+      const winnerPayout = (tier * 1.8).toFixed(2);
+      const cashback = (tier * 0.03).toFixed(2);
+      const duelId = "0x" + Math.random().toString(16).slice(2, 6);
+      
+      const newDuel = {
+        id: duelId,
+        tier: tier,
+        creator: userAddress,
+        payout: winnerPayout,
+        cashback: cashback,
+        status: 'open',
+        createdAt: Date.now()
+      };
+
+      broadcastDuel(newDuel);
+      renderDuelCard(newDuel);
+      showToast(`✅ Match ${duelId} is live! Waiting for opponent.`, "success");
+    }
+
+    async function acceptDuel(duelId, tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      try {
+        let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00`);
+        showToast(`⚔️ Duel Accepted! Match is starting...`, "success");
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Accept duel rejected or cancelled.", "error");
+        return;
+      }
+
+      const cancelObj = { id: duelId, status: 'accepted' };
+      broadcastDuel(cancelObj);
+      const row = document.getElementById(`duel-row-${duelId}`);
+      if (row) row.remove();
+
+      showToast(`🎉 Match accepted! Entering Duel Arena...`, "success");
+    }
+
+    function cancelDuel(duelId, tier) {
+      const cancelObj = { id: duelId, status: 'cancelled' };
+      broadcastDuel(cancelObj);
+      const row = document.getElementById(`duel-row-${duelId}`);
+      if (row) row.remove();
+      showToast(`✅ Duel ${duelId} cancelled. USDG refunded.`, "info");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(initGlobalDuelsListener, 300);
+    });
+  </script>
 </body>
 </html>
