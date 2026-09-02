@@ -996,8 +996,8 @@
           <table class="w-full text-left text-xs font-mono">
             <thead class="bg-slate-900/80 text-slate-400 border-b border-white/5 uppercase">
               <tr>
-                <th class="p-3.5">Time</th>
                 <th class="p-3.5">Tier Level</th>
+                <th class="p-3.5">Time</th>
                 <th class="p-3.5">Player Wallet</th>
                 <th class="p-3.5">Exact Predicted Target</th>
                 <th class="p-3.5 text-center">Ticket Number</th>
@@ -1704,8 +1704,8 @@
         tr.className = "hover:bg-white/5 transition-all";
         const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `$${s.tier} Tier`;
         tr.innerHTML = `
-          <td class="p-3.5 text-slate-400">${s.time}</td>
           <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-amber-400' : 'text-cyan-400'}">${tierDisplay}</td>
+          <td class="p-3.5 text-slate-400">${s.time}</td>
           <td class="p-3.5 font-bold text-white">${s.wallet}</td>
           <td class="p-3.5 text-emerald-400 font-bold">${s.target}</td>
           <td class="p-3.5 text-center font-bold text-slate-300">${s.ticketNum}</td>
