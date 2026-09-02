@@ -39,44 +39,52 @@
       color: #22d3ee;
       border-color: rgba(6, 182, 212, 0.4);
     }
+    
     .grid-2048 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       grid-gap: 12px;
-      background: rgba(15, 23, 42, 0.9);
-      padding: 14px;
-      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 12px;
+      border-radius: 20px;
       border: 1px solid rgba(255, 255, 255, 0.1);
-      width: 100%;
-      max-width: 440px;
-      height: 440px;
-      margin: 0 auto;
+      width: 320px;
+      height: 320px;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    }
+    @media (min-width: 640px) {
+      .grid-2048 {
+        width: 380px;
+        height: 380px;
+        grid-gap: 14px;
+        padding: 14px;
+      }
     }
     .tile {
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 26px;
-      font-weight: 800;
+      font-weight: 900;
+      font-size: 1.25rem;
       border-radius: 12px;
-      transition: all 0.15s ease-in-out;
+      transition: all 0.12s ease-in-out;
       user-select: none;
     }
-    .tile-0 { background: rgba(255, 255, 255, 0.03); }
-    .tile-2 { background: #1e293b; color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.1); }
-    .tile-4 { background: #334155; color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.2); }
-    .tile-8 { background: #0284c7; color: #ffffff; box-shadow: 0 0 15px rgba(2, 132, 199, 0.4); }
-    .tile-16 { background: #0369a1; color: #ffffff; box-shadow: 0 0 15px rgba(3, 105, 161, 0.5); }
-    .tile-32 { background: #0891b2; color: #ffffff; box-shadow: 0 0 15px rgba(8, 145, 178, 0.5); }
-    .tile-64 { background: #0d9488; color: #ffffff; box-shadow: 0 0 15px rgba(13, 148, 136, 0.5); }
-    .tile-128 { background: #059669; color: #ffffff; font-size: 22px; box-shadow: 0 0 20px rgba(5, 150, 105, 0.6); }
-    .tile-256 { background: #d97706; color: #ffffff; font-size: 22px; box-shadow: 0 0 20px rgba(217, 119, 6, 0.6); }
-    .tile-512 { background: #ea580c; color: #ffffff; font-size: 22px; box-shadow: 0 0 25px rgba(234, 88, 12, 0.7); }
-    .tile-1024 { background: #dc2626; color: #ffffff; font-size: 18px; box-shadow: 0 0 30px rgba(220, 38, 38, 0.8); }
-    .tile-2048 { background: #e11d48; color: #ffffff; font-size: 18px; box-shadow: 0 0 35px rgba(225, 29, 72, 0.9); }
-    .tile-super { background: linear-gradient(135deg, #a855f7, #ec4899); color: #ffffff; font-size: 16px; box-shadow: 0 0 40px rgba(168, 85, 247, 0.9); }
-  </style>
+    .tile-0 { background: rgba(30, 41, 59, 0.5); color: transparent; }
+    .tile-2 { background: #e2e8f0; color: #0f172a; box-shadow: 0 2px 8px rgba(255,255,255,0.2); }
+    .tile-4 { background: #cbd5e1; color: #0f172a; box-shadow: 0 2px 8px rgba(255,255,255,0.3); }
+    .tile-8 { background: #fb923c; color: #ffffff; box-shadow: 0 0 12px rgba(251,146,60,0.4); }
+    .tile-16 { background: #f97316; color: #ffffff; box-shadow: 0 0 14px rgba(249,115,22,0.5); }
+    .tile-32 { background: #ef4444; color: #ffffff; box-shadow: 0 0 16px rgba(239,68,68,0.5); }
+    .tile-64 { background: #dc2626; color: #ffffff; box-shadow: 0 0 18px rgba(220,38,38,0.6); }
+    .tile-128 { background: #eab308; color: #0f172a; box-shadow: 0 0 20px rgba(234,179,8,0.6); font-size: 1.1rem; }
+    .tile-256 { background: #facc15; color: #0f172a; box-shadow: 0 0 22px rgba(250,204,21,0.7); font-size: 1.1rem; }
+    .tile-512 { background: #06b6d4; color: #ffffff; box-shadow: 0 0 24px rgba(6,182,212,0.7); font-size: 1.1rem; }
+    .tile-1024 { background: #3b82f6; color: #ffffff; box-shadow: 0 0 26px rgba(59,130,246,0.8); font-size: 0.95rem; }
+    .tile-2048 { background: #8b5cf6; color: #ffffff; box-shadow: 0 0 30px rgba(139,92,246,0.9); font-size: 0.95rem; }
+    .tile-super { background: #ec4899; color: #ffffff; box-shadow: 0 0 35px rgba(236,72,153,1); font-size: 0.85rem; }
+</style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
 
@@ -254,7 +262,7 @@
           <span class="text-2xl">🔥</span>
           <div>
             <h4 class="font-black text-white font-mono text-sm">SPECIAL $PVP PERK: 2X TICKETS BONUS</h4>
-            <p class="text-xs text-slate-300">Buy tickets using the native $PVP token and get 2x tickets (2 game attempts) per 1 ticket fee!</p>
+            <p class="text-xs text-slate-300">Buy tickets using the native $PVP token and get 2x tickets per 1 ticket fee!</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
@@ -269,7 +277,7 @@
         <div class="lg:col-span-5 space-y-4">
           <div class="flex items-center justify-between">
             <h3 class="font-black text-white font-mono text-base">SELECT TOURNAMENT TIER</h3>
-            <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-1 rounded-lg" id="user-tickets-badge">🎟️ <span id="tickets-count">1</span> Attempt Ready</span>
+            <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-1 rounded-lg" id="user-tickets-badge">🎟️ <span id="tickets-count">1</span> Ticket Ready</span>
           </div>
 
           <!-- TIER 1 -->
@@ -303,7 +311,7 @@
                   BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="lbl-cost-usdc-1">1.00</span>)
                 </button>
                 <button onclick="buy2048Ticket(1, 'PVP')" id="buy-btn-pvp-1" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP ($<span id="lbl-cost-pvp-1">1.00</span> • <span id="lbl-qty-pvp-1">2</span> ATTEMPTS 🔥)
+                  $PVP ($<span id="lbl-cost-pvp-1">1.00</span> • <span id="lbl-qty-pvp-1">2</span> TICKETS 🔥)
                 </button>
               </div>
             </div>
@@ -339,7 +347,7 @@
                   BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="lbl-cost-usdc-5">5.00</span>)
                 </button>
                 <button onclick="buy2048Ticket(5, 'PVP')" id="buy-btn-pvp-5" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP ($<span id="lbl-cost-pvp-5">5.00</span> • <span id="lbl-qty-pvp-5">2</span> ATTEMPTS 🔥)
+                  $PVP ($<span id="lbl-cost-pvp-5">5.00</span> • <span id="lbl-qty-pvp-5">2</span> TICKETS 🔥)
                 </button>
               </div>
             </div>
@@ -375,7 +383,7 @@
                   BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="lbl-cost-usdc-10">10.00</span>)
                 </button>
                 <button onclick="buy2048Ticket(10, 'PVP')" id="buy-btn-pvp-10" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP ($<span id="lbl-cost-pvp-10">10.00</span> • <span id="lbl-qty-pvp-10">2</span> ATTEMPTS 🔥)
+                  $PVP ($<span id="lbl-cost-pvp-10">10.00</span> • <span id="lbl-qty-pvp-10">2</span> TICKETS 🔥)
                 </button>
               </div>
             </div>
@@ -411,7 +419,7 @@
                   BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="lbl-cost-usdc-100">100.00</span>)
                 </button>
                 <button onclick="buy2048Ticket(100, 'PVP')" id="buy-btn-pvp-100" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP ($<span id="lbl-cost-pvp-100">100.00</span> • <span id="lbl-qty-pvp-100">2</span> ATTEMPTS 🔥)
+                  $PVP ($<span id="lbl-cost-pvp-100">100.00</span> • <span id="lbl-qty-pvp-100">2</span> TICKETS 🔥)
                 </button>
               </div>
             </div>
@@ -447,7 +455,7 @@
                   BUY <span id="lbl-qty-usdc-1000">1</span> TICKET ($<span id="lbl-cost-usdc-1000">1,000.00</span>)
                 </button>
                 <button onclick="buy2048Ticket(1000, 'PVP')" id="buy-btn-pvp-1000" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-mono font-bold transition-all text-center">
-                  $PVP ($<span id="lbl-cost-pvp-1000">1,000.00</span> • <span id="lbl-qty-pvp-1000">2</span> ATTEMPTS 🔥)
+                  $PVP ($<span id="lbl-cost-pvp-1000">1,000.00</span> • <span id="lbl-qty-pvp-1000">2</span> TICKETS 🔥)
                 </button>
               </div>
             </div>
@@ -521,6 +529,135 @@
 
         </div>
 
+      </div>
+
+    
+      <!-- LIVE TOP 3 RECORD HOLDERS ACROSS ALL TIERS IN 2048 -->
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 space-y-5 mt-6">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <div>
+              <h3 class="font-black text-white font-mono text-base">LIVE TOP 3 RECORD HOLDERS (ALL TIERS)</h3>
+              <p class="text-xs text-slate-400">Single Highest Record in Current 24H UTC Tournament Cycle</p>
+            </div>
+          </div>
+          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full">⚡ Live Sync Every Block</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          
+          <!-- $1 TIER TOP 3 -->
+          <div id="top3-tier-1" class="p-4 rounded-2xl bg-slate-900/80 border border-cyan-500/40 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$1.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$336.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-amber-400/30">
+                <span class="text-amber-400 font-bold">🥇 #1 0x8a92...3b1f</span>
+                <span class="text-white font-black">18,420 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-slate-300 font-bold">🥈 #2 0x3f12...7e90</span>
+                <span class="text-slate-300 font-bold">15,200 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-amber-600 font-bold">🥉 #3 0x1d44...9a88</span>
+                <span class="text-slate-400">13,840 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- $5 TIER TOP 3 -->
+          <div id="top3-tier-5" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$5.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$1,680.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-amber-400/30">
+                <span class="text-amber-400 font-bold">🥇 #1 0x77c1...0e22</span>
+                <span class="text-white font-black">22,140 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-slate-300 font-bold">🥈 #2 0x9b33...55aa</span>
+                <span class="text-slate-300 font-bold">19,800 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-amber-600 font-bold">🥉 #3 0x4e19...66dd</span>
+                <span class="text-slate-400">16,210 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- $10 TIER TOP 3 -->
+          <div id="top3-tier-10" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$10.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$3,360.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-amber-400/30">
+                <span class="text-amber-400 font-bold">🥇 #1 0x5a21...bb89</span>
+                <span class="text-white font-black">26,480 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-slate-300 font-bold">🥈 #2 0x88f2...11cd</span>
+                <span class="text-slate-300 font-bold">24,100 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-amber-600 font-bold">🥉 #3 0x2c00...ee41</span>
+                <span class="text-slate-400">21,350 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- $100 TIER TOP 3 -->
+          <div id="top3-tier-100" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$100.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$33,600.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-amber-400/30">
+                <span class="text-amber-400 font-bold">🥇 #1 0x110e...88ab</span>
+                <span class="text-white font-black">31,920 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-slate-300 font-bold">🥈 #2 0x66bb...44ff</span>
+                <span class="text-slate-300 font-bold">28,400 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-amber-600 font-bold">🥉 #3 0xd8c0...883c</span>
+                <span class="text-slate-400">25,900 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- $1000 TIER TOP 3 -->
+          <div id="top3-tier-1000" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$1,000 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$336,000 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-amber-400/30">
+                <span class="text-amber-400 font-bold">🥇 #1 0x99ee...0011</span>
+                <span class="text-white font-black">38,640 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-slate-300 font-bold">🥈 #2 0x33aa...77cc</span>
+                <span class="text-slate-300 font-bold">34,120 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
+                <span class="text-amber-600 font-bold">🥉 #3 0x77dd...99ee</span>
+                <span class="text-slate-400">30,800 pts</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
     </div>
@@ -647,7 +784,7 @@
                 <th class="p-3.5">Tier Level</th>
                 <th class="p-3.5">Player Wallet</th>
                 <th class="p-3.5">Exact Predicted Target</th>
-                <th class="p-3.5 text-center">Ticket Attempt</th>
+                <th class="p-3.5 text-center">Ticket Number</th>
                 <th class="p-3.5 text-right">Onchain Tx</th>
               </tr>
             </thead>
@@ -809,8 +946,8 @@
           </p>
           <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
             <li><strong class="text-white">Single High Score Record (No Accumulation):</strong> Scores from multiple games are never summed together. Only a player highest single run record qualifies.</li>
-            <li><strong class="text-white">Unlimited Ticket Purchases:</strong> Players may buy as many attempts as desired to improve their top record.</li>
-            <li><strong class="text-white">SPECIAL $PVP PERK: 2X TICKETS BONUS:</strong> Buy tickets using the native $PVP token and get 2x tickets (2 game attempts) per 1 ticket fee!</li>
+            <li><strong class="text-white">Unlimited Ticket Purchases:</strong> Players may buy as many tickets as desired to improve their top record.</li>
+            <li><strong class="text-white">SPECIAL $PVP PERK: 2X TICKETS BONUS:</strong> Buy tickets using the native $PVP token and get 2x tickets per 1 ticket fee!</li>
             <li><strong class="text-white">Reward Distribution:</strong> 80% of the entire tier vault is transferred to the top verified record holder, with 20% allocated as protocol fee.</li>
           </ul>
         </div>
@@ -996,22 +1133,222 @@
       alert('Prediction ' + val + ' successfully recorded for $' + tier + ' Jackpot round! (Ticket 1/3)');
     }
 
-    // 2048 LOGIC
-    let board = [
-      [0, 2, 4, 0],
-      [0, 0, 8, 2],
+    // ==========================================
+    // 2048 SKILL VAULT PLAYABLE ENGINE
+    // ==========================================
+    let board2048 = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
       [0, 0, 0, 0],
       [0, 0, 0, 0]
     ];
-    let score = 14;
-    let bestScore = 3240;
+    let score2048 = 0;
+    let bestScore2048 = 3240;
     let selected2048Tier = 1;
+    let is2048GameOver = false;
+
+    function init2048Game() {
+      board2048 = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+      ];
+      score2048 = 0;
+      is2048GameOver = false;
+      addRandomTile2048();
+      addRandomTile2048();
+      render2048();
+      const overlay = document.getElementById('game-over-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      const statusText = document.getElementById('board-status-text');
+      if (statusText) {
+        statusText.innerText = '🎮 Ready To Play';
+        statusText.className = 'text-emerald-400 font-bold';
+      }
+    }
+
+    function startNew2048Game() {
+      init2048Game();
+    }
+
+    function addRandomTile2048() {
+      const emptyCells = [];
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          if (board2048[r][c] === 0) {
+            emptyCells.push({ r, c });
+          }
+        }
+      }
+      if (emptyCells.length > 0) {
+        const randCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        board2048[randCell.r][randCell.c] = Math.random() < 0.9 ? 2 : 4;
+      }
+    }
+
+    function render2048() {
+      const container = document.getElementById('board-container');
+      if (!container) return;
+      container.innerHTML = '';
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          const val = board2048[r][c];
+          const div = document.createElement('div');
+          div.className = `tile tile-${val > 2048 ? 'super' : val}`;
+          div.innerText = val > 0 ? val : '';
+          container.appendChild(div);
+        }
+      }
+      const sc = document.getElementById('game-score');
+      const bs = document.getElementById('game-best');
+      if (sc) sc.innerText = score2048.toLocaleString();
+      if (bs) bs.innerText = Math.max(score2048, bestScore2048).toLocaleString();
+    }
+
+    function slide2048Array(row) {
+      let arr = row.filter(val => val !== 0);
+      let gainedScore = 0;
+      for (let i = 0; i < arr.length - 1; i++) {
+        if (arr[i] === arr[i + 1]) {
+          arr[i] *= 2;
+          gainedScore += arr[i];
+          arr.splice(i + 1, 1);
+        }
+      }
+      while (arr.length < 4) {
+        arr.push(0);
+      }
+      return { newRow: arr, gainedScore };
+    }
+
+    function rotate2048Board(matrix) {
+      const N = matrix.length;
+      let res = [];
+      for (let i = 0; i < N; i++) {
+        res.push([]);
+        for (let j = 0; j < N; j++) {
+          res[i].push(matrix[N - j - 1][i]);
+        }
+      }
+      return res;
+    }
+
+    function handle2048Move(dir) {
+      if (is2048GameOver) return;
+      let rotated = 0;
+      if (dir === 'left') rotated = 0;
+      else if (dir === 'down') rotated = 1;
+      else if (dir === 'right') rotated = 2;
+      else if (dir === 'up') rotated = 3;
+
+      let tempBoard = JSON.parse(JSON.stringify(board2048));
+      for (let i = 0; i < rotated; i++) {
+        tempBoard = rotate2048Board(tempBoard);
+      }
+
+      let moved = false;
+      let totalGained = 0;
+
+      for (let r = 0; r < 4; r++) {
+        const { newRow, gainedScore } = slide2048Array(tempBoard[r]);
+        if (JSON.stringify(newRow) !== JSON.stringify(tempBoard[r])) {
+          moved = true;
+        }
+        tempBoard[r] = newRow;
+        totalGained += gainedScore;
+      }
+
+      for (let i = 0; i < (4 - rotated) % 4; i++) {
+        tempBoard = rotate2048Board(tempBoard);
+      }
+
+      if (moved) {
+        board2048 = tempBoard;
+        score2048 += totalGained;
+        if (score2048 > bestScore2048) {
+          bestScore2048 = score2048;
+        }
+        addRandomTile2048();
+        render2048();
+
+        if (check2048GameOver()) {
+          is2048GameOver = true;
+          const overlay = document.getElementById('game-over-overlay');
+          const finalSc = document.getElementById('overlay-final-score');
+          if (finalSc) finalSc.innerText = score2048.toLocaleString();
+          if (overlay) overlay.classList.remove('hidden');
+          const statusText = document.getElementById('board-status-text');
+          if (statusText) {
+            statusText.innerText = '⚠️ Game Over';
+            statusText.className = 'text-amber-400 font-bold';
+          }
+        }
+      }
+    }
+
+    function check2048GameOver() {
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          if (board2048[r][c] === 0) return false;
+          if (r < 3 && board2048[r][c] === board2048[r + 1][c]) return false;
+          if (c < 3 && board2048[r][c] === board2048[r][c + 1]) return false;
+        }
+      }
+      return true;
+    }
+
+    // Keyboard controls
+    window.addEventListener('keydown', function(e) {
+      const activeTab = document.getElementById('tab-vault2048');
+      if (!activeTab || activeTab.classList.contains('hidden')) return;
+
+      if (['ArrowUp', 'KeyW'].includes(e.code)) {
+        e.preventDefault();
+        handle2048Move('up');
+      } else if (['ArrowDown', 'KeyS'].includes(e.code)) {
+        e.preventDefault();
+        handle2048Move('down');
+      } else if (['ArrowLeft', 'KeyA'].includes(e.code)) {
+        e.preventDefault();
+        handle2048Move('left');
+      } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
+        e.preventDefault();
+        handle2048Move('right');
+      }
+    });
+
+    // Touch Swipe controls
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const boardEl = document.getElementById('board-container');
+    if (boardEl) {
+      boardEl.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      boardEl.addEventListener('touchend', function(e) {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          if (Math.abs(dx) > 30) {
+            handle2048Move(dx > 0 ? 'right' : 'left');
+          }
+        } else {
+          if (Math.abs(dy) > 30) {
+            handle2048Move(dy > 0 ? 'down' : 'up');
+          }
+        }
+      }, { passive: true });
+    }
 
     function select2048Tier(tier) {
       selected2048Tier = tier;
       [1, 5, 10, 100, 1000].forEach(t => {
         const card = document.getElementById('tier-card-2048-' + t);
         const tag = document.getElementById('tier-tag-' + t);
+        const top3Card = document.getElementById('top3-tier-' + t);
         if (card) {
           if (t === tier) {
             card.className = 'glass-panel p-4 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all space-y-3';
@@ -1021,10 +1358,16 @@
             if (tag) tag.classList.add('hidden');
           }
         }
+        if (top3Card) {
+          if (t === tier) {
+            top3Card.className = 'p-4 rounded-2xl bg-slate-900/80 border border-cyan-500/50 ring-1 ring-cyan-500/30 space-y-3';
+          } else {
+            top3Card.className = 'p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3';
+          }
+        }
       });
     }
 
-    
     function update2048Price(tier) {
       const qtyInput = document.getElementById("qty-2048-" + tier);
       if (!qtyInput) return;
@@ -1037,56 +1380,27 @@
 
       const lblQtyUsdc = document.getElementById("lbl-qty-usdc-" + tier);
       const lblCostUsdc = document.getElementById("lbl-cost-usdc-" + tier);
-      const lblQtyPvp = document.getElementById("lbl-qty-pvp-" + tier);
-      const lblCostPvp = document.getElementById("lbl-cost-pvp-" + tier);
-
       if (lblQtyUsdc) lblQtyUsdc.innerText = qty;
       if (lblCostUsdc) lblCostUsdc.innerText = totalCost;
+
+      const lblQtyPvp = document.getElementById("lbl-qty-pvp-" + tier);
+      const lblCostPvp = document.getElementById("lbl-cost-pvp-" + tier);
       if (lblQtyPvp) lblQtyPvp.innerText = pvpAttempts;
       if (lblCostPvp) lblCostPvp.innerText = totalCost;
     }
 
-    function buy2048Ticket(tier, currency) {
-      select2048Tier(tier);
+    function buy2048Ticket(tier, paymentMethod) {
       const qtyInput = document.getElementById("qty-2048-" + tier);
-      const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
-      const totalCost = (qty * tier).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      if (currency === "PVP") {
-        const attempts = qty * 2;
-        alert("Purchased " + qty + " ticket(s) ($" + totalCost + ") using native $PVP token! 2X BONUS: " + attempts + " Game Attempts Granted.");
-      } else {
-        alert("Purchased " + qty + " ticket(s) for $" + totalCost + " USDC in 2048 Skill Vaults!");
-      }
-    }
+      const qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+      const totalCost = (qty * tier).toFixed(2);
+      const attempts = paymentMethod === 'PVP' ? qty * 2 : qty;
 
-    function render2048() {
-      const container = document.getElementById('board-container');
-      if (!container) return;
-      container.innerHTML = '';
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          const val = board[r][c];
-          const div = document.createElement('div');
-          div.className = `tile tile-${val > 2048 ? 'super' : val}`;
-          div.innerText = val > 0 ? val : '';
-          container.appendChild(div);
-        }
+      alert(`Successfully purchased ${attempts} ticket(s) for $${tier} Tier via ${paymentMethod} ($${totalCost})!`);
+      const countEl = document.getElementById('tickets-count');
+      if (countEl) {
+        countEl.innerText = (parseInt(countEl.innerText) || 0) + attempts;
       }
-      const sc = document.getElementById('game-score');
-      const bs = document.getElementById('game-best');
-      if (sc) sc.innerText = score;
-      if (bs) bs.innerText = bestScore;
-    }
-
-    function init2048Game() {
-      board = [
-        [0, 2, 0, 0],
-        [0, 0, 2, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-      ];
-      score = 4;
-      render2048();
+      init2048Game();
     }
 
     // LEADERBOARD LOGIC
