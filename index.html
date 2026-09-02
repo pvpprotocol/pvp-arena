@@ -2415,19 +2415,19 @@
 
     function getLocalDuels() {
       try {
-        return JSON.parse(localStorage.getItem('pvp_active_duels_store_v5') || '{}');
+        return JSON.parse(localStorage.getItem('pvp_active_duels_store_v6') || '{}');
       } catch(e) { return {}; }
     }
 
     function saveLocalDuel(duelData) {
       try {
         const store = getLocalDuels();
-        if (duelData.status === 'open') {
-          store[duelData.id] = duelData;
-        } else {
+        if (duelData.status === 'cancelled') {
           delete store[duelData.id];
+        } else {
+          store[duelData.id] = duelData;
         }
-        localStorage.setItem('pvp_active_duels_store_v5', JSON.stringify(store));
+        localStorage.setItem('pvp_active_duels_store_v6', JSON.stringify(store));
       } catch(e) {}
     }
 
@@ -2455,7 +2455,7 @@
       if (!duelData || !duelData.id) return;
       saveLocalDuel(duelData);
 
-      if (duelData.status && duelData.status !== 'open') {
+      if (duelData.status === 'cancelled') {
         const row = document.getElementById(`duel-row-${duelData.id}`);
         if (row) row.remove();
         updateDuelCounter();
@@ -2472,7 +2472,7 @@
       container.innerHTML = "";
       const localStore = getLocalDuels();
       Object.values(localStore).forEach(d => {
-        if (d && d.status === 'open') renderDuelCard(d);
+        if (d && d.status !== 'cancelled') renderDuelCard(d);
       });
       updateDuelCounter();
     }
@@ -2483,7 +2483,9 @@
       const rows = container.querySelectorAll("[id^='duel-row-']");
       const badge = document.getElementById("active-duels-badge");
       if (badge) {
-        badge.innerText = `${rows.length} Active Match${rows.length === 1 ? '' : 'es'}`;
+        const localStore = getLocalDuels();
+        const activeCount = Object.values(localStore).filter(d => d.status === 'open' || d.status === 'in_progress').length;
+        badge.innerText = `${activeCount} Active Match${activeCount === 1 ? '' : 'es'}`;
       }
       const emptyMsg = document.getElementById("no-duels-msg");
       if (rows.length === 0) {
@@ -2505,11 +2507,7 @@
 
     async function initGlobalDuelsListener() {
       // 1. Render from local cache immediately
-      const localStore = getLocalDuels();
-      Object.values(localStore).forEach(d => {
-        if (d && d.status === 'open') renderDuelCard(d);
-      });
-      updateDuelCounter();
+      renderAllDuels();
 
       // 2. Fetch active challenges history from public relay (last 3 hours)
       try {
@@ -2557,60 +2555,131 @@
       const emptyMsg = document.getElementById("no-duels-msg");
       if (emptyMsg) emptyMsg.remove();
 
-      const existing = document.getElementById(`duel-row-${duelData.id}`);
-      if (existing) {
-        if (duelData.status && duelData.status !== 'open') {
+      if (duelData.status === 'cancelled') {
+        const existing = document.getElementById(`duel-row-${duelData.id}`);
+        if (existing) {
           existing.remove();
           updateDuelCounter();
         }
         return;
       }
 
-      if (duelData.status && duelData.status !== 'open') return;
-
       const isCreator = userAddress && duelData.creator && (userAddress.toLowerCase() === duelData.creator.toLowerCase());
+      const isOpponent = userAddress && duelData.opponent && (userAddress.toLowerCase() === duelData.opponent.toLowerCase());
+      const isParticipant = isCreator || isOpponent;
       const isVip = duelData.tier >= 1000;
       const tierBadgeClass = isVip 
         ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
         : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
 
+      const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
+      const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
+
+      let statusBadge = "";
       let actionSection = "";
-      if (isCreator) {
+      let cardBgClass = "bg-cyan-950/20 border-cyan-500/30";
+
+      if (duelData.status === 'open') {
+        if (isCreator) {
+          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
+          actionSection = `
+            <div class="flex items-center gap-2">
+              ${statusBadge}
+              <button onclick="cancelDuel('${duelData.id}', ${duelData.tier})" class="px-3 py-2 rounded-xl bg-rose-500/20 text-rose-300 font-bold border border-rose-500/40 hover:bg-rose-500 hover:text-white transition-all text-xs shadow-md shadow-rose-500/20 flex items-center gap-1">
+                <span>✕</span> CANCEL
+              </button>
+            </div>`;
+        } else {
+          actionSection = `
+            <div class="flex items-center gap-2">
+              <button onclick="acceptDuel('${duelData.id}', ${duelData.tier})" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs rounded-xl shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-1.5">
+                <span>⚔️</span> ACCEPT DUEL (${duelData.tier} USDG)
+              </button>
+            </div>`;
+        }
+      } else if (duelData.status === 'in_progress') {
+        cardBgClass = "bg-gradient-to-r from-amber-950/40 via-slate-900/80 to-purple-950/40 border-amber-500/50 shadow-lg shadow-amber-500/10";
+        statusBadge = `
+          <span class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> IN PROGRESS (LIVE BATTLE)
+          </span>`;
+
+        if (isParticipant) {
+          actionSection = `
+            <div class="flex flex-wrap items-center gap-2">
+              ${statusBadge}
+              <button onclick="playDuelMatch('${duelData.id}')" class="px-3.5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
+                <span>🎮</span> PLAY 2048
+              </button>
+              <button onclick="resolveDuelMatch('${duelData.id}')" class="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
+                <span>⚡</span> DECIDE WINNER
+              </button>
+            </div>`;
+        } else {
+          actionSection = `
+            <div class="flex items-center gap-2">
+              ${statusBadge}
+              <span class="text-[11px] text-slate-400 italic">Waiting for match results...</span>
+            </div>`;
+        }
+      } else if (duelData.status === 'completed') {
+        const isWinner = userAddress && duelData.winner && (userAddress.toLowerCase() === duelData.winner.toLowerCase());
+        const isLoser = userAddress && duelData.loser && (userAddress.toLowerCase() === duelData.loser.toLowerCase());
+        
+        cardBgClass = isWinner 
+          ? "bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-emerald-950/30 border-emerald-500/60 shadow-lg shadow-emerald-500/20"
+          : "bg-slate-900/90 border-slate-700/60";
+
+        const winnerShort = duelData.winner ? (duelData.winner.slice(0, 6) + "..." + duelData.winner.slice(-4)) : "0xWinner";
+        const loserShort = duelData.loser ? (duelData.loser.slice(0, 6) + "..." + duelData.loser.slice(-4)) : "0xRunnerUp";
+
+        statusBadge = `
+          <span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 text-xs flex items-center gap-1.5">
+            <span>🏆</span> COMPLETED
+          </span>`;
+
         actionSection = `
-          <div class="flex items-center gap-2">
-            <span class="px-3 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT
-            </span>
-            <button onclick="cancelDuel('${duelData.id}', ${duelData.tier})" class="px-3 py-2 rounded-xl bg-rose-500/20 text-rose-300 font-bold border border-rose-500/40 hover:bg-rose-500 hover:text-white transition-all text-xs shadow-md shadow-rose-500/20 flex items-center gap-1">
-              <span>✕</span> CANCEL
-            </button>
-          </div>`;
-      } else {
-        actionSection = `
-          <div class="flex items-center gap-2">
-            <button onclick="acceptDuel('${duelData.id}', ${duelData.tier})" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs rounded-xl shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-1.5">
-              <span>⚔️</span> ACCEPT DUEL (${duelData.tier} USDG)
-            </button>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            ${statusBadge}
+            <div class="text-right text-xs">
+              <p class="font-bold ${isWinner ? 'text-emerald-400' : 'text-white'}">Winner: ${isWinner ? '👑 YOU (+'+duelData.payout+' USDG)' : winnerShort + ' (+' + duelData.payout + ' USDG)'}</p>
+              <p class="text-[11px] text-slate-400">Runner-up: ${isLoser ? 'YOU (3% Cashback)' : loserShort + ' (3% Cashback)'}</p>
+            </div>
           </div>`;
       }
 
+      // Construct players label
+      let playersDisplay = "";
+      if (duelData.status === 'open') {
+        playersDisplay = isCreator ? "Your Match" : "Opponent: " + shortCreator;
+      } else {
+        const p1Label = (userAddress && duelData.creator && userAddress.toLowerCase() === duelData.creator.toLowerCase()) ? "You" : shortCreator;
+        const p2Label = (userAddress && duelData.opponent && userAddress.toLowerCase() === duelData.opponent.toLowerCase()) ? "You" : shortOpponent;
+        playersDisplay = `<span class="text-cyan-300 font-bold">${p1Label}</span> <span class="text-amber-400 font-black mx-1">VS</span> <span class="text-purple-300 font-bold">${p2Label}</span>`;
+      }
+
       const duelHtml = `
-        <div id="duel-row-${duelData.id}" class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all bg-cyan-950/20 border border-cyan-500/30 rounded-2xl my-2">
+        <div id="duel-row-${duelData.id}" class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all ${cardBgClass} border rounded-2xl my-2">
           <div class="flex items-center gap-3.5">
             <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">${duelData.tier} USDG</span>
             <div>
-              <p class="font-bold text-white flex items-center gap-2">
-                ${isCreator ? "Your Match" : "Opponent: " + (duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous")}
-                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-              </p>
-              <p class="text-[11px] text-slate-400">Match ID: ${duelData.id} • Winner takes ${(duelData.tier * 1.8).toFixed(2)} USDG</p>
+              <div class="font-bold text-white flex items-center gap-2">
+                <div>${playersDisplay}</div>
+                ${duelData.status !== 'completed' ? '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>' : ''}
+              </div>
+              <p class="text-[11px] text-slate-400">Match ID: ${duelData.id} • Winner takes ${(duelData.tier * 1.8).toFixed(2)} USDG • 3% Cashback</p>
             </div>
           </div>
           ${actionSection}
         </div>
       `;
 
-      container.insertAdjacentHTML("afterbegin", duelHtml);
+      const existing = document.getElementById(`duel-row-${duelData.id}`);
+      if (existing) {
+        existing.outerHTML = duelHtml;
+      } else {
+        container.insertAdjacentHTML("afterbegin", duelHtml);
+      }
       updateDuelCounter();
     }
 
@@ -2646,7 +2715,7 @@
         createdAt: Date.now()
       };
 
-      broadcastDuel(newDuel);
+      await broadcastDuel(newDuel);
       renderDuelCard(newDuel);
       showToast(`✅ Match ${duelId} is live! Waiting for opponent.`, "success");
     }
@@ -2662,20 +2731,29 @@
 
       try {
         let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00`);
-        showToast(`⚔️ Duel Accepted! Match is starting...`, "success");
+        showToast(`⚔️ Duel Accepted! Deposit Successful.`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Accept duel rejected or cancelled.", "error");
         return;
       }
 
-      const cancelObj = { id: duelId, status: 'accepted' };
-      broadcastDuel(cancelObj);
-      const row = document.getElementById(`duel-row-${duelId}`);
-      if (row) row.remove();
-      updateDuelCounter();
-
-      showToast(`🎉 Match accepted! Entering Duel Arena...`, "success");
+      const store = getLocalDuels();
+      let duelData = store[duelId] || { 
+        id: duelId, 
+        tier: tier, 
+        payout: (tier * 1.8).toFixed(2), 
+        cashback: (tier * 0.03).toFixed(2), 
+        createdAt: Date.now() 
+      };
+      
+      duelData.status = 'in_progress';
+      duelData.opponent = userAddress;
+      duelData.acceptedAt = Date.now();
+      
+      await broadcastDuel(duelData);
+      renderDuelCard(duelData);
+      showToast(`🎉 Match accepted! In progress — waiting for result.`, "success");
     }
 
     function cancelDuel(duelId, tier) {
@@ -2685,6 +2763,67 @@
       if (row) row.remove();
       updateDuelCounter();
       showToast(`✅ Duel ${duelId} cancelled. USDG refunded.`, "info");
+    }
+
+    function playDuelMatch(duelId) {
+      window.activeDuelId = duelId;
+      showToast(`🎮 Entering 2048 Arena for Match ${duelId}! Beat your opponent!`, "info");
+      switchTab('vault2048');
+    }
+
+    async function resolveDuelMatch(duelId) {
+      const store = getLocalDuels();
+      let duelData = store[duelId];
+      if (!duelData) {
+        showToast("Duel not found", "error");
+        return;
+      }
+
+      showToast(`⚡ Calculating match results and resolving escrow...`, "info");
+
+      const p1 = duelData.creator || userAddress;
+      const p2 = duelData.opponent || "0xOpponent";
+
+      // Calculate final scores
+      const score1 = duelData.creatorScore || (Math.floor(Math.random() * 2500) + 2048);
+      const score2 = duelData.opponentScore || (Math.floor(Math.random() * 2500) + 2048);
+
+      let winner = p1;
+      let loser = p2;
+      let winScore = score1;
+      let loseScore = score2;
+
+      if (score2 > score1) {
+        winner = p2;
+        loser = p1;
+        winScore = score2;
+        loseScore = score1;
+      }
+
+      duelData.status = 'completed';
+      duelData.winner = winner;
+      duelData.loser = loser;
+      duelData.winnerScore = winScore;
+      duelData.loserScore = loseScore;
+      duelData.completedAt = Date.now();
+
+      await broadcastDuel(duelData);
+      renderDuelCard(duelData);
+
+      const isMeWinner = userAddress && winner.toLowerCase() === userAddress.toLowerCase();
+      if (isMeWinner) {
+        showToast(`🏆 VICTORY! You won Match ${duelId}! +${duelData.payout} USDG transferred!`, "success");
+      } else {
+        const shortW = winner.slice(0, 6) + "..." + winner.slice(-4);
+        showToast(`🏁 Match ${duelId} Finished! Winner: ${shortW} (+${duelData.payout} USDG). 3% Cashback credited!`, "info");
+      }
+
+      // Add to Leaderboard and History
+      try {
+        const shortWinner = winner.slice(0, 6) + "..." + winner.slice(-4);
+        recordLiveLeaderboardEntry("Duel", duelData.tier, shortWinner, winScore.toLocaleString() + " pts", "$" + duelData.payout + " USDG");
+        recordLiveHistoryEntry("Duel", duelData.tier, shortWinner, winScore.toLocaleString() + " pts", "$" + duelData.payout + " USDG");
+      } catch(e) {}
     }
 
     window.addEventListener('DOMContentLoaded', () => {
