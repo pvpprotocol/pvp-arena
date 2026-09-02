@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+  <!-- Global Realtime SSE Sync Engine -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -2397,46 +2397,25 @@
 <script>
 
     // === MULTI-CHANNEL REALTIME SYNC (GunDB + BroadcastChannel + LocalStorage) ===
-    let gun = null;
-    let duelsRelay = null;
-    try {
-      localStorage.removeItem('pvp_active_duels_store_v4');
-      localStorage.removeItem('pvp_latest_duel');
-    } catch(e) {}
+        // --- GLOBAL REALTIME DUEL SYNC ENGINE (SSE + REST + Local Sync) ---
+    const REALTIME_TOPIC = "pvp-arena-rh-duels-live";
+    const REALTIME_SSE_URL = `https://ntfy.sh/${REALTIME_TOPIC}/sse`;
+    const REALTIME_PUB_URL = `https://ntfy.sh/${REALTIME_TOPIC}`;
     let duelBroadcast = null;
-
-    try {
-      if (typeof Gun !== 'undefined') {
-        gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://peer.wallie.io/gun', 'https://gundb.relay.peer.ooo/gun']);
-        duelsRelay = gun.get('pvp-arena-duels-v4-clean');
-      }
-    } catch(e) {
-      console.warn("Gun init:", e);
-    }
+    let sseSource = null;
 
     try {
       if (typeof BroadcastChannel !== 'undefined') {
         duelBroadcast = new BroadcastChannel('pvp_duels_channel');
         duelBroadcast.onmessage = (event) => {
-          if (event.data) {
-            handleIncomingDuel(event.data);
-          }
+          if (event && event.data) handleIncomingDuel(event.data);
         };
       }
     } catch(e) {}
 
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'pvp_latest_duel' && e.newValue) {
-        try {
-          const d = JSON.parse(e.newValue);
-          handleIncomingDuel(d);
-        } catch(err){}
-      }
-    });
-
     function getLocalDuels() {
       try {
-        return JSON.parse(localStorage.getItem('pvp_active_duels_store_v4') || '{}');
+        return JSON.parse(localStorage.getItem('pvp_active_duels_store_v5') || '{}');
       } catch(e) { return {}; }
     }
 
@@ -2448,49 +2427,126 @@
         } else {
           delete store[duelData.id];
         }
-        localStorage.setItem('pvp_active_duels_store_v4', JSON.stringify(store));
-        localStorage.setItem('pvp_latest_duel', JSON.stringify(duelData));
+        localStorage.setItem('pvp_active_duels_store_v5', JSON.stringify(store));
       } catch(e) {}
     }
 
-    function broadcastDuel(duelData) {
+    async function broadcastDuel(duelData) {
       saveLocalDuel(duelData);
+      
+      // 1. Same-browser instant sync
       if (duelBroadcast) {
         try { duelBroadcast.postMessage(duelData); } catch(e){}
       }
-      if (duelsRelay && duelData && duelData.id) {
-        try { duelsRelay.get(duelData.id).put(JSON.stringify(duelData)); } catch(e){}
+
+      // 2. Worldwide realtime relay (Works across all wallets, devices & browsers)
+      try {
+        await fetch(REALTIME_PUB_URL, {
+          method: 'POST',
+          body: JSON.stringify(duelData),
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch(err) {
+        console.warn("Realtime broadcast fallback:", err);
       }
     }
 
     function handleIncomingDuel(duelData) {
       if (!duelData || !duelData.id) return;
-      if (duelData.status === 'accepted' || duelData.status === 'cancelled') {
+      saveLocalDuel(duelData);
+
+      if (duelData.status && duelData.status !== 'open') {
         const row = document.getElementById(`duel-row-${duelData.id}`);
         if (row) row.remove();
+        updateDuelCounter();
         return;
       }
+
       renderDuelCard(duelData);
+      updateDuelCounter();
     }
 
-    function initGlobalDuelsListener() {
-      // 1. Load from localStorage
+    function renderAllDuels() {
+      const container = document.getElementById("duels-list-container");
+      if (!container) return;
+      container.innerHTML = "";
       const localStore = getLocalDuels();
       Object.values(localStore).forEach(d => {
         if (d && d.status === 'open') renderDuelCard(d);
       });
+      updateDuelCounter();
+    }
 
-      // 2. Load from GunDB
-      if (duelsRelay) {
-        duelsRelay.map().on((dataStr, id) => {
-          if (!dataStr) return;
+    function updateDuelCounter() {
+      const container = document.getElementById("duels-list-container");
+      if (!container) return;
+      const rows = container.querySelectorAll("[id^='duel-row-']");
+      const badge = document.getElementById("active-duels-badge");
+      if (badge) {
+        badge.innerText = `${rows.length} Active Match${rows.length === 1 ? '' : 'es'}`;
+      }
+      const emptyMsg = document.getElementById("no-duels-msg");
+      if (rows.length === 0) {
+        if (!emptyMsg) {
+          const empty = document.createElement("div");
+          empty.id = "no-duels-msg";
+          empty.className = "py-12 text-center text-slate-400";
+          empty.innerHTML = `
+            <div class="text-3xl mb-2">⚔️</div>
+            <p class="font-bold text-white mb-1">No open duel challenges available right now</p>
+            <p class="text-xs text-slate-400">Click any <span class="text-cyan-400 font-bold">CREATE DUEL</span> tier above to create the first onchain match!</p>
+          `;
+          container.appendChild(empty);
+        }
+      } else {
+        if (emptyMsg) emptyMsg.remove();
+      }
+    }
+
+    async function initGlobalDuelsListener() {
+      // 1. Render from local cache immediately
+      const localStore = getLocalDuels();
+      Object.values(localStore).forEach(d => {
+        if (d && d.status === 'open') renderDuelCard(d);
+      });
+      updateDuelCounter();
+
+      // 2. Fetch active challenges history from public relay (last 3 hours)
+      try {
+        const resp = await fetch(`${REALTIME_PUB_URL}/json?poll=1&since=3h`);
+        if (resp.ok) {
+          const text = await resp.text();
+          const lines = text.trim().split('\n');
+          lines.forEach(line => {
+            if (!line) return;
+            try {
+              const item = JSON.parse(line);
+              if (item.event === 'message' && item.message) {
+                const d = JSON.parse(item.message);
+                handleIncomingDuel(d);
+              }
+            } catch(e) {}
+          });
+        }
+      } catch(e) {
+        console.warn("Relay history poll:", e);
+      }
+
+      // 3. Connect real-time Server-Sent Events stream for instant incoming duels
+      try {
+        if (sseSource) sseSource.close();
+        sseSource = new EventSource(REALTIME_SSE_URL);
+        sseSource.onmessage = (event) => {
           try {
-            const d = typeof dataStr === 'string' ? JSON.parse(dataStr) : dataStr;
-            if (d && d.id) {
+            const data = JSON.parse(event.data);
+            if (data.event === 'message' && data.message) {
+              const d = JSON.parse(data.message);
               handleIncomingDuel(d);
             }
-          } catch(err){}
-        });
+          } catch(err) {}
+        };
+      } catch(err) {
+        console.warn("SSE stream init:", err);
       }
     }
 
@@ -2505,6 +2561,7 @@
       if (existing) {
         if (duelData.status && duelData.status !== 'open') {
           existing.remove();
+          updateDuelCounter();
         }
         return;
       }
@@ -2543,24 +2600,18 @@
             <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">${duelData.tier} USDG</span>
             <div>
               <p class="font-bold text-white flex items-center gap-2">
-                ${isCreator ? "Your Match" : "Opponent: " + duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)}
+                ${isCreator ? "Your Match" : "Opponent: " + (duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous")}
                 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
               </p>
-              <p class="text-[11px] text-slate-400">Prize Pool: ${duelData.payout} USDG • Collateral Locked: ${duelData.tier} USDG</p>
+              <p class="text-[11px] text-slate-400">Match ID: ${duelData.id} • Winner takes ${(duelData.tier * 1.8).toFixed(2)} USDG</p>
             </div>
           </div>
-          <div class="flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
-              <span class="text-emerald-400 font-bold">🏆 Winner: +${duelData.payout} (+90%)</span>
-              <span class="text-slate-500">|</span>
-              <span class="text-cyan-400 font-bold">🛡️ Cashback: ${duelData.cashback || (duelData.tier * 0.03).toFixed(2)} (3%)</span>
-            </div>
-            ${actionSection}
-          </div>
+          ${actionSection}
         </div>
       `;
 
       container.insertAdjacentHTML("afterbegin", duelHtml);
+      updateDuelCounter();
     }
 
     async function createDuel(tier) {
@@ -2622,6 +2673,7 @@
       broadcastDuel(cancelObj);
       const row = document.getElementById(`duel-row-${duelId}`);
       if (row) row.remove();
+      updateDuelCounter();
 
       showToast(`🎉 Match accepted! Entering Duel Arena...`, "success");
     }
@@ -2631,6 +2683,7 @@
       broadcastDuel(cancelObj);
       const row = document.getElementById(`duel-row-${duelId}`);
       if (row) row.remove();
+      updateDuelCounter();
       showToast(`✅ Duel ${duelId} cancelled. USDG refunded.`, "info");
     }
 
