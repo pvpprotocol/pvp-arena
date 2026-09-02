@@ -804,161 +804,17 @@
                 </div>
                 <p id="jackpot-prize-1" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
               </div>
-              <div class="mt-3">
-                <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
-                <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-1" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
-              </div>
-              <div class="mt-3 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
-                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
-                  <button type="button" onclick="changeJackpotTicketQty(1, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
-                  <span id="jackpot-qty-1" class="w-5 text-center text-xs font-bold text-cyan-400">1</span>
-                  <button type="button" onclick="changeJackpotTicketQty(1, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
+                                                                                    <div class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-mono text-slate-400 block">Predicted Target(s):</label>
+                  <span id="target-count-label-1000" class="text-[9px] font-mono text-amber-400 font-bold">1 Target</span>
                 </div>
-              </div>
-            </div>
-            <button id="jackpot-btn-1" onclick="submitJackpot(1)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY 1 TICKET ($1.00)</button>
-          </div>
-
-          <!-- $5 Tier -->
-          <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
-            <div>
-              <div class="flex justify-between items-center">
-                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 2</span>
-                <span id="jackpot-tickets-5" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
-              </div>
-              <div class="mt-3 flex items-center justify-between text-xs font-mono">
-                <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-5" class="text-white font-bold">0 tickets</span>
-              </div>
-              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span>Pool Size:</span>
-                <span id="jackpot-pool-5" class="text-cyan-400 font-bold">$0.00 USDC</span>
-              </div>
-              <div class="mt-2 pt-2 border-t border-white/5">
-                <div class="flex items-center justify-between">
-                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
-                  <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
+                <div id="target-inputs-list-1000" class="space-y-1.5">
+                  <div class="relative">
+                    <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#1</span>
+                    <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-1000-1" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-amber-400">
+                  </div>
                 </div>
-                <p id="jackpot-prize-5" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
-              </div>
-              <div class="mt-3">
-                <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
-                <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-5" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
-              </div>
-              <div class="mt-3 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
-                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
-                  <button type="button" onclick="changeJackpotTicketQty(5, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
-                  <span id="jackpot-qty-5" class="w-5 text-center text-xs font-bold text-cyan-400">1</span>
-                  <button type="button" onclick="changeJackpotTicketQty(5, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
-                </div>
-              </div>
-            </div>
-            <button id="jackpot-btn-5" onclick="submitJackpot(5)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY 1 TICKET ($5.00)</button>
-          </div>
-
-          <!-- $10 Tier -->
-          <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
-            <div>
-              <div class="flex justify-between items-center">
-                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 3</span>
-                <span id="jackpot-tickets-10" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
-              </div>
-              <div class="mt-3 flex items-center justify-between text-xs font-mono">
-                <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-10" class="text-white font-bold">0 tickets</span>
-              </div>
-              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span>Pool Size:</span>
-                <span id="jackpot-pool-10" class="text-cyan-400 font-bold">$0.00 USDC</span>
-              </div>
-              <div class="mt-2 pt-2 border-t border-white/5">
-                <div class="flex items-center justify-between">
-                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
-                  <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
-                </div>
-                <p id="jackpot-prize-10" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
-              </div>
-              <div class="mt-3">
-                <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
-                <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-10" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
-              </div>
-              <div class="mt-3 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
-                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
-                  <button type="button" onclick="changeJackpotTicketQty(10, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
-                  <span id="jackpot-qty-10" class="w-5 text-center text-xs font-bold text-cyan-400">1</span>
-                  <button type="button" onclick="changeJackpotTicketQty(10, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
-                </div>
-              </div>
-            </div>
-            <button id="jackpot-btn-10" onclick="submitJackpot(10)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY 1 TICKET ($10.00)</button>
-          </div>
-
-          <!-- $100 Tier -->
-          <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
-            <div>
-              <div class="flex justify-between items-center">
-                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 4</span>
-                <span id="jackpot-tickets-100" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
-              </div>
-              <div class="mt-3 flex items-center justify-between text-xs font-mono">
-                <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-100" class="text-white font-bold">0 tickets</span>
-              </div>
-              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span>Pool Size:</span>
-                <span id="jackpot-pool-100" class="text-cyan-400 font-bold">$0.00 USDC</span>
-              </div>
-              <div class="mt-2 pt-2 border-t border-white/5">
-                <div class="flex items-center justify-between">
-                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
-                  <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
-                </div>
-                <p id="jackpot-prize-100" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
-              </div>
-              <div class="mt-3">
-                <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
-                <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-100" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
-              </div>
-              <div class="mt-3 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
-                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
-                  <button type="button" onclick="changeJackpotTicketQty(100, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
-                  <span id="jackpot-qty-100" class="w-5 text-center text-xs font-bold text-cyan-400">1</span>
-                  <button type="button" onclick="changeJackpotTicketQty(100, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
-                </div>
-              </div>
-            </div>
-            <button id="jackpot-btn-100" onclick="submitJackpot(100)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY 1 TICKET ($100.00)</button>
-          </div>
-
-          <!-- $1000 Tier -->
-          <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-amber-400/50 transition-all flex flex-col justify-between bg-gradient-to-b from-amber-500/5 to-transparent">
-            <div>
-              <div class="flex justify-between items-center">
-                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-400/10 text-amber-400 border border-amber-400/30">TIER 5</span>
-                <span id="jackpot-tickets-1000" class="text-[10px] font-mono text-amber-400 font-bold">0/3 Tickets</span>
-              </div>
-              <div class="mt-3 flex items-center justify-between text-xs font-mono">
-                <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-1000" class="text-white font-bold">0 tickets</span>
-              </div>
-              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span>Pool Size:</span>
-                <span id="jackpot-pool-1000" class="text-amber-400 font-bold">$0.00 USDC</span>
-              </div>
-              <div class="mt-2 pt-2 border-t border-white/5">
-                <div class="flex items-center justify-between">
-                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
-                  <span class="text-[10px] font-mono text-amber-400 font-bold animate-pulse">● LIVE</span>
-                </div>
-                <p id="jackpot-prize-1000" class="text-xl font-black text-amber-400 font-mono">$0.00 USDC</p>
-              </div>
-              <div class="mt-3">
-                <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
-                <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-1000" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-amber-400">
               </div>
               <div class="mt-3 flex items-center justify-between">
                 <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
@@ -1536,6 +1392,37 @@
       1000: { tickets: 0 }
     };
 
+        function renderJackpotTargetInputs(tier, qty) {
+      const container = document.getElementById("target-inputs-list-" + tier);
+      const countLabel = document.getElementById("target-count-label-" + tier);
+      if (!container) return;
+
+      if (countLabel) {
+        countLabel.innerText = qty === 1 ? "1 Target" : `${qty} Targets`;
+      }
+
+      const focusBorder = tier === 1000 ? "focus:border-amber-400" : "focus:border-cyan-500";
+      
+      // Preserve existing values
+      const existingValues = [];
+      for (let i = 1; i <= 3; i++) {
+        const input = document.getElementById(`target-input-${tier}-${i}`);
+        if (input) existingValues.push(input.value);
+      }
+
+      let html = "";
+      for (let i = 1; i <= qty; i++) {
+        const val = existingValues[i - 1] || "";
+        html += `
+          <div class="relative">
+            <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#${i}</span>
+            <input type="text" inputmode="decimal" value="${val}" placeholder="Target e.g. 2450.${50 + i * 10}" id="target-input-${tier}-${i}" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none ${focusBorder}">
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
     function changeJackpotTicketQty(tier, delta) {
       if (!jackpotSelectedQty[tier]) jackpotSelectedQty[tier] = 1;
       const currentUsed = jackpotUserTickets[tier] || 0;
@@ -1560,6 +1447,85 @@
         const label = newQty === 1 ? "TICKET" : "TICKETS";
         btnEl.innerText = `BUY ${newQty} ${label} ($${totalCost})`;
       }
+
+      // Render corresponding target inputs
+      renderJackpotTargetInputs(tier, newQty);
+    }
+
+    async function submitJackpot(tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      const qty = jackpotSelectedQty[tier] || 1;
+      const currentUsed = jackpotUserTickets[tier] || 0;
+
+      if (currentUsed + qty > 3) {
+        showToast(`Maximum 3/3 tickets per wallet! Already used ${currentUsed}/3.`, "warning");
+        return;
+      }
+
+      const targets = [];
+      for (let i = 1; i <= qty; i++) {
+        const input = document.getElementById(`target-input-${tier}-${i}`);
+        let val = input ? input.value.trim() : "";
+        if (!val) {
+          const baseEstimate = 2450.00 + (Math.random() * 20 - 10) + (i * 2.5);
+          val = baseEstimate.toFixed(2);
+          if (input) input.value = val;
+        }
+        targets.push(val);
+      }
+
+      const totalCost = (tier * qty).toFixed(2);
+      const targetsStr = targets.map((t, idx) => `T#${idx+1}: $${t}`).join(", ");
+      showToast(`⚡ Sign verification for ${qty}x $${tier}.00 Ticket(s) ($${totalCost} USDC, ${targetsStr})...`, "info");
+
+      try {
+        const sig = await requestSafeSignature(`PVP Protocol: ${qty}x Jackpot Ticket(s) ($${totalCost} USDC)\nTier: $${tier}\nTargets: ${targetsStr}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
+        showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
+      } catch (err) {
+        showToast("❌ Signature cancelled.", "error");
+        return;
+      }
+
+      const startingTicketNum = jackpotUserTickets[tier] + 1;
+      jackpotUserTickets[tier] += qty;
+      jackpotTierStats[tier].tickets += qty;
+      updateJackpotMetrics();
+
+      const tNum = jackpotUserTickets[tier];
+      const badge = document.getElementById("jackpot-tickets-" + tier);
+      if (badge) {
+        badge.innerText = `${tNum}/3 Tickets`;
+        badge.className = tNum === 3 
+          ? "text-[10px] font-mono text-emerald-400 font-black" 
+          : (tier === 1000 ? "text-[10px] font-mono text-amber-400 font-bold" : "text-[10px] font-mono text-cyan-400 font-bold");
+      }
+
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
+      const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+      const shortTx = txHash.slice(0, 6) + "..." + txHash.slice(-4);
+
+      // Add live submissions for each ticket
+      targets.forEach((targetVal, idx) => {
+        const currentTicket = startingTicketNum + idx;
+        liveSubmissions.unshift({
+          tier: tier,
+          wallet: shortAddr,
+          target: targetVal,
+          ticketNum: `${currentTicket}/3`,
+          tx: shortTx,
+          time: "Just now"
+        });
+      });
+
+      renderJackpotSubmissions();
+      showToast(`🎉 Successfully submitted ${qty}x $${tier}.00 Jackpot Ticket(s)! Targets: ${targetsStr}`, "success");
     }
 
     function updateJackpotMetrics() {
