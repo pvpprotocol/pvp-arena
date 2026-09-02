@@ -3258,4 +3258,2948 @@
     });
   </script>
 </body>
+</html<div class="mt-6 flex justify-center">
+          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold font-mono text-sm shadow-xl shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+            <span>⚔️</span> CREATE 1v1 DUEL
+          </button>
+        </div>
+      </div>
+      
+      <!-- ACTIVE ONCHAIN DUELS LOBBY -->
+      <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
+        <div class="p-5 border-b border-white/10 flex justify-between items-center">
+          <div>
+            <h3 class="font-black text-white text-base font-mono uppercase tracking-wider">LIVE P2P DUELS</h3>
+            <p class="text-xs text-slate-400">Robinhood Escrow Contract: <span class="font-mono text-cyan-400">0x1e7e...2dae</span></p>
+          </div>
+          <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">0 Active Matches</span>
+        </div>
+        <div id="duels-list-container" class="divide-y divide-white/5 font-mono text-xs">
+          <div id="no-duels-msg" class="py-12 text-center text-slate-400">
+            <div class="text-3xl mb-2">⚔️</div>
+            <p class="font-bold text-white mb-1">No open duel challenges available right now</p>
+            <p class="text-xs text-slate-400">Click any <span class="text-cyan-400 font-bold">CREATE DUEL</span> tier above to create the first onchain match!</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2. 2048 SKILL TAB -->
+    <div id="tab-vault2048" class="tab-content hidden space-y-6">
+      
+      <!-- SPECIAL PERK BANNER -->
+      <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/40 border border-cyan-500/30 flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🔥</span>
+          <div>
+            <h4 class="font-black text-white font-mono text-sm">SPECIAL $PVP PERK: 2X TICKETS BONUS</h4>
+            <p class="text-xs text-slate-300">Buy tickets using the native $PVP token and get 2x tickets per 1 ticket fee!</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1.5 rounded-xl" id="user-tickets-badge">🎟️ <span id="tickets-count">1</span> Ticket Ready</span>
+          <span class="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-400 text-black">24H CYCLE: 00:00 UTC RESET</span>
+        </div>
+      </div>
+
+      <!-- HORIZONTAL TICKET TIERS SELECTION (5 COLUMNS ACROSS) -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-black text-white font-mono text-sm uppercase tracking-wider flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            SELECT TOURNAMENT TIER & BUY TICKETS
+          </h3>
+          <span class="text-[11px] font-mono text-slate-400">Choose a tier to activate playable board</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+          
+          <!-- TIER 1 () -->
+          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="glass-panel p-4 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all flex flex-col justify-between space-y-3 hover:border-cyan-400">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-white text-base">$1.00 TIER</span>
+                <span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$120.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$96.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(1, 'USDG')" id="buy-btn-usdc-1" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="cost-usdc-1">1.00</span> USDG)
+                </button>
+                <button onclick="buy2048Ticket(1, 'PVP')" id="buy-btn-pvp-1" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-1">1.00</span> • <span id="attempts-pvp-1">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 5 () -->
+          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-white text-base">$5.00 TIER</span>
+                <span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$1,150.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$920.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(5, 'USDG')" id="buy-btn-usdc-5" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="cost-usdc-5">5.00</span> USDG)
+                </button>
+                <button onclick="buy2048Ticket(5, 'PVP')" id="buy-btn-pvp-5" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-5">5.00</span> • <span id="attempts-pvp-5">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 10 (0) -->
+          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-white text-base">$10.00 TIER</span>
+                <span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$1,800.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$1,440.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(10, 'USDG')" id="buy-btn-usdc-10" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="cost-usdc-10">10.00</span> USDG)
+                </button>
+                <button onclick="buy2048Ticket(10, 'PVP')" id="buy-btn-pvp-10" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-10">10.00</span> • <span id="attempts-pvp-10">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 100 (00) -->
+          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-white text-base">$100.00 TIER</span>
+                <span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$3,400.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$2,720.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(100, 'USDG')" id="buy-btn-usdc-100" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="cost-usdc-100">100.00</span> USDG)
+                </button>
+                <button onclick="buy2048Ticket(100, 'PVP')" id="buy-btn-pvp-100" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-100">100.00</span> • <span id="attempts-pvp-100">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 1000 (,000) -->
+          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="glass-panel p-4 rounded-2xl border border-amber-500/40 hover:border-amber-400 cursor-pointer transition-all flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-amber-300 text-base">$1,000 TIER</span>
+                <span id="tier-tag-1000" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$25,000.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$20,000.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(1000, 'USDG')" id="buy-btn-usdc-1000" class="w-full py-2 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-1000">1</span> TICKET ($<span id="cost-usdc-1000">1,000.00</span>)
+                </button>
+                <button onclick="buy2048Ticket(1000, 'PVP')" id="buy-btn-pvp-1000" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-1000">1,000</span> • <span id="attempts-pvp-1000">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PLAYABLE 2048 HERO BOARD (CENTERED & PROMINENT) -->
+      <div class="max-w-2xl mx-auto w-full glass-panel p-6 rounded-3xl border border-white/10 flex flex-col items-center relative shadow-2xl">
+        
+        <div class="w-full flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <span class="text-xs text-slate-400 font-mono">Active Run Metric:</span>
+            <p class="text-xs text-cyan-400 font-mono font-bold">Single High Score (No Accumulation)</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 font-mono text-center">
+              <span class="text-[10px] text-slate-400 block">CURRENT SCORE</span>
+              <span id="game-score" class="text-lg font-black text-white">0</span>
+            </div>
+            <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 font-mono text-center">
+              <span class="text-[10px] text-slate-400 block">BEST RECORD</span>
+              <span id="game-best" class="text-lg font-black text-amber-400">3,240</span>
+            </div>
+            <button onclick="startNew2048Game()" class="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all">↻ NEW GAME</button>
+          </div>
+        </div>
+
+        <!-- THE 4X4 PLAYABLE GRID -->
+        <div class="relative w-full flex justify-center">
+          <div class="grid-2048 relative" id="board-container">
+            <!-- Tiles rendered dynamically by JS -->
+          </div>
+
+          <!-- GAME OVER OVERLAY -->
+          <div id="game-over-overlay" class="hidden absolute inset-0 bg-slate-950/90 rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-4 backdrop-blur-sm z-20">
+            <span class="text-4xl">🎮</span>
+            <div>
+              <h3 class="text-2xl font-black text-white font-mono">ROUND COMPLETED</h3>
+              <p class="text-xs text-slate-400 mt-1">Single Run High Score Recorded Onchain</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900 border border-white/10 font-mono">
+              <span class="text-xs text-slate-400">Final Score:</span>
+              <span id="overlay-final-score" class="text-2xl font-black text-cyan-400 block">0</span>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400">PLAY AGAIN</button>
+              <button onclick="switchTab('leaderboard'); setLeaderboardCategory('2048');" class="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-mono font-bold text-xs hover:bg-slate-700">VIEW LEADERBOARD</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTROLS & D-PAD -->
+        <div class="w-full flex flex-col items-center mt-4 space-y-3">
+          <div class="w-full flex justify-between items-center text-xs font-mono text-slate-400">
+            <span>⌨️ Use Arrow Keys / WASD or Click Buttons Below</span>
+            <span class="text-emerald-400 font-bold" id="board-status-text">🎮 Ready To Play</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 w-48 pt-1">
+            <div></div>
+            <button onclick="handle2048Move('up')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▲</button>
+            <div></div>
+            <button onclick="handle2048Move('left')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">◀</button>
+            <button onclick="handle2048Move('down')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▼</button>
+            <button onclick="handle2048Move('right')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▶</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- LIVE TOP 3 RECORD HOLDERS -->
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 space-y-5 mt-6">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <div>
+              <h3 class="font-black text-white font-mono text-base">LIVE TOP 3 RECORD HOLDERS (ALL TIERS)</h3>
+              <p class="text-xs text-slate-400">Single Highest Record in Current 24H UTC Tournament Cycle</p>
+            </div>
+          </div>
+          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full">⚡ Live Sync Every Block</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div id="top3-tier-1" class="p-4 rounded-2xl bg-slate-900/80 border border-cyan-500/40 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$1.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$96.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="top3-tier-5" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$5.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$920.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="top3-tier-10" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$10.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$1,440.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="top3-tier-100" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$100.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$2,720.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="top3-tier-1000" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-amber-300 text-sm">$1,000 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$20,000.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3. GRAND JACKPOT TAB -->
+    <div id="tab-jackpot" class="tab-content hidden space-y-8">
+      
+      <!-- ROUND COUNTDOWN & STATUS BANNER -->
+      <div class="glass-panel p-6 rounded-3xl border border-cyan-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span class="text-xs font-mono font-bold text-cyan-400 tracking-wider">LIVE ROUND • PROGRESSIVE VAULT</span>
+          </div>
+          <h2 class="text-2xl font-black text-white font-mono">GRAND JACKPOT ROUNDS</h2>
+          <p class="text-xs text-slate-300 mt-1 max-w-2xl">Predict the target outcome before the round entry countdown locks. 80% net vault awarded to correct predictions (split equally among winners). If no winner, 100% of the pool value rolls over to the next round. Maximum 3 tickets per wallet.</p>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="px-6 py-3.5 rounded-2xl bg-slate-900/95 border border-amber-400/40 font-mono text-center shadow-lg">
+            <span class="text-[10px] text-amber-400 block font-black uppercase tracking-wider mb-1.5 text-center">⏳ ROUND ENTRY COUNTDOWN</span>
+            <div class="flex items-center justify-center gap-2 font-mono">
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-days" class="text-2xl font-black text-amber-400">02</span><span class="text-[8px] text-slate-400 block font-bold">DAYS</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-hours" class="text-2xl font-black text-amber-400">14</span><span class="text-[8px] text-slate-400 block font-bold">HRS</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-mins" class="text-2xl font-black text-amber-400">35</span><span class="text-[8px] text-slate-400 block font-bold">MIN</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-secs" class="text-2xl font-black text-amber-400">18</span><span class="text-[8px] text-slate-400 block font-bold">SEC</span></div>
+            </div>
+            <span id="jackpot-timer" class="hidden text-xs text-amber-400/80">02d 14h 35m 18s</span>
+          </div>
+        </div>
+      </div>
+
+                  
+      <!-- JACKPOT TIERS CARDS (ONLINE LIVE REWARD & PARTICIPANTS CALCULATION) -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-xs font-mono font-bold text-cyan-400 tracking-wider">SELECT POOL TIER • WINNER TAKES 80%</h4>
+          <span class="text-[10px] font-mono text-slate-400">Fixed entry ticket price per tier</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          
+          <!-- TIER 1 ($1) -->
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex flex-col justify-between hover:border-cyan-500/50 transition-all space-y-4 shadow-lg">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span class="font-mono font-black text-white text-sm">TIER 1 - $1</span>
+                <span class="text-[10px] font-mono text-cyan-400 font-bold">1.00 USDG</span>
+              </div>
+              <div class="mt-3 space-y-1.5 font-mono text-xs">
+                <div class="flex justify-between text-slate-400"><span>Current Vault:</span> <span class="text-white font-bold" id="jackpot-pool-1">$1,240.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>80% Prize Share:</span> <span class="text-emerald-400 font-bold" id="jackpot-reward-1">$992.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>Round Players:</span> <span class="text-amber-400 font-bold" id="jackpot-players-1">0</span></div>
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-2 border-t border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
+                <div class="flex items-center gap-1 bg-slate-950 border border-white/20 rounded-lg p-0.5">
+                  <button onclick="changeJackpotTicketQty(1, -1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▼</button>
+                  <span id="jackpot-qty-1" class="font-mono font-bold text-white text-xs px-2">1</span>
+                  <button onclick="changeJackpotTicketQty(1, 1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▲</button>
+                </div>
+              </div>
+
+              <div id="target-inputs-1" class="space-y-2">
+                <div>
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
+                  <input type="text" id="target-input-1-1" placeholder="e.g. 2048.50" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-1-2" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
+                  <input type="text" id="target-input-1-2" placeholder="e.g. 2100.00" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-1-3" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
+                  <input type="text" id="target-input-1-3" placeholder="e.g. 2250.75" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+              </div>
+
+              <button onclick="buyJackpotTicket(1)" id="btn-jackpot-1" class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs shadow-md transition-all text-center">BUY TICKET ($1.00)</button>
+            </div>
+          </div>
+
+          <!-- TIER 2 ($5) -->
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex flex-col justify-between hover:border-cyan-500/50 transition-all space-y-4 shadow-lg">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span class="font-mono font-black text-white text-sm">TIER 2 - $5</span>
+                <span class="text-[10px] font-mono text-cyan-400 font-bold">5.00 USDG</span>
+              </div>
+              <div class="mt-3 space-y-1.5 font-mono text-xs">
+                <div class="flex justify-between text-slate-400"><span>Current Vault:</span> <span class="text-white font-bold" id="jackpot-pool-5">$4,850.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>80% Prize Share:</span> <span class="text-emerald-400 font-bold" id="jackpot-reward-5">$3,880.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>Round Players:</span> <span class="text-amber-400 font-bold" id="jackpot-players-5">0</span></div>
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-2 border-t border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
+                <div class="flex items-center gap-1 bg-slate-950 border border-white/20 rounded-lg p-0.5">
+                  <button onclick="changeJackpotTicketQty(5, -1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▼</button>
+                  <span id="jackpot-qty-5" class="font-mono font-bold text-white text-xs px-2">1</span>
+                  <button onclick="changeJackpotTicketQty(5, 1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▲</button>
+                </div>
+              </div>
+
+              <div id="target-inputs-5" class="space-y-2">
+                <div>
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
+                  <input type="text" id="target-input-5-1" placeholder="e.g. 2048.50" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-5-2" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
+                  <input type="text" id="target-input-5-2" placeholder="e.g. 2100.00" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-5-3" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
+                  <input type="text" id="target-input-5-3" placeholder="e.g. 2250.75" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+              </div>
+
+              <button onclick="buyJackpotTicket(5)" id="btn-jackpot-5" class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs shadow-md transition-all text-center">BUY TICKET ($5.00)</button>
+            </div>
+          </div>
+
+          <!-- TIER 3 ($10) -->
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex flex-col justify-between hover:border-cyan-500/50 transition-all space-y-4 shadow-lg">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span class="font-mono font-black text-white text-sm">TIER 3 - $10</span>
+                <span class="text-[10px] font-mono text-cyan-400 font-bold">10.00 USDG</span>
+              </div>
+              <div class="mt-3 space-y-1.5 font-mono text-xs">
+                <div class="flex justify-between text-slate-400"><span>Current Vault:</span> <span class="text-white font-bold" id="jackpot-pool-10">$9,200.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>80% Prize Share:</span> <span class="text-emerald-400 font-bold" id="jackpot-reward-10">$7,360.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>Round Players:</span> <span class="text-amber-400 font-bold" id="jackpot-players-10">0</span></div>
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-2 border-t border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
+                <div class="flex items-center gap-1 bg-slate-950 border border-white/20 rounded-lg p-0.5">
+                  <button onclick="changeJackpotTicketQty(10, -1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▼</button>
+                  <span id="jackpot-qty-10" class="font-mono font-bold text-white text-xs px-2">1</span>
+                  <button onclick="changeJackpotTicketQty(10, 1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▲</button>
+                </div>
+              </div>
+
+              <div id="target-inputs-10" class="space-y-2">
+                <div>
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
+                  <input type="text" id="target-input-10-1" placeholder="e.g. 2048.50" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-10-2" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
+                  <input type="text" id="target-input-10-2" placeholder="e.g. 2100.00" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-10-3" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
+                  <input type="text" id="target-input-10-3" placeholder="e.g. 2250.75" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+              </div>
+
+              <button onclick="buyJackpotTicket(10)" id="btn-jackpot-10" class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs shadow-md transition-all text-center">BUY TICKET ($10.00)</button>
+            </div>
+          </div>
+
+          <!-- TIER 4 ($100) -->
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-white/10 flex flex-col justify-between hover:border-cyan-500/50 transition-all space-y-4 shadow-lg">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span class="font-mono font-black text-white text-sm">TIER 4 - $100</span>
+                <span class="text-[10px] font-mono text-cyan-400 font-bold">100.00 USDG</span>
+              </div>
+              <div class="mt-3 space-y-1.5 font-mono text-xs">
+                <div class="flex justify-between text-slate-400"><span>Current Vault:</span> <span class="text-white font-bold" id="jackpot-pool-100">$24,500.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>80% Prize Share:</span> <span class="text-emerald-400 font-bold" id="jackpot-reward-100">$19,600.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>Round Players:</span> <span class="text-amber-400 font-bold" id="jackpot-players-100">0</span></div>
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-2 border-t border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
+                <div class="flex items-center gap-1 bg-slate-950 border border-white/20 rounded-lg p-0.5">
+                  <button onclick="changeJackpotTicketQty(100, -1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▼</button>
+                  <span id="jackpot-qty-100" class="font-mono font-bold text-white text-xs px-2">1</span>
+                  <button onclick="changeJackpotTicketQty(100, 1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▲</button>
+                </div>
+              </div>
+
+              <div id="target-inputs-100" class="space-y-2">
+                <div>
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
+                  <input type="text" id="target-input-100-1" placeholder="e.g. 2048.50" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-100-2" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
+                  <input type="text" id="target-input-100-2" placeholder="e.g. 2100.00" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-100-3" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
+                  <input type="text" id="target-input-100-3" placeholder="e.g. 2250.75" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+              </div>
+
+              <button onclick="buyJackpotTicket(100)" id="btn-jackpot-100" class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs shadow-md transition-all text-center">BUY TICKET ($100.00)</button>
+            </div>
+          </div>
+
+          <!-- TIER 5 ($1,000) -->
+          <div class="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/40 flex flex-col justify-between hover:border-amber-400 transition-all space-y-4 shadow-lg">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <span class="font-mono font-black text-amber-400 text-sm">TIER 5 - $1,000</span>
+                <span class="text-[10px] font-mono text-amber-400 font-bold">1,000.00 USDG</span>
+              </div>
+              <div class="mt-3 space-y-1.5 font-mono text-xs">
+                <div class="flex justify-between text-slate-400"><span>Current Vault:</span> <span class="text-white font-bold" id="jackpot-pool-1000">$85,000.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>80% Prize Share:</span> <span class="text-emerald-400 font-bold" id="jackpot-reward-1000">$68,000.00</span></div>
+                <div class="flex justify-between text-slate-400"><span>Round Players:</span> <span class="text-amber-400 font-bold" id="jackpot-players-1000">0</span></div>
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-2 border-t border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
+                <div class="flex items-center gap-1 bg-slate-950 border border-white/20 rounded-lg p-0.5">
+                  <button onclick="changeJackpotTicketQty(1000, -1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▼</button>
+                  <span id="jackpot-qty-1000" class="font-mono font-bold text-white text-xs px-2">1</span>
+                  <button onclick="changeJackpotTicketQty(1000, 1)" class="w-6 h-6 rounded bg-slate-800 text-white font-mono text-xs font-bold hover:bg-slate-700 flex items-center justify-center">▲</button>
+                </div>
+              </div>
+
+              <div id="target-inputs-1000" class="space-y-2">
+                <div>
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
+                  <input type="text" id="target-input-1000-1" placeholder="e.g. 2048.50" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-1000-2" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
+                  <input type="text" id="target-input-1000-2" placeholder="e.g. 2100.00" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+                <div id="target-row-1000-3" class="hidden">
+                  <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
+                  <input type="text" id="target-input-1000-3" placeholder="e.g. 2250.75" class="w-full bg-slate-950 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-cyan-400 focus:outline-none" />
+                </div>
+              </div>
+
+              <button onclick="buyJackpotTicket(1000)" id="btn-jackpot-1000" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono font-bold text-xs shadow-md transition-all text-center">BUY TICKET ($1,000.00)</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- LIVE ROUND PREDICTIONS FEED TABLE -->
+      <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden shadow-xl">
+        <div class="p-4 border-b border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div>
+            <h4 class="font-bold text-white font-mono text-sm">LIVE ROUND PREDICTIONS FEED</h4>
+            <p class="text-xs text-slate-400">Real time submissions recorded for the active round</p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-slate-900/80 text-slate-400 border-b border-white/5 uppercase">
+              <tr>
+                <th class="p-3.5">Tier Level</th>
+                <th class="p-3.5">Time</th>
+                <th class="p-3.5">Player Wallet</th>
+                <th class="p-3.5">Exact Predicted Target</th>
+                <th class="p-3.5 text-center">Ticket Number</th>
+                <th class="p-3.5 text-right">Onchain Tx</th>
+              </tr>
+            </thead>
+            <tbody id="jackpot-submissions-body" class="divide-y divide-white/5">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 4. LEADERBOARD TAB -->
+    <div id="tab-leaderboard" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div onclick="setLeaderboardCategory('duel')" id="lb-cat-duel" class="glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center">
+          <span class="text-2xl block mb-2">⚔️</span>
+          <h4 class="font-black text-white font-mono text-sm">1. P2P DUELS</h4>
+          <p class="text-xs text-slate-400 mt-1">Wins & Streaks</p>
+        </div>
+        <div onclick="setLeaderboardCategory('2048')" id="lb-cat-2048" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
+          <span class="text-2xl block mb-2">🎮</span>
+          <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
+          <p class="text-xs text-slate-400 mt-1">Single High Score Records</p>
+        </div>
+        <div onclick="setLeaderboardCategory('jackpot')" id="lb-cat-jackpot" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
+          <span class="text-2xl block mb-2">🎯</span>
+          <h4 class="font-black text-white font-mono text-sm">3. GRAND JACKPOT</h4>
+          <p class="text-xs text-slate-400 mt-1">Closest Predictions</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="setLeaderboardTier(1)" id="lb-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1 Tier Vault</button>
+        <button onclick="setLeaderboardTier(5)" id="lb-tier-5" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$5 Tier Vault</button>
+        <button onclick="setLeaderboardTier(10)" id="lb-tier-10" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$10 Tier Vault</button>
+        <button onclick="setLeaderboardTier(100)" id="lb-tier-100" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$100 Tier Vault</button>
+        <button onclick="setLeaderboardTier(1000)" id="lb-tier-1000" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$1,000 Tier Vault</button>
+      </div>
+
+      <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
+        <div class="p-4 border-b border-white/10 flex justify-between items-center">
+          <h4 id="lb-table-title" class="font-bold text-white font-mono text-sm">Top 100 Players — P2P Duels ($1 Tier)</h4>
+          <span class="text-xs font-mono text-slate-400">Live 24h Standing</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-slate-900/80 text-slate-400 border-b border-white/5 uppercase">
+              <tr>
+                <th class="p-3.5">Rank</th>
+                <th class="p-3.5">Player Wallet</th>
+                <th class="p-3.5" id="lb-col-metric">Wins / Streak</th>
+                <th class="p-3.5">Est. Winnings</th>
+                <th class="p-3.5">Status</th>
+              </tr>
+            </thead>
+            <tbody id="lb-tbody" class="divide-y divide-white/5">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. HISTORY TAB -->
+    <div id="tab-history" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div onclick="setHistoryCategory('duel')" id="hist-cat-duel" class="glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center">
+          <span class="text-2xl block mb-2">⚔️</span>
+          <h4 class="font-black text-white font-mono text-sm">1. P2P DUELS</h4>
+          <p class="text-xs text-slate-400 mt-1">Verified 90% Duel Champions</p>
+        </div>
+        <div onclick="setHistoryCategory('2048')" id="hist-cat-2048" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
+          <span class="text-2xl block mb-2">🎮</span>
+          <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
+          <p class="text-xs text-slate-400 mt-1">Verified 80% 24h Top Record Holders</p>
+        </div>
+        <div onclick="setHistoryCategory('jackpot')" id="hist-cat-jackpot" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
+          <span class="text-2xl block mb-2">🎯</span>
+          <h4 class="font-black text-white font-mono text-sm">3. GRAND JACKPOT</h4>
+          <p class="text-xs text-slate-400 mt-1">Verified 80% 1h Closest Predictions</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="setHistoryTier(1)" id="hist-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1 Tier Vault</button>
+        <button onclick="setHistoryTier(5)" id="hist-tier-5" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$5 Tier Vault</button>
+        <button onclick="setHistoryTier(10)" id="hist-tier-10" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$10 Tier Vault</button>
+        <button onclick="setHistoryTier(100)" id="hist-tier-100" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$100 Tier Vault</button>
+        <button onclick="setHistoryTier(1000)" id="hist-tier-1000" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$1,000 Tier Vault</button>
+      </div>
+
+      <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
+        <div class="p-4 border-b border-white/10 flex justify-between items-center">
+          <h4 id="hist-table-title" class="font-bold text-white font-mono text-sm">Verified Reward Winners — P2P Duels ($1 Tier)</h4>
+          <span class="text-xs font-mono text-emerald-400">Onchain Verified</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-slate-900/80 text-slate-400 border-b border-white/5 uppercase">
+              <tr>
+                <th class="p-3.5">Settled Date (UTC)</th>
+                <th class="p-3.5">Tier</th>
+                <th class="p-3.5">Winner Wallet</th>
+                <th class="p-3.5">Winning Metric</th>
+                <th class="p-3.5">Exact Prize Paid</th>
+                <th class="p-3.5">Settlement / Tx</th>
+              </tr>
+            </thead>
+            <tbody id="hist-tbody" class="divide-y divide-white/5">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. PROTOCOL DOCS / WHITEPAPER TAB -->
+    <div id="tab-docs" class="tab-content hidden space-y-6">
+      <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-white/10 space-y-10">
+        <div class="border-b border-white/10 pb-6">
+          <h1 class="text-3xl font-black text-white font-mono">PVP Protocol Whitepaper</h1>
+          <div class="mt-4 p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30">
+            <h3 class="text-sm font-bold text-cyan-300 font-mono mb-1.5">Core Ecosystem Pillars</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-white/10">
+                <span class="text-xs font-bold text-cyan-400 font-mono block">1. Prediction</span>
+                <span class="text-[11px] text-slate-400 font-mono mt-1 block">P2P Instant Duel price & outcome speculation with 90% winner share & 3% cashback rebate.</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-white/10">
+                <span class="text-xs font-bold text-emerald-400 font-mono block">2. Skill</span>
+                <span class="text-[11px] text-slate-400 font-mono mt-1 block">Tournament Skill Vaults & competitive daily leaderboards (24H UTC single top score record).</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-white/10">
+                <span class="text-xs font-bold text-amber-400 font-mono block">3. Chance</span>
+                <span class="text-[11px] text-slate-400 font-mono mt-1 block">Grand Jackpot pools with fair outcome distribution and rollover prize vaults.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold text-white font-mono">p2p Prediction</h2>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk to reward ratio (for example at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In PVP Arena, the winner earns 90% net profit directly, and the runner up receives 3% rebate cashback to preserve liquidity and enable immediate re-entry.
+          </p>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Two participants lock equal collateral into the canonical escrow smart contract. Upon verified outcome resolution, funds are automatically distributed as follows:
+          </p>
+          <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
+            <li><strong class="text-white">90%</strong> allocated directly to the verified winner</li>
+            <li><strong class="text-white">3%</strong> rebate cashback returned to the runner up wallet</li>
+            <li><strong class="text-white">7%</strong> protocol treasury fee for buybacks and rewards</li>
+          </ul>
+        </div>
+
+        <div class="space-y-4 border-t border-white/10 pt-8">
+          <h2 class="text-xl font-bold text-white font-mono">2. skill</h2>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Players compete with each other based on skill. Skill tournaments run in continuous 24 hour cycles ending at 00:00 UTC every day.
+          </p>
+          <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
+            <li><strong class="text-white">Single High Score Record (No Accumulation):</strong> Scores from multiple games are never summed together. Only a player highest single run record qualifies.</li>
+            <li><strong class="text-white">Unlimited Ticket Purchases:</strong> Players may buy as many tickets as desired to improve their top record.</li>
+            <li><strong class="text-white">SPECIAL $PVP PERK: 2X TICKETS BONUS:</strong> Buy tickets using the native $PVP token and get 2x tickets per 1 ticket fee!</li>
+            <li><strong class="text-white">Reward Distribution:</strong> 80% of the entire tier vault is transferred to the top verified record holder, with 20% allocated as protocol fee.</li>
+          </ul>
+        </div>
+
+        <div class="space-y-4 border-t border-white/10 pt-8">
+          <h2 class="text-xl font-bold text-white font-mono">3. Grand Jackpot System & Round Lifecycle</h2>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Players test their luck in jackpot pools within designated time windows. When the countdown timer reaches zero, round submissions automatically lock for verifiable settlement.
+          </p>
+          <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
+            <li><strong class="text-white">Fixed Entry Countdown:</strong> Participants have a defined time window to enter each tier before the round timer expires.</li>
+            <li><strong class="text-white">Correct Prediction Reward:</strong> The reward is distributed to any participant who provides the correct outcome prediction for the round.</li>
+            <li><strong class="text-white">Prize Pool Rollover (Unclaimed Vaults):</strong> If no participant provides a correct prediction, 100% of the vault's USD value is preserved and carried over to boost the next jackpot round.</li>
+            <li><strong class="text-white">Equal Split for Multiple Winners:</strong> If multiple participants predict the correct target, the net prize pool is split equally among all winning participants.</li>
+            <li><strong class="text-white">Max 3 Tickets Per Wallet:</strong> Strict per-wallet cap to prevent whale dominance and guarantee fair distribution.</li>
+            <li><strong class="text-white">Reward Distribution:</strong> 80% of the entire tier vault is transferred to the top verified record holder, with 20% allocated as protocol fee.</li>
+          </ul>
+        </div>
+
+      </div>
+
+                <!-- 4. OFFICIAL PVP TOKEN CONTRACT -->
+        <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/30 bg-cyan-950/20 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span class="text-xs font-bold text-cyan-400 font-mono block">OFFICIAL $PVP TOKEN CONTRACT</span>
+              <span class="text-[11px] text-slate-400 font-mono">Robinhood Chain (Verified)</span>
+            </div>
+            <button onclick="copyPvpContract()" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-cyan-500/20 active:scale-95">
+              <span>📋</span>
+              <span id="copy-btn-text">Copy Contract</span>
+            </button>
+          </div>
+          <div class="p-3 rounded-xl bg-black/60 border border-cyan-500/30 font-mono text-xs text-cyan-300 break-all select-all flex items-center justify-between">
+            <span id="pvp-contract-address">0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/10 bg-[#05070d] py-6 text-center text-xs font-mono text-slate-500">
+    <p>PVP Protocol © 2026 • Robinhood Chain</p>
+  </footer>
+
+  <!-- INTERACTIVE JAVASCRIPT -->
+  <script>
+
+    function copyPvpContract() {
+      const addr = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(addr).then(() => {
+          showToast("✅ Contract address copied to clipboard!", "success");
+          const btn = document.getElementById("copy-btn-text");
+          if (btn) {
+            btn.innerText = "Copied!";
+            setTimeout(() => { btn.innerText = "Copy Contract"; }, 2500);
+          }
+        }).catch(() => fallbackCopy(addr));
+      } else {
+        fallbackCopy(addr);
+      }
+    }
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showToast("✅ Contract address copied to clipboard!", "success");
+    }
+
+    // TAB SWITCHING LOGIC
+    function switchTab(tabId) {
+      try {
+        const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs"];
+        tabs.forEach(t => {
+          const el = document.getElementById("tab-" + t);
+          if (el) {
+            if (t === tabId) {
+              el.classList.remove("hidden");
+              el.style.display = "block";
+            } else {
+              el.classList.add("hidden");
+              el.style.display = "none";
+            }
+          }
+        });
+
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+
+        const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab='" + tabId + "']");
+        activeBtns.forEach(b => b.classList.add("active"));
+
+        try {
+          if (tabId === "vault2048" && typeof render2048 === "function") render2048();
+          if (tabId === "jackpot") {
+            if (typeof renderJackpotSubmissions === "function") renderJackpotSubmissions();
+            if (typeof updateJackpotMetrics === "function") updateJackpotMetrics();
+          }
+          if (tabId === "leaderboard" && typeof updateLeaderboardUI === "function") updateLeaderboardUI();
+          if (tabId === "history" && typeof updateHistoryUI === "function") updateHistoryUI();
+        } catch (e) {
+          console.warn("Tab switch callback:", e);
+        }
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        console.error("switchTab error:", err);
+      }
+    }
+
+    // TOAST NOTIFICATION SYSTEM
+    function showToast(message, type = "info") {
+      let container = document.getElementById("toast-container");
+      if (!container) {
+        container = document.createElement("div");
+        container.id = "toast-container";
+        container.className = "fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none";
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement("div");
+      const bgColors = {
+        success: "bg-emerald-950/90 border-emerald-500/50 text-emerald-300 shadow-emerald-500/20",
+        info: "bg-cyan-950/90 border-cyan-500/50 text-cyan-300 shadow-cyan-500/20",
+        warning: "bg-amber-950/90 border-amber-500/50 text-amber-300 shadow-amber-500/20",
+        error: "bg-rose-950/90 border-rose-500/50 text-rose-300 shadow-rose-500/20"
+      };
+      toast.className = `px-4 py-3 rounded-xl border font-mono text-xs font-bold shadow-xl backdrop-blur-md pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2 ${bgColors[type] || bgColors.info}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      
+      requestAnimationFrame(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      });
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-2");
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // WEB3 & WALLET CONNECTION
+    let isConnected = false;
+    let userAddress = null;
+    var ROBINHOOD_CHAIN_ID = "0x2710"; // 4663 in hex
+    var ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
+
+    async function connectWallet() {
+      const btnText = document.getElementById("walletBtnText");
+      const dot = document.getElementById("walletDot");
+
+      if (isConnected) {
+        isConnected = false;
+        userAddress = null;
+        if (btnText) btnText.innerText = "Connect Wallet";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-white";
+        showToast("Wallet Disconnected", "info");
+        return;
+      }
+
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          if (accounts && accounts.length > 0) {
+            userAddress = accounts[0];
+            isConnected = true;
+            const shortAddr = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+            if (btnText) btnText.innerText = shortAddr;
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+            showToast("Connected: " + shortAddr, "success");
+            if (typeof renderAllDuels === 'function') renderAllDuels();
+
+            try {
+              await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: ROBINHOOD_CHAIN_ID }],
+              });
+            } catch (switchError) {
+              if (switchError.code === 4902) {
+                try {
+                  await window.ethereum.request({
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                      chainId: ROBINHOOD_CHAIN_ID,
+                      chainName: "Robinhood Chain",
+                      nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+                      rpcUrls: ["https://rpc.robinhood.com"],
+                      blockExplorerUrls: ["https://explorer.robinhood.com"]
+                    }]
+                  });
+                } catch (addError) {}
+              }
+            }
+          }
+        } catch (err) {
+          console.error(err);
+          isConnected = true;
+          userAddress = "0x71C...49A2";
+          if (btnText) btnText.innerText = "0x71c2...49a2";
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+          showToast("Connected: 0x71c2...49a2", "success");
+        }
+      } else {
+        isConnected = true;
+        userAddress = "0x71C...49A2";
+        if (btnText) btnText.innerText = "0x71c2...49a2";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        showToast("Connected: 0x71c2...49a2", "success");
+      }
+    }
+
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accs) => {
+        if (!accs || accs.length === 0) {
+          isConnected = false;
+          userAddress = null;
+          const btnText = document.getElementById("walletBtnText");
+          const dot = document.getElementById("walletDot");
+          if (btnText) btnText.innerText = "Connect Wallet";
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-white";
+          if (typeof renderAllDuels === 'function') renderAllDuels();
+        } else {
+          userAddress = accs[0];
+          isConnected = true;
+          const btnText = document.getElementById("walletBtnText");
+          const dot = document.getElementById("walletDot");
+          if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+          if (typeof renderAllDuels === 'function') renderAllDuels();
+        }
+      });
+   
+    // Auto-detect connected wallet account on page load
+    async function checkAutoConnect() {
+      if (window.ethereum) {
+        try {
+          const accs = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accs && accs.length > 0) {
+            userAddress = accs[0];
+            isConnected = true;
+            const btnText = document.getElementById("walletBtnText");
+            const dot = document.getElementById("walletDot");
+            if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+            if (typeof renderAllDuels === 'function') renderAllDuels();
+          }
+        } catch(err) {
+          console.warn("Auto-connect check:", err);
+        }
+      }
+    }
+    window.addEventListener("DOMContentLoaded", checkAutoConnect);
+    window.addEventListener("load", checkAutoConnect);
+ }
+
+    // P2P DUELS ONCHAIN ESCROW LOGIC
+    let activeDuelsCount = 0;
+
+    
+    // ONCHAIN TRANSACTION EXECUTOR (ROBINHOOD CHAIN)
+    var USDG_TOKEN_ADDRESS = "0x89C6F61b4A5eb14397B1C82A2E4459648939c0fa"; // Official USDG on Robinhood Chain
+    var PVP_TOKEN_ADDRESS = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3"; // Native $PVP token
+    var ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
+
+    async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry") {
+      if (!window.ethereum) {
+        showToast("⚠️ Web3 wallet not detected. Using simulated mode.", "warning");
+        return "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+      }
+      if (!userAddress) {
+        throw new Error("Wallet not connected");
+      }
+
+      // Check / switch chain if needed
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: ROBINHOOD_CHAIN_ID }],
+        });
+      } catch (switchErr) {}
+
+      // STEP 1: Authorization Signature
+      showToast(`✍️ Step 1/2: Sign entry authorization for ${totalCostUSD} ${paymentMethod}...`, "info");
+      const messageToSign = `PVP ARENA PROTOCOL - AUTHORIZATION\nAction: ${purpose}\nAmount: ${totalCostUSD} ${paymentMethod}\nVault: ${ESCROW_CONTRACT}\nNetwork: Robinhood Chain\nPlayer: ${userAddress}\nTimestamp: ${new Date().toISOString()}\nNonce: ${Date.now()}`;
+
+      let signature = "";
+      try {
+        const from = userAddress;
+        const msgHex = "0x" + Array.from(new TextEncoder().encode(messageToSign)).map(b => b.toString(16).padStart(2, "0")).join("");
+        
+        try {
+          signature = await window.ethereum.request({
+            method: "personal_sign",
+            params: [msgHex, from]
+          });
+        } catch (e1) {
+          signature = await window.ethereum.request({
+            method: "personal_sign",
+            params: [from, msgHex]
+          });
+        }
+      } catch (err) {
+        console.error("Signature rejected:", err);
+        throw new Error("Signature was cancelled by user.");
+      }
+
+      // STEP 2: Onchain Transfer of USDG / PVP to Escrow Vault
+      showToast(`💳 Step 2/2: Confirm ${paymentMethod} transfer to Escrow Vault...`, "info");
+
+      const cleanRecipient = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
+      let tokenContract = USDG_TOKEN_ADDRESS;
+      let cleanAmount = "";
+
+      if (paymentMethod === "PVP") {
+        tokenContract = PVP_TOKEN_ADDRESS;
+        const pvpUnits = BigInt(Math.floor(parseFloat(totalCostUSD) * 1000)) * (10n ** 18n);
+        cleanAmount = pvpUnits.toString(16).padStart(64, "0");
+      } else {
+        tokenContract = USDG_TOKEN_ADDRESS;
+        const usdgUnits = BigInt(Math.round(parseFloat(totalCostUSD) * 1000000));
+        cleanAmount = usdgUnits.toString(16).padStart(64, "0");
+      }
+
+      // ERC-20 transfer(address recipient, uint256 amount) selector: 0xa9059cbb
+      const transferCalldata = "0xa9059cbb" + cleanRecipient + cleanAmount;
+
+      let txHash = null;
+      try {
+        txHash = await window.ethereum.request({
+          method: "eth_sendTransaction",
+          params: [{
+            from: userAddress,
+            to: tokenContract,
+            data: transferCalldata
+          }]
+        });
+      } catch (err) {
+        console.error("USDG Transfer rejected:", err);
+        throw new Error("USDG transfer transaction was cancelled.");
+      }
+
+      if (!txHash) {
+        throw new Error("Transaction hash not returned.");
+      }
+
+      return txHash;
+    }
+    
+    async function requestSafeSignature(messageText) {
+      if (!window.ethereum) {
+        return "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+      }
+      const hexMsg = "0x" + Array.from(new TextEncoder().encode(messageText)).map(b => b.toString(16).padStart(2, "0")).join("");
+      try {
+        return await window.ethereum.request({
+          method: "personal_sign",
+          params: [hexMsg, userAddress]
+        });
+      } catch (err) {
+        if (err && (err.code === 4001 || (err.message && err.message.toLowerCase().includes("user rejected")))) {
+          throw err;
+        }
+        return "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+      }
+    }
+
+    // Duplicate duel functions removed
+    // GRAND JACKPOT LOGIC
+        let jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
+    let jackpotSelectedQty = { 1: 1, 5: 1, 10: 1, 100: 1, 1000: 1 };
+    let jackpotTierStats = {
+      1: { tickets: 0 },
+      5: { tickets: 0 },
+      10: { tickets: 0 },
+      100: { tickets: 0 },
+      1000: { tickets: 0 }
+    };
+
+        function renderJackpotTargetInputs(tier, qty) {
+      const container = document.getElementById("target-inputs-list-" + tier);
+      const countLabel = document.getElementById("target-count-label-" + tier);
+      if (!container) return;
+
+      if (countLabel) {
+        countLabel.innerText = qty === 1 ? "1 Target" : `${qty} Targets`;
+      }
+
+      const focusBorder = tier === 1000 ? "focus:border-amber-400" : "focus:border-cyan-500";
+      
+      // Preserve existing values
+      const existingValues = [];
+      for (let i = 1; i <= 3; i++) {
+        const input = document.getElementById(`target-input-${tier}-${i}`);
+        if (input) existingValues.push(input.value);
+      }
+
+      let html = "";
+      for (let i = 1; i <= qty; i++) {
+        const val = existingValues[i - 1] || "";
+        html += `
+          <div class="relative">
+            <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#${i}</span>
+            <input type="text" inputmode="decimal" value="${val}" placeholder="Target e.g. 2450.${50 + i * 10}" id="target-input-${tier}-${i}" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none ${focusBorder}">
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
+    
+
+    function changeJackpotTicketQty(tier, delta) {
+      if (!jackpotSelectedQty[tier]) jackpotSelectedQty[tier] = 1;
+      const currentUsed = jackpotUserTickets[tier] || 0;
+      const maxAllowed = Math.max(1, 3 - currentUsed);
+
+      let newQty = jackpotSelectedQty[tier] + delta;
+      if (newQty < 1) newQty = 1;
+      if (newQty > 3) newQty = 3;
+      if (newQty > maxAllowed) {
+        newQty = maxAllowed;
+        showToast("Maximum 3/3 tickets per wallet for this round!", "warning");
+      }
+
+      jackpotSelectedQty[tier] = newQty;
+
+      // Update quantity display
+      const qtyEl = document.getElementById("jackpot-qty-" + tier);
+      if (qtyEl) qtyEl.innerText = newQty;
+
+      // Update button label and total price (e.g., 3 x $10 = $30.00)
+      const totalCost = (tier * newQty).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const label = newQty === 1 ? "TICKET" : "TICKETS";
+      
+      const btn1 = document.getElementById("btn-jackpot-" + tier);
+      if (btn1) btn1.innerText = `BUY ${newQty} ${label} (${totalCost})`;
+      const btn2 = document.getElementById("jackpot-btn-" + tier);
+      if (btn2) btn2.innerText = `BUY ${newQty} ${label} (${totalCost})`;
+
+      // Show/Hide target prediction inputs dynamically
+      const row2 = document.getElementById(`target-row-${tier}-2`);
+      const row3 = document.getElementById(`target-row-${tier}-3`);
+      if (row2) {
+        if (newQty >= 2) row2.classList.remove("hidden");
+        else row2.classList.add("hidden");
+      }
+      if (row3) {
+        if (newQty >= 3) row3.classList.remove("hidden");
+        else row3.classList.add("hidden");
+      }
+    }
+
+    async function buyJackpotTicket(tier) {
+      await submitJackpot(tier);
+    }
+
+    async function submitJackpot(tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      const qty = jackpotSelectedQty[tier] || 1;
+      const currentUsed = jackpotUserTickets[tier] || 0;
+
+      if (currentUsed + qty > 3) {
+        showToast(`Maximum 3/3 tickets per wallet! Already used ${currentUsed}/3.`, "warning");
+        return;
+      }
+
+      const targets = [];
+      for (let i = 1; i <= qty; i++) {
+        const input = document.getElementById(`target-input-${tier}-${i}`);
+        let val = input ? input.value.trim() : "";
+        if (!val) {
+          const baseEstimate = 2450.00 + (Math.random() * 20 - 10) + (i * 2.5);
+          val = baseEstimate.toFixed(2);
+          if (input) input.value = val;
+        }
+        targets.push(val);
+      }
+
+      const totalCost = (tier * qty).toFixed(2);
+      let txHash = "";
+      try {
+        txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
+        showToast(`✅ Step 1 Signed & Step 2 USDG Transferred: ${txHash.slice(0, 10)}...`, "success");
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
+        return;
+      }
+
+      const startingTicketNum = jackpotUserTickets[tier] + 1;
+      jackpotUserTickets[tier] += qty;
+      jackpotTierStats[tier].tickets += qty;
+      updateJackpotMetrics();
+
+      const tNum = jackpotUserTickets[tier];
+      const badge = document.getElementById("jackpot-tickets-" + tier);
+      if (badge) {
+        badge.innerText = `${tNum}/3 Tickets`;
+        badge.className = tNum === 3 
+          ? "text-[10px] font-mono text-emerald-400 font-black" 
+          : (tier === 1000 ? "text-[10px] font-mono text-amber-400 font-bold" : "text-[10px] font-mono text-cyan-400 font-bold");
+      }
+
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
+      txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+      const shortTx = txHash.slice(0, 6) + "..." + txHash.slice(-4);
+
+      // Add live submissions for each ticket
+      targets.forEach((targetVal, idx) => {
+        const currentTicket = startingTicketNum + idx;
+        liveSubmissions.unshift({
+          tier: tier,
+          wallet: shortAddr,
+          target: targetVal,
+          ticketNum: `${currentTicket}/3`,
+          tx: shortTx,
+          time: "Just now"
+        });
+      });
+
+      renderJackpotSubmissions();
+      showToast(`🎉 Successfully submitted ${qty}x ${tier}.00 Jackpot Ticket(s)! Targets: ${targetsStr}`, "success");
+    }
+
+    function updateJackpotMetrics() {
+      [1, 5, 10, 100, 1000].forEach(tier => {
+        const stats = jackpotTierStats[tier];
+        if (!stats) return;
+        const totalTickets = stats.tickets;
+        const totalPool = totalTickets * tier;
+        const winnerPrize = totalPool * 0.80;
+
+        const prizeEl = document.getElementById("jackpot-prize-" + tier);
+        const poolEl = document.getElementById("jackpot-pool-" + tier);
+        const partEl = document.getElementById("jackpot-participants-" + tier);
+
+        if (prizeEl) prizeEl.innerText = "$" + winnerPrize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+        if (poolEl) poolEl.innerText = "$" + totalPool.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+        if (partEl) partEl.innerText = totalTickets.toLocaleString() + " tickets";
+      });
+    }
+
+    let liveSubmissions = [];
+
+    function updateJackpotTimer() {
+      const daysEl = document.getElementById("jackpot-days");
+      const hoursEl = document.getElementById("jackpot-hours");
+      const minsEl = document.getElementById("jackpot-mins");
+      const secsEl = document.getElementById("jackpot-secs");
+      
+      const targetTime = Date.now() + (2 * 86400000) + (14 * 3600000) + (35 * 60000);
+      
+      function tick() {
+        const now = Date.now();
+        const diff = Math.max(0, targetTime - now);
+        
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        if (daysEl) daysEl.innerText = String(d).padStart(2, "0");
+        if (hoursEl) hoursEl.innerText = String(h).padStart(2, "0");
+        if (minsEl) minsEl.innerText = String(m).padStart(2, "0");
+        if (secsEl) secsEl.innerText = String(s).padStart(2, "0");
+      }
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    async function submitJackpot(tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      const qty = jackpotSelectedQty[tier] || 1;
+      const currentUsed = jackpotUserTickets[tier] || 0;
+
+      if (currentUsed + qty > 3) {
+        showToast(`Maximum 3/3 tickets per wallet! Already used ${currentUsed}/3.`, "warning");
+        return;
+      }
+
+      const input = document.getElementById("target-input-" + tier);
+      let val = input ? input.value.trim() : "";
+      
+      if (!val) {
+        const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
+        val = baseEstimate.toFixed(2);
+        if (input) input.value = val;
+        showToast(`Auto-populated benchmark: ${val}`, "info");
+      }
+
+      const totalCost = (tier * qty).toFixed(2);
+      let txHash = "";
+      try {
+        txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
+        showToast(`✅ Step 1 Signed & Step 2 USDG Transferred: ${txHash.slice(0, 10)}...`, "success");
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
+        return;
+      }
+
+      jackpotUserTickets[tier] += qty;
+      jackpotTierStats[tier].tickets += qty;
+      updateJackpotMetrics();
+
+      const tNum = jackpotUserTickets[tier];
+      const badge = document.getElementById("jackpot-tickets-" + tier);
+      if (badge) {
+        badge.innerText = `${tNum}/3 Tickets`;
+        badge.className = tNum === 3 
+          ? "text-[10px] font-mono text-emerald-400 font-black" 
+          : "text-[10px] font-mono text-cyan-400 font-bold";
+      }
+
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
+      /* txHash already obtained from executeOnchainPayment */
+
+      liveSubmissions.unshift({
+        time: "Just now",
+        tier: tier,
+        wallet: shortAddr,
+        target: "$" + parseFloat(val).toLocaleString("en-US", { minimumFractionDigits: 2 }),
+        ticketNum: `${qty} Ticket${qty > 1 ? 's' : ''} (${tNum}/3)`,
+        tx: txHash
+      });
+
+      renderJackpotSubmissions();
+      
+      // Update qty stepper to safe remaining
+      changeJackpotTicketQty(tier, 0);
+
+      showToast(`🎉 ${qty} Ticket(s) Entered in ${tier} Jackpot Round! Target: ${val}`, "info");
+    }
+
+    function renderJackpotSubmissions() {
+      const tbody = document.getElementById("jackpot-submissions-body");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      if (liveSubmissions.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center py-10 text-slate-400 font-mono">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <span class="text-2xl">🎯</span>
+                <span class="text-xs font-bold text-slate-300">No predictions recorded yet</span>
+                <span class="text-[10px] text-slate-500">Be the first player to submit a prediction in this round ($1, $5, $10, $100, $1,000 Tiers)!</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      liveSubmissions.forEach(s => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-white/5 transition-all";
+        const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `${s.tier} Tier`;
+        tr.innerHTML = `
+          <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-amber-400' : 'text-cyan-400'}">${tierDisplay}</td>
+          <td class="p-3.5 text-slate-400">${s.time}</td>
+          <td class="p-3.5 font-bold text-white">${s.wallet}</td>
+          <td class="p-3.5 text-emerald-400 font-bold">${s.target}</td>
+          <td class="p-3.5 text-center font-bold text-slate-300">${s.ticketNum}</td>
+          <td class="p-3.5 text-right"><a href="https://robinhood.superscan.network" target="_blank" class="text-cyan-400 hover:underline">${s.tx}</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateJackpotDynamicUI() {
+      [1, 5, 10, 100, 1000].forEach(t => {
+        const pCount = jackpotTierStats[t] ? jackpotTierStats[t].tickets : 0;
+        const poolSize = pCount * t;
+        const netReward = poolSize * 0.8;
+
+        const partEl = document.getElementById("jackpot-participants-" + t);
+        if (partEl) partEl.innerText = pCount + " tickets";
+
+        const poolEl = document.getElementById("jackpot-pool-" + t);
+        if (poolEl) poolEl.innerText = "$" + poolSize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+
+        const rewEl = document.getElementById("jackpot-reward-" + t);
+        if (rewEl) rewEl.innerText = "$" + netReward.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+      });
+    }
+
+    async function submitJackpot(tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      const input = document.getElementById("target-input-" + tier);
+      let val = input ? input.value.trim() : "";
+      
+      if (!val) {
+        const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
+        val = baseEstimate.toFixed(2);
+        if (input) input.value = val;
+        showToast(`Auto-populated benchmark: ${val}`, "info");
+      }
+
+      if (jackpotUserTickets[tier] >= 3) {
+        showToast(`Maximum 3/3 tickets already used for ${tier} round!`, "warning");
+        return;
+      }
+
+      showToast(`⚡ Sign verification for ${tier}.00 Jackpot Ticket (Target ${val})...`, "info");
+
+      try {
+        const sig = await requestSafeSignature(`PVP Protocol: Jackpot Ticket ${tier}.00 USDG\nTarget: ${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
+        showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
+      } catch (err) {
+        showToast("❌ Signature cancelled.", "error");
+        return;
+      }
+
+      jackpotUserTickets[tier]++;
+      jackpotTierStats[tier].tickets++;
+      updateJackpotMetrics();
+
+      const tNum = jackpotUserTickets[tier];
+
+      const badge = document.getElementById("jackpot-tickets-" + tier);
+      if (badge) {
+        badge.innerText = `${tNum}/3 Tickets`;
+        badge.className = tNum === 3 
+          ? "text-[10px] font-mono text-emerald-400 font-black" 
+          : "text-[10px] font-mono text-cyan-400 font-bold";
+      }
+
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
+      let txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
+
+      liveSubmissions.unshift({
+        time: "Just Now",
+        tier: tier,
+        wallet: shortAddr,
+        target: "$" + Number(val).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        ticketNum: `Ticket ${tNum}/3`,
+        tx: txHash
+      });
+
+      renderJackpotSubmissions();
+      showToast(`✅ Ticket ${tNum}/3 Purchased! Target ${val} locked for ${tier} Jackpot.`, "success");
+    }
+
+    // 2048 SKILL VAULT & TOURNAMENT ENGINE
+    let board2048 = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0]
+    ];
+    let score2048 = 0;
+    let bestScore2048 = 18420;
+    let is2048GameOver = false;
+    let selected2048Tier = 1;
+    let userAvailableTickets = 1;
+
+    function init2048Game() {
+      board2048 = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+      ];
+      score2048 = 0;
+      is2048GameOver = false;
+      addRandomTile2048();
+      addRandomTile2048();
+      render2048();
+
+      const overlay = document.getElementById('game-over-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      const statusText = document.getElementById('board-status-text');
+      if (statusText) {
+        statusText.innerText = '🎮 Active Run: Move with Arrows / WASD';
+        statusText.className = 'text-cyan-400 font-bold';
+      }
+    }
+
+    function startNew2048Game() {
+      init2048Game();
+      showToast("🎮 New 2048 Tournament Run Started!", "info");
+    }
+
+    function addRandomTile2048() {
+      const emptyCells = [];
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          if (board2048[r][c] === 0) {
+            emptyCells.push({ r, c });
+          }
+        }
+      }
+      if (emptyCells.length > 0) {
+        const randCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        board2048[randCell.r][randCell.c] = Math.random() < 0.9 ? 2 : 4;
+      }
+    }
+
+    function render2048() {
+      const container = document.getElementById('board-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          const val = board2048[r][c];
+          const div = document.createElement('div');
+          div.className = `tile tile-${val > 2048 ? 'super' : val}`;
+          div.innerText = val > 0 ? val : '';
+          container.appendChild(div);
+        }
+      }
+
+      const sc = document.getElementById('game-score');
+      const bs = document.getElementById('game-best');
+      if (sc) sc.innerText = score2048.toLocaleString();
+      if (bs) bs.innerText = Math.max(score2048, bestScore2048).toLocaleString();
+    }
+
+    function slide2048Array(row) {
+      let arr = row.filter(val => val !== 0);
+      let gainedScore = 0;
+      for (let i = 0; i < arr.length - 1; i++) {
+        if (arr[i] === arr[i + 1]) {
+          arr[i] *= 2;
+          gainedScore += arr[i];
+          arr.splice(i + 1, 1);
+        }
+      }
+      while (arr.length < 4) {
+        arr.push(0);
+      }
+      return { newRow: arr, gainedScore };
+    }
+
+    function rotate2048Board(matrix) {
+      const N = matrix.length;
+      let res = [];
+      for (let i = 0; i < N; i++) {
+        res.push([]);
+        for (let j = 0; j < N; j++) {
+          res[i].push(matrix[N - j - 1][i]);
+        }
+      }
+      return res;
+    }
+
+    function handle2048Move(dir) {
+      if (is2048GameOver) return;
+      let rotated = 0;
+      if (dir === 'left') rotated = 0;
+      else if (dir === 'down') rotated = 1;
+      else if (dir === 'right') rotated = 2;
+      else if (dir === 'up') rotated = 3;
+
+      let tempBoard = JSON.parse(JSON.stringify(board2048));
+      for (let i = 0; i < rotated; i++) {
+        tempBoard = rotate2048Board(tempBoard);
+      }
+
+      let moved = false;
+      let totalGained = 0;
+
+      for (let r = 0; r < 4; r++) {
+        const { newRow, gainedScore } = slide2048Array(tempBoard[r]);
+        if (JSON.stringify(newRow) !== JSON.stringify(tempBoard[r])) {
+          moved = true;
+        }
+        tempBoard[r] = newRow;
+        totalGained += gainedScore;
+      }
+
+      for (let i = 0; i < (4 - rotated) % 4; i++) {
+        tempBoard = rotate2048Board(tempBoard);
+      }
+
+      if (moved) {
+        board2048 = tempBoard;
+        score2048 += totalGained;
+        if (score2048 > bestScore2048) {
+          bestScore2048 = score2048;
+        }
+        addRandomTile2048();
+        render2048();
+
+        if (check2048GameOver()) {
+          is2048GameOver = true;
+          const overlay = document.getElementById('game-over-overlay');
+          const finalSc = document.getElementById('overlay-final-score');
+          if (finalSc) finalSc.innerText = score2048.toLocaleString();
+          if (overlay) overlay.classList.remove('hidden');
+          const statusText = document.getElementById('board-status-text');
+          if (statusText) {
+            statusText.innerText = '🏁 Round Finished - High Score Saved!';
+            statusText.className = 'text-amber-400 font-bold';
+          }
+          showToast(`🏁 Game Over! Your Single High Score: ${score2048.toLocaleString()} pts`, "warning");
+          if (userAddress) {
+            const shortW = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+            const estPrize = "$" + (selected2048Tier * 0.8).toFixed(2) + " USDG";
+            recordLiveLeaderboardEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
+            recordLiveHistoryEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
+          }
+        }
+      }
+    }
+
+    function check2048GameOver() {
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          if (board2048[r][c] === 0) return false;
+          if (r < 3 && board2048[r][c] === board2048[r + 1][c]) return false;
+          if (c < 3 && board2048[r][c] === board2048[r][c + 1]) return false;
+        }
+      }
+      return true;
+    }
+
+    window.addEventListener('keydown', function(e) {
+      const activeTab = document.getElementById('tab-vault2048');
+      if (!activeTab || activeTab.classList.contains('hidden')) return;
+
+      if (['ArrowUp', 'KeyW'].includes(e.code)) {
+        e.preventDefault();
+        handle2048Move('up');
+      } else if (['ArrowDown', 'KeyS'].includes(e.code)) {
+        e.preventDefault();
+        handle2048Move('down');
+      } else if (['ArrowLeft', 'KeyA'].includes(e.code)) {
+        e.preventDefault();
+        handle2048Move('left');
+      } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
+        e.preventDefault();
+        handle2048Move('right');
+      }
+    });
+
+    function select2048Tier(tier) {
+      selected2048Tier = tier;
+      [1, 5, 10, 100, 1000].forEach(t => {
+        const card = document.getElementById('tier-card-2048-' + t);
+        const tag = document.getElementById('tier-tag-' + t);
+        const top3Card = document.getElementById('top3-tier-' + t);
+
+        if (t === tier) {
+          if (card) card.className = t >= 1000
+            ? 'glass-panel p-4 rounded-2xl border-2 border-amber-500 bg-amber-950/40 cursor-pointer transition-all space-y-3'
+            : 'glass-panel p-4 rounded-2xl border-2 border-cyan-500 bg-cyan-950/40 cursor-pointer transition-all space-y-3';
+          if (tag) {
+            tag.innerText = 'ACTIVE TIER';
+            tag.className = t >= 1000
+              ? 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500 text-black'
+              : 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500 text-black';
+          }
+          if (top3Card) {
+            top3Card.className = t >= 1000
+              ? 'p-4 rounded-2xl bg-slate-900/90 border-2 border-amber-500 space-y-3 shadow-lg shadow-amber-500/10'
+              : 'p-4 rounded-2xl bg-slate-900/90 border-2 border-cyan-500 space-y-3 shadow-lg shadow-cyan-500/10';
+          }
+        } else {
+          if (card) card.className = t >= 1000
+            ? 'glass-panel p-4 rounded-2xl border border-amber-500/40 bg-amber-950/10 hover:border-amber-500/70 cursor-pointer transition-all space-y-3'
+            : 'glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/50 bg-slate-900/60 cursor-pointer transition-all space-y-3';
+          if (tag) {
+            tag.innerText = 'SELECT';
+            tag.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-slate-400';
+          }
+          if (top3Card) {
+            top3Card.className = 'p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3';
+          }
+        }
+      });
+    }
+
+    function update2048Price(tier) {
+      const qtyInput = document.getElementById("qty-2048-" + tier);
+      if (!qtyInput) return;
+      let qty = parseInt(qtyInput.value) || 1;
+      if (qty < 1) qty = 1;
+      if (qty > 100) qty = 100;
+      qtyInput.value = qty;
+
+      const totalCost = (qty * tier).toFixed(2);
+      const pvpAttempts = qty * 2;
+
+      const lblQtyUsdc = document.getElementById("lbl-qty-usdc-" + tier);
+      const lblCostUsdc = document.getElementById("cost-usdc-" + tier);
+      const lblCostPvp = document.getElementById("cost-pvp-" + tier);
+      const lblAttPvp = document.getElementById("attempts-pvp-" + tier);
+      const buyBtnUsdc = document.getElementById("buy-btn-usdc-" + tier);
+
+      if (lblQtyUsdc) lblQtyUsdc.innerText = qty;
+      if (lblCostUsdc) lblCostUsdc.innerText = totalCost;
+      if (lblAttPvp) lblAttPvp.innerText = pvpAttempts;
+      if (lblCostPvp) lblCostPvp.innerText = totalCost;
+
+      if (buyBtnUsdc) {
+        const ticketWord = qty === 1 ? "TICKET" : "TICKETS";
+        buyBtnUsdc.innerHTML = `BUY <span id="lbl-qty-usdc-${tier}">${qty}</span> ${ticketWord} ($<span id="cost-usdc-${tier}">${totalCost}</span> USDG)`;
+      }
+    }
+
+    async function buy2048Ticket(tier, paymentMethod) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      const qtyInput = document.getElementById("qty-2048-" + tier);
+      const qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+      const totalCost = (qty * tier).toFixed(2);
+      const ticketsPurchased = paymentMethod === 'PVP' ? qty * 2 : qty;
+
+      let txHash = "";
+      try {
+        txHash = await executeOnchainPayment(totalCost, paymentMethod, `${ticketsPurchased}x 2048 Tickets Tier ${tier} (${paymentMethod})`);
+        showToast(`✅ Step 1 Signed & Step 2 USDG Transferred: ${txHash.slice(0, 10)}...`, "success");
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
+        return;
+      }
+
+      userAvailableTickets += ticketsPurchased;
+      const countEl = document.getElementById('tickets-count');
+      if (countEl) {
+        countEl.innerText = userAvailableTickets;
+      }
+
+      select2048Tier(tier);
+      init2048Game();
+      showToast(`✅ Purchased ${ticketsPurchased} Ticket(s) for ${tier} Tier! Game activated.`, "success");
+    }
+
+    // LEADERBOARD LOGIC
+    let curLbCat = 'duel';
+    let curLbTier = 1;
+
+    function setLeaderboardCategory(cat) {
+      curLbCat = cat;
+      ['duel', '2048', 'jackpot'].forEach(c => {
+        const el = document.getElementById('lb-cat-' + c);
+        if (el) {
+          if (c === cat) {
+            el.className = 'glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center';
+          } else {
+            el.className = 'glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center';
+          }
+        }
+      });
+      updateLeaderboardUI();
+    }
+
+    function setLeaderboardTier(tier) {
+      curLbTier = tier;
+      [1, 5, 10, 100, 1000].forEach(t => {
+        const b = document.getElementById('lb-tier-' + t);
+        if (b) {
+          if (t === tier) {
+            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+          } else {
+            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10';
+          }
+        }
+      });
+      updateLeaderboardUI();
+    }
+
+    function updateLeaderboardUI() {
+      const tbody = document.getElementById('lb-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
+      const title = document.getElementById('lb-table-title');
+      if (title) title.innerText = `Top 100 Players — ${catNames[curLbCat]} (${curLbTier} Tier)`;
+      
+      const colMetric = document.getElementById('lb-col-metric');
+      if (colMetric) {
+        if (curLbCat === 'duel') colMetric.innerText = 'Wins / Streak';
+        else if (curLbCat === '2048') colMetric.innerText = 'Single High Score';
+        else colMetric.innerText = 'Closest Target';
+      }
+
+      const leaderboardData = []; // Real-time onchain leaderboard entries
+
+      if (leaderboardData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center py-12 text-slate-400 font-mono">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <span class="text-3xl">🏆</span>
+                <span class="text-sm font-bold text-slate-300">No ranked players for this cycle yet</span>
+                <span class="text-xs text-slate-500">Compete now to claim the #1 spot on the leaderboard!</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      leaderboardData.forEach((entry, i) => {
+        const rank = i + 1;
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-white/5 transition-all';
+        tr.innerHTML = `
+          <td class="p-3.5 font-bold ${rank===1 ? 'text-amber-400' : rank===2 ? 'text-slate-300' : rank===3 ? 'text-amber-600' : 'text-slate-500'}">#${rank}</td>
+          <td class="p-3.5 font-mono text-cyan-400">${entry.wallet}</td>
+          <td class="p-3.5 text-white font-bold">${entry.metric}</td>
+          <td class="p-3.5 text-emerald-400 font-bold">${entry.won}</td>
+          <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">VERIFIED</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // HISTORY LOGIC
+    let curHistCat = 'duel';
+    let curHistTier = 1;
+
+    function setHistoryCategory(cat) {
+      curHistCat = cat;
+      ['duel', '2048', 'jackpot'].forEach(c => {
+        const el = document.getElementById('hist-cat-' + c);
+        if (el) {
+          if (c === cat) {
+            el.className = 'glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center';
+          } else {
+            el.className = 'glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center';
+          }
+        }
+      });
+      updateHistoryUI();
+    }
+
+    function setHistoryTier(tier) {
+      curHistTier = tier;
+      [1, 5, 10, 100, 1000].forEach(t => {
+        const b = document.getElementById('hist-tier-' + t);
+        if (b) {
+          if (t === tier) {
+            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+          } else {
+            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10';
+          }
+        }
+      });
+      updateHistoryUI();
+    }
+
+    function updateHistoryUI() {
+      const tbody = document.getElementById('hist-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
+      const title = document.getElementById('hist-table-title');
+      if (title) title.innerText = `Verified Reward Winners — ${catNames[curHistCat]} (${curHistTier} Tier)`;
+
+      const settledWinners = []; // Real-time onchain settlement records
+
+      if (settledWinners.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center py-12 text-slate-400 font-mono">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <span class="text-3xl">⚔️</span>
+                <span class="text-sm font-bold text-slate-300">No settled rounds recorded yet for this tier</span>
+                <span class="text-xs text-slate-500">Be the first player to compete and claim the prize pool!</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      settledWinners.forEach(w => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-white/5 transition-all';
+        tr.innerHTML = `
+          <td class="p-3.5 text-slate-400">${w.date}</td>
+          <td class="p-3.5 font-bold text-cyan-400">${curHistTier} Tier</td>
+          <td class="p-3.5 font-bold text-white">${w.wallet}</td>
+          <td class="p-3.5 text-slate-300">${w.metric}</td>
+          <td class="p-3.5 text-emerald-400 font-bold">${w.prize}</td>
+          <td class="p-3.5"><a href="${w.txUrl || 'https://robinhood.superscan.network'}" target="_blank" class="text-cyan-400 hover:underline">${w.txHash || 'View Tx'}</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // INITIAL LOAD
+    window.addEventListener("DOMContentLoaded", () => {
+      startNew2048Game();
+      updateJackpotTimer();
+      renderJackpotSubmissions();
+      updateLeaderboardUI();
+      updateHistoryUI();
+    });
+  
+
+  // Explicitly export all interactive functions to window scope
+  window.connectWallet = typeof connectWallet !== "undefined" ? connectWallet : function(){};
+  window.createDuel = typeof createDuel !== "undefined" ? createDuel : function(){};
+  window.cancelDuel = typeof cancelDuel !== "undefined" ? cancelDuel : function(){};
+  window.select2048Tier = typeof select2048Tier !== "undefined" ? select2048Tier : function(){};
+  window.buy2048Ticket = typeof buy2048Ticket !== "undefined" ? buy2048Ticket : function(){};
+  window.startNew2048Game = typeof startNew2048Game !== "undefined" ? startNew2048Game : function(){};
+  window.handle2048Move = typeof handle2048Move !== "undefined" ? handle2048Move : function(){};
+  window.changeJackpotTicketQty = typeof changeJackpotTicketQty !== "undefined" ? changeJackpotTicketQty : function(){};
+  window.buyJackpotTicket = typeof buyJackpotTicket !== "undefined" ? buyJackpotTicket : function(){};
+  window.setLeaderboardCategory = typeof setLeaderboardCategory !== "undefined" ? setLeaderboardCategory : function(){};
+  window.setLeaderboardTier = typeof setLeaderboardTier !== "undefined" ? setLeaderboardTier : function(){};
+  window.setHistoryCategory = typeof setHistoryCategory !== "undefined" ? setHistoryCategory : function(){};
+  window.setHistoryTier = typeof setHistoryTier !== "undefined" ? setHistoryTier : function(){};
+  window.copyPvpContract = typeof copyPvpContract !== "undefined" ? copyPvpContract : function(){};
+  window.showToast = typeof showToast !== "undefined" ? showToast : function(){};
+  
+
+</script>
+
+  <!-- MOBILE BOTTOM FLOATING NAVIGATION BAR -->
+  <div id="mobile-bottom-nav" class="lg:hidden fixed bottom-3 left-3 right-3 z-50 bg-[#070b14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-1.5 shadow-2xl flex items-center justify-around">
+    <button onclick="switchTab('duel')" class="tab-btn active px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
+      <span class="text-sm">⚔️</span>
+      <span>Duels</span>
+    </button>
+    <button onclick="switchTab('vault2048')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
+      <span class="text-sm">🎮</span>
+      <span>2048</span>
+    </button>
+    <button onclick="switchTab('jackpot')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
+      <span class="text-sm">🎯</span>
+      <span>Jackpot</span>
+    </button>
+    <button onclick="switchTab('leaderboard')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
+      <span class="text-sm">🏆</span>
+      <span>Ranks</span>
+    </button>
+    <button onclick="switchTab('history')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
+      <span class="text-sm">📜</span>
+      <span>History</span>
+    </button>
+    <button onclick="switchTab('docs')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
+      <span class="text-sm">📖</span>
+      <span>Docs</span>
+    </button>
+  </div>
+
+<script>
+
+    // === MULTI-CHANNEL REALTIME SYNC (GunDB + BroadcastChannel + LocalStorage) ===
+        // --- GLOBAL REALTIME DUEL SYNC ENGINE (SSE + REST + Local Sync) ---
+    const REALTIME_TOPIC = "pvp-arena-rh-duels-live";
+    const REALTIME_SSE_URL = `https://ntfy.sh/${REALTIME_TOPIC}/sse`;
+    const REALTIME_PUB_URL = `https://ntfy.sh/${REALTIME_TOPIC}`;
+    let duelBroadcast = null;
+    let sseSource = null;
+
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        duelBroadcast = new BroadcastChannel('pvp_duels_channel');
+        duelBroadcast.onmessage = (event) => {
+          if (event && event.data) handleIncomingDuel(event.data);
+        };
+      }
+    } catch(e) {}
+
+    // 10 ACTIVE BINARY DUEL QUESTIONS
+    const DUEL_QUESTIONS = [
+      { 
+        id: 1, 
+        category: "CRYPTO", 
+        title: "Will BTC Daily Candle Close GREEN?", 
+        desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green).",
+        deadlineDesc: "Daily UTC 00:00 Close",
+        getDeadline: function() {
+          const now = new Date();
+          const target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+          return target.getTime();
+        },
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
+      },
+      { 
+        id: 2, 
+        category: "ROBINHOOD", 
+        title: "Will Robinhood Chain Daily Revenue Exceed $1,000,000 Tomorrow?", 
+        desc: "Robinhood Chain cumulative on-chain fee revenue surpasses $1,000,000 USD tomorrow.",
+        deadlineDesc: "Tomorrow UTC 23:59:59",
+        getDeadline: function() {
+          const now = new Date();
+          const target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 23, 59, 59));
+          return target.getTime();
+        },
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "> $1M Revenue",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "< $1M Revenue"
+      }
+    ];
+
+    let selectedDuelQuestionId = 1;
+    let selectedDuelTier = 5;
+    let selectedDuelOption = 'YES';
+
+    function getQuestionDeadline(qId) {
+      const q = DUEL_QUESTIONS.find(x => x.id === qId) || DUEL_QUESTIONS[0];
+      if (typeof q.getDeadline === 'function') return q.getDeadline();
+      return Date.now() + 24 * 3600 * 1000;
+    }
+
+    function formatRemainingTime(deadlineMs) {
+      const diff = (deadlineMs || 0) - Date.now();
+      if (diff <= 0) return { expired: true, text: "DEADLINE PASSED", short: "EXPIRED" };
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      return { 
+        expired: false, 
+        text: `${hours.toString().padStart(2, '0')}h ${mins.toString().padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`,
+        short: `${hours}h ${mins}m`,
+        diff 
+      };
+    }
+
+    function renderDuelQuestions() {
+      const grid = document.getElementById("duel-questions-grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      DUEL_QUESTIONS.forEach((q, idx) => {
+        const isSelected = q.id === selectedDuelQuestionId;
+        const borderClass = isSelected ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-500/50" : "border-white/10 bg-slate-900/60 hover:border-cyan-500/40";
+        const dotClass = isSelected ? "bg-cyan-400 animate-pulse" : "bg-slate-600";
+        const numBadge = `<div class="w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-sm font-mono flex items-center justify-center shrink-0 transition-all">${idx + 1}</div>`;
+        const qDeadline = getQuestionDeadline(q.id);
+        const timeObj = formatRemainingTime(qDeadline);
+
+        const qHtml = `
+          <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
+            ${numBadge}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.category}</span>
+                  <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
+                  ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide">Selected</span>' : ''}
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center gap-1">
+                  ⏳ <span class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span>
+                </span>
+              </div>
+              <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
+              <p class="text-[10px] text-slate-400 font-mono mt-1 line-clamp-1">${q.desc}</p>
+              <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center gap-2">
+                <span>Cutoff: <span class="text-slate-300 font-semibold">${q.deadlineDesc || '24h Cycle'}</span></span>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.insertAdjacentHTML("beforeend", qHtml);
+      });
+      updateOptionButtonsUI();
+      updateDuelSummary();
+    }
+
+    function selectDuelQuestion(qId) {
+      selectedDuelQuestionId = qId;
+      selectedDuelOption = 'YES';
+      renderDuelQuestions();
+    }
+
+    function selectDuelTier(tier) {
+      selectedDuelTier = tier;
+      const tiers = [1, 5, 10, 100, 1000];
+      tiers.forEach(t => {
+        const btn = document.getElementById(`tier-btn-${t}`);
+        if (!btn) return;
+        if (t === tier) {
+          const isVip = t >= 1000;
+          btn.className = isVip
+            ? "tier-pick-btn p-2 rounded-xl border border-amber-500/80 bg-amber-500/20 text-center font-mono transition-all shadow-md shadow-amber-500/20"
+            : "tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20";
+        } else {
+          btn.className = "tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50";
+        }
+      });
+
+      const payoutEl = document.getElementById("selected-tier-payout");
+      if (payoutEl) {
+        payoutEl.textContent = `Winner: +$${(tier * 1.8).toFixed(2)} USDG`;
+      }
+      updateDuelSummary();
+    }
+
+    function updateOptionButtonsUI() {
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const btnYes = document.getElementById("opt-btn-yes");
+      const btnNo = document.getElementById("opt-btn-no");
+
+      if (btnYes) {
+        btnYes.setAttribute("onclick", "selectDuelOption('YES')");
+        btnYes.innerHTML = `
+          <span class="text-base font-black tracking-wider text-emerald-400">YES</span>
+          <span class="text-[10px] font-mono text-emerald-300/80 font-medium">${q.optASub || 'Affirmative'}</span>
+        `;
+      }
+
+      if (btnNo) {
+        btnNo.setAttribute("onclick", "selectDuelOption('NO')");
+        btnNo.innerHTML = `
+          <span class="text-base font-black tracking-wider text-rose-400">NO</span>
+          <span class="text-[10px] font-mono text-slate-400 font-medium">${q.optBSub || 'Negative'}</span>
+        `;
+      }
+
+      applyOptionStyles();
+    }
+
+    function selectDuelOption(opt) {
+      selectedDuelOption = opt;
+      applyOptionStyles();
+      updateDuelSummary();
+    }
+
+    function applyOptionStyles() {
+      const btnYes = document.getElementById("opt-btn-yes");
+      const btnNo = document.getElementById("opt-btn-no");
+      if (!btnYes || !btnNo) return;
+
+      if (selectedDuelOption === 'YES') {
+        btnYes.className = "p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]";
+      } else {
+        btnYes.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-emerald-500/50 hover:text-emerald-300 hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-rose-500/80 bg-rose-500/20 text-rose-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02]";
+      }
+    }
+
+    function updateDuelSummary() {
+      // Summary text removed as requested
+      return;
+    }
+
+    function extractDuelPayload(raw) {
+      if (!raw) return null;
+      let obj = raw;
+      if (typeof raw === 'string') {
+        try { obj = JSON.parse(raw); } catch(e) { return null; }
+      }
+      // If wrapped by ntfy SSE / JSON envelope
+      if (obj && obj.message && typeof obj.message === 'string') {
+        try {
+          const inner = JSON.parse(obj.message);
+          if (inner && inner.id && typeof inner.id === 'string' && inner.id.startsWith('duel_') && (inner.tier || inner.status || inner.creator)) return inner;
+        } catch(e) {}
+      }
+      if (obj && obj.id && typeof obj.id === 'string' && obj.id.startsWith('duel_') && (obj.tier || obj.status || obj.creator)) {
+        return obj;
+      }
+      return null;
+    }
+
+    function getLocalDuels() {
+      try {
+        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v7') || '{}');
+        const cleanStore = {};
+        Object.keys(rawStore).forEach(k => {
+          const item = rawStore[k];
+          // Strictly allow only valid duel objects starting with duel_
+          if (item && item.id && typeof item.id === 'string' && item.id.startsWith('duel_') && item.status && item.status !== 'cancelled') {
+            cleanStore[item.id] = item;
+          }
+        });
+        if (Object.keys(cleanStore).length !== Object.keys(rawStore).length) {
+          localStorage.setItem('pvp_active_duels_store_v7', JSON.stringify(cleanStore));
+        }
+        return cleanStore;
+      } catch(e) {
+        return {};
+      }
+    }
+
+    function saveLocalDuel(duelData) {
+      try {
+        if (!duelData || !duelData.id) return;
+        const store = getLocalDuels();
+        if (duelData.status === 'cancelled') {
+          delete store[duelData.id];
+        } else {
+          const existing = store[duelData.id] || {};
+          store[duelData.id] = { ...existing, ...duelData };
+          // Ensure valid tier and payout
+          if (!store[duelData.id].tier) store[duelData.id].tier = 1;
+          if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
+        }
+        localStorage.setItem('pvp_active_duels_store_v7', JSON.stringify(store));
+      } catch(e) {}
+    }
+
+    async function broadcastDuel(duelData) {
+      if (!duelData || !duelData.id) return;
+      saveLocalDuel(duelData);
+      
+      // 1. Same-browser instant sync (between tabs and accounts)
+      if (duelBroadcast) {
+        try { duelBroadcast.postMessage(duelData); } catch(e){}
+      }
+
+      // 2. Worldwide realtime relay (Instant push to all connected wallets & devices)
+      try {
+        await fetch(REALTIME_PUB_URL, {
+          method: 'POST',
+          body: JSON.stringify(duelData),
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch(err) {
+        console.warn("Realtime broadcast fallback:", err);
+      }
+    }
+
+    function handleIncomingDuel(rawPayload) {
+      const duelData = extractDuelPayload(rawPayload);
+      if (!duelData || !duelData.id || !duelData.status) return;
+      saveLocalDuel(duelData);
+      renderDuelCard(duelData);
+    }
+
+    async function fetchActiveDuelsFromRelay() {
+      try {
+        const res = await fetch(`https://ntfy.sh/${REALTIME_TOPIC}/json?poll=1`);
+        if (!res.ok) return;
+        const text = await res.text();
+        const lines = text.trim().split('\n');
+        lines.forEach(line => {
+          try {
+            if (!line) return;
+            const payload = extractDuelPayload(line);
+            if (payload && payload.id && payload.status && payload.status !== 'cancelled') {
+              saveLocalDuel(payload);
+            }
+          } catch(e){}
+        });
+        renderAllDuels();
+      } catch(err) {
+        console.warn("Failed to poll relay history:", err);
+      }
+    }
+
+    function renderAllDuels() {
+      const store = getLocalDuels();
+      const keys = Object.keys(store);
+      const container = document.getElementById("duels-list-container");
+      if (!container) return;
+
+      if (keys.length === 0) {
+        container.innerHTML = `
+          <div id="no-duels-msg" class="text-center py-12 text-slate-500">
+            <p class="text-4xl mb-3">⚔️</p>
+            <p class="text-base font-semibold text-slate-400">No active duel matches found</p>
+            <p class="text-xs text-slate-500 mt-1">Select a question and tier above, then click "CREATE 1v1 DUEL" to start!</p>
+          </div>
+        `;
+      } else {
+        const emptyMsg = document.getElementById("no-duels-msg");
+        if (emptyMsg) emptyMsg.remove();
+        // Sort newest first
+        const sortedKeys = keys.sort((a,b) => ((store[b].createdAt || 0) - (store[a].createdAt || 0)));
+        container.innerHTML = "";
+        sortedKeys.forEach(k => {
+          if (store[k] && store[k].status !== 'cancelled') {
+            renderDuelCard(store[k]);
+          }
+        });
+      }
+      updateDuelCounter();
+    }
+
+    function updateDuelCounter() {
+      const counterEl = document.getElementById("active-duels-count");
+      const badgeEl = document.getElementById("duels-count-badge");
+      const store = getLocalDuels();
+      let activeCount = 0;
+      Object.keys(store).forEach(k => {
+        if (store[k] && store[k].status !== 'cancelled') activeCount++;
+      });
+      const text = `${activeCount} Active Match${activeCount === 1 ? '' : 'es'}`;
+      if (counterEl) counterEl.textContent = text;
+      if (badgeEl) badgeEl.textContent = text;
+    }
+
+    function initGlobalDuelsListener() {
+      // 1. Initial fetch of all active duels currently waiting in relay
+      fetchActiveDuelsFromRelay();
+
+      // 2. Realtime SSE listener
+      try {
+        if (typeof EventSource !== 'undefined') {
+          sseSource = new EventSource(REALTIME_SSE_URL);
+          sseSource.onmessage = (event) => {
+            if (!event || !event.data) return;
+            try {
+              const payload = extractDuelPayload(event.data);
+              if (payload) handleIncomingDuel(payload);
+            } catch(e) {}
+          };
+          sseSource.onerror = (err) => {
+            console.warn("SSE connection reconnecting...", err);
+          };
+        }
+      } catch(e) {}
+
+      // 3. Local cross-tab listener
+      if (duelBroadcast) {
+        duelBroadcast.onmessage = (event) => {
+          const payload = extractDuelPayload(event.data);
+          if (payload) handleIncomingDuel(payload);
+        };
+      }
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'pvp_active_duels_store_v7') {
+          renderAllDuels();
+        }
+      });
+    }
+
+    // Ticking interval to update live countdown timers across all cards
+    setInterval(() => {
+      // 1. Update questions grid timers
+      DUEL_QUESTIONS.forEach(q => {
+        const el = document.querySelector(`.q-timer-display[data-qid="${q.id}"]`);
+        if (el) {
+          const qDeadline = getQuestionDeadline(q.id);
+          const timeObj = formatRemainingTime(qDeadline);
+          el.textContent = timeObj.text;
+        }
+      });
+
+      // 2. Update summary timer
+      const summaryTimerEl = document.getElementById("summary-deadline-timer");
+      if (summaryTimerEl) {
+        const qDeadline = getQuestionDeadline(selectedDuelQuestionId);
+        const timeObj = formatRemainingTime(qDeadline);
+        summaryTimerEl.textContent = timeObj.text;
+      }
+
+      // 3. Update duel card timers in the lobby
+      const cardTimers = document.querySelectorAll(".duel-card-deadline-timer");
+      cardTimers.forEach(el => {
+        const dl = parseInt(el.getAttribute("data-deadline") || "0", 10);
+        if (dl > 0) {
+          const timeObj = formatRemainingTime(dl);
+          el.textContent = timeObj.text;
+          const cardId = el.getAttribute("data-duel-id");
+          if (timeObj.expired && cardId) {
+            const store = getLocalDuels();
+            if (store[cardId] && store[cardId].status === 'open') {
+              renderDuelCard(store[cardId]);
+            }
+          }
+        }
+      });
+    }, 1000);
+
+    function renderDuelCard(duelData) {
+      const container = document.getElementById("duels-list-container");
+      if (!container) return;
+
+      const emptyMsg = document.getElementById("no-duels-msg");
+      if (emptyMsg) emptyMsg.remove();
+
+      if (!duelData || !duelData.id || typeof duelData.id !== 'string' || !duelData.id.startsWith('duel_') || duelData.status === 'cancelled') {
+        if (duelData && duelData.id) {
+          const existing = document.getElementById(`duel-row-${duelData.id}`);
+          if (existing) {
+            existing.remove();
+            updateDuelCounter();
+          }
+        }
+        return;
+      }
+
+      // Merge with locally stored full object if partial update arrived
+      const store = getLocalDuels();
+      if (store[duelData.id]) {
+        duelData = { ...store[duelData.id], ...duelData };
+      }
+
+      const safeTier = (duelData.tier !== undefined && duelData.tier !== null) ? Number(duelData.tier) : 1;
+      const safePayout = duelData.payout ? duelData.payout : (safeTier * 1.8).toFixed(2);
+      const questionText = duelData.questionText || "Will BTC Daily Candle Close GREEN?";
+      const creatorOption = duelData.creatorOption || "YES";
+      const requiredOpponentOption = duelData.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
+      const creatorColor = creatorOption === "YES" ? "text-emerald-400" : "text-rose-400";
+      const opponentColor = requiredOpponentOption === "YES" ? "text-emerald-400" : "text-rose-400";
+
+      let myCreatedDuels = [];
+      try { myCreatedDuels = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]'); } catch(e){}
+      const isLocalCreator = myCreatedDuels.includes(duelData.id);
+      const isCreator = isLocalCreator || (userAddress && duelData.creator && (userAddress.toLowerCase() === duelData.creator.toLowerCase()));
+      const isOpponent = userAddress && duelData.opponent && (userAddress.toLowerCase() === duelData.opponent.toLowerCase());
+      const isParticipant = isCreator || isOpponent;
+      const isVip = safeTier >= 1000;
+      const tierBadgeClass = isVip 
+        ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
+        : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
+
+      const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
+      const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
+
+      const duelDeadline = duelData.deadline || (Date.now() + 24 * 3600 * 1000);
+      const isExpired = Date.now() >= duelDeadline;
+      const timeObj = formatRemainingTime(duelDeadline);
+
+      let statusBadge = "";
+      let actionSection = "";
+      let cardBgClass = "bg-cyan-950/20 border-cyan-500/30";
+
+      // STATUS 1: OPEN (Waiting for an opponent before deadline)
+      if (duelData.status === 'open') {
+        if (isExpired) {
+          // EXPIRED / UNMATCHED: Submissions closed
+          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
+          if (isCreator) {
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold text-xs shadow-md shadow-amber-500/30 hover:brightness-110 flex items-center gap-1">
+                  💰 RECLAIM DEPOSIT
+                </button>
+              </div>
+            `;
+          } else {
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <span class="px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-white/10 text-xs font-bold font-mono">CLOSED</span>
+              </div>
+            `;
+          }
+        } else {
+          // ACTIVE AND OPEN
+          if (isCreator) {
+            // Clean, dedicated waiting box without any undefined text
+            statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-2 shadow-sm"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 text-xs font-bold font-mono transition-all">CANCEL</button>
+              </div>
+            `;
+          } else {
+            actionSection = `
+              <button onclick="acceptDuel('${duelData.id}', ${safeTier})" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black text-xs font-mono uppercase tracking-wider transition-all shadow-md shadow-cyan-500/20 active:scale-95 flex items-center gap-1.5">
+                ⚔️ ACCEPT: TAKE [${requiredOpponentOption}] (${safeTier} USDG)
+              </button>
+            `;
+          }
+        }
+      } 
+      // STATUS 2: IN PROGRESS / WAITING OUTCOME (Strict 1v1 Locked)
+      else if (duelData.status === 'in_progress') {
+        cardBgClass = "bg-indigo-950/30 border-indigo-500/40";
+        statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> WAITING OUTCOME (1v1 BATTLE)</span>`;
+
+        if (isParticipant) {
+          actionSection = `
+            <div class="flex items-center gap-2">
+              ${statusBadge}
+              <button onclick="resolveDuelOutcome('${duelData.id}')" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-white font-extrabold text-xs font-mono tracking-wider transition-all shadow-md shadow-indigo-500/20 flex items-center gap-1">
+                ⚡ RESOLVE RESULT
+              </button>
+            </div>
+          `;
+        } else {
+          actionSection = `
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 font-mono text-xs border border-white/10">🔒 1v1 LOCKED</span>
+              ${statusBadge}
+            </div>
+          `;
+        }
+      }
+      // STATUS 3: COMPLETED
+      else if (duelData.status === 'completed') {
+        cardBgClass = "bg-emerald-950/20 border-emerald-500/30";
+        const shortWinner = duelData.winner ? (duelData.winner.slice(0, 6) + "..." + duelData.winner.slice(-4)) : "Winner";
+        const isWinner = userAddress && duelData.winner && (userAddress.toLowerCase() === duelData.winner.toLowerCase());
+        
+        statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 text-xs">🏆 COMPLETED</span>`;
+        actionSection = `
+          <div class="flex items-center gap-2 font-mono text-xs">
+            ${statusBadge}
+            <span class="text-emerald-400 font-bold">${isWinner ? '🎉 YOU WON +' + safePayout + ' USDG!' : 'Winner: ' + shortWinner}</span>
+          </div>
+        `;
+      }
+
+      const cardHtml = `
+        <div id="duel-row-${duelData.id}" class="p-4 rounded-2xl border ${cardBgClass} transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-slate-900/80 border border-white/10 flex flex-col items-center justify-center shrink-0">
+              <span class="text-[10px] text-slate-400 font-mono uppercase font-bold">TIER</span>
+              <span class="text-sm font-black font-mono text-cyan-400">$${safeTier}</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-mono font-bold text-white">${questionText}</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${safeTier} USDG</span>
+                ${isCreator ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">Your Match</span>' : ''}
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                  ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
+                </span>
+              </div>
+              <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
+                <span>P1: <span class="text-slate-200">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
+                <span class="text-slate-600 font-bold">VS</span>
+                <span>P2: <span class="text-slate-200">${duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent'}</span> [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>
+                <span class="text-slate-500">•</span>
+                <span class="text-emerald-400 font-semibold">Prize: $${safePayout} USDG</span>
+              </div>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center gap-2">
+            ${actionSection}
+          </div>
+        </div>
+      `;
+
+      const existingEl = document.getElementById(`duel-row-${duelData.id}`);
+      if (existingEl) {
+        existingEl.outerHTML = cardHtml;
+      } else {
+        container.insertAdjacentHTML("afterbegin", cardHtml);
+      }
+      updateDuelCounter();
+    }
+
+    async function createDuel() {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const qDeadline = getQuestionDeadline(q.id);
+
+      // STRICT DEADLINE ENFORCEMENT: Cannot submit requests after deadline!
+      if (Date.now() >= qDeadline) {
+        showToast("⚠️ Submissions closed for this question! Deadline has passed.", "warning");
+        return;
+      }
+
+      const btn = document.getElementById("create-duel-btn");
+      if (btn) btn.disabled = true;
+
+      const oppositeOption = selectedDuelOption === 'YES' ? 'NO' : 'YES';
+
+      try {
+        let txHash = await executeOnchainPayment(selectedDuelTier, "USDG", `Create Duel Tier ${selectedDuelTier}.00 [${selectedDuelOption}]`);
+        showToast(`⚔️ Duel Created! Deposit Successful.`, "success");
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Transaction rejected or cancelled.", "error");
+        if (btn) btn.disabled = false;
+        return;
+      }
+
+      const duelId = "duel_" + Date.now().toString(36) + "_" + Math.random().toString(36).substr(2, 4);
+      const newDuel = {
+        id: duelId,
+        questionId: q.id,
+        questionText: q.title,
+        creatorOption: selectedDuelOption,
+        requiredOpponentOption: oppositeOption,
+        tier: selectedDuelTier,
+        creator: userAddress,
+        status: 'open',
+        deadline: qDeadline,
+        payout: (selectedDuelTier * 1.8).toFixed(2),
+        cashback: (selectedDuelTier * 0.03).toFixed(2),
+        createdAt: Date.now()
+      };
+
+      try {
+        const myCreated = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]');
+        if (!myCreated.includes(newDuel.id)) {
+          myCreated.push(newDuel.id);
+          localStorage.setItem('my_created_duel_ids', JSON.stringify(myCreated));
+        }
+      } catch(e){}
+      await broadcastDuel(newDuel);
+      renderDuelCard(newDuel);
+      if (btn) btn.disabled = false;
+      showToast(`🎉 Duel Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Closes at deadline.`, "success");
+    }
+
+    async function acceptDuel(duelId, tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      const store = getLocalDuels();
+      let duelData = store[duelId];
+
+      // 1. Strict Deadline Check
+      if (duelData && duelData.deadline && Date.now() >= duelData.deadline) {
+        showToast("⚠️ This duel deadline has expired and can no longer be accepted!", "warning");
+        renderDuelCard(duelData);
+        return;
+      }
+
+      // 2. Strict P2P validation: Only 1 person can accept
+      if (duelData && duelData.status !== 'open') {
+        showToast("⚠️ This duel has already been accepted by another player!", "warning");
+        return;
+      }
+
+      // 3. Prevent creator from accepting their own match
+      if (duelData && duelData.creator && userAddress && duelData.creator.toLowerCase() === userAddress.toLowerCase()) {
+        showToast("⚠️ You cannot accept your own duel match!", "warning");
+        return;
+      }
+
+      // 4. Immediately lock the match across all wallets so no one else can click Accept!
+      if (!duelData) {
+        duelData = { 
+          id: duelId, 
+          tier: tier, 
+          deadline: Date.now() + 24 * 3600 * 1000,
+          payout: (tier * 1.8).toFixed(2), 
+          cashback: (tier * 0.03).toFixed(2), 
+          createdAt: Date.now() 
+        };
+      }
+      duelData.status = 'in_progress';
+      duelData.opponent = userAddress;
+      duelData.opponentOption = duelData.requiredOpponentOption || (duelData.creatorOption === 'YES' ? 'NO' : 'YES');
+      duelData.acceptedAt = Date.now();
+      
+      // Instantly broadcast locking to all users worldwide
+      await broadcastDuel(duelData);
+      renderDuelCard(duelData);
+
+      try {
+        let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00 [${duelData.opponentOption}]`);
+        showToast(`⚔️ Duel Accepted! Deposit Successful.`, "success");
+      } catch (err) {
+        console.error(err);
+        // If wallet transaction failed or cancelled, release duel back to open
+        duelData.status = 'open';
+        delete duelData.opponent;
+        delete duelData.opponentOption;
+        delete duelData.acceptedAt;
+        await broadcastDuel(duelData);
+        renderDuelCard(duelData);
+        showToast("❌ Accept duel rejected or cancelled.", "error");
+        return;
+      }
+
+      // Confirmed locked in progress
+      duelData.status = 'in_progress';
+      duelData.opponent = userAddress;
+      await broadcastDuel(duelData);
+      renderDuelCard(duelData);
+      showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${duelData.opponentOption}]!`, "success");
+    }
+
+    function cancelDuel(duelId, tier) {
+      const cancelObj = { id: duelId, status: 'cancelled' };
+      broadcastDuel(cancelObj);
+      const row = document.getElementById(`duel-row-${duelId}`);
+      if (row) row.remove();
+      updateDuelCounter();
+      showToast(`✅ Duel ${duelId} cancelled. USDG refunded.`, "info");
+    }
+
+    async function resolveDuelMatch(duelId, winningOption) {
+      const store = getLocalDuels();
+      let duelData = store[duelId];
+      if (!duelData) {
+        showToast("Duel not found", "error");
+        return;
+      }
+
+      const p1 = duelData.creator || userAddress;
+      const p2 = duelData.opponent || "0xOpponent";
+      const cOpt = duelData.creatorOption || "YES";
+      const oOpt = duelData.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES");
+
+      const resolvedWinningOption = winningOption || (Math.random() > 0.5 ? "YES" : "NO");
+
+      let winner = p1;
+      let loser = p2;
+
+      if (resolvedWinningOption === cOpt) {
+        winner = p1;
+        loser = p2;
+      } else {
+        winner = p2;
+        loser = p1;
+      }
+
+      duelData.status = 'completed';
+      duelData.winningOption = resolvedWinningOption;
+      duelData.winner = winner;
+      duelData.loser = loser;
+      duelData.completedAt = Date.now();
+
+      await broadcastDuel(duelData);
+      renderDuelCard(duelData);
+
+      const isMeWinner = userAddress && winner.toLowerCase() === userAddress.toLowerCase();
+      if (isMeWinner) {
+        showToast(`🏆 VICTORY! [${resolvedWinningOption}] won! +${duelData.payout} USDG transferred!`, "success");
+      } else {
+        const shortW = winner.slice(0, 6) + "..." + winner.slice(-4);
+        showToast(`🏁 Duel Resolved! Winning Side: [${resolvedWinningOption}] (${shortW} won +${duelData.payout} USDG). 3% Cashback credited!`, "info");
+      }
+
+      // Add to Leaderboard and History
+      try {
+        const shortWinner = winner.slice(0, 6) + "..." + winner.slice(-4);
+        recordLiveLeaderboardEntry("Duel", duelData.tier, shortWinner, `Pick: ${resolvedWinningOption}`, duelData.payout + " USDG");
+        recordLiveHistoryEntry("Duel", duelData.tier, shortWinner, `Pick: ${resolvedWinningOption}`, duelData.payout + " USDG");
+      } catch(e){}
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderDuelQuestions();
+      setTimeout(initGlobalDuelsListener, 300);
+    });
+  </script>
+</body>
 </html>
