@@ -2914,6 +2914,95 @@ async function connectWallet() {
         return false;
       }
 
+      // Universal Sorting across ALL 4 TABS (Open, Matched, Completed, Expired):
+      // 1. Current wallet's own items ALWAYS appear at the very top of each tab
+      // 2. Followed by other players' items, sorted consistently by time
+      filteredKeys.sort((a, b) => {
+        const itemA = store[a];
+        const itemB = store[b];
+        const partA = isUserDuelParticipant(itemA);
+        const partB = isUserDuelParticipant(itemB);
+
+        // Priority 1: Current wallet's own items always on TOP in every tab
+        if (partA && !partB) return -1;
+        if (!partA && partB) return 1;
+
+        // Priority 2: Secondary sort by timestamp
+        if (currentDuelTab === 'matched') {
+          // For matched battles: which was matched earlier (acceptedAt)
+          const timeA = itemA.acceptedAt || itemA.createdAt || 0;
+          const timeB = itemB.acceptedAt || itemB.createdAt || 0;
+          return timeA - timeB;
+        } else if (currentDuelTab === 'open') {
+          // For open requests: newest first
+          const timeA = itemA.createdAt || 0;
+          const timeB = itemB.createdAt || 0;
+          return timeB - timeA;
+        } else if (currentDuelTab === 'completed') {
+          // For completed battles: latest resolved first
+          const timeA = itemA.resolvedAt || itemA.acceptedAt || itemA.createdAt || 0;
+          const timeB = itemB.resolvedAt || itemB.acceptedAt || itemB.createdAt || 0;
+          return timeB - timeA;
+        } else if (currentDuelTab === 'expired') {
+          // For expired duels: newest expired first
+          const timeA = itemA.deadline || itemA.createdAt || 0;
+          const timeB = itemB.deadline || itemB.createdAt || 0;
+          return timeB - timeA;
+        }
+
+        return (itemB.createdAt || 0) - (itemA.createdAt || 0);
+      });
+
+      if (filteredKeys.length === 0) {
+        let emptyIcon = "⚔️";
+        let emptyTitle = "No open duel requests";
+        let emptySub = "Select a question and tier above, then click \"CREATE P2P DUEL\" to start!";
+
+        if (currentDuelTab === 'matched') {
+          emptyIcon = "⚡";
+          emptyTitle = "No matches currently in progress";
+          emptySub = "When an open duel is accepted by a rival, the live battle appears here!";
+        } else if (currentDuelTab === 'completed') {
+          emptyIcon = "🏆";
+          emptyTitle = "No completed duels yet";
+          emptySub = "Finished matches and prize claim payouts will appear in this section.";
+        } else if (currentDuelTab === 'expired') {
+          emptyIcon = "⌛";
+          emptyTitle = "No expired duels";
+          emptySub = "Requests that reached their deadline without an opponent appear here for deposit reclamation.";
+        }
+
+        container.innerHTML = `
+          <div id="no-duels-msg" class="text-center py-12 text-slate-500">
+            <p class="text-4xl mb-3">${emptyIcon}</p>
+            <p class="text-base font-semibold text-slate-300 font-mono">${emptyTitle}</p>
+            <p class="text-xs text-slate-500 mt-1 font-mono">${emptySub}</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = "";
+        filteredKeys.forEach(k => {
+          renderDuelCard(store[k]);
+        });
+      }
+      updateDuelCounter();
+    }
+
+      function isUserDuelParticipant(d) {
+        if (!d) return false;
+        let myCreated = [];
+        let myAccepted = [];
+        try { myCreated = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]'); } catch(e){}
+        try { myAccepted = JSON.parse(localStorage.getItem('my_accepted_duel_ids') || '[]'); } catch(e){}
+        if (myCreated.includes(d.id) || myAccepted.includes(d.id)) return true;
+        if (userAddress) {
+          const u = userAddress.toLowerCase();
+          if (d.creator && String(d.creator).toLowerCase() === u) return true;
+          if (d.opponent && String(d.opponent).toLowerCase() === u) return true;
+        }
+        return false;
+      }
+
       if (currentDuelTab === 'matched') {
         filteredKeys.sort((a, b) => {
           const itemA = store[a];
@@ -3173,6 +3262,7 @@ async function connectWallet() {
       const isCreator = isLocalCreator || (userAddress && duelData.creator && (userAddress.toLowerCase() === duelData.creator.toLowerCase()));
       const isOpponent = userAddress && duelData.opponent && (userAddress.toLowerCase() === duelData.opponent.toLowerCase());
       const isParticipant = isCreator || isOpponent;
+      const yourLabel = (currentDuelTab === 'open' || currentDuelTab === 'expired') ? 'Your Request' : 'Your Match';
       const isVip = safeTier >= 1000;
       const tierBadgeClass = isVip 
         ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
@@ -3309,7 +3399,7 @@ async function connectWallet() {
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-mono font-bold text-white">${questionText}</span>
                 <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${safeTier} USDG</span>
-                ${isParticipant ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">⚡ Your Match</span>' : ''}
+                ${isParticipant ? `<span class=\"px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30\">⚡ ${yourLabel}</span>` : ''}
                 <span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                   ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-qid="${resolvedQId}" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
                 </span>
