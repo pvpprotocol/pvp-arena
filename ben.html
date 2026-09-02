@@ -239,66 +239,72 @@
           <!-- Populated by JavaScript renderDuelQuestions() -->
         </div>
 
-        <!-- STEP 2 & 3: PICK PREDICTION & TIER -->
+        <!-- STEP 2 & 3: PICK TIER & PREDICTION (YES / NO) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-2">
           
-          <!-- STEP 2: CHOOSE SIDE (YES or NO) -->
+          <!-- STEP 2: CHOOSE TIER -->
+          <div class="lg:col-span-7 glass-panel p-5 rounded-2xl border border-white/10 bg-slate-900/60 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 2</span>
+                <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Select Stake Tier</h4>
+              </div>
+              <span id="selected-tier-payout" class="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20">Winner: +$9.00 USDG</span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDG. Winner takes 90%, 3% auto-cashback, 7% platform fee.</p>
+            
+            <div class="grid grid-cols-5 gap-2 pt-1">
+              <button onclick="selectDuelTier(1)" id="tier-btn-1" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
+                <span class="block text-[10px] text-slate-400 font-bold uppercase">Novice</span>
+                <span class="block text-xs font-black text-white mt-0.5">$1</span>
+                <span class="block text-[9px] text-emerald-400/80 font-bold mt-0.5">+$1.80</span>
+              </button>
+              <button onclick="selectDuelTier(5)" id="tier-btn-5" class="tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20">
+                <span class="block text-[10px] text-cyan-300 font-bold uppercase">Standard</span>
+                <span class="block text-xs font-black text-white mt-0.5">$5</span>
+                <span class="block text-[9px] text-emerald-400 font-bold mt-0.5">+$9.00</span>
+              </button>
+              <button onclick="selectDuelTier(10)" id="tier-btn-10" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
+                <span class="block text-[10px] text-slate-400 font-bold uppercase">Pro</span>
+                <span class="block text-xs font-black text-white mt-0.5">$10</span>
+                <span class="block text-[9px] text-emerald-400/80 font-bold mt-0.5">+$18.00</span>
+              </button>
+              <button onclick="selectDuelTier(100)" id="tier-btn-100" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
+                <span class="block text-[10px] text-slate-400 font-bold uppercase">Elite</span>
+                <span class="block text-xs font-black text-white mt-0.5">$100</span>
+                <span class="block text-[9px] text-emerald-400/80 font-bold mt-0.5">+$180</span>
+              </button>
+              <button onclick="selectDuelTier(1000)" id="tier-btn-1000" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-amber-500/50">
+                <span class="block text-[10px] text-amber-400 font-bold uppercase">VIP</span>
+                <span class="block text-xs font-black text-amber-300 mt-0.5">$1,000</span>
+                <span class="block text-[9px] text-amber-400/80 font-bold mt-0.5">+$1,800</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: CHOOSE POSITION (YES or NO - 100% ENGLISH) -->
           <div class="lg:col-span-5 glass-panel p-5 rounded-2xl border border-white/10 bg-slate-900/60 space-y-3">
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 2</span>
-              <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Choose Your Position</h4>
+              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 3</span>
+              <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Choose Position</h4>
             </div>
-            <p class="text-[11px] text-slate-400 font-mono">The opponent who accepts your duel must take the opposite side.</p>
+            <p class="text-[11px] text-slate-400 font-mono">Select YES or NO. Opponent must take the opposite side to enter.</p>
             
             <div class="grid grid-cols-2 gap-3 pt-1">
               <button id="opt-btn-yes" onclick="selectDuelOption('YES')" class="p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]">
                 <span class="text-lg">🟢</span>
-                <span>YES (بله)</span>
-                <span class="text-[10px] font-normal text-emerald-400/90">Affirmative</span>
+                <span class="text-base font-black tracking-wider">YES</span>
+                <span class="text-[10px] font-mono text-emerald-300/80 font-medium">Affirmative</span>
               </button>
 
               <button id="opt-btn-no" onclick="selectDuelOption('NO')" class="p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]">
                 <span class="text-lg">🔴</span>
-                <span>NO (خیر)</span>
-                <span class="text-[10px] font-normal text-slate-500">Negative</span>
+                <span class="text-base font-black tracking-wider">NO</span>
+                <span class="text-[10px] font-mono text-slate-400 font-medium">Negative</span>
               </button>
             </div>
           </div>
 
-          <!-- STEP 3: CHOOSE TIER -->
-          <div class="lg:col-span-7 glass-panel p-5 rounded-2xl border border-white/10 bg-slate-900/60 space-y-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 3</span>
-                <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Select Stake Tier</h4>
-              </div>
-              <span id="selected-tier-payout" class="text-xs font-mono font-bold text-cyan-400">Winner: +$9.00 USDG</span>
-            </div>
-            <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDG (90% to winner, 3% cashback rebate).</p>
-            
-            <div class="grid grid-cols-5 gap-2 pt-1">
-              <button onclick="selectDuelTier(1)" id="tier-btn-1" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
-                <span class="block text-xs font-black text-white">$1</span>
-                <span class="block text-[9px] text-cyan-400/80">+$1.80</span>
-              </button>
-              <button onclick="selectDuelTier(5)" id="tier-btn-5" class="tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20">
-                <span class="block text-xs font-black text-white">$5</span>
-                <span class="block text-[9px] text-cyan-400">+$9.00</span>
-              </button>
-              <button onclick="selectDuelTier(10)" id="tier-btn-10" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
-                <span class="block text-xs font-black text-white">$10</span>
-                <span class="block text-[9px] text-cyan-400/80">+$18.00</span>
-              </button>
-              <button onclick="selectDuelTier(100)" id="tier-btn-100" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
-                <span class="block text-xs font-black text-white">$100</span>
-                <span class="block text-[9px] text-cyan-400/80">+$180</span>
-              </button>
-              <button onclick="selectDuelTier(1000)" id="tier-btn-1000" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-amber-500/50">
-                <span class="block text-xs font-black text-amber-300">$1,000</span>
-                <span class="block text-[9px] text-amber-400/80">+$1,800</span>
-              </button>
-            </div>
-          </div>
         </div>
 
         <!-- SUMMARY & CREATE BUTTON -->
@@ -2455,27 +2461,27 @@
         id: 1, 
         icon: "₿", 
         category: "CRYPTO", 
-        title: "کندل روزانه بیت‌کوین سبز بسته می‌شود یا قرمز؟ (Will BTC Daily Candle Close GREEN or RED?)", 
-        desc: "پیش‌بینی بسته شدن کندل روزانه بیت‌کوین (UTC 00:00) به صورت صعودی (سبز) یا نزولی (قرمز).",
-        optA: "GREEN",
-        optALabel: "GREEN (سبز 🟢)",
-        optASub: "Bullish Close",
-        optB: "RED",
-        optBLabel: "RED (قرمز 🔴)",
-        optBSub: "Bearish Close"
+        title: "کندل روزانه بیت‌کوین سبز بسته می‌شود؟ (Will BTC Daily Candle Close GREEN?)", 
+        desc: "پیش‌بینی بسته شدن کندل روزانه بیت‌کوین (UTC 00:00) به صورت صعودی و سبز.",
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Candle",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Candle"
       },
       { 
         id: 2, 
         icon: "Ξ", 
         category: "CRYPTO", 
-        title: "کندل روزانه اتریوم سبز بسته می‌شود یا قرمز؟ (Will ETH Daily Candle Close GREEN or RED?)", 
-        desc: "پیش‌بینی بسته شدن کندل روزانه اتریوم به صورت صعودی (سبز) یا نزولی (قرمز).",
-        optA: "GREEN",
-        optALabel: "GREEN (سبز 🟢)",
-        optASub: "Bullish Close",
-        optB: "RED",
-        optBLabel: "RED (قرمز 🔴)",
-        optBSub: "Bearish Close"
+        title: "کندل روزانه اتریوم سبز بسته می‌شود؟ (Will ETH Daily Candle Close GREEN?)", 
+        desc: "پیش‌بینی بسته شدن کندل روزانه اتریوم (UTC 00:00) به صورت صعودی و سبز.",
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Candle",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Candle"
       },
       { 
         id: 3, 
@@ -2484,36 +2490,36 @@
         title: "آیا بیت‌کوین این هفته بالای ۶۵,۰۰۰ دلار باقی می‌ماند؟ (Will BTC Stay Above $65,000?)", 
         desc: "حفظ سطح حمایتی ۶۵ هزار دلار توسط بیت‌کوین تا پایان هفته جاری.",
         optA: "YES",
-        optALabel: "YES (بله 🟢)",
+        optALabel: "YES",
         optASub: "Above $65,000",
         optB: "NO",
-        optBLabel: "NO (خیر 🔴)",
+        optBLabel: "NO",
         optBSub: "Below $65,000"
       },
       { 
         id: 4, 
         icon: "🏹", 
         category: "ROBINHOOD", 
-        title: "آیا تراکنش‌های روزانه رابین‌هود چین بالای ۱۰۰,۰۰۰ تراکنش ثبت می‌شود؟", 
+        title: "آیا تراکنش‌های روزانه رابین‌هود چین بالای ۱۰۰,۰۰۰ ثبت می‌شود؟", 
         desc: "ثبت بیش از ۱۰۰ هزار تراکنش درون‌زنجیره‌ای در ۲۴ ساعت آینده در شبکه رابین‌هود.",
         optA: "YES",
-        optALabel: "YES (بله 🟢)",
+        optALabel: "YES",
         optASub: "> 100k Txs",
         optB: "NO",
-        optBLabel: "NO (خیر 🔴)",
+        optBLabel: "NO",
         optBSub: "< 100k Txs"
       },
       { 
         id: 5, 
         icon: "◎", 
         category: "CRYPTO", 
-        title: "عملکرد ۲۴ ساعته سولانا بهتر خواهد بود یا اتریوم؟ (SOL vs ETH Outperformance)", 
+        title: "آیا بازدهی ۲۴ ساعته سولانا از اتریوم بیشتر خواهد بود؟ (Will SOL Outperform ETH?)", 
         desc: "درصد بازدهی مثبت سولانا در ۲۴ ساعت آینده نسبت به اتریوم بیشتر خواهد بود.",
-        optA: "SOL",
-        optALabel: "SOL (سولانا 🟢)",
+        optA: "YES",
+        optALabel: "YES",
         optASub: "SOL Outperforms",
-        optB: "ETH",
-        optBLabel: "ETH (اتریوم 🔴)",
+        optB: "NO",
+        optBLabel: "NO",
         optBSub: "ETH Outperforms"
       },
       { 
@@ -2523,69 +2529,69 @@
         title: "آیا انس جهانی طلا امروز بالای ۲,۵۰۰ دلار بسته می‌شود؟ (Gold > $2,500)", 
         desc: "قیمت لحظه‌ای انس طلا (XAU/USD) در پایان معاملات روزانه بالای ۲۵۰۰ دلار.",
         optA: "YES",
-        optALabel: "YES (بله 🟢)",
+        optALabel: "YES",
         optASub: "Above $2,500",
         optB: "NO",
-        optBLabel: "NO (خیر 🔴)",
+        optBLabel: "NO",
         optBSub: "Below $2,500"
       },
       { 
         id: 7, 
         icon: "🔵", 
         category: "BASE", 
-        title: "آیا آدرس‌های فعال روزانه شبکه بیس از مرز ۲ میلیون عبور می‌کند؟", 
+        title: "آیا آدرس‌های فعال روزانه شبکه بیس از ۲ میلیون عبور می‌کند؟", 
         desc: "ثبت بیش از ۲ میلیون والت فعال روزانه در شبکه لایه دو بیس.",
         optA: "YES",
-        optALabel: "YES (بله 🟢)",
+        optALabel: "YES",
         optASub: "> 2M Users",
         optB: "NO",
-        optBLabel: "NO (خیر 🔴)",
+        optBLabel: "NO",
         optBSub: "< 2M Users"
       },
       { 
         id: 8, 
         icon: "📈", 
         category: "EQUITIES", 
-        title: "کندل روزانه سهام توکنیزه اپل (AAPL) سبز بسته می‌شود یا قرمز؟", 
-        desc: "بسته شدن کندل روزانه سهام توکنیزه شرکت اپل در پلتفرم رابین‌هود به صورت مثبت یا منفی.",
-        optA: "GREEN",
-        optALabel: "GREEN (سبز 🟢)",
-        optASub: "Positive Close",
-        optB: "RED",
-        optBLabel: "RED (قرمز 🔴)",
-        optBSub: "Negative Close"
+        title: "آیا کندل روزانه سهام توکنیزه اپل (AAPL) سبز بسته می‌شود؟", 
+        desc: "بسته شدن کندل روزانه سهام توکنیزه اپل در پلتفرم رابین‌هود به صورت مثبت.",
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
       },
       { 
         id: 9, 
         icon: "🎮", 
         category: "ARENA", 
-        title: "آیا در بازی ۲۰۴۸ آرنا امروز بازیکنی به تایل ۲۰۴۸ دست می‌یابد؟", 
+        title: "آیا در بازی ۲۰۴۸ امروز بازیکنی به تایل ۲۰۴۸ دست می‌یابد؟", 
         desc: "ثبت رکورد دستیابی به تایل ۲۰۴۸ توسط بازیکنان در لیدربورد مهارت.",
         optA: "YES",
-        optALabel: "YES (بله 🟢)",
+        optALabel: "YES",
         optASub: "Achieved",
         optB: "NO",
-        optBLabel: "NO (خیر 🔴)",
+        optBLabel: "NO",
         optBSub: "Not Achieved"
       },
       { 
         id: 10, 
         icon: "🌐", 
         category: "MARKET", 
-        title: "آیا مارکت‌کپ کل بازار کریپتو بالای ۲.۵ تریلیون دلار تثبیت می‌شود؟", 
+        title: "آیا مارکت‌کپ کل کریپتو بالای ۲.۵ تریلیون دلار تثبیت می‌شود؟", 
         desc: "تثبیت ارزش کل بازار ارزهای دیجیتال بالای سطح ۲.۵ تریلیون دلار در این ماه.",
         optA: "YES",
-        optALabel: "YES (بله 🟢)",
+        optALabel: "YES",
         optASub: "> $2.5T Cap",
         optB: "NO",
-        optBLabel: "NO (خیر 🔴)",
+        optBLabel: "NO",
         optBSub: "< $2.5T Cap"
       }
     ];
 
     let selectedDuelQuestionId = 1;
-    let selectedDuelOption = 'GREEN';
     let selectedDuelTier = 5;
+    let selectedDuelOption = 'YES';
 
     function renderDuelQuestions() {
       const grid = document.getElementById("duel-questions-grid");
@@ -2621,56 +2627,8 @@
 
     function selectDuelQuestion(qId) {
       selectedDuelQuestionId = qId;
-      const q = DUEL_QUESTIONS.find(x => x.id === qId) || DUEL_QUESTIONS[0];
-      selectedDuelOption = q.optA;
+      selectedDuelOption = 'YES';
       renderDuelQuestions();
-    }
-
-    function updateOptionButtonsUI() {
-      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
-      const btnA = document.getElementById("opt-btn-yes");
-      const btnB = document.getElementById("opt-btn-no");
-
-      if (btnA) {
-        btnA.setAttribute("onclick", `selectDuelOption('${q.optA}')`);
-        btnA.innerHTML = `
-          <span class="text-lg">🟢</span>
-          <span>${q.optALabel}</span>
-          <span class="text-[10px] font-normal text-emerald-400/90">${q.optASub}</span>
-        `;
-      }
-
-      if (btnB) {
-        btnB.setAttribute("onclick", `selectDuelOption('${q.optB}')`);
-        btnB.innerHTML = `
-          <span class="text-lg">🔴</span>
-          <span>${q.optBLabel}</span>
-          <span class="text-[10px] font-normal text-slate-400">${q.optBSub}</span>
-        `;
-      }
-
-      applyOptionStyles(q);
-    }
-
-    function selectDuelOption(opt) {
-      selectedDuelOption = opt;
-      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
-      applyOptionStyles(q);
-      updateDuelSummary();
-    }
-
-    function applyOptionStyles(q) {
-      const btnA = document.getElementById("opt-btn-yes");
-      const btnB = document.getElementById("opt-btn-no");
-      if (!btnA || !btnB) return;
-
-      if (selectedDuelOption === q.optA) {
-        btnA.className = "p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]";
-        btnB.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]";
-      } else {
-        btnA.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-emerald-500/50 hover:text-emerald-300 hover:scale-[1.02]";
-        btnB.className = "p-3.5 rounded-xl border border-rose-500/80 bg-rose-500/20 text-rose-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02]";
-      }
     }
 
     function selectDuelTier(tier) {
@@ -2696,14 +2654,59 @@
       updateDuelSummary();
     }
 
+    function updateOptionButtonsUI() {
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const btnYes = document.getElementById("opt-btn-yes");
+      const btnNo = document.getElementById("opt-btn-no");
+
+      if (btnYes) {
+        btnYes.setAttribute("onclick", "selectDuelOption('YES')");
+        btnYes.innerHTML = `
+          <span class="text-lg">🟢</span>
+          <span class="text-base font-black tracking-wider">YES</span>
+          <span class="text-[10px] font-mono text-emerald-300/80 font-medium">${q.optASub || 'Affirmative'}</span>
+        `;
+      }
+
+      if (btnNo) {
+        btnNo.setAttribute("onclick", "selectDuelOption('NO')");
+        btnNo.innerHTML = `
+          <span class="text-lg">🔴</span>
+          <span class="text-base font-black tracking-wider">NO</span>
+          <span class="text-[10px] font-mono text-slate-400 font-medium">${q.optBSub || 'Negative'}</span>
+        `;
+      }
+
+      applyOptionStyles();
+    }
+
+    function selectDuelOption(opt) {
+      selectedDuelOption = opt;
+      applyOptionStyles();
+      updateDuelSummary();
+    }
+
+    function applyOptionStyles() {
+      const btnYes = document.getElementById("opt-btn-yes");
+      const btnNo = document.getElementById("opt-btn-no");
+      if (!btnYes || !btnNo) return;
+
+      if (selectedDuelOption === 'YES') {
+        btnYes.className = "p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]";
+      } else {
+        btnYes.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-emerald-500/50 hover:text-emerald-300 hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-rose-500/80 bg-rose-500/20 text-rose-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02]";
+      }
+    }
+
     function updateDuelSummary() {
       const summaryEl = document.getElementById("duel-summary-text");
       if (!summaryEl) return;
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
-      const oppositeOpt = selectedDuelOption === q.optA ? q.optB : q.optA;
-      const isGreen = selectedDuelOption === q.optA;
-      const optColor = isGreen ? 'text-emerald-400' : 'text-rose-400';
-      const oppColor = !isGreen ? 'text-emerald-400' : 'text-rose-400';
+      const oppositeOpt = selectedDuelOption === 'YES' ? 'NO' : 'YES';
+      const optColor = selectedDuelOption === 'YES' ? 'text-emerald-400' : 'text-rose-400';
+      const oppColor = oppositeOpt === 'YES' ? 'text-emerald-400' : 'text-rose-400';
 
       summaryEl.innerHTML = `
         <span class="text-white">${q.title}</span> • 
@@ -2995,7 +2998,7 @@
       if (btn) btn.disabled = true;
 
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
-      const oppositeOption = (selectedDuelOption === q.optA) ? q.optB : q.optA;
+      const oppositeOption = selectedDuelOption === 'YES' ? 'NO' : 'YES';
 
       try {
         let txHash = await executeOnchainPayment(selectedDuelTier, "USDG", `Create Duel Tier ${selectedDuelTier}.00 [${selectedDuelOption}]`);
