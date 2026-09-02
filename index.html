@@ -2867,17 +2867,7 @@ async function connectWallet() {
     function getDuelCategory(duelData) {
       if (!duelData || duelData.status === 'cancelled') return 'cancelled';
       if (duelData.status === 'completed') return 'completed';
-      // When opponent accepts request, status is in_progress -> classified as matched
       if (duelData.status === 'in_progress') return 'matched';
-      if (duelData.status === 'open') {
-        const dl = getDuelEffectiveDeadline(duelData);
-        if (Date.now() >= dl) {
-          return 'expired';
-        }
-        return 'open';
-      }
-      return 'open';
-    }
       if (duelData.status === 'open') {
         const dl = getDuelEffectiveDeadline(duelData);
         if (Date.now() >= dl) {
