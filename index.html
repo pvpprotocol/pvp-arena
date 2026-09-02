@@ -149,9 +149,9 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-    <!-- 1. 1V1 DUELS TAB -->
+    <!-- 1. P2P DUELS TAB -->
     <div id="tab-duel" class="tab-content block space-y-8">
-      <!-- 1V1 EXCLUSIVE P2P HEADER BANNER -->
+      <!-- EXCLUSIVE P2P DUELS HEADER BANNER -->
       <div class="glass-panel p-4 sm:p-5 rounded-3xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-purple-950/40 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
         <div class="flex items-center gap-3.5">
           <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-2xl shrink-0">
@@ -159,7 +159,7 @@
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h3 class="text-base sm:text-lg font-black text-white font-mono uppercase tracking-wider">Strictly 1v1 Player vs Player Battles</h3>
+              <h3 class="text-base sm:text-lg font-black text-white font-mono uppercase tracking-wider">Strictly P2P Player vs Player Battles</h3>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Head to Head</span>
             </div>
             <p class="text-xs text-slate-300 font-mono mt-0.5">
@@ -1089,7 +1089,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
               <div class="p-3 rounded-xl bg-slate-900/80 border border-white/10">
                 <span class="text-xs font-bold text-cyan-400 font-mono block">1. Prediction</span>
-                <span class="text-[11px] text-slate-400 font-mono mt-1 block">1v1 Instant Duel price & outcome speculation with 90% winner share & 3% cashback rebate.</span>
+                <span class="text-[11px] text-slate-400 font-mono mt-1 block">P2P Instant Duel price & outcome speculation with 90% winner share & 3% cashback rebate.</span>
               </div>
               <div class="p-3 rounded-xl bg-slate-900/80 border border-white/10">
                 <span class="text-xs font-bold text-emerald-400 font-mono block">2. Skill</span>
@@ -1303,7 +1303,7 @@
       });
     }
 
-    // 1V1 DUELS ONCHAIN ESCROW LOGIC
+    // P2P DUELS ONCHAIN ESCROW LOGIC
     let activeDuelsCount = 5;
 
     async function requestSafeSignature(messageText) {
