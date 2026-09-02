@@ -317,13 +317,43 @@
       
       <!-- ACTIVE ONCHAIN DUELS LOBBY -->
       <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
-        <div class="p-5 border-b border-white/10 flex justify-between items-center">
+        <div class="p-5 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h3 class="font-black text-white text-base font-mono uppercase tracking-wider">LIVE P2P DUELS</h3>
+            <h3 class="font-black text-white text-base font-mono uppercase tracking-wider flex items-center gap-2">
+              <span>⚔️</span> LIVE P2P DUELS
+            </h3>
             <p class="text-xs text-slate-400">Robinhood Escrow Contract: <span class="font-mono text-cyan-400">0x1e7e...2dae</span></p>
           </div>
-          <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">0 Active Matches</span>
+          <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 self-start md:self-auto">0 Total</span>
         </div>
+
+        <!-- 4 DISTINCT DUEL CATEGORY TABS -->
+        <div class="px-5 pt-3 pb-0 bg-slate-900/60 border-b border-white/10 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <button id="duel-tab-open" onclick="switchDuelTab('open')" class="px-4 py-3 border-b-2 border-cyan-400 text-cyan-300 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
+            <span>⚔️</span>
+            <span>OPEN REQUESTS</span>
+            <span id="badge-count-open" class="px-2 py-0.5 rounded-full text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">0</span>
+          </button>
+
+          <button id="duel-tab-matched" onclick="switchDuelTab('matched')" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
+            <span>⚡</span>
+            <span>MATCHED (IN PROGRESS)</span>
+            <span id="badge-count-matched" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-white/10">0</span>
+          </button>
+
+          <button id="duel-tab-completed" onclick="switchDuelTab('completed')" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
+            <span>🏆</span>
+            <span>COMPLETED & PRIZES</span>
+            <span id="badge-count-completed" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-white/10">0</span>
+          </button>
+
+          <button id="duel-tab-expired" onclick="switchDuelTab('expired')" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
+            <span>⌛</span>
+            <span>EXPIRED & REFUNDS</span>
+            <span id="badge-count-expired" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-white/10">0</span>
+          </button>
+        </div>
+
         <div id="duels-list-container" class="divide-y divide-white/5 font-mono text-xs">
           <div id="no-duels-msg" class="py-12 text-center text-slate-400">
             <div class="text-3xl mb-2">⚔️</div>
@@ -2784,46 +2814,165 @@
       }
     }
 
+    let currentDuelTab = 'open';
+
+    function switchDuelTab(tab) {
+      currentDuelTab = tab;
+      const tabs = ['open', 'matched', 'completed', 'expired'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`duel-tab-${t}`);
+        if (!btn) return;
+        if (t === tab) {
+          btn.className = "px-4 py-3 border-b-2 border-cyan-400 text-cyan-300 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+        } else {
+          btn.className = "px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+        }
+      });
+      renderAllDuels();
+    }
+
+    function getDuelCategory(duelData) {
+      if (!duelData || duelData.status === 'cancelled') return 'cancelled';
+      if (duelData.status === 'completed') return 'completed';
+      if (duelData.status === 'in_progress') return 'matched';
+      if (duelData.status === 'open') {
+        const dl = getDuelEffectiveDeadline(duelData);
+        if (Date.now() >= dl) {
+          return 'expired';
+        }
+        return 'open';
+      }
+      return 'open';
+    }
+
     function renderAllDuels() {
       const store = getLocalDuels();
       const keys = Object.keys(store);
       const container = document.getElementById("duels-list-container");
       if (!container) return;
 
-      if (keys.length === 0) {
+      // Calculate categorized arrays
+      const filteredKeys = keys.filter(k => {
+        const item = store[k];
+        if (!item || item.status === 'cancelled') return false;
+        const cat = getDuelCategory(item);
+        return cat === currentDuelTab;
+      });
+
+      // Sort newest first
+      filteredKeys.sort((a,b) => ((store[b].createdAt || 0) - (store[a].createdAt || 0)));
+
+      if (filteredKeys.length === 0) {
+        let emptyIcon = "⚔️";
+        let emptyTitle = "No open duel requests";
+        let emptySub = "Select a question and tier above, then click \"CREATE P2P DUEL\" to start!";
+
+        if (currentDuelTab === 'matched') {
+          emptyIcon = "⚡";
+          emptyTitle = "No matches currently in progress";
+          emptySub = "When an open duel is accepted by a rival, the live battle appears here!";
+        } else if (currentDuelTab === 'completed') {
+          emptyIcon = "🏆";
+          emptyTitle = "No completed duels yet";
+          emptySub = "Finished matches and prize claim payouts will appear in this section.";
+        } else if (currentDuelTab === 'expired') {
+          emptyIcon = "⌛";
+          emptyTitle = "No expired duels";
+          emptySub = "Requests that reached their deadline without an opponent appear here for deposit reclamation.";
+        }
+
         container.innerHTML = `
           <div id="no-duels-msg" class="text-center py-12 text-slate-500">
-            <p class="text-4xl mb-3">⚔️</p>
-            <p class="text-base font-semibold text-slate-400">No active duel matches found</p>
-            <p class="text-xs text-slate-500 mt-1">Select a question and tier above, then click "CREATE P2P DUEL" to start!</p>
+            <p class="text-4xl mb-3">${emptyIcon}</p>
+            <p class="text-base font-semibold text-slate-300 font-mono">${emptyTitle}</p>
+            <p class="text-xs text-slate-500 mt-1 font-mono">${emptySub}</p>
           </div>
         `;
       } else {
-        const emptyMsg = document.getElementById("no-duels-msg");
-        if (emptyMsg) emptyMsg.remove();
-        // Sort newest first
-        const sortedKeys = keys.sort((a,b) => ((store[b].createdAt || 0) - (store[a].createdAt || 0)));
         container.innerHTML = "";
-        sortedKeys.forEach(k => {
-          if (store[k] && store[k].status !== 'cancelled') {
-            renderDuelCard(store[k]);
-          }
+        filteredKeys.forEach(k => {
+          renderDuelCard(store[k]);
         });
       }
       updateDuelCounter();
     }
 
     function updateDuelCounter() {
-      const counterEl = document.getElementById("active-duels-count");
-      const badgeEl = document.getElementById("duels-count-badge");
       const store = getLocalDuels();
-      let activeCount = 0;
+      let openCount = 0;
+      let matchedCount = 0;
+      let completedCount = 0;
+      let expiredCount = 0;
+      let totalCount = 0;
+
       Object.keys(store).forEach(k => {
-        if (store[k] && store[k].status !== 'cancelled') activeCount++;
+        const item = store[k];
+        if (!item || item.status === 'cancelled') return;
+        const cat = getDuelCategory(item);
+        if (cat === 'open') openCount++;
+        else if (cat === 'matched') matchedCount++;
+        else if (cat === 'completed') completedCount++;
+        else if (cat === 'expired') expiredCount++;
+        totalCount++;
       });
-      const text = `${activeCount} Active Match${activeCount === 1 ? '' : 'es'}`;
-      if (counterEl) counterEl.textContent = text;
-      if (badgeEl) badgeEl.textContent = text;
+
+      const badgeOpen = document.getElementById("badge-count-open");
+      const badgeMatched = document.getElementById("badge-count-matched");
+      const badgeCompleted = document.getElementById("badge-count-completed");
+      const badgeExpired = document.getElementById("badge-count-expired");
+      const badgeTotal = document.getElementById("duels-count-badge");
+      const legacyCount = document.getElementById("active-duels-count");
+
+      if (badgeOpen) badgeOpen.textContent = openCount;
+      if (badgeMatched) badgeMatched.textContent = matchedCount;
+      if (badgeCompleted) badgeCompleted.textContent = completedCount;
+      if (badgeExpired) badgeExpired.textContent = expiredCount;
+      if (badgeTotal) badgeTotal.textContent = `${totalCount} Total`;
+      if (legacyCount) legacyCount.textContent = `${totalCount} Active Matches`;
+    }
+
+    async function claimDuelPrize(duelId, payout) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      const store = getLocalDuels();
+      let duelData = store[duelId];
+      if (!duelData) {
+        showToast("Duel not found", "error");
+        return;
+      }
+      
+      duelData.claimed = true;
+      duelData.claimedAt = Date.now();
+      saveLocalDuel(duelData);
+      await broadcastDuel(duelData);
+      renderAllDuels();
+
+      showToast(`🎉 +${payout} USDG Prize Claimed & Withdrawn to your wallet!`, "success");
+    }
+
+    async function reclaimExpiredDeposit(duelId, tier) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      const store = getLocalDuels();
+      let duelData = store[duelId];
+      if (!duelData) {
+        showToast("Duel not found", "error");
+        return;
+      }
+
+      // Mark cancelled / refunded
+      duelData.status = 'cancelled';
+      duelData.refundedAt = Date.now();
+      saveLocalDuel(duelData);
+      await broadcastDuel(duelData);
+
+      const row = document.getElementById(`duel-row-${duelId}`);
+      if (row) row.remove();
+      renderAllDuels();
+
+      showToast(`💰 ${tier} USDG Deposit Reclaimed & Returned to your balance!`, "success");
     }
 
     function initGlobalDuelsListener() {
@@ -2904,9 +3053,6 @@
       const container = document.getElementById("duels-list-container");
       if (!container) return;
 
-      const emptyMsg = document.getElementById("no-duels-msg");
-      if (emptyMsg) emptyMsg.remove();
-
       if (!duelData || !duelData.id || typeof duelData.id !== 'string' || !duelData.id.startsWith('duel_') || duelData.status === 'cancelled') {
         if (duelData && duelData.id) {
           const existing = document.getElementById(`duel-row-${duelData.id}`);
@@ -2923,6 +3069,21 @@
       if (store[duelData.id]) {
         duelData = { ...store[duelData.id], ...duelData };
       }
+
+      const category = getDuelCategory(duelData);
+
+      // Filter by current active tab
+      const existingEl = document.getElementById(`duel-row-${duelData.id}`);
+      if (category !== currentDuelTab) {
+        if (existingEl) {
+          existingEl.remove();
+          updateDuelCounter();
+        }
+        return;
+      }
+
+      const emptyMsg = document.getElementById("no-duels-msg");
+      if (emptyMsg) emptyMsg.remove();
 
       const safeTier = (duelData.tier !== undefined && duelData.tier !== null) ? Number(duelData.tier) : 1;
       const safePayout = duelData.payout ? duelData.payout : (safeTier * 1.8).toFixed(2);
@@ -2954,50 +3115,26 @@
       let actionSection = "";
       let cardBgClass = "bg-cyan-950/20 border-cyan-500/30";
 
-      // STATUS 1: OPEN (Waiting for an opponent before deadline)
-      if (duelData.status === 'open') {
-        if (isExpired) {
-          // EXPIRED / UNMATCHED: Submissions closed
-          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
-          if (isCreator) {
-            actionSection = `
-              <div class="flex items-center gap-2">
-                ${statusBadge}
-                <button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold text-xs shadow-md shadow-amber-500/30 hover:brightness-110 flex items-center gap-1">
-                  💰 RECLAIM DEPOSIT
-                </button>
-              </div>
-            `;
-          } else {
-            actionSection = `
-              <div class="flex items-center gap-2">
-                ${statusBadge}
-                <span class="px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-white/10 text-xs font-bold font-mono">CLOSED</span>
-              </div>
-            `;
-          }
+      // 1. OPEN TAB
+      if (category === 'open') {
+        if (isCreator) {
+          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-2 shadow-sm"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
+          actionSection = `
+            <div class="flex items-center gap-2">
+              ${statusBadge}
+              <button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 text-xs font-bold font-mono transition-all">CANCEL</button>
+            </div>
+          `;
         } else {
-          // ACTIVE AND OPEN
-          if (isCreator) {
-            // Clean, dedicated waiting box without any undefined text
-            statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-2 shadow-sm"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
-            actionSection = `
-              <div class="flex items-center gap-2">
-                ${statusBadge}
-                <button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 text-xs font-bold font-mono transition-all">CANCEL</button>
-              </div>
-            `;
-          } else {
-            actionSection = `
-              <button onclick="acceptDuel('${duelData.id}', ${safeTier})" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black text-xs font-mono uppercase tracking-wider transition-all shadow-md shadow-cyan-500/20 active:scale-95 flex items-center gap-1.5">
-                ⚔️ ACCEPT: TAKE [${requiredOpponentOption}] (${safeTier} USDG)
-              </button>
-            `;
-          }
+          actionSection = `
+            <button onclick="acceptDuel('${duelData.id}', ${safeTier})" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black text-xs font-mono uppercase tracking-wider transition-all shadow-md shadow-cyan-500/20 active:scale-95 flex items-center gap-1.5">
+              ⚔️ ACCEPT: TAKE [${requiredOpponentOption}] (${safeTier} USDG)
+            </button>
+          `;
         }
-      } 
-      // STATUS 2: IN PROGRESS / WAITING OUTCOME (Strict 1v1 Locked)
-      else if (duelData.status === 'in_progress') {
+      }
+      // 2. MATCHED / IN PROGRESS TAB
+      else if (category === 'matched') {
         cardBgClass = "bg-indigo-950/30 border-indigo-500/40";
         statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> WAITING OUTCOME (1v1 BATTLE)</span>`;
 
@@ -3019,19 +3156,71 @@
           `;
         }
       }
-      // STATUS 3: COMPLETED
-      else if (duelData.status === 'completed') {
+      // 3. COMPLETED & PRIZES TAB
+      else if (category === 'completed') {
         cardBgClass = "bg-emerald-950/20 border-emerald-500/30";
         const shortWinner = duelData.winner ? (duelData.winner.slice(0, 6) + "..." + duelData.winner.slice(-4)) : "Winner";
         const isWinner = userAddress && duelData.winner && (userAddress.toLowerCase() === duelData.winner.toLowerCase());
+        const isLoser = userAddress && duelData.loser && (userAddress.toLowerCase() === duelData.loser.toLowerCase());
         
         statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 text-xs">🏆 COMPLETED</span>`;
-        actionSection = `
-          <div class="flex items-center gap-2 font-mono text-xs">
-            ${statusBadge}
-            <span class="text-emerald-400 font-bold">${isWinner ? '🎉 YOU WON +' + safePayout + ' USDG!' : 'Winner: ' + shortWinner}</span>
-          </div>
-        `;
+        
+        if (isWinner) {
+          if (duelData.claimed) {
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <span class="px-3.5 py-2 rounded-xl bg-emerald-950/60 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40 flex items-center gap-1">✅ PRIZE CLAIMED (+${safePayout} USDG)</span>
+              </div>
+            `;
+          } else {
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <button onclick="claimDuelPrize('${duelData.id}', ${safePayout})" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:brightness-110 text-black font-extrabold text-xs shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition-all active:scale-95">
+                  💰 CLAIM PRIZE (+${safePayout} USDG)
+                </button>
+              </div>
+            `;
+          }
+        } else if (isLoser) {
+          actionSection = `
+            <div class="flex items-center gap-2">
+              ${statusBadge}
+              <span class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-400 font-mono text-xs font-bold border border-white/10 flex items-center gap-1">💸 3% CASHBACK CREDITED</span>
+            </div>
+          `;
+        } else {
+          actionSection = `
+            <div class="flex items-center gap-2 font-mono text-xs">
+              ${statusBadge}
+              <span class="text-emerald-400 font-bold">Winner: ${shortWinner} (+${safePayout} USDG)</span>
+            </div>
+          `;
+        }
+      }
+      // 4. EXPIRED & REFUNDS TAB
+      else if (category === 'expired') {
+        cardBgClass = "bg-amber-950/20 border-amber-500/30";
+        statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
+
+        if (isCreator) {
+          actionSection = `
+            <div class="flex items-center gap-2">
+              ${statusBadge}
+              <button onclick="reclaimExpiredDeposit('${duelData.id}', ${safeTier})" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold text-xs shadow-md shadow-amber-500/30 hover:brightness-110 flex items-center gap-1 transition-all active:scale-95">
+                💰 RECLAIM DEPOSIT (${safeTier} USDG)
+              </button>
+            </div>
+          `;
+        } else {
+          actionSection = `
+            <div class="flex items-center gap-2">
+              ${statusBadge}
+              <span class="px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-white/10 text-xs font-bold font-mono">UNMATCHED / EXPIRED</span>
+            </div>
+          `;
+        }
       }
 
       const cardHtml = `
@@ -3065,7 +3254,6 @@
         </div>
       `;
 
-      const existingEl = document.getElementById(`duel-row-${duelData.id}`);
       if (existingEl) {
         existingEl.outerHTML = cardHtml;
       } else {
