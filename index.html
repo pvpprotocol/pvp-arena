@@ -112,7 +112,7 @@
           <span>⚔️</span> P2P Duels
         </button>
         <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
-          <span>🎮</span> 2048 Skill Vaults
+          <span>🎮</span> 2048 Skill
         </button>
         <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
           <span>🎯</span> Grand Jackpot
@@ -344,7 +344,7 @@
 
     </div>
 
-    <!-- 2. 2048 SKILL VAULTS TAB -->
+    <!-- 2. 2048 SKILL TAB -->
     <div id="tab-vault2048" class="tab-content hidden space-y-6">
       
       <!-- SPECIAL PERK BANNER -->
@@ -983,7 +983,7 @@
         </div>
         <div onclick="setLeaderboardCategory('2048')" id="lb-cat-2048" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎮</span>
-          <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL VAULTS</h4>
+          <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
           <p class="text-xs text-slate-400 mt-1">Single High Score Records</p>
         </div>
         <div onclick="setLeaderboardCategory('jackpot')" id="lb-cat-jackpot" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
@@ -1035,7 +1035,7 @@
         </div>
         <div onclick="setHistoryCategory('2048')" id="hist-cat-2048" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎮</span>
-          <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL VAULTS</h4>
+          <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 80% 24h Top Record Holders</p>
         </div>
         <div onclick="setHistoryCategory('jackpot')" id="hist-cat-jackpot" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
@@ -1998,7 +1998,7 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       
-      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill Vaults', jackpot: 'Grand Jackpot' };
+      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('lb-table-title');
       if (title) title.innerText = `Top 100 Players — ${catNames[curLbCat]} ($${curLbTier} Tier)`;
       
