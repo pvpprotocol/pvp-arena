@@ -1941,6 +1941,29 @@
     }
 
     // INITIAL LOAD
+    
+    // LIVE JACKPOT COUNTDOWN TIMER
+    let jackpotTimerInterval = null;
+    function updateJackpotTimer() {
+      if (jackpotTimerInterval) clearInterval(jackpotTimerInterval);
+      
+      function tick() {
+        const now = new Date();
+        const minutesLeft = 59 - now.getMinutes();
+        const secondsLeft = 59 - now.getSeconds();
+        
+        const timeString = String(minutesLeft).padStart(2, "0") + ":" + String(secondsLeft).padStart(2, "0");
+        
+        const timerEl = document.getElementById("jackpot-timer");
+        if (timerEl) {
+          timerEl.textContent = timeString;
+        }
+      }
+
+      tick();
+      jackpotTimerInterval = setInterval(tick, 1000);
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
       startNew2048Game();
       updateJackpotTimer();
