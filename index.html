@@ -94,7 +94,7 @@
       
       <!-- LOGO & BRAND -->
       <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('duel')">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 ring-1 ring-white/20">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 ring-1 ring-white/20">
           <span class="text-2xl font-black text-white">⚔️</span>
         </div>
         <div>
@@ -135,7 +135,7 @@
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span class="text-cyan-400 font-bold">$PVP:</span>
           <span id="pvpLivePrice" class="text-white font-bold font-mono">$0.0485</span>
-          <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">+14.2%</span>
+          <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-cyan-500/30">+14.2%</span>
         </div>
         <button onclick="connectWallet()" id="walletBtn" class="px-4 py-2 rounded-xl font-mono text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2">
           <span id="walletDot" class="w-2 h-2 rounded-full bg-white"></span>
@@ -184,43 +184,43 @@
           <div>
             <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 1</span>
             <h3 class="text-2xl font-black text-white font-mono mt-3">$1.00 <span class="text-xs text-slate-400">USDC</span></h3>
-            <p class="text-xs text-emerald-400 font-mono font-bold mt-1">Winner: +$1.80 USDC</p>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$1.80 USDC</p>
             <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.03</p>
           </div>
           <button onclick="createDuel(1)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
         </div>
 
         <!-- $5 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-emerald-500/50 transition-all text-center flex flex-col justify-between">
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
           <div>
-            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">TIER 2</span>
+            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 2</span>
             <h3 class="text-2xl font-black text-white font-mono mt-3">$5.00 <span class="text-xs text-slate-400">USDC</span></h3>
-            <p class="text-xs text-emerald-400 font-mono font-bold mt-1">Winner: +$9.00 USDC</p>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$9.00 USDC</p>
             <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.15</p>
           </div>
-          <button onclick="createDuel(5)" class="mt-4 w-full py-2 rounded-xl bg-emerald-500 text-black font-mono font-bold text-xs hover:bg-emerald-400 transition-all shadow-md shadow-emerald-500/20">CREATE DUEL</button>
+          <button onclick="createDuel(5)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
         </div>
 
         <!-- $10 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-blue-500/50 transition-all text-center flex flex-col justify-between">
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
           <div>
-            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/30">TIER 3</span>
+            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 3</span>
             <h3 class="text-2xl font-black text-white font-mono mt-3">$10.00 <span class="text-xs text-slate-400">USDC</span></h3>
-            <p class="text-xs text-emerald-400 font-mono font-bold mt-1">Winner: +$18.00 USDC</p>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$18.00 USDC</p>
             <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.30</p>
           </div>
-          <button onclick="createDuel(10)" class="mt-4 w-full py-2 rounded-xl bg-blue-500 text-white font-mono font-bold text-xs hover:bg-blue-400 transition-all shadow-md shadow-blue-500/20">CREATE DUEL</button>
+          <button onclick="createDuel(10)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
         </div>
 
         <!-- $100 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-purple-500/50 transition-all text-center flex flex-col justify-between">
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
           <div>
-            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">TIER 4</span>
+            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 4</span>
             <h3 class="text-2xl font-black text-white font-mono mt-3">$100.00 <span class="text-xs text-slate-400">USDC</span></h3>
-            <p class="text-xs text-emerald-400 font-mono font-bold mt-1">Winner: +$180.00 USDC</p>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$180.00 USDC</p>
             <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $3.00</p>
           </div>
-          <button onclick="createDuel(100)" class="mt-4 w-full py-2 rounded-xl bg-purple-500 text-white font-mono font-bold text-xs hover:bg-purple-400 transition-all shadow-md shadow-purple-500/20">CREATE DUEL</button>
+          <button onclick="createDuel(100)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
         </div>
 
         <!-- $1000 Tier -->
@@ -228,7 +228,7 @@
           <div>
             <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">TIER 5</span>
             <h3 class="text-2xl font-black text-white font-mono mt-3">$1,000 <span class="text-xs text-slate-400">USDC</span></h3>
-            <p class="text-xs text-emerald-400 font-mono font-bold mt-1">Winner: +$1,800 USDC</p>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$1,800 USDC</p>
             <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $30.00</p>
           </div>
           <button onclick="createDuel(1000)" class="mt-4 w-full py-2 rounded-xl bg-amber-500 text-black font-mono font-bold text-xs hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">CREATE DUEL</button>
@@ -242,7 +242,7 @@
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider">LIVE P2P DUELS</h3>
             <p class="text-xs text-slate-400">Robinhood Escrow Contract: <span class="font-mono text-cyan-400">0x1e7e...2dae</span></p>
           </div>
-          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">4 Active Matches</span>
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">5 Active Matches (All 5 Tiers)</span>
         </div>
         <div class="divide-y divide-white/5 font-mono text-xs">
           <!-- Match 1: $1 Tier -->
@@ -250,12 +250,11 @@
             <div class="flex items-center gap-3.5">
               <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$1 TIER</span>
               <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0xd8c0...883c</span> <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span></p>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0xd8c0...883c</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
                 <p class="text-[11px] text-slate-400">Collateral Locked: $1.00 USDC</p>
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-              <!-- Reward breakdown for both sides -->
               <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
                 <span class="text-emerald-400 font-bold">🏆 Winner: +$1.80 (+90%)</span>
                 <span class="text-slate-500">|</span>
@@ -268,60 +267,76 @@
           <!-- Match 2: $5 Tier -->
           <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
             <div class="flex items-center gap-3.5">
-              <span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">$5 TIER</span>
+              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$5 TIER</span>
               <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x4a71...e982</span> <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span></p>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x4a71...e982</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
                 <p class="text-[11px] text-slate-400">Collateral Locked: $5.00 USDC</p>
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-              <!-- Reward breakdown for both sides -->
               <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
                 <span class="text-emerald-400 font-bold">🏆 Winner: +$9.00 (+90%)</span>
                 <span class="text-slate-500">|</span>
                 <span class="text-cyan-400 font-bold">🛡️ Cashback: $0.15 (3%)</span>
               </div>
-              <button onclick="acceptDuel('0x2')" class="px-4 py-2 rounded-xl bg-emerald-500 text-black font-bold hover:bg-emerald-400 transition-all shadow-md shadow-emerald-500/20">ACCEPT DUEL</button>
+              <button onclick="acceptDuel('0x2')" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
             </div>
           </div>
 
           <!-- Match 3: $10 Tier -->
           <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
             <div class="flex items-center gap-3.5">
-              <span class="px-3 py-1.5 rounded-xl bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">$10 TIER</span>
+              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$10 TIER</span>
               <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x91a2...77bb</span> <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span></p>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x91a2...77bb</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
                 <p class="text-[11px] text-slate-400">Collateral Locked: $10.00 USDC</p>
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-              <!-- Reward breakdown for both sides -->
               <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
                 <span class="text-emerald-400 font-bold">🏆 Winner: +$18.00 (+90%)</span>
                 <span class="text-slate-500">|</span>
                 <span class="text-cyan-400 font-bold">🛡️ Cashback: $0.30 (3%)</span>
               </div>
-              <button onclick="acceptDuel('0x3')" class="px-4 py-2 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-400 transition-all shadow-md shadow-blue-500/20">ACCEPT DUEL</button>
+              <button onclick="acceptDuel('0x3')" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
             </div>
           </div>
 
           <!-- Match 4: $100 Tier -->
           <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
             <div class="flex items-center gap-3.5">
-              <span class="px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">$100 TIER</span>
+              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$100 TIER</span>
               <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x3f88...91ee</span> <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span></p>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x3f88...91ee</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
                 <p class="text-[11px] text-slate-400">Collateral Locked: $100.00 USDC</p>
               </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-              <!-- Reward breakdown for both sides -->
               <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
                 <span class="text-emerald-400 font-bold">🏆 Winner: +$180.00 (+90%)</span>
                 <span class="text-slate-500">|</span>
-                <span class="text-purple-400 font-bold">🛡️ Cashback: $3.00 (3%)</span>
+                <span class="text-cyan-400 font-bold">🛡️ Cashback: $3.00 (3%)</span>
               </div>
-              <button onclick="acceptDuel('0x4')" class="px-4 py-2 rounded-xl bg-purple-500 text-white font-bold hover:bg-purple-400 transition-all shadow-md shadow-purple-500/20">ACCEPT DUEL</button>
+              <button onclick="acceptDuel('0x4')" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
+            </div>
+          </div>
+
+          <!-- Match 5: $1,000 Tier (VIP Amber) -->
+          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
+            <div class="flex items-center gap-3.5">
+              <span class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">$1,000 TIER</span>
+              <div>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x7c99...11aa</span> <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span></p>
+                <p class="text-[11px] text-slate-400">Collateral Locked: $1,000.00 USDC</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
+                <span class="text-emerald-400 font-bold">🏆 Winner: +$1,800.00 (+90%)</span>
+                <span class="text-slate-500">|</span>
+                <span class="text-amber-400 font-bold">🛡️ Cashback: $30.00 (3%)</span>
+              </div>
+              <button onclick="acceptDuel('0x5')" class="px-4 py-2 rounded-xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">ACCEPT DUEL</button>
             </div>
           </div>
         </div>
@@ -333,7 +348,7 @@
     <div id="tab-vault2048" class="tab-content hidden space-y-6">
       
       <!-- SPECIAL PERK BANNER -->
-      <div class="p-4 rounded-2xl bg-gradient-to-r from-purple-900/40 via-indigo-900/40 to-cyan-900/40 border border-purple-500/30 flex items-center justify-between flex-wrap gap-3">
+      <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/40 border border-cyan-500/30 flex items-center justify-between flex-wrap gap-3">
         <div class="flex items-center gap-3">
           <span class="text-2xl">🔥</span>
           <div>
@@ -1160,9 +1175,9 @@
           <td class="py-3 px-4">
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-bold ${
               item.tier === 1000 ? 'bg-amber-400 text-black shadow-sm' :
-              item.tier === 100 ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
+              item.tier === 100 ? 'bg-purple-500/20 text-purple-300 border border-cyan-500/30' :
               item.tier === 10 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' :
-              item.tier === 5 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+              item.tier === 5 ? 'bg-emerald-500/20 text-emerald-300 border border-cyan-500/30' :
               'bg-slate-800 text-slate-200 border border-white/10'
             }">
               $${item.tier} TIER
