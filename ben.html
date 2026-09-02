@@ -2066,18 +2066,28 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       
-      const catNames = { duel: 'P2P Duels', '2048': '2048 Tournament', jackpot: 'Grand Jackpot' };
+      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('hist-table-title');
       if (title) title.innerText = `Verified Reward Winners — ${catNames[curHistCat]} ($${curHistTier} Tier)`;
 
-      const mockWinners = [
-        { date: '2026-09-01 14:10 UTC', wallet: '0x8a92...3b1f', metric: 'Won vs 0x4a82', prize: `+$${(curHistTier * 1.8).toFixed(2)} USDC` },
-        { date: '2026-09-01 13:45 UTC', wallet: '0x3f12...7e90', metric: 'Won vs 0x9b33', prize: `+$${(curHistTier * 1.8).toFixed(2)} USDC` },
-        { date: '2026-09-01 13:00 UTC', wallet: '0x1d44...9a88', metric: '24h Best: 24,190 pts', prize: `+$${(curHistTier * 336).toFixed(2)} USDC` },
-        { date: '2026-09-01 12:00 UTC', wallet: '0x77c1...0e22', metric: 'Target: 2450.68', prize: `+$${(curHistTier * 273.6).toFixed(2)} USDC` }
-      ];
+      const settledWinners = []; // Real-time onchain settlement records
 
-      mockWinners.forEach(w => {
+      if (settledWinners.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center py-12 text-slate-400 font-mono">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <span class="text-3xl">⚔️</span>
+                <span class="text-sm font-bold text-slate-300">No settled rounds recorded yet for this tier</span>
+                <span class="text-xs text-slate-500">Be the first player to compete and claim the prize pool!</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      settledWinners.forEach(w => {
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-white/5 transition-all';
         tr.innerHTML = `
@@ -2086,7 +2096,7 @@
           <td class="p-3.5 font-bold text-white">${w.wallet}</td>
           <td class="p-3.5 text-slate-300">${w.metric}</td>
           <td class="p-3.5 text-emerald-400 font-bold">${w.prize}</td>
-          <td class="p-3.5"><a href="https://robinhood.superscan.network" target="_blank" class="text-cyan-400 hover:underline">0x9c3f...tx</a></td>
+          <td class="p-3.5"><a href="${w.txUrl || 'https://robinhood.superscan.network'}" target="_blank" class="text-cyan-400 hover:underline">${w.txHash || 'View Tx'}</a></td>
         `;
         tbody.appendChild(tr);
       });
