@@ -85,6 +85,46 @@
     .tile-2048 { background: #8b5cf6; color: #ffffff; box-shadow: 0 0 30px rgba(139,92,246,0.9); font-size: 0.95rem; }
     .tile-super { background: #ec4899; color: #ffffff; box-shadow: 0 0 35px rgba(236,72,153,1); font-size: 0.85rem; }
   </style>
+
+  <script>
+    window.switchTab = function(tabId) {
+      try {
+        const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs"];
+        tabs.forEach(function(t) {
+          const el = document.getElementById("tab-" + t);
+          if (el) {
+            if (t === tabId) {
+              el.classList.remove("hidden");
+              el.style.display = "block";
+            } else {
+              el.classList.add("hidden");
+              el.style.display = "none";
+            }
+          }
+        });
+
+        document.querySelectorAll(".tab-btn").forEach(function(btn) {
+          btn.classList.remove("active");
+        });
+
+        const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab='" + tabId + "']");
+        activeBtns.forEach(function(b) { b.classList.add("active"); });
+
+        if (tabId === "vault2048" && typeof window.render2048 === "function") window.render2048();
+        if (tabId === "jackpot") {
+          if (typeof window.renderJackpotSubmissions === "function") window.renderJackpotSubmissions();
+          if (typeof window.updateJackpotMetrics === "function") window.updateJackpotMetrics();
+        }
+        if (tabId === "leaderboard" && typeof window.updateLeaderboardUI === "function") window.updateLeaderboardUI();
+        if (tabId === "history" && typeof window.updateHistoryUI === "function") window.updateHistoryUI();
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (e) {
+        console.error("switchTab err:", e);
+      }
+    };
+  </script>
+  
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
 
@@ -1430,7 +1470,7 @@
       }
 
       try {
-        const txHash = await executeOnchainPayment(tier, "USDC", `Create Duel Tier ${tier}.00`);
+        let txHash = await executeOnchainPayment(tier, "USDC", `Create Duel Tier ${tier}.00`);
         showToast(`✅ Onchain Tx Broadcast: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
       } catch (err) {
         console.error(err);
@@ -1497,7 +1537,7 @@
       }
 
       try {
-        const txHash = await executeOnchainPayment(tier, "USDC", `Accept Duel ${duelId} Tier ${tier}.00`);
+        let txHash = await executeOnchainPayment(tier, "USDC", `Accept Duel ${duelId} Tier ${tier}.00`);
         showToast(`✅ Onchain Tx Broadcast: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
       } catch (err) {
         console.error(err);
@@ -1694,7 +1734,7 @@
       }
 
       const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
-      const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+      let txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
       const shortTx = txHash.slice(0, 6) + "..." + txHash.slice(-4);
 
       // Add live submissions for each ticket
@@ -1812,7 +1852,7 @@
       }
 
       const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
-      const txHash = "0x" + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join("") + "...";
+      let txHash = "0x" + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join("") + "...";
 
       liveSubmissions.unshift({
         time: "Just now",
@@ -1933,7 +1973,7 @@
       }
 
       const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
-      const txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
+      let txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
 
       liveSubmissions.unshift({
         time: "Just Now",
