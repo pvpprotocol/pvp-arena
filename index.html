@@ -1315,6 +1315,78 @@
     // P2P DUELS ONCHAIN ESCROW LOGIC
     let activeDuelsCount = 0;
 
+    
+    // ONCHAIN TRANSACTION EXECUTOR (ROBINHOOD CHAIN)
+    const PVP_TOKEN_ADDRESS = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3";
+    
+    async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDC", actionDesc = "PVP Arena Entry") {
+      if (!window.ethereum) {
+        throw new Error("No Web3 wallet detected. Please connect MetaMask or Rabby.");
+      }
+      if (!userAddress) {
+        await connectWallet();
+      }
+      if (!userAddress) {
+        throw new Error("Wallet not connected");
+      }
+
+      // Check / switch to Robinhood Chain
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: ROBINHOOD_CHAIN_ID }],
+        });
+      } catch (switchErr) {}
+
+      showToast(`💳 Please confirm onchain transaction for ${totalCostUSD} (${paymentMethod}) in your wallet...`, "info");
+
+      let txHash = null;
+
+      if (paymentMethod === "PVP") {
+        // ERC20 Transfer call on Robinhood Chain
+        // transfer(address to, uint256 amount) selector: 0xa9059cbb
+        const cleanRecipient = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
+        // Calculate PVP amount (e.g. 1 USD = ~1000 PVP or standard 18-dec token calculation)
+        const pvpDecimals = 18;
+        const pvpUnits = BigInt(Math.floor(parseFloat(totalCostUSD) * 1000)) * (10n ** BigInt(pvpDecimals));
+        const cleanAmount = pvpUnits.toString(16).padStart(64, "0");
+        const calldata = "0xa9059cbb" + cleanRecipient + cleanAmount;
+
+        txHash = await window.ethereum.request({
+          method: "eth_sendTransaction",
+          params: [{
+            from: userAddress,
+            to: PVP_TOKEN_ADDRESS,
+            data: calldata,
+            value: "0x0"
+          }]
+        });
+      } else {
+        // Native ETH / Collateral on Robinhood Chain (calculated by current ETH price ~$2400)
+        const ethPriceUSD = 2400;
+        const ethCost = parseFloat(totalCostUSD) / ethPriceUSD;
+        // In Wei hex (minimum 1000000000000 wei)
+        const weiCost = BigInt(Math.max(1000000000000, Math.floor(ethCost * 1e18)));
+        const hexWei = "0x" + weiCost.toString(16);
+
+        txHash = await window.ethereum.request({
+          method: "eth_sendTransaction",
+          params: [{
+            from: userAddress,
+            to: ESCROW_CONTRACT,
+            value: hexWei,
+            data: "0x"
+          }]
+        });
+      }
+
+      if (!txHash) {
+        throw new Error("Transaction was not broadcast.");
+      }
+
+      return txHash;
+    }
+    
     async function requestSafeSignature(messageText) {
       if (!window.ethereum) {
         return "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
@@ -1342,13 +1414,12 @@
         return;
       }
 
-      showToast(`⚡ Sign verification to Create $${tier}.00 Duel...`, "info");
-
       try {
-        const sig = await requestSafeSignature(`PVP Protocol: Create Duel Tier $${tier}.00 USDC\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
-        showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
+        const txHash = await executeOnchainPayment(tier, "USDC", `Create Duel Tier ${tier}.00`);
+        showToast(`✅ Onchain Tx Broadcast: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
       } catch (err) {
-        showToast("❌ Signature cancelled.", "error");
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
         return;
       }
 
@@ -1410,13 +1481,12 @@
         return;
       }
 
-      showToast(`⚡ Sign verification to Accept Duel ${duelId} ($${tier}.00 USDC)...`, "info");
-
       try {
-        const sig = await requestSafeSignature(`PVP Protocol: Accept Duel ${duelId} Tier $${tier}.00 USDC\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
-        showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
+        const txHash = await executeOnchainPayment(tier, "USDC", `Accept Duel ${duelId} Tier ${tier}.00`);
+        showToast(`✅ Onchain Tx Broadcast: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
       } catch (err) {
-        showToast("❌ Signature cancelled.", "error");
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
         return;
       }
 
@@ -1584,14 +1654,13 @@
       }
 
       const totalCost = (tier * qty).toFixed(2);
-      const targetsStr = targets.map((t, idx) => `T#${idx+1}: $${t}`).join(", ");
-      showToast(`⚡ Sign verification for ${qty}x $${tier}.00 Ticket(s) ($${totalCost} USDC, ${targetsStr})...`, "info");
-
+      let txHash = "";
       try {
-        const sig = await requestSafeSignature(`PVP Protocol: ${qty}x Jackpot Ticket(s) ($${totalCost} USDC)\nTier: $${tier}\nTargets: ${targetsStr}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
-        showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
+        txHash = await executeOnchainPayment(totalCost, "USDC", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
+        showToast(`✅ Onchain Tx Broadcast: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
       } catch (err) {
-        showToast("❌ Signature cancelled.", "error");
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
         return;
       }
 
@@ -2131,13 +2200,13 @@
       const totalCost = (qty * tier).toFixed(2);
       const ticketsPurchased = paymentMethod === 'PVP' ? qty * 2 : qty;
 
-      showToast(`⚡ Sign verification to buy ${ticketsPurchased} Ticket(s) ($${totalCost}) for $${tier}.00 Tier via ${paymentMethod}...`, "info");
-
+      let txHash = "";
       try {
-        const sig = await requestSafeSignature(`PVP Protocol: Buy 2048 Tickets Tier $${tier}.00\nQty: ${ticketsPurchased} (${paymentMethod})\nTotal: $${totalCost}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
-        showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
+        txHash = await executeOnchainPayment(totalCost, paymentMethod, `${ticketsPurchased}x 2048 Tickets Tier ${tier} (${paymentMethod})`);
+        showToast(`✅ Onchain Tx Broadcast: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
       } catch (err) {
-        showToast("❌ Signature cancelled.", "error");
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
         return;
       }
 
