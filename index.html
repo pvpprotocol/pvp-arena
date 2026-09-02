@@ -1415,7 +1415,29 @@
           if (typeof renderAllDuels === 'function') renderAllDuels();
         }
       });
+   
+    // Auto-detect connected wallet account on page load
+    async function checkAutoConnect() {
+      if (window.ethereum) {
+        try {
+          const accs = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accs && accs.length > 0) {
+            userAddress = accs[0];
+            isConnected = true;
+            const btnText = document.getElementById("walletBtnText");
+            const dot = document.getElementById("walletDot");
+            if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+            if (typeof renderAllDuels === 'function') renderAllDuels();
+          }
+        } catch(err) {
+          console.warn("Auto-connect check:", err);
+        }
+      }
     }
+    window.addEventListener("DOMContentLoaded", checkAutoConnect);
+    window.addEventListener("load", checkAutoConnect);
+ }
 
     // P2P DUELS ONCHAIN ESCROW LOGIC
     let activeDuelsCount = 0;
@@ -2905,7 +2927,10 @@
       const creatorColor = creatorOption === "YES" ? "text-emerald-400" : "text-rose-400";
       const opponentColor = requiredOpponentOption === "YES" ? "text-emerald-400" : "text-rose-400";
 
-      const isCreator = userAddress && duelData.creator && (userAddress.toLowerCase() === duelData.creator.toLowerCase());
+      let myCreatedDuels = [];
+      try { myCreatedDuels = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]'); } catch(e){}
+      const isLocalCreator = myCreatedDuels.includes(duelData.id);
+      const isCreator = isLocalCreator || (userAddress && duelData.creator && (userAddress.toLowerCase() === duelData.creator.toLowerCase()));
       const isOpponent = userAddress && duelData.opponent && (userAddress.toLowerCase() === duelData.opponent.toLowerCase());
       const isParticipant = isCreator || isOpponent;
       const isVip = safeTier >= 1000;
@@ -3093,6 +3118,13 @@
         createdAt: Date.now()
       };
 
+      try {
+        const myCreated = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]');
+        if (!myCreated.includes(newDuel.id)) {
+          myCreated.push(newDuel.id);
+          localStorage.setItem('my_created_duel_ids', JSON.stringify(myCreated));
+        }
+      } catch(e){}
       await broadcastDuel(newDuel);
       renderDuelCard(newDuel);
       if (btn) btn.disabled = false;
