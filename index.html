@@ -250,7 +250,7 @@
             <div class="flex items-center gap-3.5">
               <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$1 TIER</span>
               <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0xd8c0...883c</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x71c2...49a2</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
                 <p class="text-[11px] text-slate-400">Collateral Locked: $1.00 USDC</p>
               </div>
             </div>
@@ -708,7 +708,7 @@
                 <span class="text-slate-300 font-bold">28,400 pts</span>
               </div>
               <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
-                <span class="text-amber-600 font-bold">🥉 #3 0xd8c0...883c</span>
+                <span class="text-amber-600 font-bold">🥉 #3 0x71c2...49a2</span>
                 <span class="text-slate-400">25,900 pts</span>
               </div>
             </div>
@@ -1427,7 +1427,7 @@
             <div class="flex items-center gap-3.5">
               <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$1 TIER</span>
               <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0xd8c0...883c</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x71c2...49a2</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
                 <p class="text-[11px] text-slate-400">Collateral Locked: $1.00 USDC</p>
               </div>
             </div>
@@ -1885,7 +1885,7 @@
                 <span class="text-slate-300 font-bold">28,400 pts</span>
               </div>
               <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-slate-700">
-                <span class="text-amber-600 font-bold">🥉 #3 0xd8c0...883c</span>
+                <span class="text-amber-600 font-bold">🥉 #3 0x71c2...49a2</span>
                 <span class="text-slate-400">25,900 pts</span>
               </div>
             </div>
@@ -2481,17 +2481,17 @@
         } catch (err) {
           console.error(err);
           isConnected = true;
-          userAddress = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
-          if (btnText) btnText.innerText = "0xd8c0...883c";
+          userAddress = "0x71C...49A2";
+          if (btnText) btnText.innerText = "0x71c2...49a2";
           if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
-          showToast("Connected: 0xd8c0...883c", "success");
+          showToast("Connected: 0x71c2...49a2", "success");
         }
       } else {
         isConnected = true;
-        userAddress = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
-        if (btnText) btnText.innerText = "0xd8c0...883c";
+        userAddress = "0x71C...49A2";
+        if (btnText) btnText.innerText = "0x71c2...49a2";
         if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
-        showToast("Connected: 0xd8c0...883c", "success");
+        showToast("Connected: 0x71c2...49a2", "success");
       }
     }
 
@@ -2572,7 +2572,7 @@
           <div class="flex items-center gap-3.5">
             <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">$${tier} TIER</span>
             <div>
-              <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-cyan-300">${userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0xd8c0...883c"}</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
+              <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-cyan-300">${userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2"}</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
               <p class="text-[11px] text-slate-400">Collateral Locked: $${tier}.00 USDC (Your Open Match)</p>
             </div>
           </div>
@@ -2833,7 +2833,7 @@
           : "text-[10px] font-mono text-cyan-400 font-bold";
       }
 
-      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0xd8c0...883c";
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
       const txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
 
       liveSubmissions.unshift({
