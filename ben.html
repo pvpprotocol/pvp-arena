@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1311,6 +1312,7 @@
             if (btnText) btnText.innerText = shortAddr;
             if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
             showToast("Connected: " + shortAddr, "success");
+            if (typeof renderAllDuels === 'function') renderAllDuels();
 
             try {
               await window.ethereum.request({
@@ -1360,6 +1362,7 @@
           const dot = document.getElementById("walletDot");
           if (btnText) btnText.innerText = "Connect Wallet";
           if (dot) dot.className = "w-2 h-2 rounded-full bg-white";
+          if (typeof renderAllDuels === 'function') renderAllDuels();
         } else {
           userAddress = accs[0];
           isConnected = true;
@@ -1367,6 +1370,7 @@
           const dot = document.getElementById("walletDot");
           if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
           if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+          if (typeof renderAllDuels === 'function') renderAllDuels();
         }
       });
     }
@@ -1482,137 +1486,7 @@
       }
     }
 
-    async function createDuel(tier) {
-      if (!isConnected) {
-        await connectWallet();
-      }
-      if (!isConnected) {
-        showToast("Please connect your wallet first", "warning");
-        return;
-      }
-
-      try {
-        let txHash = await executeOnchainPayment(tier, "USDG", `Create Duel Tier ${tier}.00`);
-        showToast(`✅ Step 1 Signed & Step 2 USDG Transferred: ${txHash.slice(0, 10)}...`, "success");
-      } catch (err) {
-        console.error(err);
-        showToast("❌ Transaction rejected or failed in wallet.", "error");
-        return;
-      }
-
-      const emptyMsg = document.getElementById("no-duels-msg");
-      if (emptyMsg) emptyMsg.remove();
-
-      activeDuelsCount++;
-      const badge = document.getElementById("duels-count-badge");
-      if (badge) badge.innerText = `${activeDuelsCount} Active Matches`;
-
-      const winnerPayout = (tier * 1.8).toFixed(2);
-      const cashback = (tier * 0.03).toFixed(2);
-      const duelId = "0x" + Math.random().toString(16).slice(2, 6);
-      syncDuelToRelay({ id: duelId, tier: tier, creator: userAddress, payout: winnerPayout, status: 'open', createdAt: Date.now() });
-      const isVip = tier >= 1000;
-      const tierBadgeClass = isVip 
-        ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
-        : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
-
-      const duelHtml = `
-        <div id="duel-row-${duelId}" class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all bg-cyan-950/20 border border-cyan-500/30 rounded-2xl my-2">
-          <div class="flex items-center gap-3.5">
-            <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">${tier} TIER</span>
-            <div>
-              <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-cyan-300">${userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2"}</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
-              <p class="text-[11px] text-slate-400">Collateral Locked: ${tier}.00 USDG (Your Open Match)</p>
-            </div>
-          </div>
-          <div class="flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
-              <span class="text-emerald-400 font-bold">🏆 Winner: +${winnerPayout} (+90%)</span>
-              <span class="text-slate-500">|</span>
-              <span class="text-cyan-400 font-bold">🛡️ Cashback: ${cashback} (3%)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="px-3 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT
-              </span>
-              <button onclick="cancelDuel('${duelId}', ${tier})" class="px-3 py-2 rounded-xl bg-rose-500/20 text-rose-300 font-bold border border-rose-500/40 hover:bg-rose-500 hover:text-white transition-all text-xs shadow-md shadow-rose-500/20 flex items-center gap-1">
-                <span>✕</span> CANCEL
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      const container = document.getElementById("duels-list-container");
-      if (container) {
-        container.insertAdjacentHTML("afterbegin", duelHtml);
-      }
-      showToast(`✅ Duel created! ${tier}.00 USDG duel registered on Robinhood Chain.`, "success");
-    }
-
-    async function acceptDuel(duelId, tier = 1) {
-      if (!isConnected) {
-        await connectWallet();
-      }
-      if (!isConnected) {
-        showToast("Please connect your wallet first", "warning");
-        return;
-      }
-
-      try {
-        let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00`);
-        showToast(`✅ Step 1 Signed & Step 2 USDG Transferred: ${txHash.slice(0, 10)}...`, "success");
-      } catch (err) {
-        console.error(err);
-        showToast("❌ Transaction rejected or failed in wallet.", "error");
-        return;
-      }
-
-      if (window.event && window.event.target) {
-        const targetBtn = window.event.target.closest("button");
-        if (targetBtn) {
-          targetBtn.className = "px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/40 text-xs";
-          targetBtn.innerHTML = "⚔️ MATCH LIVE";
-          targetBtn.disabled = true;
-        }
-      }
-
-      showToast(`⚔️ Joined duel #${duelId}! Match is now LIVE!`, "success");
-    }
-
-    async function cancelDuel(duelId, tier) {
-      if (!isConnected) {
-        await connectWallet();
-      }
-
-      showToast(`⚡ Requesting cancellation for Duel ${duelId}...`, "info");
-
-      const row = document.getElementById(`duel-row-${duelId}`);
-      if (row) {
-        row.style.transition = "all 0.4s ease";
-        row.style.opacity = "0";
-        row.style.transform = "scale(0.95)";
-        setTimeout(() => {
-          row.remove();
-          if (activeDuelsCount > 0) activeDuelsCount--;
-          const badge = document.getElementById("duels-count-badge");
-          if (badge) badge.innerText = `${activeDuelsCount} Active Matches`;
-          if (activeDuelsCount === 0) {
-            const container = document.getElementById("duels-list-container");
-            if (container && !document.getElementById("no-duels-msg")) {
-              container.innerHTML = `<div id="no-duels-msg" class="py-12 text-center text-slate-400">
-                <div class="text-3xl mb-2">⚔️</div>
-                <p class="font-bold text-white mb-1">No open duel challenges available right now</p>
-                <p class="text-xs text-slate-400">Click any <span class="text-cyan-400 font-bold">CREATE DUEL</span> tier above to create the first onchain match!</p>
-              </div>`;
-            }
-          }
-        }, 400);
-      }
-
-      showToast(`✅ Duel ${duelId} cancelled.`, "success");
-    }
-
+    // Duplicate duel functions removed
     // GRAND JACKPOT LOGIC
         let jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
     let jackpotSelectedQty = { 1: 1, 5: 1, 10: 1, 100: 1, 1000: 1 };
