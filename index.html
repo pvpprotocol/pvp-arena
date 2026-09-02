@@ -780,6 +780,1041 @@
           <span class="text-[11px] font-mono text-slate-400">Max 3 tickets / wallet</span>
         </div>
 
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <!-- $1 Tier -->
+          <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center">
+                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border-cyan-500/30 border">TIER 1 ($1)</span>
+                <span id="jackpot-tickets-1" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
+              </div>
+              <div class="mt-3 flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-400">Participants:</span>
+                <span id="jackpot-participants-1" class="text-white font-bold">0 tickets</span>
+              </div>
+              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span>Pool Size:</span>
+                <span id="jackpot-pool-1" class="text-cyan-400 font-bold">$0.00 USDC</span>
+              </div>
+              <div class="mt-2 pt-2 border-t border-white/5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
+                  <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
+                </div>
+                <p id="jackpot-prize-1" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
+              </div>
+
+              <!-- TARGET INPUTS LIST (1 TO 3 INPUTS) -->
+              <div class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-mono text-slate-400 block">Predicted Target(s):</label>
+                  <span id="target-count-label-1" class="text-[9px] font-mono text-cyan-400 font-bold">1 Target</span>
+                </div>
+                <div id="target-inputs-list-1" class="space-y-1.5">
+                  <div class="relative">
+                    <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#1</span>
+                    <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-1-1" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-400">
+                  </div>
+                </div>
+              </div>
+
+              <!-- TICKET QUANTITY SPINNER (MAX 3) -->
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
+                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
+                  <button type="button" onclick="changeJackpotTicketQty(1, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
+                  <span id="jackpot-qty-1" class="w-5 text-center text-xs font-bold text-cyan-400">1</span>
+                  <button type="button" onclick="changeJackpotTicketQty(1, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
+                </div>
+              </div>
+            </div>
+            <button id="jackpot-btn-1" onclick="submitJackpot(1)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 shadow-md shadow-cyan-500/20 font-mono font-black text-xs transition-all">BUY 1 TICKET ($1.00)</button>
+          </div>
+
+          <!-- $5 Tier -->
+          <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center">
+                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border-cyan-500/30 border">TIER 2 ($5)</span>
+                <span id="jackpot-tickets-5" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
+              </div>
+              <div class="mt-3 flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-400">Participants:</span>
+                <span id="jackpot-participants-5" class="text-white font-bold">0 tickets</span>
+              </div>
+              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span>Pool Size:</span>
+                <span id="jackpot-pool-5" class="text-cyan-400 font-bold">$0.00 USDC</span>
+              </div>
+              <div class="mt-2 pt-2 border-t border-white/5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
+                  <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
+                </div>
+                <p id="jackpot-prize-5" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
+              </div>
+
+              <!-- TARGET INPUTS LIST (1 TO 3 INPUTS) -->
+              <div class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-mono text-slate-400 block">Predicted Target(s):</label>
+                  <span id="target-count-label-5" class="text-[9px] font-mono text-cyan-400 font-bold">1 Target</span>
+                </div>
+                <div id="target-inputs-list-5" class="space-y-1.5">
+                  <div class="relative">
+                    <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#1</span>
+                    <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-5-1" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-400">
+                  </div>
+                </div>
+              </div>
+
+              <!-- TICKET QUANTITY SPINNER (MAX 3) -->
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
+                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
+                  <button type="button" onclick="changeJackpotTicketQty(5, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
+                  <span id="jackpot-qty-5" class="w-5 text-center text-xs font-bold text-cyan-400">1</span>
+                  <button type="button" onclick="changeJackpotTicketQty(5, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
+                </div>
+              </div>
+            </div>
+            <button id="jackpot-btn-5" onclick="submitJackpot(5)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 shadow-md shadow-cyan-500/20 font-mono font-black text-xs transition-all">BUY 1 TICKET ($5.00)</button>
+          </div>
+
+          <!-- $10 Tier -->
+          <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center">
+                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border-cyan-500/30 border">TIER 3 ($10)</span>
+                <span id="jackpot-tickets-10" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
+              </div>
+              <div class="mt-3 flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-400">Participants:</span>
+                <span id="jackpot-participants-10" class="text-white font-bold">0 tickets</span>
+              </div>
+              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span>Pool Size:</span>
+                <span id="jackpot-pool-10" class="text-cyan-400 font-bold">$0.00 USDC</span>
+              </div>
+              <div class="mt-2 pt-2 border-t border-white/5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
+                  <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
+                </div>
+                <p id="jackpot-prize-10" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
+              </div>
+
+              <!-- TARGET INPUTS LIST (1 TO 3 INPUTS) -->
+              <div class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-mono text-slate-400 block">Predicted Target(s):</label>
+                  <span id="target-count-label-10" class="text-[9px] font-mono text-cyan-400 font-bold">1 Target</span>
+                </div>
+                <div id="target-inputs-list-10" class="space-y-1.5">
+                  <div class="relative">
+                    <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#1</span>
+                    <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-10-1" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-400">
+                  </div>
+                </div>
+              </div>
+
+              <!-- TICKET QUANTITY SPINNER (MAX 3) -->
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
+                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
+                  <button type="button" onclick="changeJackpotTicketQty(10, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
+                  <span id="jackpot-qty-10" class="w-5 text-center text-xs font-bold text-cyan-400">1</span>
+                  <button type="button" onclick="changeJackpotTicketQty(10, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
+                </div>
+              </div>
+            </div>
+            <button id="jackpot-btn-10" onclick="submitJackpot(10)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 shadow-md shadow-cyan-500/20 font-mono font-black text-xs transition-all">BUY 1 TICKET ($10.00)</button>
+          </div>
+
+          <!-- $100 Tier -->
+          <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center">
+                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border-cyan-500/30 border">TIER 4 ($100)</span>
+                <span id="jackpot-tickets-100" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
+              </div>
+              <div class="mt-3 flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-400">Participants:</span>
+                <span id="jackpot-participants-100" class="text-white font-bold">0 tickets</span>
+              </div>
+              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span>Pool Size:</span>
+                <span id="jackpot-pool-100" class="text-cyan-400 font-bold">$0.00 USDC</span>
+              </div>
+              <div class="mt-2 pt-2 border-t border-white/5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
+                  <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
+                </div>
+                <p id="jackpot-prize-100" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
+              </div>
+
+              <!-- TARGET INPUTS LIST (1 TO 3 INPUTS) -->
+              <div class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-mono text-slate-400 block">Predicted Target(s):</label>
+                  <span id="target-count-label-100" class="text-[9px] font-mono text-cyan-400 font-bold">1 Target</span>
+                </div>
+                <div id="target-inputs-list-100" class="space-y-1.5">
+                  <div class="relative">
+                    <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#1</span>
+                    <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-100-1" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-400">
+                  </div>
+                </div>
+              </div>
+
+              <!-- TICKET QUANTITY SPINNER (MAX 3) -->
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
+                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
+                  <button type="button" onclick="changeJackpotTicketQty(100, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
+                  <span id="jackpot-qty-100" class="w-5 text-center text-xs font-bold text-cyan-400">1</span>
+                  <button type="button" onclick="changeJackpotTicketQty(100, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
+                </div>
+              </div>
+            </div>
+            <button id="jackpot-btn-100" onclick="submitJackpot(100)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 shadow-md shadow-cyan-500/20 font-mono font-black text-xs transition-all">BUY 1 TICKET ($100.00)</button>
+          </div>
+
+          <!-- $1,000 Tier -->
+          <div class="glass-panel p-5 rounded-3xl border border-amber-500/40 hover:border-amber-400 transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center">
+                <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border-amber-500/30 border">TIER 5 ($1,000)</span>
+                <span id="jackpot-tickets-1000" class="text-[10px] font-mono text-amber-400 font-bold">0/3 Tickets</span>
+              </div>
+              <div class="mt-3 flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-400">Participants:</span>
+                <span id="jackpot-participants-1000" class="text-white font-bold">0 tickets</span>
+              </div>
+              <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span>Pool Size:</span>
+                <span id="jackpot-pool-1000" class="text-amber-400 font-bold">$0.00 USDC</span>
+              </div>
+              <div class="mt-2 pt-2 border-t border-white/5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
+                  <span class="text-[10px] font-mono text-amber-400 font-bold animate-pulse">● LIVE</span>
+                </div>
+                <p id="jackpot-prize-1000" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
+              </div>
+
+              <!-- TARGET INPUTS LIST (1 TO 3 INPUTS) -->
+              <div class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-[10px] font-mono text-slate-400 block">Predicted Target(s):</label>
+                  <span id="target-count-label-1000" class="text-[9px] font-mono text-amber-400 font-bold">1 Target</span>
+                </div>
+                <div id="target-inputs-list-1000" class="space-y-1.5">
+                  <div class="relative">
+                    <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#1</span>
+                    <input type="text" inputmode="decimal" placeholder="Target e.g. 2450.50" id="target-input-1000-1" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-400">
+                  </div>
+                </div>
+              </div>
+
+              <!-- TICKET QUANTITY SPINNER (MAX 3) -->
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-[10px] font-mono text-slate-400">Tickets (Max 3):</span>
+                <div class="flex items-center gap-1 bg-slate-900 border border-white/10 rounded-xl p-1 font-mono">
+                  <button type="button" onclick="changeJackpotTicketQty(1000, -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▼</button>
+                  <span id="jackpot-qty-1000" class="w-5 text-center text-xs font-bold text-amber-400">1</span>
+                  <button type="button" onclick="changeJackpotTicketQty(1000, 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs transition-all active:scale-95">▲</button>
+                </div>
+              </div>
+            </div>
+            <button id="jackpot-btn-1000" onclick="submitJackpot(1000)" class="mt-4 w-full py-2.5 rounded-xl bg-amber-500 text-black hover:bg-amber-400 shadow-md shadow-amber-500/20 font-mono font-black text-xs transition-all">BUY 1 TICKET ($1,000.00)</button>
+          </div>
+        </div>
+      </div>
+
+      <!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PVP Protocol | Onchain Skill & Duel Arena on Robinhood Chain</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #05070d;
+      color: #cbd5e1;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.6) 0%, transparent 80%);
+      background-attachment: fixed;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-panel-glow {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+    }
+    .tab-btn.active {
+      background: rgba(6, 182, 212, 0.15);
+      color: #22d3ee;
+      border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    .grid-2048 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      width: 320px;
+      height: 320px;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    }
+    @media (min-width: 640px) {
+      .grid-2048 {
+        width: 380px;
+        height: 380px;
+        grid-gap: 14px;
+        padding: 14px;
+      }
+    }
+    .tile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 900;
+      font-size: 1.25rem;
+      border-radius: 12px;
+      transition: all 0.12s ease-in-out;
+      user-select: none;
+    }
+    .tile-0 { background: rgba(30, 41, 59, 0.5); color: transparent; }
+    .tile-2 { background: #e2e8f0; color: #0f172a; box-shadow: 0 2px 8px rgba(255,255,255,0.2); }
+    .tile-4 { background: #cbd5e1; color: #0f172a; box-shadow: 0 2px 8px rgba(255,255,255,0.3); }
+    .tile-8 { background: #fb923c; color: #ffffff; box-shadow: 0 0 12px rgba(251,146,60,0.4); }
+    .tile-16 { background: #f97316; color: #ffffff; box-shadow: 0 0 14px rgba(249,115,22,0.5); }
+    .tile-32 { background: #ef4444; color: #ffffff; box-shadow: 0 0 16px rgba(239,68,68,0.5); }
+    .tile-64 { background: #dc2626; color: #ffffff; box-shadow: 0 0 18px rgba(220,38,38,0.6); }
+    .tile-128 { background: #eab308; color: #0f172a; box-shadow: 0 0 20px rgba(234,179,8,0.6); font-size: 1.1rem; }
+    .tile-256 { background: #facc15; color: #0f172a; box-shadow: 0 0 22px rgba(250,204,21,0.7); font-size: 1.1rem; }
+    .tile-512 { background: #06b6d4; color: #ffffff; box-shadow: 0 0 24px rgba(6,182,212,0.7); font-size: 1.1rem; }
+    .tile-1024 { background: #3b82f6; color: #ffffff; box-shadow: 0 0 26px rgba(59,130,246,0.8); font-size: 0.95rem; }
+    .tile-2048 { background: #8b5cf6; color: #ffffff; box-shadow: 0 0 30px rgba(139,92,246,0.9); font-size: 0.95rem; }
+    .tile-super { background: #ec4899; color: #ffffff; box-shadow: 0 0 35px rgba(236,72,153,1); font-size: 0.85rem; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
+
+  <!-- TOP HEADER / NAVBAR -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-[#05070d]/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- LOGO & BRAND -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('duel')">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 ring-1 ring-white/20">
+          <span class="text-2xl font-black text-white">⚔️</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-black text-xl tracking-wider text-white font-mono">PVP PROTOCOL</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">ROBINHOOD</span>
+          </div>
+          <p class="text-[11px] font-medium text-slate-400">Canonical Decentralized Arena</p>
+        </div>
+      </div>
+
+      <!-- MAIN NAVIGATION TABS -->
+      <nav class="hidden lg:flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-2xl border border-white/10">
+        <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
+          <span>⚔️</span> P2P Duels
+        </button>
+        <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
+          <span>🎮</span> 2048 Skill
+        </button>
+        <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
+          <span>🎯</span> Grand Jackpot
+        </button>
+        <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
+          <span>🏆</span> Leaderboard
+        </button>
+        <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
+          <span>📜</span> History
+        </button>
+        <button onclick="switchTab('docs')" id="btn-tab-docs" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
+          <span>📖</span> Protocol Docs
+        </button>
+      </nav>
+
+      <!-- WALLET & QUICK METRICS -->
+      <div class="flex items-center gap-3">
+        <!-- NATIVE $PVP LIVE PRICE BADGE -->
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 text-xs font-mono shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-cyan-400 font-bold">$PVP:</span>
+          <span id="pvpLivePrice" class="text-white font-bold font-mono">$0.0485</span>
+          <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-cyan-500/30">+14.2%</span>
+        </div>
+        <button onclick="connectWallet()" id="walletBtn" class="px-4 py-2 rounded-xl font-mono text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+          <span id="walletDot" class="w-2 h-2 rounded-full bg-white"></span>
+          <span id="walletBtnText">Connect Wallet</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+    <!-- 1. P2P DUELS TAB -->
+    <div id="tab-duel" class="tab-content block space-y-8">
+      <!-- EXCLUSIVE P2P DUELS HEADER BANNER -->
+      <div class="glass-panel p-4 sm:p-5 rounded-3xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-purple-950/40 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-2xl shrink-0">
+            ⚔️
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base sm:text-lg font-black text-white font-mono uppercase tracking-wider">Strictly P2P Player vs Player Battles</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Head to Head</span>
+            </div>
+            <p class="text-xs text-slate-300 font-mono mt-0.5">
+              Every duel is strictly a 2 player direct matchup with instant onchain escrow resolution — 90% net profit to the winner, 3% rebate cashback to the runner up.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 text-xs font-mono text-emerald-400 font-bold">
+            🏆 90% Winner Payout
+          </span>
+          <span class="px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 text-xs font-mono text-cyan-400 font-bold">
+            🛡️ 3% Cashback
+          </span>
+        </div>
+      </div>
+      
+      <!-- HERO CARDS FOR 5 TIERS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- $1 Tier -->
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
+          <div>
+            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 1</span>
+            <h3 class="text-2xl font-black text-white font-mono mt-3">$1.00 <span class="text-xs text-slate-400">USDC</span></h3>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$1.80 USDC</p>
+            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.03</p>
+          </div>
+          <button onclick="createDuel(1)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
+        </div>
+
+        <!-- $5 Tier -->
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
+          <div>
+            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 2</span>
+            <h3 class="text-2xl font-black text-white font-mono mt-3">$5.00 <span class="text-xs text-slate-400">USDC</span></h3>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$9.00 USDC</p>
+            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.15</p>
+          </div>
+          <button onclick="createDuel(5)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
+        </div>
+
+        <!-- $10 Tier -->
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
+          <div>
+            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 3</span>
+            <h3 class="text-2xl font-black text-white font-mono mt-3">$10.00 <span class="text-xs text-slate-400">USDC</span></h3>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$18.00 USDC</p>
+            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.30</p>
+          </div>
+          <button onclick="createDuel(10)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
+        </div>
+
+        <!-- $100 Tier -->
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
+          <div>
+            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 4</span>
+            <h3 class="text-2xl font-black text-white font-mono mt-3">$100.00 <span class="text-xs text-slate-400">USDC</span></h3>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$180.00 USDC</p>
+            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $3.00</p>
+          </div>
+          <button onclick="createDuel(100)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
+        </div>
+
+        <!-- $1000 Tier -->
+        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-amber-500/50 transition-all text-center flex flex-col justify-between">
+          <div>
+            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">TIER 5</span>
+            <h3 class="text-2xl font-black text-white font-mono mt-3">$1,000 <span class="text-xs text-slate-400">USDC</span></h3>
+            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$1,800 USDC</p>
+            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $30.00</p>
+          </div>
+          <button onclick="createDuel(1000)" class="mt-4 w-full py-2 rounded-xl bg-amber-500 text-black font-mono font-bold text-xs hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">CREATE DUEL</button>
+        </div>
+      </div>
+
+      <!-- ACTIVE ONCHAIN DUELS LOBBY -->
+      <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
+        <div class="p-5 border-b border-white/10 flex justify-between items-center">
+          <div>
+            <h3 class="font-black text-white text-base font-mono uppercase tracking-wider">LIVE P2P DUELS</h3>
+            <p class="text-xs text-slate-400">Robinhood Escrow Contract: <span class="font-mono text-cyan-400">0x1e7e...2dae</span></p>
+          </div>
+          <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">5 Active Matches</span>
+        </div>
+        <div id="duels-list-container" class="divide-y divide-white/5 font-mono text-xs">
+          <!-- Match 1: $1 Tier -->
+          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
+            <div class="flex items-center gap-3.5">
+              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$1 TIER</span>
+              <div>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x71c2...49a2</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
+                <p class="text-[11px] text-slate-400">Collateral Locked: $1.00 USDC</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
+                <span class="text-emerald-400 font-bold">🏆 Winner: +$1.80 (+90%)</span>
+                <span class="text-slate-500">|</span>
+                <span class="text-cyan-400 font-bold">🛡️ Cashback: $0.03 (3%)</span>
+              </div>
+              <button onclick="acceptDuel('0x1', 1)" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
+            </div>
+          </div>
+
+          <!-- Match 2: $5 Tier -->
+          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
+            <div class="flex items-center gap-3.5">
+              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$5 TIER</span>
+              <div>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x4a71...e982</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
+                <p class="text-[11px] text-slate-400">Collateral Locked: $5.00 USDC</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
+                <span class="text-emerald-400 font-bold">🏆 Winner: +$9.00 (+90%)</span>
+                <span class="text-slate-500">|</span>
+                <span class="text-cyan-400 font-bold">🛡️ Cashback: $0.15 (3%)</span>
+              </div>
+              <button onclick="acceptDuel('0x2', 5)" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
+            </div>
+          </div>
+
+          <!-- Match 3: $10 Tier -->
+          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
+            <div class="flex items-center gap-3.5">
+              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$10 TIER</span>
+              <div>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x91a2...77bb</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
+                <p class="text-[11px] text-slate-400">Collateral Locked: $10.00 USDC</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
+                <span class="text-emerald-400 font-bold">🏆 Winner: +$18.00 (+90%)</span>
+                <span class="text-slate-500">|</span>
+                <span class="text-cyan-400 font-bold">🛡️ Cashback: $0.30 (3%)</span>
+              </div>
+              <button onclick="acceptDuel('0x3', 10)" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
+            </div>
+          </div>
+
+          <!-- Match 4: $100 Tier -->
+          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
+            <div class="flex items-center gap-3.5">
+              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$100 TIER</span>
+              <div>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x3f88...91ee</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
+                <p class="text-[11px] text-slate-400">Collateral Locked: $100.00 USDC</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
+                <span class="text-emerald-400 font-bold">🏆 Winner: +$180.00 (+90%)</span>
+                <span class="text-slate-500">|</span>
+                <span class="text-cyan-400 font-bold">🛡️ Cashback: $3.00 (3%)</span>
+              </div>
+              <button onclick="acceptDuel('0x4', 100)" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
+            </div>
+          </div>
+
+          <!-- Match 5: $1,000 Tier (VIP Amber) -->
+          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
+            <div class="flex items-center gap-3.5">
+              <span class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">$1,000 TIER</span>
+              <div>
+                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x7c99...11aa</span> <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span></p>
+                <p class="text-[11px] text-slate-400">Collateral Locked: $1,000.00 USDC</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
+                <span class="text-emerald-400 font-bold">🏆 Winner: +$1,800.00 (+90%)</span>
+                <span class="text-slate-500">|</span>
+                <span class="text-cyan-400 font-bold">🛡️ Cashback: $30.00 (3%)</span>
+              </div>
+              <button onclick="acceptDuel('0x5', 1000)" class="px-4 py-2 rounded-xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">ACCEPT DUEL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2. 2048 SKILL TAB -->
+    <div id="tab-vault2048" class="tab-content hidden space-y-6">
+      
+      <!-- SPECIAL PERK BANNER -->
+      <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/40 border border-cyan-500/30 flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🔥</span>
+          <div>
+            <h4 class="font-black text-white font-mono text-sm">SPECIAL $PVP PERK: 2X TICKETS BONUS</h4>
+            <p class="text-xs text-slate-300">Buy tickets using the native $PVP token and get 2x tickets per 1 ticket fee!</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1.5 rounded-xl" id="user-tickets-badge">🎟️ <span id="tickets-count">1</span> Ticket Ready</span>
+          <span class="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-400 text-black">24H CYCLE: 00:00 UTC RESET</span>
+        </div>
+      </div>
+
+      <!-- HORIZONTAL TICKET TIERS SELECTION (5 COLUMNS ACROSS) -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-black text-white font-mono text-sm uppercase tracking-wider flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            SELECT TOURNAMENT TIER & BUY TICKETS
+          </h3>
+          <span class="text-[11px] font-mono text-slate-400">Choose a tier to activate playable board</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+          
+          <!-- TIER 1 () -->
+          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="glass-panel p-4 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all flex flex-col justify-between space-y-3 hover:border-cyan-400">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-white text-base">$1.00 TIER</span>
+                <span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$120.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$96.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(1, 'USDC')" id="buy-btn-usdc-1" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="cost-usdc-1">1.00</span> USDC)
+                </button>
+                <button onclick="buy2048Ticket(1, 'PVP')" id="buy-btn-pvp-1" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-1">1.00</span> • <span id="attempts-pvp-1">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 5 () -->
+          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-white text-base">$5.00 TIER</span>
+                <span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$1,150.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$920.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(5, 'USDC')" id="buy-btn-usdc-5" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="cost-usdc-5">5.00</span> USDC)
+                </button>
+                <button onclick="buy2048Ticket(5, 'PVP')" id="buy-btn-pvp-5" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-5">5.00</span> • <span id="attempts-pvp-5">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 10 (0) -->
+          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-white text-base">$10.00 TIER</span>
+                <span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$1,800.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$1,440.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(10, 'USDC')" id="buy-btn-usdc-10" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="cost-usdc-10">10.00</span> USDC)
+                </button>
+                <button onclick="buy2048Ticket(10, 'PVP')" id="buy-btn-pvp-10" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-10">10.00</span> • <span id="attempts-pvp-10">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 100 (00) -->
+          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-white text-base">$100.00 TIER</span>
+                <span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$3,400.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$2,720.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(100, 'USDC')" id="buy-btn-usdc-100" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="cost-usdc-100">100.00</span> USDC)
+                </button>
+                <button onclick="buy2048Ticket(100, 'PVP')" id="buy-btn-pvp-100" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-100">100.00</span> • <span id="attempts-pvp-100">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIER 1000 (,000) -->
+          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="glass-panel p-4 rounded-2xl border border-amber-500/40 hover:border-amber-400 cursor-pointer transition-all flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-black text-amber-300 text-base">$1,000 TIER</span>
+                <span id="tier-tag-1000" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">ACTIVE</span>
+              </div>
+              <div class="mt-2 space-y-1 text-[11px] font-mono">
+                <div class="flex justify-between text-slate-400">
+                  <span>24h Pool:</span>
+                  <span class="text-white font-bold">$25,000.00</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>1st Prize (80%):</span>
+                  <span class="text-emerald-400 font-bold">$20,000.00</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-2 border-t border-white/10 flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-slate-900/90 px-2.5 py-1 rounded-xl border border-white/10 text-xs font-mono">
+                <span class="text-slate-400 text-[11px]">Qty:</span>
+                <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <button onclick="buy2048Ticket(1000, 'USDC')" id="buy-btn-usdc-1000" class="w-full py-2 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                  BUY <span id="lbl-qty-usdc-1000">1</span> TICKET ($<span id="cost-usdc-1000">1,000.00</span>)
+                </button>
+                <button onclick="buy2048Ticket(1000, 'PVP')" id="buy-btn-pvp-1000" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
+                  BUY $PVP ($<span id="cost-pvp-1000">1,000</span> • <span id="attempts-pvp-1000">2</span> TIX 🔥)
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PLAYABLE 2048 HERO BOARD (CENTERED & PROMINENT) -->
+      <div class="max-w-2xl mx-auto w-full glass-panel p-6 rounded-3xl border border-white/10 flex flex-col items-center relative shadow-2xl">
+        
+        <div class="w-full flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <span class="text-xs text-slate-400 font-mono">Active Run Metric:</span>
+            <p class="text-xs text-cyan-400 font-mono font-bold">Single High Score (No Accumulation)</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 font-mono text-center">
+              <span class="text-[10px] text-slate-400 block">CURRENT SCORE</span>
+              <span id="game-score" class="text-lg font-black text-white">0</span>
+            </div>
+            <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 font-mono text-center">
+              <span class="text-[10px] text-slate-400 block">BEST RECORD</span>
+              <span id="game-best" class="text-lg font-black text-amber-400">3,240</span>
+            </div>
+            <button onclick="startNew2048Game()" class="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all">↻ NEW GAME</button>
+          </div>
+        </div>
+
+        <!-- THE 4X4 PLAYABLE GRID -->
+        <div class="relative w-full flex justify-center">
+          <div class="grid-2048 relative" id="board-container">
+            <!-- Tiles rendered dynamically by JS -->
+          </div>
+
+          <!-- GAME OVER OVERLAY -->
+          <div id="game-over-overlay" class="hidden absolute inset-0 bg-slate-950/90 rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-4 backdrop-blur-sm z-20">
+            <span class="text-4xl">🎮</span>
+            <div>
+              <h3 class="text-2xl font-black text-white font-mono">ROUND COMPLETED</h3>
+              <p class="text-xs text-slate-400 mt-1">Single Run High Score Recorded Onchain</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900 border border-white/10 font-mono">
+              <span class="text-xs text-slate-400">Final Score:</span>
+              <span id="overlay-final-score" class="text-2xl font-black text-cyan-400 block">0</span>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400">PLAY AGAIN</button>
+              <button onclick="switchTab('leaderboard'); setLeaderboardCategory('2048');" class="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-mono font-bold text-xs hover:bg-slate-700">VIEW LEADERBOARD</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTROLS & D-PAD -->
+        <div class="w-full flex flex-col items-center mt-4 space-y-3">
+          <div class="w-full flex justify-between items-center text-xs font-mono text-slate-400">
+            <span>⌨️ Use Arrow Keys / WASD or Click Buttons Below</span>
+            <span class="text-emerald-400 font-bold" id="board-status-text">🎮 Ready To Play</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 w-48 pt-1">
+            <div></div>
+            <button onclick="handle2048Move('up')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▲</button>
+            <div></div>
+            <button onclick="handle2048Move('left')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">◀</button>
+            <button onclick="handle2048Move('down')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▼</button>
+            <button onclick="handle2048Move('right')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/20 text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▶</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- LIVE TOP 3 RECORD HOLDERS -->
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 space-y-5 mt-6">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <div>
+              <h3 class="font-black text-white font-mono text-base">LIVE TOP 3 RECORD HOLDERS (ALL TIERS)</h3>
+              <p class="text-xs text-slate-400">Single Highest Record in Current 24H UTC Tournament Cycle</p>
+            </div>
+          </div>
+          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full">⚡ Live Sync Every Block</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div id="top3-tier-1" class="p-4 rounded-2xl bg-slate-900/80 border border-cyan-500/40 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$1.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$96.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="top3-tier-5" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$5.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$920.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="top3-tier-10" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$10.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$1,440.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="top3-tier-100" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-white text-sm">$100.00 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$2,720.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="top3-tier-1000" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/10">
+              <span class="font-mono font-black text-amber-300 text-sm">$1,000 TIER</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">$20,000.00 1st Prize</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/10 text-slate-400">
+                <span>🥇 #1 No active record</span>
+                <span class="text-slate-500">0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥈 #2 Empty</span>
+                <span>0 pts</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
+                <span>🥉 #3 Empty</span>
+                <span>0 pts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3. GRAND JACKPOT TAB -->
+    <div id="tab-jackpot" class="tab-content hidden space-y-8">
+      
+      <!-- ROUND COUNTDOWN & STATUS BANNER -->
+      <div class="glass-panel p-6 rounded-3xl border border-cyan-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span class="text-xs font-mono font-bold text-cyan-400 tracking-wider">LIVE ROUND • PROGRESSIVE VAULT</span>
+          </div>
+          <h2 class="text-2xl font-black text-white font-mono">GRAND JACKPOT ROUNDS</h2>
+          <p class="text-xs text-slate-300 mt-1 max-w-2xl">Predict the target outcome before the round entry countdown locks. 80% net vault awarded to correct predictions (split equally among winners). If no winner, 100% of the pool value rolls over to the next round. Maximum 3 tickets per wallet.</p>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="px-6 py-3.5 rounded-2xl bg-slate-900/95 border border-amber-400/40 font-mono text-center shadow-lg">
+            <span class="text-[10px] text-amber-400 block font-black uppercase tracking-wider mb-1.5 text-center">⏳ ROUND ENTRY COUNTDOWN</span>
+            <div class="flex items-center justify-center gap-2 font-mono">
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-days" class="text-2xl font-black text-amber-400">02</span><span class="text-[8px] text-slate-400 block font-bold">DAYS</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-hours" class="text-2xl font-black text-amber-400">14</span><span class="text-[8px] text-slate-400 block font-bold">HRS</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-mins" class="text-2xl font-black text-amber-400">35</span><span class="text-[8px] text-slate-400 block font-bold">MIN</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-secs" class="text-2xl font-black text-amber-400">18</span><span class="text-[8px] text-slate-400 block font-bold">SEC</span></div>
+            </div>
+            <span id="jackpot-timer" class="hidden text-xs text-amber-400/80">02d 14h 35m 18s</span>
+          </div>
+        </div>
+      </div>
+
+                  <!-- JACKPOT TIERS CARDS (ONLINE LIVE REWARD & PARTICIPANTS CALCULATION) -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-xs font-mono font-bold text-cyan-400 tracking-wider flex items-center gap-2 uppercase">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Active Pools • Dynamic Live Rewards (80% Winner Share)
+          </h4>
+          <span class="text-[11px] font-mono text-slate-400">Max 3 tickets / wallet</span>
+        </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           
           <!-- $1 Tier -->
