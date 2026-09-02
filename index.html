@@ -755,8 +755,17 @@
 
         <div class="flex items-center gap-4">
           <div class="px-6 py-3.5 rounded-2xl bg-slate-900/95 border border-amber-400/40 font-mono text-center shadow-lg">
-            <span class="text-[10px] text-amber-400 block font-black uppercase tracking-wider">⏳ ENTRY WINDOW CLOSES IN</span>
-            <span id="jackpot-timer" class="text-3xl font-black text-amber-400 tracking-wider font-mono">59:59</span>
+            <span class="text-[10px] text-amber-400 block font-black uppercase tracking-wider mb-1.5 text-center">⏳ ROUND ENTRY COUNTDOWN</span>
+            <div class="flex items-center justify-center gap-2 font-mono">
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-days" class="text-2xl font-black text-amber-400">02</span><span class="text-[8px] text-slate-400 block font-bold">DAYS</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-hours" class="text-2xl font-black text-amber-400">14</span><span class="text-[8px] text-slate-400 block font-bold">HRS</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-mins" class="text-2xl font-black text-amber-400">35</span><span class="text-[8px] text-slate-400 block font-bold">MIN</span></div>
+              <span class="text-lg font-bold text-amber-400/60">:</span>
+              <div class="text-center px-2 py-1 rounded-lg bg-slate-950 border border-white/10 min-w-[50px]"><span id="jackpot-secs" class="text-2xl font-black text-amber-400">18</span><span class="text-[8px] text-slate-400 block font-bold">SEC</span></div>
+            </div>
+            <span id="jackpot-timer" class="hidden text-xs text-amber-400/80">02d 14h 35m 18s</span>
           </div>
         </div>
       </div>
@@ -1473,15 +1482,34 @@
     let selectedJackpotFilter = 'all';
 
     function updateJackpotTimer() {
+      const daysEl = document.getElementById("jackpot-days");
+      const hoursEl = document.getElementById("jackpot-hours");
+      const minsEl = document.getElementById("jackpot-mins");
+      const secsEl = document.getElementById("jackpot-secs");
       const timerEl = document.getElementById("jackpot-timer");
-      if (!timerEl) return;
-      let remaining = 3599; // 59m 59s
+      
+      let remaining = 2 * 86400 + 14 * 3600 + 35 * 60 + 18;
+
       setInterval(() => {
-        const m = Math.floor(remaining / 60).toString().padStart(2, "0");
-        const s = (remaining % 60).toString().padStart(2, "0");
-        timerEl.innerText = `${m}:${s}`;
-        if (remaining > 0) remaining--;
-        else remaining = 3599;
+        const d = Math.floor(remaining / 86400);
+        const h = Math.floor((remaining % 86400) / 3600);
+        const m = Math.floor((remaining % 3600) / 60);
+        const s = remaining % 60;
+
+        if (daysEl) daysEl.innerText = d.toString().padStart(2, "0");
+        if (hoursEl) hoursEl.innerText = h.toString().padStart(2, "0");
+        if (minsEl) minsEl.innerText = m.toString().padStart(2, "0");
+        if (secsEl) secsEl.innerText = s.toString().padStart(2, "0");
+
+        if (timerEl) {
+          timerEl.innerText = d + "d " + h.toString().padStart(2, "0") + "h " + m.toString().padStart(2, "0") + "m " + s.toString().padStart(2, "0") + "s";
+        }
+
+        if (remaining > 0) {
+          remaining--;
+        } else {
+          remaining = 3 * 86400;
+        }
       }, 1000);
     }
 
