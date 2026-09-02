@@ -2919,6 +2919,17 @@ async function connectWallet() {
 
     let currentDuelTab = 'open';
 
+    
+    window.switchDuelTab = switchDuelTab;
+    window.renderAllDuels = renderAllDuels;
+    window.renderDuelCard = renderDuelCard;
+    window.createDuel = createDuel;
+    window.acceptDuel = acceptDuel;
+    window.cancelDuel = cancelDuel;
+    window.claimDuelPrize = claimDuelPrize;
+    window.reclaimExpiredDeposit = reclaimExpiredDeposit;
+    window.resolveDuelOutcome = resolveDuelOutcome;
+    
     function switchDuelTab(tab) {
       currentDuelTab = tab;
       const tabs = ['open', 'matched', 'completed', 'expired'];
@@ -3414,9 +3425,7 @@ async function connectWallet() {
       if (existingEl) {
         existingEl.outerHTML = cardHtml;
       } else {
-        // Re-render sorted list to ensure user's duels remain at the top
-        renderAllDuels();
-        return;
+        container.insertAdjacentHTML('beforeend', cardHtml);
       }
       updateDuelCounter();
     }
@@ -3643,6 +3652,7 @@ async function connectWallet() {
 
     window.addEventListener('DOMContentLoaded', () => {
       renderDuelQuestions();
+      renderAllDuels();
       setTimeout(initGlobalDuelsListener, 300);
     });
   </script>
