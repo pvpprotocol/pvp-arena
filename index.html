@@ -4,7 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PVP Protocol | Onchain Skill & Duel Arena on Robinhood Chain</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com">
+  // Explicitly export all functions to global window scope for inline onclick handlers
+  window.connectWallet = typeof connectWallet !== "undefined" ? connectWallet : function(){};
+  window.createDuel = typeof createDuel !== "undefined" ? createDuel : function(){};
+  window.cancelDuel = typeof cancelDuel !== "undefined" ? cancelDuel : function(){};
+  window.select2048Tier = typeof select2048Tier !== "undefined" ? select2048Tier : function(){};
+  window.buy2048Ticket = typeof buy2048Ticket !== "undefined" ? buy2048Ticket : function(){};
+  window.startNew2048Game = typeof startNew2048Game !== "undefined" ? startNew2048Game : function(){};
+  window.handle2048Move = typeof handle2048Move !== "undefined" ? handle2048Move : function(){};
+  window.changeJackpotTicketQty = typeof changeJackpotTicketQty !== "undefined" ? changeJackpotTicketQty : function(){};
+  window.buyJackpotTicket = typeof buyJackpotTicket !== "undefined" ? buyJackpotTicket : function(){};
+  window.setLeaderboardCategory = typeof setLeaderboardCategory !== "undefined" ? setLeaderboardCategory : function(){};
+  window.setLeaderboardTier = typeof setLeaderboardTier !== "undefined" ? setLeaderboardTier : function(){};
+  window.setHistoryCategory = typeof setHistoryCategory !== "undefined" ? setHistoryCategory : function(){};
+  window.setHistoryTier = typeof setHistoryTier !== "undefined" ? setHistoryTier : function(){};
+  window.copyPvpContract = typeof copyPvpContract !== "undefined" ? copyPvpContract : function(){};
+  window.showToast = typeof showToast !== "undefined" ? showToast : function(){};
+  
+</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
