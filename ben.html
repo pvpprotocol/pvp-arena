@@ -221,64 +221,100 @@
         </div>
       </div>
       
-      <!-- HERO CARDS FOR 5 TIERS -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <!-- $1 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
+      <!-- 10 ACTIVE BINARY DUEL QUESTIONS & WIZARD -->
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/10 pb-4">
           <div>
-            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 1</span>
-            <h3 class="text-2xl font-black text-white font-mono mt-3">$1.00 <span class="text-xs text-slate-400">USDG</span></h3>
-            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$1.80 USDG</p>
-            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.03</p>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 1</span>
+              <h3 class="text-base font-black text-white font-mono uppercase tracking-wide">Select Binary Duel Question</h3>
+            </div>
+            <p class="text-xs text-slate-400 font-mono mt-1">Select an active question. Each duel question is available across all 5 stake tiers!</p>
           </div>
-          <button onclick="createDuel(1)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
+          <span class="text-xs font-mono text-cyan-400 font-bold bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">10 Active Topics Live</span>
         </div>
 
-        <!-- $5 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
-          <div>
-            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 2</span>
-            <h3 class="text-2xl font-black text-white font-mono mt-3">$5.00 <span class="text-xs text-slate-400">USDG</span></h3>
-            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$9.00 USDG</p>
-            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.15</p>
-          </div>
-          <button onclick="createDuel(5)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
+        <!-- 10 Interactive Questions Grid -->
+        <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <!-- Populated by JavaScript renderDuelQuestions() -->
         </div>
 
-        <!-- $10 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
-          <div>
-            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 3</span>
-            <h3 class="text-2xl font-black text-white font-mono mt-3">$10.00 <span class="text-xs text-slate-400">USDG</span></h3>
-            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$18.00 USDG</p>
-            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $0.30</p>
+        <!-- STEP 2 & 3: PICK PREDICTION & TIER -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-2">
+          
+          <!-- STEP 2: CHOOSE SIDE (YES or NO) -->
+          <div class="lg:col-span-5 glass-panel p-5 rounded-2xl border border-white/10 bg-slate-900/60 space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 2</span>
+              <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Choose Your Position</h4>
+            </div>
+            <p class="text-[11px] text-slate-400 font-mono">The opponent who accepts your duel must take the opposite side.</p>
+            
+            <div class="grid grid-cols-2 gap-3 pt-1">
+              <button id="opt-btn-yes" onclick="selectDuelOption('YES')" class="p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]">
+                <span class="text-lg">🟢</span>
+                <span>YES (بله)</span>
+                <span class="text-[10px] font-normal text-emerald-400/90">Affirmative</span>
+              </button>
+
+              <button id="opt-btn-no" onclick="selectDuelOption('NO')" class="p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]">
+                <span class="text-lg">🔴</span>
+                <span>NO (خیر)</span>
+                <span class="text-[10px] font-normal text-slate-500">Negative</span>
+              </button>
+            </div>
           </div>
-          <button onclick="createDuel(10)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
+
+          <!-- STEP 3: CHOOSE TIER -->
+          <div class="lg:col-span-7 glass-panel p-5 rounded-2xl border border-white/10 bg-slate-900/60 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 3</span>
+                <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Select Stake Tier</h4>
+              </div>
+              <span id="selected-tier-payout" class="text-xs font-mono font-bold text-cyan-400">Winner: +$9.00 USDG</span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDG (90% to winner, 3% cashback rebate).</p>
+            
+            <div class="grid grid-cols-5 gap-2 pt-1">
+              <button onclick="selectDuelTier(1)" id="tier-btn-1" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
+                <span class="block text-xs font-black text-white">$1</span>
+                <span class="block text-[9px] text-cyan-400/80">+$1.80</span>
+              </button>
+              <button onclick="selectDuelTier(5)" id="tier-btn-5" class="tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20">
+                <span class="block text-xs font-black text-white">$5</span>
+                <span class="block text-[9px] text-cyan-400">+$9.00</span>
+              </button>
+              <button onclick="selectDuelTier(10)" id="tier-btn-10" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
+                <span class="block text-xs font-black text-white">$10</span>
+                <span class="block text-[9px] text-cyan-400/80">+$18.00</span>
+              </button>
+              <button onclick="selectDuelTier(100)" id="tier-btn-100" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
+                <span class="block text-xs font-black text-white">$100</span>
+                <span class="block text-[9px] text-cyan-400/80">+$180</span>
+              </button>
+              <button onclick="selectDuelTier(1000)" id="tier-btn-1000" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-amber-500/50">
+                <span class="block text-xs font-black text-amber-300">$1,000</span>
+                <span class="block text-[9px] text-amber-400/80">+$1,800</span>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <!-- $100 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all text-center flex flex-col justify-between">
+        <!-- SUMMARY & CREATE BUTTON -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-purple-950/40 border border-cyan-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 4</span>
-            <h3 class="text-2xl font-black text-white font-mono mt-3">$100.00 <span class="text-xs text-slate-400">USDG</span></h3>
-            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$180.00 USDG</p>
-            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $3.00</p>
+            <p class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Duel Summary:</p>
+            <p id="duel-summary-text" class="text-xs sm:text-sm font-bold text-white font-mono mt-0.5">
+              Will Bitcoin stay above $65,000 this month? • You Pick: <span class="text-emerald-400 font-bold">YES</span> • Stake: <span class="text-cyan-400 font-bold">5 USDG</span>
+            </p>
           </div>
-          <button onclick="createDuel(100)" class="mt-4 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">CREATE DUEL</button>
-        </div>
-
-        <!-- $1000 Tier -->
-        <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-amber-500/50 transition-all text-center flex flex-col justify-between">
-          <div>
-            <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">TIER 5</span>
-            <h3 class="text-2xl font-black text-white font-mono mt-3">$1,000 <span class="text-xs text-slate-400">USDG</span></h3>
-            <p class="text-xs text-cyan-400 font-mono font-bold mt-1">Winner: +$1,800 USDG</p>
-            <p class="text-[11px] text-slate-400 font-mono mt-0.5">3% Cashback: $30.00</p>
-          </div>
-          <button onclick="createDuel(1000)" class="mt-4 w-full py-2 rounded-xl bg-amber-500 text-black font-mono font-bold text-xs hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">CREATE DUEL</button>
+          <button id="create-duel-btn" onclick="createDuel()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold font-mono text-xs shadow-lg shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 shrink-0 flex items-center gap-2">
+            <span>⚔️</span> CREATE 1v1 DUEL
+          </button>
         </div>
       </div>
-
+      
       <!-- ACTIVE ONCHAIN DUELS LOBBY -->
       <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
         <div class="p-5 border-b border-white/10 flex justify-between items-center">
@@ -2413,6 +2449,113 @@
       }
     } catch(e) {}
 
+    // 10 ACTIVE BINARY DUEL QUESTIONS
+    const DUEL_QUESTIONS = [
+      { id: 1, icon: "₿", category: "CRYPTO", title: "Will Bitcoin (BTC) stay above $65,000 this month?", desc: "BTC price holds above $65,000 support level on major feeds." },
+      { id: 2, icon: "Ξ", category: "CRYPTO", title: "Will Ethereum (ETH) trade above $2,500 by end of week?", desc: "ETH breaks and sustains above $2,500 mark before weekly close." },
+      { id: 3, icon: "🏹", category: "ROBINHOOD", title: "Will Robinhood Chain daily transaction count break 100,000?", desc: "Robinhood Chain onchain activity crosses 100,000 daily transactions." },
+      { id: 4, icon: "◎", category: "CRYPTO", title: "Will Solana (SOL) outperform Ethereum in 7-day gains?", desc: "SOL percentage return exceeds ETH over the next 7-day window." },
+      { id: 5, icon: "🪙", category: "COMMODITIES", title: "Will Gold (XAU) maintain above $2,500/oz?", desc: "Spot Gold remains above $2,500/oz threshold throughout the week." },
+      { id: 6, icon: "🔵", category: "BASE", title: "Will Base daily active addresses cross 2,000,000?", desc: "Base network registers over 2M unique active addresses in 24 hours." },
+      { id: 7, icon: "📈", category: "EQUITIES", title: "Will Robinhood AAPL tokenized stock close green this Friday?", desc: "Apple tokenized shares finish Friday regular session with positive return." },
+      { id: 8, icon: "🎮", category: "ARENA", title: "Will any player achieve a 2048 tile in the Arena today?", desc: "At least one participant scores a verified 2048 tile in the 1v1 skill games." },
+      { id: 9, icon: "🏦", category: "MACRO", title: "Will the Federal Reserve cut interest rates at the next FOMC?", desc: "FOMC official policy announcement initiates benchmark rate reduction." },
+      { id: 10, icon: "🌐", category: "MARKET", title: "Will total crypto market cap break $2.5 Trillion this month?", desc: "Aggregated crypto market capitalization surpasses $2.5T threshold." }
+    ];
+
+    let selectedDuelQuestionId = 1;
+    let selectedDuelOption = 'YES';
+    let selectedDuelTier = 5;
+
+    function renderDuelQuestions() {
+      const grid = document.getElementById("duel-questions-grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      DUEL_QUESTIONS.forEach(q => {
+        const isSelected = q.id === selectedDuelQuestionId;
+        const borderClass = isSelected ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/20" : "border-white/10 bg-slate-900/60 hover:border-cyan-500/40";
+        const dotClass = isSelected ? "bg-cyan-400 animate-pulse" : "bg-slate-600";
+        
+        const qHtml = `
+          <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
+            <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-all">
+              ${q.icon}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.category}</span>
+                <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
+                ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide">Selected</span>' : ''}
+              </div>
+              <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
+              <p class="text-[10px] text-slate-400 font-mono mt-1 line-clamp-1">${q.desc}</p>
+            </div>
+          </div>
+        `;
+        grid.insertAdjacentHTML("beforeend", qHtml);
+      });
+      updateDuelSummary();
+    }
+
+    function selectDuelQuestion(qId) {
+      selectedDuelQuestionId = qId;
+      renderDuelQuestions();
+    }
+
+    function selectDuelOption(opt) {
+      selectedDuelOption = opt;
+      const btnYes = document.getElementById("opt-btn-yes");
+      const btnNo = document.getElementById("opt-btn-no");
+
+      if (opt === 'YES') {
+        if (btnYes) btnYes.className = "p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]";
+        if (btnNo) btnNo.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]";
+      } else {
+        if (btnYes) btnYes.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-emerald-500/50 hover:text-emerald-300 hover:scale-[1.02]";
+        if (btnNo) btnNo.className = "p-3.5 rounded-xl border border-rose-500/80 bg-rose-500/20 text-rose-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02]";
+      }
+      updateDuelSummary();
+    }
+
+    function selectDuelTier(tier) {
+      selectedDuelTier = tier;
+      const tiers = [1, 5, 10, 100, 1000];
+      tiers.forEach(t => {
+        const btn = document.getElementById(`tier-btn-${t}`);
+        if (!btn) return;
+        if (t === tier) {
+          const isVip = t >= 1000;
+          btn.className = isVip
+            ? "tier-pick-btn p-2 rounded-xl border border-amber-500/80 bg-amber-500/20 text-center font-mono transition-all shadow-md shadow-amber-500/20"
+            : "tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20";
+        } else {
+          btn.className = "tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50";
+        }
+      });
+
+      const payoutEl = document.getElementById("selected-tier-payout");
+      if (payoutEl) {
+        payoutEl.textContent = `Winner: +$${(tier * 1.8).toFixed(2)} USDG`;
+      }
+      updateDuelSummary();
+    }
+
+    function updateDuelSummary() {
+      const summaryEl = document.getElementById("duel-summary-text");
+      if (!summaryEl) return;
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const optColor = selectedDuelOption === 'YES' ? 'text-emerald-400' : 'text-rose-400';
+      const oppositeOpt = selectedDuelOption === 'YES' ? 'NO' : 'YES';
+
+      summaryEl.innerHTML = `
+        <span class="text-white">${q.title}</span> • 
+        You Pick: <span class="${optColor} font-bold">${selectedDuelOption}</span> • 
+        Opponent Takes: <span class="text-slate-300 font-bold">${oppositeOpt}</span> • 
+        Stake: <span class="text-cyan-400 font-bold">${selectedDuelTier} USDG</span>
+      `;
+    }
+
     function getLocalDuels() {
       try {
         return JSON.parse(localStorage.getItem('pvp_active_duels_store_v6') || '{}');
@@ -2475,7 +2618,7 @@
           <div id="no-duels-msg" class="text-center py-12 text-slate-500">
             <p class="text-4xl mb-3">⚔️</p>
             <p class="text-base font-semibold text-slate-400">No active duel matches found</p>
-            <p class="text-xs text-slate-500 mt-1">Select a tier above and click "Create Duel" to start your 1v1 match!</p>
+            <p class="text-xs text-slate-500 mt-1">Select a question and tier above, then click "CREATE 1v1 DUEL" to start!</p>
           </div>
         `;
       } else {
@@ -2492,13 +2635,15 @@
 
     function updateDuelCounter() {
       const counterEl = document.getElementById("active-duels-count");
-      if (!counterEl) return;
+      const badgeEl = document.getElementById("duels-count-badge");
       const store = getLocalDuels();
       let activeCount = 0;
       Object.keys(store).forEach(k => {
         if (store[k] && store[k].status !== 'cancelled') activeCount++;
       });
-      counterEl.textContent = `${activeCount} Active Match${activeCount === 1 ? '' : 'es'}`;
+      const text = `${activeCount} Active Match${activeCount === 1 ? '' : 'es'}`;
+      if (counterEl) counterEl.textContent = text;
+      if (badgeEl) badgeEl.textContent = text;
     }
 
     function initGlobalDuelsListener() {
@@ -2552,14 +2697,20 @@
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
       const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
 
+      const questionText = duelData.questionText || "Will Bitcoin stay above $65,000 this month?";
+      const creatorOption = duelData.creatorOption || "YES";
+      const requiredOpponentOption = duelData.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
+      const creatorColor = creatorOption === "YES" ? "text-emerald-400" : "text-rose-400";
+      const opponentColor = requiredOpponentOption === "YES" ? "text-emerald-400" : "text-rose-400";
+
       let statusBadge = "";
       let actionSection = "";
       let cardBgClass = "bg-cyan-950/20 border-cyan-500/30";
 
-      // STATUS 1: OPEN (Waiting for someone to accept - Exactly 1 person can accept)
+      // STATUS 1: OPEN (Waiting for an opponent to accept with opposite side)
       if (duelData.status === 'open') {
         if (isCreator) {
-          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
+          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT (${requiredOpponentOption})</span>`;
           actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
@@ -2571,28 +2722,28 @@
           actionSection = `
             <div class="flex items-center gap-2">
               <button id="accept-btn-${duelData.id}" onclick="acceptDuel('${duelData.id}', ${duelData.tier})" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs rounded-xl shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-1.5">
-                <span>⚔️</span> ACCEPT DUEL (${duelData.tier} USDG)
+                <span>⚔️</span> ACCEPT DUEL: TAKE [${requiredOpponentOption}] (${duelData.tier} USDG)
               </button>
             </div>`;
         }
       } 
-      // STATUS 2: IN PROGRESS / WAITING RESULTS (Only 1 opponent accepted! Locked for all others!)
+      // STATUS 2: IN PROGRESS / WAITING RESULTS (Locked 1v1 battle!)
       else if (duelData.status === 'in_progress') {
         cardBgClass = "bg-gradient-to-r from-amber-950/40 via-slate-900/80 to-purple-950/40 border-amber-500/50 shadow-lg shadow-amber-500/10";
         statusBadge = `
           <span class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> WAITING RESULT (1v1 BATTLE)
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> WAITING OUTCOME (1v1 BATTLE)
           </span>`;
 
         if (isParticipant) {
           actionSection = `
             <div class="flex flex-wrap items-center gap-2">
               ${statusBadge}
-              <button onclick="playDuelMatch('${duelData.id}')" class="px-3.5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
-                <span>🎮</span> PLAY 2048
+              <button onclick="resolveDuelMatch('${duelData.id}', '${creatorOption}')" class="px-3.5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
+                <span>⚡</span> ${creatorOption} WON
               </button>
-              <button onclick="resolveDuelMatch('${duelData.id}')" class="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
-                <span>⚡</span> DECIDE WINNER
+              <button onclick="resolveDuelMatch('${duelData.id}', '${requiredOpponentOption}')" class="px-3.5 py-2 bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-black font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center gap-1">
+                <span>⚡</span> ${requiredOpponentOption} WON
               </button>
             </div>`;
         } else {
@@ -2615,10 +2766,11 @@
 
         const winnerShort = duelData.winner ? (duelData.winner.slice(0, 6) + "..." + duelData.winner.slice(-4)) : "0xWinner";
         const loserShort = duelData.loser ? (duelData.loser.slice(0, 6) + "..." + duelData.loser.slice(-4)) : "0xRunnerUp";
+        const winningOpt = duelData.winningOption || "YES";
 
         statusBadge = `
           <span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 text-xs flex items-center gap-1.5">
-            <span>🏆</span> COMPLETED
+            <span>🏆</span> RESULT: [${winningOpt}] WON
           </span>`;
 
         actionSection = `
@@ -2631,29 +2783,36 @@
           </div>`;
       }
 
-      // Construct players label
+      // Construct players label with their specific prediction
       let playersDisplay = "";
       if (duelData.status === 'open') {
-        playersDisplay = isCreator ? "Your Match" : "Opponent: " + shortCreator;
+        playersDisplay = isCreator 
+          ? `Your Match: Took [<span class="${creatorColor} font-bold">${creatorOption}</span>]` 
+          : `Opponent: ${shortCreator} (Took [<span class="${creatorColor} font-bold">${creatorOption}</span>] • Needs [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>])`;
       } else {
         const p1Label = (userAddress && duelData.creator && userAddress.toLowerCase() === duelData.creator.toLowerCase()) ? "You" : shortCreator;
         const p2Label = (userAddress && duelData.opponent && userAddress.toLowerCase() === duelData.opponent.toLowerCase()) ? "You" : shortOpponent;
-        playersDisplay = `<span class="text-cyan-300 font-bold">${p1Label}</span> <span class="text-amber-400 font-black mx-1">VS</span> <span class="text-purple-300 font-bold">${p2Label}</span>`;
+        playersDisplay = `<span class="text-white">${p1Label} [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span> <span class="text-amber-400 font-black mx-1">VS</span> <span class="text-white">${p2Label} [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>`;
       }
 
       const duelHtml = `
-        <div id="duel-row-${duelData.id}" class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all ${cardBgClass} border rounded-2xl my-2">
-          <div class="flex items-center gap-3.5">
-            <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">${duelData.tier} USDG</span>
-            <div>
-              <div class="font-bold text-white flex items-center gap-2">
-                <div>${playersDisplay}</div>
-                ${duelData.status !== 'completed' ? '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>' : ''}
+        <div id="duel-row-${duelData.id}" class="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all ${cardBgClass} border rounded-2xl my-2">
+          <div class="flex items-start sm:items-center gap-3.5">
+            <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass} shrink-0 text-xs sm:text-sm">${duelData.tier} USDG</span>
+            <div class="space-y-1">
+              <h4 class="font-black text-white text-xs sm:text-sm font-mono flex items-center gap-2">
+                <span>❓ ${questionText}</span>
+                ${duelData.status !== 'completed' ? '<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>' : ''}
+              </h4>
+              <div class="font-mono text-xs text-slate-300">
+                ${playersDisplay}
               </div>
-              <p class="text-[11px] text-slate-400">Match ID: ${duelData.id} • Winner takes ${(duelData.tier * 1.8).toFixed(2)} USDG • 3% Cashback</p>
+              <p class="text-[11px] text-slate-400 font-mono">Match ID: ${duelData.id} • Winner takes ${(duelData.tier * 1.8).toFixed(2)} USDG • 3% Cashback</p>
             </div>
           </div>
-          ${actionSection}
+          <div class="shrink-0">
+            ${actionSection}
+          </div>
         </div>
       `;
 
@@ -2678,8 +2837,11 @@
       const btn = document.getElementById("create-duel-btn");
       if (btn) btn.disabled = true;
 
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const oppositeOption = selectedDuelOption === 'YES' ? 'NO' : 'YES';
+
       try {
-        let txHash = await executeOnchainPayment(selectedDuelTier, "USDG", `Create Duel Tier ${selectedDuelTier}.00`);
+        let txHash = await executeOnchainPayment(selectedDuelTier, "USDG", `Create Duel Tier ${selectedDuelTier}.00 [${selectedDuelOption}]`);
         showToast(`⚔️ Duel Created! Deposit Successful.`, "success");
       } catch (err) {
         console.error(err);
@@ -2688,9 +2850,13 @@
         return;
       }
 
-      const duelId = "match_" + Date.now().toString(36) + "_" + Math.random().toString(36).substr(2, 4);
+      const duelId = "duel_" + Date.now().toString(36) + "_" + Math.random().toString(36).substr(2, 4);
       const newDuel = {
         id: duelId,
+        questionId: q.id,
+        questionText: q.title,
+        creatorOption: selectedDuelOption,
+        requiredOpponentOption: oppositeOption,
         tier: selectedDuelTier,
         creator: userAddress,
         status: 'open',
@@ -2702,7 +2868,7 @@
       await broadcastDuel(newDuel);
       renderDuelCard(newDuel);
       if (btn) btn.disabled = false;
-      showToast(`🎉 Duel Created for ${selectedDuelTier} USDG! Waiting for an opponent to accept.`, "success");
+      showToast(`🎉 Duel Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent to take [${oppositeOption}].`, "success");
     }
 
     async function acceptDuel(duelId, tier) {
@@ -2741,6 +2907,7 @@
       }
       duelData.status = 'in_progress';
       duelData.opponent = userAddress;
+      duelData.opponentOption = duelData.requiredOpponentOption || (duelData.creatorOption === 'YES' ? 'NO' : 'YES');
       duelData.acceptedAt = Date.now();
       
       // Instantly broadcast locking to all users worldwide
@@ -2748,13 +2915,14 @@
       renderDuelCard(duelData);
 
       try {
-        let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00`);
+        let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00 [${duelData.opponentOption}]`);
         showToast(`⚔️ Duel Accepted! Deposit Successful.`, "success");
       } catch (err) {
         console.error(err);
         // If wallet transaction failed or cancelled, release duel back to open
         duelData.status = 'open';
         delete duelData.opponent;
+        delete duelData.opponentOption;
         delete duelData.acceptedAt;
         await broadcastDuel(duelData);
         renderDuelCard(duelData);
@@ -2767,7 +2935,7 @@
       duelData.opponent = userAddress;
       await broadcastDuel(duelData);
       renderDuelCard(duelData);
-      showToast(`🎉 Match accepted! Status: WAITING RESULT. Both players can play 2048!`, "success");
+      showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${duelData.opponentOption}]!`, "success");
     }
 
     function cancelDuel(duelId, tier) {
@@ -2779,13 +2947,7 @@
       showToast(`✅ Duel ${duelId} cancelled. USDG refunded.`, "info");
     }
 
-    function playDuelMatch(duelId) {
-      window.activeDuelId = duelId;
-      showToast(`🎮 Entering 2048 Arena for Match ${duelId}! Beat your opponent!`, "info");
-      switchTab('vault2048');
-    }
-
-    async function resolveDuelMatch(duelId) {
+    async function resolveDuelMatch(duelId, winningOption) {
       const store = getLocalDuels();
       let duelData = store[duelId];
       if (!duelData) {
@@ -2793,32 +2955,28 @@
         return;
       }
 
-      showToast(`⚡ Calculating match results and resolving escrow...`, "info");
-
       const p1 = duelData.creator || userAddress;
       const p2 = duelData.opponent || "0xOpponent";
+      const cOpt = duelData.creatorOption || "YES";
+      const oOpt = duelData.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES");
 
-      // Calculate final scores
-      const score1 = duelData.creatorScore || (Math.floor(Math.random() * 2500) + 2048);
-      const score2 = duelData.opponentScore || (Math.floor(Math.random() * 2500) + 2048);
+      const resolvedWinningOption = winningOption || (Math.random() > 0.5 ? "YES" : "NO");
 
       let winner = p1;
       let loser = p2;
-      let winScore = score1;
-      let loseScore = score2;
 
-      if (score2 > score1) {
+      if (resolvedWinningOption === cOpt) {
+        winner = p1;
+        loser = p2;
+      } else {
         winner = p2;
         loser = p1;
-        winScore = score2;
-        loseScore = score1;
       }
 
       duelData.status = 'completed';
+      duelData.winningOption = resolvedWinningOption;
       duelData.winner = winner;
       duelData.loser = loser;
-      duelData.winnerScore = winScore;
-      duelData.loserScore = loseScore;
       duelData.completedAt = Date.now();
 
       await broadcastDuel(duelData);
@@ -2826,21 +2984,22 @@
 
       const isMeWinner = userAddress && winner.toLowerCase() === userAddress.toLowerCase();
       if (isMeWinner) {
-        showToast(`🏆 VICTORY! You won Match ${duelId}! +${duelData.payout} USDG transferred!`, "success");
+        showToast(`🏆 VICTORY! [${resolvedWinningOption}] won! +${duelData.payout} USDG transferred!`, "success");
       } else {
         const shortW = winner.slice(0, 6) + "..." + winner.slice(-4);
-        showToast(`🏁 Match ${duelId} Finished! Winner: ${shortW} (+${duelData.payout} USDG). 3% Cashback credited!`, "info");
+        showToast(`🏁 Duel Resolved! Winning Side: [${resolvedWinningOption}] (${shortW} won +${duelData.payout} USDG). 3% Cashback credited!`, "info");
       }
 
       // Add to Leaderboard and History
       try {
         const shortWinner = winner.slice(0, 6) + "..." + winner.slice(-4);
-        recordLiveLeaderboardEntry("Duel", duelData.tier, shortWinner, winScore.toLocaleString() + " pts", duelData.payout + " USDG");
-        recordLiveHistoryEntry("Duel", duelData.tier, shortWinner, winScore.toLocaleString() + " pts", duelData.payout + " USDG");
+        recordLiveLeaderboardEntry("Duel", duelData.tier, shortWinner, `Pick: ${resolvedWinningOption}`, duelData.payout + " USDG");
+        recordLiveHistoryEntry("Duel", duelData.tier, shortWinner, `Pick: ${resolvedWinningOption}`, duelData.payout + " USDG");
       } catch(e){}
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      renderDuelQuestions();
       setTimeout(initGlobalDuelsListener, 300);
     });
   </script>
