@@ -1397,7 +1397,7 @@
     // GRAND JACKPOT LOGIC
     let jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
 
-    async async function submitJackpot(tier) {
+    async function submitJackpot(tier) {
       if (!isConnected) {
         await connectWallet();
       }
@@ -1478,49 +1478,7 @@
       renderJackpotSubmissions();
       showToast(`✅ Ticket ${tNum}/3 Purchased for $${tierCostUSD}! Target $${val} locked.`, "success");
     }
-      const input = document.getElementById("target-input-" + tier);
-      let val = input ? input.value.trim() : "";
-      
-      if (!val) {
-        // Provide intelligent default benchmark prediction if empty
-        const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
-        val = baseEstimate.toFixed(2);
-        if (input) input.value = val;
-        showToast(`Auto-populated target benchmark: $${val}`, "info");
-      }
 
-      if (jackpotUserTickets[tier] >= 3) {
-        showToast(`Maximum 3/3 tickets already used for $${tier} round!`, "warning");
-        return;
-      }
-
-      jackpotUserTickets[tier]++;
-      const tNum = jackpotUserTickets[tier];
-
-      // Update badge UI
-      const badge = document.getElementById("jackpot-tickets-" + tier);
-      if (badge) {
-        badge.innerText = `${tNum}/3 Tickets`;
-        badge.className = tNum === 3 
-          ? "text-[10px] font-mono text-emerald-400 font-black" 
-          : "text-[10px] font-mono text-cyan-400 font-bold";
-      }
-
-      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0xd8c0...883c";
-      const txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
-
-      liveSubmissions.unshift({
-        time: "Just Now",
-        tier: tier,
-        wallet: shortAddr,
-        target: Number(val).toLocaleString("en-US", { minimumFractionDigits: 2 }),
-        ticketNum: `Ticket ${tNum}/3`,
-        tx: txHash
-      });
-
-      renderJackpotSubmissions();
-      showToast(`✅ Ticket ${tNum}/3 Purchased! Recorded target $${val} for $${tier} Jackpot round.`, "success");
-    }
 
         // ==========================================
     // 2048 SKILL VAULT & TOURNAMENT ENGINE
