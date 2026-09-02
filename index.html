@@ -2176,13 +2176,21 @@
       const totalCost = (qty * tier).toFixed(2);
       const pvpAttempts = qty * 2;
 
+      const lblQtyUsdc = document.getElementById("lbl-qty-usdc-" + tier);
       const lblCostUsdc = document.getElementById("cost-usdc-" + tier);
       const lblCostPvp = document.getElementById("cost-pvp-" + tier);
       const lblAttPvp = document.getElementById("attempts-pvp-" + tier);
+      const buyBtnUsdc = document.getElementById("buy-btn-usdc-" + tier);
 
+      if (lblQtyUsdc) lblQtyUsdc.innerText = qty;
       if (lblCostUsdc) lblCostUsdc.innerText = totalCost;
       if (lblAttPvp) lblAttPvp.innerText = pvpAttempts;
       if (lblCostPvp) lblCostPvp.innerText = totalCost;
+
+      if (buyBtnUsdc) {
+        const ticketWord = qty === 1 ? "TICKET" : "TICKETS";
+        buyBtnUsdc.innerHTML = `BUY <span id="lbl-qty-usdc-${tier}">${qty}</span> ${ticketWord} ($<span id="cost-usdc-${tier}">${totalCost}</span> USDC)`;
+      }
     }
 
     async function buy2048Ticket(tier, paymentMethod) {
