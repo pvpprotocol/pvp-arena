@@ -2399,12 +2399,16 @@
     // === MULTI-CHANNEL REALTIME SYNC (GunDB + BroadcastChannel + LocalStorage) ===
     let gun = null;
     let duelsRelay = null;
+    try {
+      localStorage.removeItem('pvp_active_duels_store_v4');
+      localStorage.removeItem('pvp_latest_duel');
+    } catch(e) {}
     let duelBroadcast = null;
 
     try {
       if (typeof Gun !== 'undefined') {
         gun = Gun(['https://gun-manhattan.herokuapp.com/gun', 'https://peer.wallie.io/gun', 'https://gundb.relay.peer.ooo/gun']);
-        duelsRelay = gun.get('pvp-arena-global-duels-v3');
+        duelsRelay = gun.get('pvp-arena-duels-v4-clean');
       }
     } catch(e) {
       console.warn("Gun init:", e);
@@ -2432,7 +2436,7 @@
 
     function getLocalDuels() {
       try {
-        return JSON.parse(localStorage.getItem('pvp_active_duels_store') || '{}');
+        return JSON.parse(localStorage.getItem('pvp_active_duels_store_v4') || '{}');
       } catch(e) { return {}; }
     }
 
@@ -2444,7 +2448,7 @@
         } else {
           delete store[duelData.id];
         }
-        localStorage.setItem('pvp_active_duels_store', JSON.stringify(store));
+        localStorage.setItem('pvp_active_duels_store_v4', JSON.stringify(store));
         localStorage.setItem('pvp_latest_duel', JSON.stringify(duelData));
       } catch(e) {}
     }
