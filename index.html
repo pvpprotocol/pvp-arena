@@ -2662,10 +2662,10 @@
       if (obj && obj.message && typeof obj.message === 'string') {
         try {
           const inner = JSON.parse(obj.message);
-          if (inner && inner.id && (inner.tier || inner.status || inner.creator)) return inner;
+          if (inner && inner.id && typeof inner.id === 'string' && inner.id.startsWith('duel_') && (inner.tier || inner.status || inner.creator)) return inner;
         } catch(e) {}
       }
-      if (obj && obj.id && (obj.tier || obj.status || obj.creator)) {
+      if (obj && obj.id && typeof obj.id === 'string' && obj.id.startsWith('duel_') && (obj.tier || obj.status || obj.creator)) {
         return obj;
       }
       return null;
@@ -2677,12 +2677,18 @@
         const cleanStore = {};
         Object.keys(rawStore).forEach(k => {
           const item = rawStore[k];
-          if (item && item.id && item.status && item.status !== 'cancelled') {
+          // Strictly allow only valid duel objects starting with duel_
+          if (item && item.id && typeof item.id === 'string' && item.id.startsWith('duel_') && item.status && item.status !== 'cancelled') {
             cleanStore[item.id] = item;
           }
         });
+        if (Object.keys(cleanStore).length !== Object.keys(rawStore).length) {
+          localStorage.setItem('pvp_active_duels_store_v7', JSON.stringify(cleanStore));
+        }
         return cleanStore;
-      } catch(e) { return {}; }
+      } catch(e) {
+        return {};
+      }
     }
 
     function saveLocalDuel(duelData) {
@@ -2874,7 +2880,7 @@
       const emptyMsg = document.getElementById("no-duels-msg");
       if (emptyMsg) emptyMsg.remove();
 
-      if (!duelData || !duelData.id || duelData.status === 'cancelled') {
+      if (!duelData || !duelData.id || typeof duelData.id !== 'string' || !duelData.id.startsWith('duel_') || duelData.status === 'cancelled') {
         if (duelData && duelData.id) {
           const existing = document.getElementById(`duel-row-${duelData.id}`);
           if (existing) {
