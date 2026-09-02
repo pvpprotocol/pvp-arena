@@ -2867,16 +2867,17 @@ async function connectWallet() {
     function getDuelCategory(duelData) {
       if (!duelData || duelData.status === 'cancelled') return 'cancelled';
       if (duelData.status === 'completed') return 'completed';
-      // STRICT BLOCKCHAIN VERIFICATION: Must have real onchain acceptTxHash to be considered matched!
-      if (duelData.status === 'in_progress') {
-        if (duelData.acceptTxHash && duelData.acceptTxHash.startsWith("0x") && duelData.acceptTxHash.length === 66) {
-          return 'matched';
-        }
-        // If no valid on-chain tx, fallback to open (or expired if past deadline)
+      // When opponent accepts request, status is in_progress -> classified as matched
+      if (duelData.status === 'in_progress') return 'matched';
+      if (duelData.status === 'open') {
         const dl = getDuelEffectiveDeadline(duelData);
-        if (Date.now() >= dl) return 'expired';
+        if (Date.now() >= dl) {
+          return 'expired';
+        }
         return 'open';
       }
+      return 'open';
+    }
       if (duelData.status === 'open') {
         const dl = getDuelEffectiveDeadline(duelData);
         if (Date.now() >= dl) {
