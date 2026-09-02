@@ -1592,6 +1592,9 @@
       container.innerHTML = html;
     }
 
+    const jackpotSelectedQty = { 1: 1, 5: 1, 10: 1, 100: 1, 1000: 1 };
+    const jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
+
     function changeJackpotTicketQty(tier, delta) {
       if (!jackpotSelectedQty[tier]) jackpotSelectedQty[tier] = 1;
       const currentUsed = jackpotUserTickets[tier] || 0;
@@ -1602,23 +1605,39 @@
       if (newQty > 3) newQty = 3;
       if (newQty > maxAllowed) {
         newQty = maxAllowed;
-        showToast(`Maximum 3/3 tickets per wallet for $${tier} round!`, "warning");
+        showToast("Maximum 3/3 tickets per wallet for this round!", "warning");
       }
 
       jackpotSelectedQty[tier] = newQty;
 
+      // Update quantity display
       const qtyEl = document.getElementById("jackpot-qty-" + tier);
       if (qtyEl) qtyEl.innerText = newQty;
 
-      const btnEl = document.getElementById("jackpot-btn-" + tier);
-      if (btnEl) {
-        const totalCost = (tier * newQty).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        const label = newQty === 1 ? "TICKET" : "TICKETS";
-        btnEl.innerText = `BUY ${newQty} ${label} ($${totalCost})`;
-      }
+      // Update button label and total price (e.g., 3 x $10 = $30.00)
+      const totalCost = (tier * newQty).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const label = newQty === 1 ? "TICKET" : "TICKETS";
+      
+      const btn1 = document.getElementById("btn-jackpot-" + tier);
+      if (btn1) btn1.innerText = `BUY ${newQty} ${label} ($${totalCost})`;
+      const btn2 = document.getElementById("jackpot-btn-" + tier);
+      if (btn2) btn2.innerText = `BUY ${newQty} ${label} ($${totalCost})`;
 
-      // Render corresponding target inputs
-      renderJackpotTargetInputs(tier, newQty);
+      // Show/Hide target prediction inputs dynamically
+      const row2 = document.getElementById(`target-row-${tier}-2`);
+      const row3 = document.getElementById(`target-row-${tier}-3`);
+      if (row2) {
+        if (newQty >= 2) row2.classList.remove("hidden");
+        else row2.classList.add("hidden");
+      }
+      if (row3) {
+        if (newQty >= 3) row3.classList.remove("hidden");
+        else row3.classList.add("hidden");
+      }
+    }
+
+    async function buyJackpotTicket(tier) {
+      await submitJackpot(tier);
     }
 
     async function submitJackpot(tier) {
