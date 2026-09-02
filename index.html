@@ -2009,22 +2009,36 @@
         else colMetric.innerText = 'Closest Target';
       }
 
-      const mockWallets = ['0x8a92...3b1f', '0x3f12...7e90', '0x1d44...9a88', '0x77c1...0e22', '0x9b33...55aa'];
-      for (let i = 1; i <= 10; i++) {
+      const leaderboardData = []; // Real-time onchain leaderboard entries
+
+      if (leaderboardData.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center py-12 text-slate-400 font-mono">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <span class="text-3xl">🏆</span>
+                <span class="text-sm font-bold text-slate-300">No ranked players for this cycle yet</span>
+                <span class="text-xs text-slate-500">Compete now to claim the #1 spot on the leaderboard!</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      leaderboardData.forEach((entry, i) => {
+        const rank = i + 1;
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-white/5 transition-all';
-        let metric = curLbCat === 'duel' ? `${35 - i*2} Wins` : curLbCat === '2048' ? `${16480 - i*850} pts` : `Diff: ±${(0.05 * i).toFixed(2)}`;
-        let won = curLbCat === 'duel' ? `+$${((35 - i*2) * curLbTier * 0.9).toFixed(2)} USDC` : `+$${(curLbTier * 80).toFixed(2)} USDC`;
-        
         tr.innerHTML = `
-          <td class="p-3.5 font-bold ${i===1 ? 'text-amber-400' : i===2 ? 'text-slate-300' : i===3 ? 'text-amber-600' : 'text-slate-500'}">#${i}</td>
-          <td class="p-3.5 font-mono text-cyan-400">${mockWallets[(i-1)%mockWallets.length]}</td>
-          <td class="p-3.5 text-white font-bold">${metric}</td>
-          <td class="p-3.5 text-emerald-400 font-bold">${won}</td>
+          <td class="p-3.5 font-bold ${rank===1 ? 'text-amber-400' : rank===2 ? 'text-slate-300' : rank===3 ? 'text-amber-600' : 'text-slate-500'}">#${rank}</td>
+          <td class="p-3.5 font-mono text-cyan-400">${entry.wallet}</td>
+          <td class="p-3.5 text-white font-bold">${entry.metric}</td>
+          <td class="p-3.5 text-emerald-400 font-bold">${entry.won}</td>
           <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">VERIFIED</span></td>
         `;
         tbody.appendChild(tr);
-      }
+      });
     }
 
     // HISTORY LOGIC
