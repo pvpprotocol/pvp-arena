@@ -231,7 +231,7 @@
             </div>
             <p class="text-xs text-slate-400 font-mono mt-1">Select an active question. Each duel question is available across all 5 stake tiers!</p>
           </div>
-          <span class="text-xs font-mono text-cyan-400 font-bold bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">10 Active Topics Live</span>
+          <span id="active-topics-count-badge" class="text-xs font-mono text-cyan-400 font-bold bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">2 Active Topics Live</span>
         </div>
 
         <!-- 10 Interactive Questions Grid -->
@@ -2556,6 +2556,11 @@
     }
 
     function renderDuelQuestions() {
+      const topicsBadge = document.getElementById("active-topics-count-badge");
+      if (topicsBadge && typeof DUEL_QUESTIONS !== "undefined") {
+        const count = DUEL_QUESTIONS.length;
+        topicsBadge.textContent = `${count} Active Topic${count === 1 ? "" : "s"} Live`;
+      }
       const grid = document.getElementById("duel-questions-grid");
       if (!grid) return;
       grid.innerHTML = "";
@@ -5520,6 +5525,11 @@
     }
 
     function renderDuelQuestions() {
+      const topicsBadge = document.getElementById("active-topics-count-badge");
+      if (topicsBadge && typeof DUEL_QUESTIONS !== "undefined") {
+        const count = DUEL_QUESTIONS.length;
+        topicsBadge.textContent = `${count} Active Topic${count === 1 ? "" : "s"} Live`;
+      }
       const grid = document.getElementById("duel-questions-grid");
       if (!grid) return;
       grid.innerHTML = "";
