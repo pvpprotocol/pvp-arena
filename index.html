@@ -1109,7 +1109,7 @@
             <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk to reward ratio (for example at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In PVP Arena, the winner earns 90% net profit directly, and the runner up receives 3% rebate cashback to preserve liquidity and enable immediate re-entry.
           </p>
           <p class="text-sm text-slate-300 leading-relaxed">
-            Two participants lock equal collateral into the canonical escrow smart contract (<span class="text-white font-mono">0x1e7e733d3fc72051f719537473f68f2204832dae</span>). Upon verified outcome resolution, funds are automatically distributed as follows:
+            Two participants lock equal collateral into the canonical escrow smart contract. Upon verified outcome resolution, funds are automatically distributed as follows:
           </p>
           <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
             <li><strong class="text-white">90%</strong> allocated directly to the verified winner</li>
@@ -1148,51 +1148,58 @@
 
       </div>
 
-        <!-- 4. OFFICIAL CONTRACTS & VAULTS -->
-        <div class="glass-panel p-6 rounded-2xl border border-cyan-500/20 space-y-4">
-          <div class="flex items-center gap-3">
-            <span class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center font-mono">4</span>
-            <h3 class="text-lg font-bold text-white tracking-wide font-mono">Official Protocol Contracts & Vaults</h3>
+                <!-- 4. OFFICIAL PVP TOKEN CONTRACT -->
+        <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/30 bg-cyan-950/20 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span class="text-xs font-bold text-cyan-400 font-mono block">OFFICIAL $PVP TOKEN CONTRACT</span>
+              <span class="text-[11px] text-slate-400 font-mono">Robinhood Chain (Verified)</span>
+            </div>
+            <button onclick="copyPvpContract()" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-cyan-500/20 active:scale-95">
+              <span>📋</span>
+              <span id="copy-btn-text">Copy Contract</span>
+            </button>
           </div>
-          <p class="text-sm text-slate-300 leading-relaxed">
-            All PVP Protocol operations, escrow locking, reward settlements, and tournament prize pools are secured on-chain via non-custodial smart contracts deployed on Robinhood Chain:
-          </p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-cyan-400 font-mono">CANONICAL ESCROW & VAULT</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-500/20 text-cyan-300">ROBINHOOD CHAIN</span>
-              </div>
-              <div class="p-2.5 rounded-lg bg-black/40 border border-white/5 font-mono text-xs text-slate-200 break-all select-all">
-                0x1e7e733d3fc72051f719537473f68f2204832dae
-              </div>
-              <p class="text-[11px] text-slate-400">P2P collateral escrow, 2048 skill vault pools & jackpot prize distributions.</p>
-            </div>
-
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-amber-400 font-mono">PVP PROTOCOL ECOSYSTEM</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300">VERIFIED CONTRACT</span>
-              </div>
-              <div class="p-2.5 rounded-lg bg-black/40 border border-white/5 font-mono text-xs text-slate-200 break-all select-all">
-                0x1e7e733d3fc72051f719537473f68f2204832dae
-              </div>
-              <p class="text-[11px] text-slate-400">Non-custodial smart execution with 0% counterparty custody risk.</p>
-            </div>
+          <div class="p-3 rounded-xl bg-black/60 border border-cyan-500/30 font-mono text-xs text-cyan-300 break-all select-all flex items-center justify-between">
+            <span id="pvp-contract-address">0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3</span>
           </div>
         </div>
-
+      </div>
     </div>
-
   </main>
 
   <!-- FOOTER -->
   <footer class="border-t border-white/10 bg-[#05070d] py-6 text-center text-xs font-mono text-slate-500">
-    <p>PVP Protocol © 2026 • Robinhood Chain Canonical Arena • 0x1e7e...2dae</p>
+    <p>PVP Protocol © 2026 • Robinhood Chain</p>
   </footer>
 
   <!-- INTERACTIVE JAVASCRIPT -->
   <script>
+    function copyPvpContract() {
+      const addr = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(addr).then(() => {
+          showToast("✅ Contract address copied to clipboard!", "success");
+          const btn = document.getElementById("copy-btn-text");
+          if (btn) {
+            btn.innerText = "Copied!";
+            setTimeout(() => { btn.innerText = "Copy Contract"; }, 2500);
+          }
+        }).catch(() => fallbackCopy(addr));
+      } else {
+        fallbackCopy(addr);
+      }
+    }
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showToast("✅ Contract address copied to clipboard!", "success");
+    }
+
     // TAB SWITCHING LOGIC
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => {
