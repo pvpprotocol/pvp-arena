@@ -2780,6 +2780,12 @@ async function connectWallet() {
         } else {
           const existing = store[duelData.id] || {};
           store[duelData.id] = { ...existing, ...duelData };
+          if (duelData.status === 'open') {
+            delete store[duelData.id].opponent;
+            delete store[duelData.id].opponentOption;
+            delete store[duelData.id].acceptedAt;
+            delete store[duelData.id].acceptTxHash;
+          }
           // Ensure valid tier and payout
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
           if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
@@ -3368,7 +3374,7 @@ async function connectWallet() {
 
       // 2. Strict P2P validation: Only 1 person can accept
       if (duelData && duelData.status !== 'open') {
-        showToast("⚠️ This duel has already been accepted by another player!", "warning");
+        showToast("⚠️ This duel has already been accepted or is in progress!", "warning");
         return;
       }
 
@@ -3378,7 +3384,6 @@ async function connectWallet() {
         return;
       }
 
-      // 4. Immediately lock the match across all wallets so no one else can click Accept!
       if (!duelData) {
         duelData = { 
           id: duelId, 
@@ -3389,37 +3394,43 @@ async function connectWallet() {
           createdAt: Date.now() 
         };
       }
-      duelData.status = 'in_progress';
-      duelData.opponent = userAddress;
-      duelData.opponentOption = duelData.requiredOpponentOption || (duelData.creatorOption === 'YES' ? 'NO' : 'YES');
-      duelData.acceptedAt = Date.now();
-      
-      // Instantly broadcast locking to all users worldwide
-      await broadcastDuel(duelData);
-      renderDuelCard(duelData);
 
+      const opponentOption = duelData.requiredOpponentOption || (duelData.creatorOption === 'YES' ? 'NO' : 'YES');
+
+      // 4. DO NOT change status or broadcast to matched YET!
+      // Require the user to complete signature AND on-chain USDG payment FIRST!
+      let txHash = null;
       try {
-        let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00 [${duelData.opponentOption}]`);
-        showToast(`⚔️ Duel Accepted! Deposit Successful.`, "success");
+        txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00 [${opponentOption}]`);
       } catch (err) {
-        console.error(err);
-        // If wallet transaction failed or cancelled, release duel back to open
+        console.error("Accept duel payment failed or rejected:", err);
+        showToast("❌ Transaction rejected or cancelled. Duel remains OPEN.", "error");
+        // Ensure status stays open
         duelData.status = 'open';
         delete duelData.opponent;
         delete duelData.opponentOption;
         delete duelData.acceptedAt;
-        await broadcastDuel(duelData);
         renderDuelCard(duelData);
-        showToast("❌ Accept duel rejected or cancelled.", "error");
         return;
       }
 
-      // Confirmed locked in progress
+      if (!txHash) {
+        showToast("❌ Transaction failed. Duel was not accepted.", "error");
+        return;
+      }
+
+      // 5. ONLY AFTER successful onchain deposit: Lock duel as in_progress and broadcast
+      showToast(`⚔️ Deposit Confirmed! Match accepted.`, "success");
       duelData.status = 'in_progress';
       duelData.opponent = userAddress;
+      duelData.opponentOption = opponentOption;
+      duelData.acceptedAt = Date.now();
+      duelData.acceptTxHash = txHash;
+      
       await broadcastDuel(duelData);
       renderDuelCard(duelData);
-      showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${duelData.opponentOption}]!`, "success");
+      renderAllDuels();
+      showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${opponentOption}]!`, "success");
     }
 
     function cancelDuel(duelId, tier) {
