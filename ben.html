@@ -1389,8 +1389,8 @@
         throw new Error("Wallet not connected");
       }
 
-      // STEP 1: Personal Sign Authorization
-      showToast(`[1/2] ✍️ Step 1: Please SIGN authorization in your wallet...`, "info");
+      // STEP 1: Personal Sign Authorization (EIP-191 / Personal Sign)
+      showToast(`[1/2] ✍️ Step 1: Sign entry authorization in wallet...`, "info");
       const messageToSign = `PVP ARENA PROTOCOL - ENTRY AUTHORIZATION
 Purpose: ${purpose}
 Amount: ${totalCostUSD} ${paymentMethod}
@@ -1424,11 +1424,11 @@ Nonce: ${Date.now()}`;
         throw new Error("Step 1 Signature failed.");
       }
 
-      // Short delay so Rabby / MetaMask UI closes the signature modal cleanly before opening the transaction popup
-      await new Promise(r => setTimeout(cb => r(), 300));
+      // Brief delay to allow Rabby / MetaMask popup to transition smoothly
+      await new Promise(r => setTimeout(cb => r(), 350));
 
-      // STEP 2: Onchain Transfer Transaction Popup (USDG or PVP)
-      showToast(`[2/2] 💳 Step 2: Opening wallet to confirm ${totalCostUSD} ${paymentMethod} transfer...`, "info");
+      // STEP 2: Standard ERC-20 Approve / Transfer to Escrow Contract
+      showToast(`[2/2] 💳 Step 2: Confirm ${paymentMethod} authorization in wallet...`, "info");
 
       try {
         await window.ethereum.request({
@@ -1437,8 +1437,8 @@ Nonce: ${Date.now()}`;
         });
       } catch (switchErr) {}
 
-      // Prepare ERC-20 transfer(to, amount) calldata (methodId: 0xa9059cbb)
-      const cleanRecipient = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
+      // Standard ERC20 approve(spender, amount) methodId: 0x095ea7b3
+      const cleanSpender = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
       let tokenContract = USDG_TOKEN_ADDRESS;
       let cleanAmount = "";
 
@@ -1452,7 +1452,8 @@ Nonce: ${Date.now()}`;
         cleanAmount = usdgUnits.toString(16).padStart(64, "0");
       }
 
-      const transferCalldata = "0xa9059cbb" + cleanRecipient + cleanAmount;
+      // Method: approve(address spender, uint256 amount)
+      const approveCalldata = "0x095ea7b3" + cleanSpender + cleanAmount;
 
       let txHash = null;
       try {
@@ -1461,17 +1462,17 @@ Nonce: ${Date.now()}`;
           params: [{
             from: userAddress,
             to: tokenContract,
-            data: transferCalldata
+            data: approveCalldata
           }]
         });
       } catch (err) {
-        console.warn("Step 2 Transfer tx rejected or failed:", err);
-        showToast("⚠️ Step 2 Transfer was skipped or failed. Proceeding with signed entry.", "warning");
+        console.warn("Step 2 Approval tx rejected or failed:", err);
+        showToast("⚠️ Step 2 Approval was skipped. Proceeding with signed entry.", "warning");
         return signature;
       }
 
       if (txHash) {
-        showToast(`✅ USDG Transfer Broadcast: ${txHash.slice(0, 10)}... (Escrow Funded)`, "success");
+        showToast(`✅ ${paymentMethod} Escrow Approved: ${txHash.slice(0, 10)}...`, "success");
         return txHash;
       }
 
