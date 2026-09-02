@@ -2652,25 +2652,54 @@
       `;
     }
 
+    function extractDuelPayload(raw) {
+      if (!raw) return null;
+      let obj = raw;
+      if (typeof raw === 'string') {
+        try { obj = JSON.parse(raw); } catch(e) { return null; }
+      }
+      // If wrapped by ntfy SSE / JSON envelope
+      if (obj && obj.message && typeof obj.message === 'string') {
+        try {
+          const inner = JSON.parse(obj.message);
+          if (inner && inner.id && (inner.tier || inner.status || inner.creator)) return inner;
+        } catch(e) {}
+      }
+      if (obj && obj.id && (obj.tier || obj.status || obj.creator)) {
+        return obj;
+      }
+      return null;
+    }
+
     function getLocalDuels() {
       try {
-        return JSON.parse(localStorage.getItem('pvp_active_duels_store_v6') || '{}');
+        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v7') || '{}');
+        const cleanStore = {};
+        Object.keys(rawStore).forEach(k => {
+          const item = rawStore[k];
+          if (item && item.id && item.status && item.status !== 'cancelled') {
+            cleanStore[item.id] = item;
+          }
+        });
+        return cleanStore;
       } catch(e) { return {}; }
     }
 
     function saveLocalDuel(duelData) {
       try {
+        if (!duelData || !duelData.id) return;
         const store = getLocalDuels();
         if (duelData.status === 'cancelled') {
           delete store[duelData.id];
         } else {
           store[duelData.id] = duelData;
         }
-        localStorage.setItem('pvp_active_duels_store_v6', JSON.stringify(store));
+        localStorage.setItem('pvp_active_duels_store_v7', JSON.stringify(store));
       } catch(e) {}
     }
 
     async function broadcastDuel(duelData) {
+      if (!duelData || !duelData.id) return;
       saveLocalDuel(duelData);
       
       // 1. Same-browser instant sync (between tabs and accounts)
@@ -2690,10 +2719,32 @@
       }
     }
 
-    function handleIncomingDuel(duelData) {
-      if (!duelData || !duelData.id) return;
+    function handleIncomingDuel(rawPayload) {
+      const duelData = extractDuelPayload(rawPayload);
+      if (!duelData || !duelData.id || !duelData.status) return;
       saveLocalDuel(duelData);
       renderDuelCard(duelData);
+    }
+
+    async function fetchActiveDuelsFromRelay() {
+      try {
+        const res = await fetch(`https://ntfy.sh/${REALTIME_TOPIC}/json?poll=1`);
+        if (!res.ok) return;
+        const text = await res.text();
+        const lines = text.trim().split('\n');
+        lines.forEach(line => {
+          try {
+            if (!line) return;
+            const payload = extractDuelPayload(line);
+            if (payload && payload.id && payload.status && payload.status !== 'cancelled') {
+              saveLocalDuel(payload);
+            }
+          } catch(e){}
+        });
+        renderAllDuels();
+      } catch(err) {
+        console.warn("Failed to poll relay history:", err);
+      }
     }
 
     function renderAllDuels() {
@@ -2713,7 +2764,10 @@
       } else {
         const emptyMsg = document.getElementById("no-duels-msg");
         if (emptyMsg) emptyMsg.remove();
-        keys.forEach(k => {
+        // Sort newest first
+        const sortedKeys = keys.sort((a,b) => ((store[b].createdAt || 0) - (store[a].createdAt || 0)));
+        container.innerHTML = "";
+        sortedKeys.forEach(k => {
           if (store[k] && store[k].status !== 'cancelled') {
             renderDuelCard(store[k]);
           }
@@ -2736,14 +2790,18 @@
     }
 
     function initGlobalDuelsListener() {
+      // 1. Initial fetch of all active duels currently waiting in relay
+      fetchActiveDuelsFromRelay();
+
+      // 2. Realtime SSE listener
       try {
         if (typeof EventSource !== 'undefined') {
           sseSource = new EventSource(REALTIME_SSE_URL);
           sseSource.onmessage = (event) => {
             if (!event || !event.data) return;
             try {
-              const parsed = JSON.parse(event.data);
-              handleIncomingDuel(parsed);
+              const payload = extractDuelPayload(event.data);
+              if (payload) handleIncomingDuel(payload);
             } catch(e) {}
           };
           sseSource.onerror = (err) => {
@@ -2752,8 +2810,16 @@
         }
       } catch(e) {}
 
+      // 3. Local cross-tab listener
+      if (duelBroadcast) {
+        duelBroadcast.onmessage = (event) => {
+          const payload = extractDuelPayload(event.data);
+          if (payload) handleIncomingDuel(payload);
+        };
+      }
+
       window.addEventListener('storage', (e) => {
-        if (e.key === 'pvp_active_duels_store_v6') {
+        if (e.key === 'pvp_active_duels_store_v7') {
           renderAllDuels();
         }
       });
