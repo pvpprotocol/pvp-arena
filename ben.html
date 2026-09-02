@@ -2779,12 +2779,16 @@ async function connectWallet() {
           delete store[duelData.id];
         } else {
           const existing = store[duelData.id] || {};
+          // STRICT BLOCKCHAIN ENFORCEMENT: If already matched on-chain, NEVER allow downgrade to open!
+          if ((existing.acceptTxHash || existing.status === 'in_progress') && duelData.status === 'open') {
+            console.log(`[PVP] Ignoring relay open downgrade for ${duelData.id} - already locked onchain!`);
+            return;
+          }
           store[duelData.id] = { ...existing, ...duelData };
-          if (duelData.status === 'open') {
+          if (duelData.status === 'open' && !store[duelData.id].acceptTxHash) {
             delete store[duelData.id].opponent;
             delete store[duelData.id].opponentOption;
             delete store[duelData.id].acceptedAt;
-            delete store[duelData.id].acceptTxHash;
           }
           // Ensure valid tier and payout
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
@@ -3335,6 +3339,7 @@ async function connectWallet() {
         creator: userAddress,
         status: 'open',
         deadline: qDeadline,
+        createTxHash: txHash,
         payout: (selectedDuelTier * 1.8).toFixed(2),
         cashback: (selectedDuelTier * 0.03).toFixed(2),
         createdAt: Date.now()
@@ -3419,17 +3424,20 @@ async function connectWallet() {
         return;
       }
 
-      // 5. ONLY AFTER successful onchain deposit: Lock duel as in_progress and broadcast
-      showToast(`⚔️ Deposit Confirmed! Match accepted.`, "success");
+      // 5. STRICT BLOCKCHAIN MATCHING: Lock duel permanently to on-chain txHash
+      showToast(`⚔️ On-chain Deposit Confirmed! Tx: ${txHash.slice(0,10)}...`, "success");
       duelData.status = 'in_progress';
       duelData.opponent = userAddress;
       duelData.opponentOption = opponentOption;
       duelData.acceptedAt = Date.now();
       duelData.acceptTxHash = txHash;
       
+      saveLocalDuel(duelData);
       await broadcastDuel(duelData);
       renderDuelCard(duelData);
       renderAllDuels();
+      // Switch tab to matched automatically so user immediately sees their on-chain match
+      switchDuelTab('matched');
       showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${opponentOption}]!`, "success");
     }
 
