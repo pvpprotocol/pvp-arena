@@ -242,102 +242,13 @@
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider">LIVE P2P DUELS</h3>
             <p class="text-xs text-slate-400">Robinhood Escrow Contract: <span class="font-mono text-cyan-400">0x1e7e...2dae</span></p>
           </div>
-          <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">5 Active Matches</span>
+          <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">0 Active Matches</span>
         </div>
         <div id="duels-list-container" class="divide-y divide-white/5 font-mono text-xs">
-          <!-- Match 1: $1 Tier -->
-          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
-            <div class="flex items-center gap-3.5">
-              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$1 TIER</span>
-              <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x71c2...49a2</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
-                <p class="text-[11px] text-slate-400">Collateral Locked: $1.00 USDC</p>
-              </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
-                <span class="text-emerald-400 font-bold">🏆 Winner: +$1.80 (+90%)</span>
-                <span class="text-slate-500">|</span>
-                <span class="text-cyan-400 font-bold">🛡️ Cashback: $0.03 (3%)</span>
-              </div>
-              <button onclick="acceptDuel('0x1', 1)" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
-            </div>
-          </div>
-
-          <!-- Match 2: $5 Tier -->
-          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
-            <div class="flex items-center gap-3.5">
-              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$5 TIER</span>
-              <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x4a71...e982</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
-                <p class="text-[11px] text-slate-400">Collateral Locked: $5.00 USDC</p>
-              </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
-                <span class="text-emerald-400 font-bold">🏆 Winner: +$9.00 (+90%)</span>
-                <span class="text-slate-500">|</span>
-                <span class="text-cyan-400 font-bold">🛡️ Cashback: $0.15 (3%)</span>
-              </div>
-              <button onclick="acceptDuel('0x2', 5)" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
-            </div>
-          </div>
-
-          <!-- Match 3: $10 Tier -->
-          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
-            <div class="flex items-center gap-3.5">
-              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$10 TIER</span>
-              <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x91a2...77bb</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
-                <p class="text-[11px] text-slate-400">Collateral Locked: $10.00 USDC</p>
-              </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
-                <span class="text-emerald-400 font-bold">🏆 Winner: +$18.00 (+90%)</span>
-                <span class="text-slate-500">|</span>
-                <span class="text-cyan-400 font-bold">🛡️ Cashback: $0.30 (3%)</span>
-              </div>
-              <button onclick="acceptDuel('0x3', 10)" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
-            </div>
-          </div>
-
-          <!-- Match 4: $100 Tier -->
-          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
-            <div class="flex items-center gap-3.5">
-              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">$100 TIER</span>
-              <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x3f88...91ee</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
-                <p class="text-[11px] text-slate-400">Collateral Locked: $100.00 USDC</p>
-              </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
-                <span class="text-emerald-400 font-bold">🏆 Winner: +$180.00 (+90%)</span>
-                <span class="text-slate-500">|</span>
-                <span class="text-cyan-400 font-bold">🛡️ Cashback: $3.00 (3%)</span>
-              </div>
-              <button onclick="acceptDuel('0x4', 100)" class="px-4 py-2 rounded-xl bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">ACCEPT DUEL</button>
-            </div>
-          </div>
-
-          <!-- Match 5: $1,000 Tier (VIP Amber) -->
-          <div class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all">
-            <div class="flex items-center gap-3.5">
-              <span class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">$1,000 TIER</span>
-              <div>
-                <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-slate-300">0x7c99...11aa</span> <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span></p>
-                <p class="text-[11px] text-slate-400">Collateral Locked: $1,000.00 USDC</p>
-              </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-3">
-              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
-                <span class="text-emerald-400 font-bold">🏆 Winner: +$1,800.00 (+90%)</span>
-                <span class="text-slate-500">|</span>
-                <span class="text-cyan-400 font-bold">🛡️ Cashback: $30.00 (3%)</span>
-              </div>
-              <button onclick="acceptDuel('0x5', 1000)" class="px-4 py-2 rounded-xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">ACCEPT DUEL</button>
-            </div>
+          <div id="no-duels-msg" class="py-12 text-center text-slate-400">
+            <div class="text-3xl mb-2">⚔️</div>
+            <p class="font-bold text-white mb-1">No open duel challenges available right now</p>
+            <p class="text-xs text-slate-400">Click any <span class="text-cyan-400 font-bold">CREATE DUEL</span> tier above to create the first onchain match!</p>
           </div>
         </div>
       </div>
@@ -1402,7 +1313,7 @@
     }
 
     // P2P DUELS ONCHAIN ESCROW LOGIC
-    let activeDuelsCount = 5;
+    let activeDuelsCount = 0;
 
     async function requestSafeSignature(messageText) {
       if (!window.ethereum) {
@@ -1440,6 +1351,9 @@
         showToast("❌ Signature cancelled.", "error");
         return;
       }
+
+      const emptyMsg = document.getElementById("no-duels-msg");
+      if (emptyMsg) emptyMsg.remove();
 
       activeDuelsCount++;
       const badge = document.getElementById("duels-count-badge");
@@ -1535,6 +1449,16 @@
           if (activeDuelsCount > 0) activeDuelsCount--;
           const badge = document.getElementById("duels-count-badge");
           if (badge) badge.innerText = `${activeDuelsCount} Active Matches`;
+          if (activeDuelsCount === 0) {
+            const container = document.getElementById("duels-list-container");
+            if (container && !document.getElementById("no-duels-msg")) {
+              container.innerHTML = `<div id="no-duels-msg" class="py-12 text-center text-slate-400">
+                <div class="text-3xl mb-2">⚔️</div>
+                <p class="font-bold text-white mb-1">No open duel challenges available right now</p>
+                <p class="text-xs text-slate-400">Click any <span class="text-cyan-400 font-bold">CREATE DUEL</span> tier above to create the first onchain match!</p>
+              </div>`;
+            }
+          }
         }, 400);
       }
 
