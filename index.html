@@ -770,7 +770,7 @@
         </div>
       </div>
 
-      <!-- JACKPOT TIERS CARDS (ONLINE LIVE REWARD & PARTICIPANTS CALCULATION) -->
+            <!-- JACKPOT TIERS CARDS (ONLINE LIVE REWARD & PARTICIPANTS CALCULATION) -->
       <div>
         <div class="flex items-center justify-between mb-3">
           <h4 class="text-xs font-mono font-bold text-cyan-400 tracking-wider flex items-center gap-2 uppercase">
@@ -782,7 +782,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           
-          <!--  Tier -->
+          <!-- $1 Tier -->
           <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
             <div>
               <div class="flex justify-between items-center">
@@ -791,28 +791,28 @@
               </div>
               <div class="mt-3 flex items-center justify-between text-xs font-mono">
                 <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-1" class="text-white font-bold">342 tickets</span>
+                <span id="jackpot-participants-1" class="text-white font-bold">0 tickets</span>
               </div>
               <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
                 <span>Pool Size:</span>
-                <span id="jackpot-pool-1" class="text-cyan-400 font-bold">42.00 USDC</span>
+                <span id="jackpot-pool-1" class="text-cyan-400 font-bold">$0.00 USDC</span>
               </div>
               <div class="mt-2 pt-2 border-t border-white/5">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
                   <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
                 </div>
-                <p id="jackpot-prize-1" class="text-xl font-black text-emerald-400 font-mono">73.60 USDC</p>
+                <p id="jackpot-prize-1" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
               </div>
               <div class="mt-3">
                 <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
                 <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-1" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
               </div>
             </div>
-            <button onclick="submitJackpot(1)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET (.00)</button>
+            <button onclick="submitJackpot(1)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($1.00)</button>
           </div>
 
-          <!--  Tier -->
+          <!-- $5 Tier -->
           <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
             <div>
               <div class="flex justify-between items-center">
@@ -821,28 +821,28 @@
               </div>
               <div class="mt-3 flex items-center justify-between text-xs font-mono">
                 <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-5" class="text-white font-bold">180 tickets</span>
+                <span id="jackpot-participants-5" class="text-white font-bold">0 tickets</span>
               </div>
               <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
                 <span>Pool Size:</span>
-                <span id="jackpot-pool-5" class="text-cyan-400 font-bold">00.00 USDC</span>
+                <span id="jackpot-pool-5" class="text-cyan-400 font-bold">$0.00 USDC</span>
               </div>
               <div class="mt-2 pt-2 border-t border-white/5">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
                   <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
                 </div>
-                <p id="jackpot-prize-5" class="text-xl font-black text-emerald-400 font-mono">20.00 USDC</p>
+                <p id="jackpot-prize-5" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
               </div>
               <div class="mt-3">
                 <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
                 <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-5" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
               </div>
             </div>
-            <button onclick="submitJackpot(5)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET (.00)</button>
+            <button onclick="submitJackpot(5)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($5.00)</button>
           </div>
 
-          <!-- 0 Tier -->
+          <!-- $10 Tier -->
           <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
             <div>
               <div class="flex justify-between items-center">
@@ -851,28 +851,28 @@
               </div>
               <div class="mt-3 flex items-center justify-between text-xs font-mono">
                 <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-10" class="text-white font-bold">225 tickets</span>
+                <span id="jackpot-participants-10" class="text-white font-bold">0 tickets</span>
               </div>
               <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
                 <span>Pool Size:</span>
-                <span id="jackpot-pool-10" class="text-cyan-400 font-bold">,250.00 USDC</span>
+                <span id="jackpot-pool-10" class="text-cyan-400 font-bold">$0.00 USDC</span>
               </div>
               <div class="mt-2 pt-2 border-t border-white/5">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
                   <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
                 </div>
-                <p id="jackpot-prize-10" class="text-xl font-black text-emerald-400 font-mono">,800.00 USDC</p>
+                <p id="jackpot-prize-10" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
               </div>
               <div class="mt-3">
                 <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
                 <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-10" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
               </div>
             </div>
-            <button onclick="submitJackpot(10)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET (0.00)</button>
+            <button onclick="submitJackpot(10)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($10.00)</button>
           </div>
 
-          <!-- 00 Tier -->
+          <!-- $100 Tier -->
           <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
             <div>
               <div class="flex justify-between items-center">
@@ -881,28 +881,28 @@
               </div>
               <div class="mt-3 flex items-center justify-between text-xs font-mono">
                 <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-100" class="text-white font-bold">68 tickets</span>
+                <span id="jackpot-participants-100" class="text-white font-bold">0 tickets</span>
               </div>
               <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
                 <span>Pool Size:</span>
-                <span id="jackpot-pool-100" class="text-cyan-400 font-bold">,800.00 USDC</span>
+                <span id="jackpot-pool-100" class="text-cyan-400 font-bold">$0.00 USDC</span>
               </div>
               <div class="mt-2 pt-2 border-t border-white/5">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
                   <span class="text-[10px] font-mono text-cyan-400 font-bold animate-pulse">● LIVE</span>
                 </div>
-                <p id="jackpot-prize-100" class="text-xl font-black text-emerald-400 font-mono">,440.00 USDC</p>
+                <p id="jackpot-prize-100" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
               </div>
               <div class="mt-3">
                 <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
                 <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-100" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
               </div>
             </div>
-            <button onclick="submitJackpot(100)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET (00.00)</button>
+            <button onclick="submitJackpot(100)" class="mt-4 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-black text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($100.00)</button>
           </div>
 
-          <!-- 000 Tier -->
+          <!-- $1000 Tier -->
           <div class="glass-panel p-5 rounded-3xl border border-amber-500/50 transition-all flex flex-col justify-between">
             <div>
               <div class="flex justify-between items-center">
@@ -911,25 +911,25 @@
               </div>
               <div class="mt-3 flex items-center justify-between text-xs font-mono">
                 <span class="text-slate-400">Participants:</span>
-                <span id="jackpot-participants-1000" class="text-amber-400 font-bold">23 tickets</span>
+                <span id="jackpot-participants-1000" class="text-amber-400 font-bold">0 tickets</span>
               </div>
               <div class="mt-1 flex items-center justify-between text-[11px] font-mono text-slate-400">
                 <span>Pool Size:</span>
-                <span id="jackpot-pool-1000" class="text-amber-300 font-bold">3,000.00 USDC</span>
+                <span id="jackpot-pool-1000" class="text-amber-300 font-bold">$0.00 USDC</span>
               </div>
               <div class="mt-2 pt-2 border-t border-white/5">
                 <div class="flex items-center justify-between">
                   <span class="text-[10px] text-slate-400 font-mono">Live Reward (80%):</span>
                   <span class="text-[10px] font-mono text-amber-400 font-bold animate-pulse">● LIVE</span>
                 </div>
-                <p id="jackpot-prize-1000" class="text-xl font-black text-emerald-400 font-mono">8,400.00 USDC</p>
+                <p id="jackpot-prize-1000" class="text-xl font-black text-emerald-400 font-mono">$0.00 USDC</p>
               </div>
               <div class="mt-3">
                 <label class="text-[10px] font-mono text-slate-400 block mb-1">Enter Predicted Target:</label>
                 <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-1000" class="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-amber-500">
               </div>
             </div>
-            <button onclick="submitJackpot(1000)" class="mt-4 w-full py-2.5 rounded-xl bg-amber-500 text-black font-mono font-black text-xs hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">BUY TICKET (,000)</button>
+            <button onclick="submitJackpot(1000)" class="mt-4 w-full py-2.5 rounded-xl bg-amber-500 text-black font-mono font-black text-xs hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">BUY TICKET ($1,000)</button>
           </div>
         </div>
       </div>
@@ -939,16 +939,16 @@
         <div class="p-4 border-b border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <h4 class="font-bold text-white font-mono text-sm">LIVE ROUND PREDICTIONS FEED</h4>
-            <p class="text-xs text-slate-400">Real time submissions recorded for the active 1 hour round</p>
+            <p class="text-xs text-slate-400">Real time submissions recorded for the active round</p>
           </div>
           
           <div class="flex items-center gap-1.5 flex-wrap">
             <button onclick="filterJackpotSubmissions('all')" id="filter-btn-all" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">All Tiers</button>
-            <button onclick="filterJackpotSubmissions(1)" id="filter-btn-1" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10"></button>
-            <button onclick="filterJackpotSubmissions(5)" id="filter-btn-5" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10"></button>
-            <button onclick="filterJackpotSubmissions(10)" id="filter-btn-10" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10">0</button>
-            <button onclick="filterJackpotSubmissions(100)" id="filter-btn-100" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10">00</button>
-            <button onclick="filterJackpotSubmissions(1000)" id="filter-btn-1000" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10">,000</button>
+            <button onclick="filterJackpotSubmissions(1)" id="filter-btn-1" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10">$1</button>
+            <button onclick="filterJackpotSubmissions(5)" id="filter-btn-5" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10">$5</button>
+            <button onclick="filterJackpotSubmissions(10)" id="filter-btn-10" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10">$10</button>
+            <button onclick="filterJackpotSubmissions(100)" id="filter-btn-100" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10">$100</button>
+            <button onclick="filterJackpotSubmissions(1000)" id="filter-btn-1000" class="px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10">$1,000</button>
           </div>
         </div>
 
