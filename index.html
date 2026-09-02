@@ -1829,13 +1829,13 @@
       }
 
       const totalCost = (tier * qty).toFixed(2);
-      showToast(`⚡ Sign verification for ${qty}x ${tier}.00 Jackpot Ticket (${totalCost} USDG, Target ${val})...`, "info");
-
+      let txHash = "";
       try {
-        const sig = await requestSafeSignature(`PVP Protocol: ${qty}x Jackpot Ticket(s) (${totalCost} USDG)\nTier: ${tier}\nTarget: ${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
-        showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
+        txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
+        showToast(`✅ Onchain Tx Broadcast: ${txHash.slice(0, 10)}... (Robinhood Chain)`, "success");
       } catch (err) {
-        showToast("❌ Signature cancelled.", "error");
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
         return;
       }
 
@@ -1853,7 +1853,7 @@
       }
 
       const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
-      txHash = "0x" + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join("") + "...";
+      /* txHash already obtained from executeOnchainPayment */
 
       liveSubmissions.unshift({
         time: "Just now",
