@@ -1352,10 +1352,49 @@
     // WEB3 & WALLET CONNECTION
     let isConnected = false;
     let userAddress = null;
-    var ROBINHOOD_CHAIN_ID = "0x2710"; // 4663 in hex
+    var ROBINHOOD_CHAIN_ID = "0x1237"; // 4663 in hex (Robinhood Chain)
     var ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
 
-    async function connectWallet() {
+        async function ensureRobinhoodNetwork() {
+      if (!window.ethereum) return true;
+      try {
+        const currentChain = await window.ethereum.request({ method: "eth_chainId" });
+        const chainNum = parseInt(currentChain, 16);
+        if (chainNum === 4663 || currentChain.toLowerCase() === "0x1237" || currentChain.toLowerCase() === "0x2710") {
+          return true;
+        }
+
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: ROBINHOOD_CHAIN_ID }],
+          });
+          return true;
+        } catch (switchError) {
+          if (switchError.code === 4902 || switchError.code === -32603 || (switchError.message && switchError.message.toLowerCase().includes("unrecognized"))) {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: ROBINHOOD_CHAIN_ID,
+                chainName: "Robinhood Chain",
+                nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+                rpcUrls: ["https://rpc.robinhood.com"],
+                blockExplorerUrls: ["https://explorer.robinhood.com"]
+              }]
+            });
+            return true;
+          } else {
+            throw switchError;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to switch to Robinhood Chain:", err);
+        showToast("⚠️ Please switch wallet network to Robinhood Chain (Chain ID: 4663) to proceed.", "warning");
+        throw new Error("Robinhood Chain required. Transaction aborted on wrong network.");
+      }
+    }
+
+async function connectWallet() {
       const btnText = document.getElementById("walletBtnText");
       const dot = document.getElementById("walletDot");
 
@@ -1381,26 +1420,8 @@
             if (typeof renderAllDuels === 'function') renderAllDuels();
 
             try {
-              await window.ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [{ chainId: ROBINHOOD_CHAIN_ID }],
-              });
-            } catch (switchError) {
-              if (switchError.code === 4902) {
-                try {
-                  await window.ethereum.request({
-                    method: "wallet_addEthereumChain",
-                    params: [{
-                      chainId: ROBINHOOD_CHAIN_ID,
-                      chainName: "Robinhood Chain",
-                      nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-                      rpcUrls: ["https://rpc.robinhood.com"],
-                      blockExplorerUrls: ["https://explorer.robinhood.com"]
-                    }]
-                  });
-                } catch (addError) {}
-              }
-            }
+              await ensureRobinhoodNetwork();
+            } catch (netErr) {}
           }
         } catch (err) {
           console.error(err);
@@ -1437,6 +1458,13 @@
           if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
           if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
           if (typeof renderAllDuels === 'function') renderAllDuels();
+          try { ensureRobinhoodNetwork(); } catch (e) {}
+        }
+      });
+      window.ethereum.on("chainChanged", (newChainId) => {
+        const num = parseInt(newChainId, 16);
+        if (num !== 4663 && newChainId.toLowerCase() !== "0x1237" && newChainId.toLowerCase() !== "0x2710") {
+          showToast("⚠️ Network changed to non-Robinhood Chain! Please switch back to Robinhood Chain (4663).", "warning");
         }
       });
    
@@ -1481,13 +1509,8 @@
         throw new Error("Wallet not connected");
       }
 
-      // Check / switch chain if needed
-      try {
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: ROBINHOOD_CHAIN_ID }],
-        });
-      } catch (switchErr) {}
+      // Strict Robinhood Chain Enforcement - Never proceed on Ethereum Mainnet!
+      await ensureRobinhoodNetwork();
 
       // STEP 1: Authorization Signature
       showToast(`✍️ Step 1/2: Sign entry authorization for ${totalCostUSD} ${paymentMethod}...`, "info");
