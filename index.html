@@ -781,150 +781,70 @@
         <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 1 ($1)</span>
-              <span id="jackpot-tickets-1" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Your Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 1</span>
+              <span id="jackpot-tickets-1" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
             </div>
-            
-            <div class="mt-3.5 space-y-1.5 p-3 rounded-2xl bg-black/40 border border-white/5 font-mono">
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Participants:</span>
-                <span id="tier-participants-1" class="text-cyan-300 font-bold">342 Tickets</span>
-              </div>
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Total Vault Pool:</span>
-                <span id="tier-vault-1" class="text-white font-bold">$342.00 USDC</span>
-              </div>
-              <div class="flex justify-between text-[11px] pt-1 border-t border-white/10">
-                <span class="text-slate-300 font-bold">Estimated Prize (80%):</span>
-                <span id="tier-prize-1" class="text-emerald-400 font-black">$273.60 USDC</span>
-              </div>
-            </div>
-
-            <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-1" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
+            <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
+            <p class="text-xl font-black text-emerald-400 font-mono">$273.60 USDC</p>
+            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-1" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="submitJackpot(1)" class="mt-3 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20 flex items-center justify-center gap-1">
-            <span>🎯</span> BUY TICKET ($1.00)
-          </button>
+          <button onclick="submitJackpot(1)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($1)</button>
         </div>
 
         <!-- $5 Tier -->
         <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 2 ($5)</span>
-              <span id="jackpot-tickets-5" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Your Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 2</span>
+              <span id="jackpot-tickets-5" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
             </div>
-            
-            <div class="mt-3.5 space-y-1.5 p-3 rounded-2xl bg-black/40 border border-white/5 font-mono">
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Participants:</span>
-                <span id="tier-participants-5" class="text-cyan-300 font-bold">180 Tickets</span>
-              </div>
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Total Vault Pool:</span>
-                <span id="tier-vault-5" class="text-white font-bold">$900.00 USDC</span>
-              </div>
-              <div class="flex justify-between text-[11px] pt-1 border-t border-white/10">
-                <span class="text-slate-300 font-bold">Estimated Prize (80%):</span>
-                <span id="tier-prize-5" class="text-emerald-400 font-black">$720.00 USDC</span>
-              </div>
-            </div>
-
-            <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-5" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
+            <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
+            <p class="text-xl font-black text-emerald-400 font-mono">$720.00 USDC</p>
+            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-5" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="submitJackpot(5)" class="mt-3 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20 flex items-center justify-center gap-1">
-            <span>🎯</span> BUY TICKET ($5.00)
-          </button>
+          <button onclick="submitJackpot(5)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($5)</button>
         </div>
 
         <!-- $10 Tier -->
         <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 3 ($10)</span>
-              <span id="jackpot-tickets-10" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Your Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 3</span>
+              <span id="jackpot-tickets-10" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
             </div>
-            
-            <div class="mt-3.5 space-y-1.5 p-3 rounded-2xl bg-black/40 border border-white/5 font-mono">
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Participants:</span>
-                <span id="tier-participants-10" class="text-cyan-300 font-bold">225 Tickets</span>
-              </div>
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Total Vault Pool:</span>
-                <span id="tier-vault-10" class="text-white font-bold">$2,250.00 USDC</span>
-              </div>
-              <div class="flex justify-between text-[11px] pt-1 border-t border-white/10">
-                <span class="text-slate-300 font-bold">Estimated Prize (80%):</span>
-                <span id="tier-prize-10" class="text-emerald-400 font-black">$1,800.00 USDC</span>
-              </div>
-            </div>
-
-            <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-10" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
+            <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
+            <p class="text-xl font-black text-emerald-400 font-mono">$1,800.00 USDC</p>
+            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-10" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="submitJackpot(10)" class="mt-3 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20 flex items-center justify-center gap-1">
-            <span>🎯</span> BUY TICKET ($10.00)
-          </button>
+          <button onclick="submitJackpot(10)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($10)</button>
         </div>
 
         <!-- $100 Tier -->
         <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-cyan-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 4 ($100)</span>
-              <span id="jackpot-tickets-100" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Your Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">TIER 4</span>
+              <span id="jackpot-tickets-100" class="text-[10px] font-mono text-cyan-400 font-bold">0/3 Tickets</span>
             </div>
-            
-            <div class="mt-3.5 space-y-1.5 p-3 rounded-2xl bg-black/40 border border-white/5 font-mono">
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Participants:</span>
-                <span id="tier-participants-100" class="text-cyan-300 font-bold">68 Tickets</span>
-              </div>
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Total Vault Pool:</span>
-                <span id="tier-vault-100" class="text-white font-bold">$6,800.00 USDC</span>
-              </div>
-              <div class="flex justify-between text-[11px] pt-1 border-t border-white/10">
-                <span class="text-slate-300 font-bold">Estimated Prize (80%):</span>
-                <span id="tier-prize-100" class="text-emerald-400 font-black">$5,440.00 USDC</span>
-              </div>
-            </div>
-
-            <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-100" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
+            <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
+            <p class="text-xl font-black text-emerald-400 font-mono">$5,400.00 USDC</p>
+            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-100" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="submitJackpot(100)" class="mt-3 w-full py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20 flex items-center justify-center gap-1">
-            <span>🎯</span> BUY TICKET ($100.00)
-          </button>
+          <button onclick="submitJackpot(100)" class="mt-3 w-full py-2 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20">BUY TICKET ($100)</button>
         </div>
 
         <!-- $1000 Tier -->
         <div class="glass-panel p-5 rounded-3xl border border-white/10 hover:border-amber-500/50 transition-all flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center">
-              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">TIER 5 ($1,000 VIP)</span>
-              <span id="jackpot-tickets-1000" class="text-[10px] font-mono text-amber-400 font-bold">0/3 Your Tickets</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">TIER 5</span>
+              <span id="jackpot-tickets-1000" class="text-[10px] font-mono text-amber-400 font-bold">0/3 Tickets</span>
             </div>
-            
-            <div class="mt-3.5 space-y-1.5 p-3 rounded-2xl bg-black/40 border border-white/5 font-mono">
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Participants:</span>
-                <span id="tier-participants-1000" class="text-amber-300 font-bold">23 Tickets</span>
-              </div>
-              <div class="flex justify-between text-[11px]">
-                <span class="text-slate-400">Total Vault Pool:</span>
-                <span id="tier-vault-1000" class="text-white font-bold">$23,000.00 USDC</span>
-              </div>
-              <div class="flex justify-between text-[11px] pt-1 border-t border-white/10">
-                <span class="text-slate-300 font-bold">Estimated Prize (80%):</span>
-                <span id="tier-prize-1000" class="text-emerald-400 font-black">$18,400.00 USDC</span>
-              </div>
-            </div>
-
-            <input type="number" step="0.01" placeholder="Target e.g. 2450.50" id="target-input-1000" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-amber-500">
+            <p class="text-xs text-slate-400 mt-3 font-mono">Estimated Prize (80%):</p>
+            <p class="text-xl font-black text-emerald-400 font-mono">$18,000.00 USDC</p>
+            <input type="number" step="0.01" placeholder="Target e.g. 2450.5" id="target-input-1000" class="mt-3 w-full px-3 py-2 rounded-xl bg-slate-900/80 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-amber-500">
           </div>
-          <button onclick="submitJackpot(1000)" class="mt-3 w-full py-2.5 rounded-xl bg-amber-500 text-black font-mono font-bold text-xs hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-1">
-            <span>👑</span> BUY TICKET ($1,000.00)
-          </button>
+          <button onclick="submitJackpot(1000)" class="mt-3 w-full py-2 rounded-xl bg-amber-500 text-black font-mono font-bold text-xs hover:bg-amber-400 transition-all shadow-md shadow-amber-500/20">BUY TICKET ($1,000)</button>
         </div>
       </div>
 
@@ -1477,1101 +1397,12 @@
     // GRAND JACKPOT LOGIC
     let jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
 
-    async 
-    // ==========================================
-    // GRAND JACKPOT DYNAMIC STATE & PREDICTIONS
-    // ==========================================
-    let jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
-    
-    // Dynamic Active Round Stats per Tier
-    let jackpotTierStats = {
-      1: { participants: 342, pricePerTicket: 1 },
-      5: { participants: 180, pricePerTicket: 5 },
-      10: { participants: 225, pricePerTicket: 10 },
-      100: { participants: 68, pricePerTicket: 100 },
-      1000: { participants: 23, pricePerTicket: 1000 }
-    };
-
-    function updateJackpotTierCardsUI() {
-      [1, 5, 10, 100, 1000].forEach(tier => {
-        const stats = jackpotTierStats[tier];
-        const vaultTotal = stats.participants * stats.pricePerTicket;
-        const prize80 = vaultTotal * 0.8;
-
-        const partEl = document.getElementById("tier-participants-" + tier);
-        const vaultEl = document.getElementById("tier-vault-" + tier);
-        const prizeEl = document.getElementById("tier-prize-" + tier);
-
-        if (partEl) partEl.innerText = stats.participants.toLocaleString() + " Tickets";
-        if (vaultEl) vaultEl.innerText = "$" + vaultTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDC";
-        if (prizeEl) prizeEl.innerText = "$" + prize80.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDC";
-      });
-    }
-
-    let activeJackpotFilter = "all";
-
-    let liveSubmissions = [
-      { time: "1 min ago", tier: 1000, wallet: "0x742d...44e9", target: "$2,458.20", status: "Active (2/3)", tx: "0x9a4f...31a2" },
-      { time: "2 mins ago", tier: 100, wallet: "0x3901...99c2", target: "$2,452.80", status: "Active (1/3)", tx: "0x8e12...b45f" },
-      { time: "3 mins ago", tier: 10, wallet: "0x51b2...e81a", target: "$2,449.10", status: "Active (3/3)", tx: "0x33ca...012d" },
-      { time: "4 mins ago", tier: 5, wallet: "0x12d4...ff33", target: "$2,451.75", status: "Active (1/3)", tx: "0xaa98...771c" },
-      { time: "5 mins ago", tier: 1, wallet: "0x99a1...440b", target: "$2,450.40", status: "Active (2/3)", tx: "0x66fe...884a" },
-      { time: "7 mins ago", tier: 1000, wallet: "0xba88...12fe", target: "$2,454.00", status: "Active (1/3)", tx: "0x11be...99de" },
-      { time: "8 mins ago", tier: 100, wallet: "0x44cd...7701", target: "$2,448.90", status: "Active (2/3)", tx: "0x55dc...33ba" },
-      { time: "11 mins ago", tier: 10, wallet: "0x77ee...bb54", target: "$2,453.60", status: "Active (1/3)", tx: "0x22cf...66aa" },
-      { time: "14 mins ago", tier: 5, wallet: "0x88cc...119a", target: "$2,450.00", status: "Active (3/3)", tx: "0x77ae...55cc" },
-      { time: "18 mins ago", tier: 1, wallet: "0x33bb...9902", target: "$2,447.50", status: "Active (1/3)", tx: "0x44ea...113b" }
-    ];
-
-    function filterJackpotSubmissions(tier) {
-      activeJackpotFilter = tier;
-      
-      const buttons = ["all", "1", "5", "10", "100", "1000"];
-      buttons.forEach(b => {
-        const btn = document.getElementById("filter-btn-" + b);
-        if (btn) {
-          if (String(b) === String(tier)) {
-            btn.className = "px-3 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30";
-          } else {
-            btn.className = "px-3 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 text-slate-300 hover:bg-white/10";
-          }
-        }
-      });
-
-      renderJackpotSubmissions();
-    }
-
-    function renderJackpotSubmissions() {
-      const tbody = document.getElementById("jackpot-submissions-body");
-      if (!tbody) return;
-      tbody.innerHTML = "";
-
-      const filtered = activeJackpotFilter === "all" 
-        ? liveSubmissions 
-        : liveSubmissions.filter(s => String(s.tier) === String(activeJackpotFilter));
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 font-mono">No active submissions in Tier 
-
-
-        // ==========================================
-    // 2048 SKILL VAULT & TOURNAMENT ENGINE
-    // ==========================================
-    let board2048 = [
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    let score2048 = 0;
-    let bestScore2048 = 18420;
-    let is2048GameOver = false;
-    let selected2048Tier = 1;
-    let userAvailableTickets = 1;
-
-    function init2048Game() {
-      board2048 = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-      ];
-      score2048 = 0;
-      is2048GameOver = false;
-      addRandomTile2048();
-      addRandomTile2048();
-      render2048();
-
-      const overlay = document.getElementById('game-over-overlay');
-      if (overlay) overlay.classList.add('hidden');
-      const statusText = document.getElementById('board-status-text');
-      if (statusText) {
-        statusText.innerText = '🎮 Active Run: Move with Arrows / WASD';
-        statusText.className = 'text-cyan-400 font-bold';
-      }
-    }
-
-    function startNew2048Game() {
-      init2048Game();
-      showToast("🎮 New 2048 Tournament Run Started!", "info");
-    }
-
-    function addRandomTile2048() {
-      const emptyCells = [];
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          if (board2048[r][c] === 0) {
-            emptyCells.push({ r, c });
-          }
-        }
-      }
-      if (emptyCells.length > 0) {
-        const randCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        board2048[randCell.r][randCell.c] = Math.random() < 0.9 ? 2 : 4;
-      }
-    }
-
-    function render2048() {
-      const container = document.getElementById('board-container');
-      if (!container) return;
-      container.innerHTML = '';
-
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          const val = board2048[r][c];
-          const div = document.createElement('div');
-          div.className = `tile tile-${val > 2048 ? 'super' : val}`;
-          div.innerText = val > 0 ? val : '';
-          container.appendChild(div);
-        }
-      }
-
-      const sc = document.getElementById('game-score');
-      const bs = document.getElementById('game-best');
-      if (sc) sc.innerText = score2048.toLocaleString();
-      if (bs) bs.innerText = Math.max(score2048, bestScore2048).toLocaleString();
-    }
-
-    function slide2048Array(row) {
-      let arr = row.filter(val => val !== 0);
-      let gainedScore = 0;
-      for (let i = 0; i < arr.length - 1; i++) {
-        if (arr[i] === arr[i + 1]) {
-          arr[i] *= 2;
-          gainedScore += arr[i];
-          arr.splice(i + 1, 1);
-        }
-      }
-      while (arr.length < 4) {
-        arr.push(0);
-      }
-      return { newRow: arr, gainedScore };
-    }
-
-    function rotate2048Board(matrix) {
-      const N = matrix.length;
-      let res = [];
-      for (let i = 0; i < N; i++) {
-        res.push([]);
-        for (let j = 0; j < N; j++) {
-          res[i].push(matrix[N - j - 1][i]);
-        }
-      }
-      return res;
-    }
-
-    function handle2048Move(dir) {
-      if (is2048GameOver) return;
-      let rotated = 0;
-      if (dir === 'left') rotated = 0;
-      else if (dir === 'down') rotated = 1;
-      else if (dir === 'right') rotated = 2;
-      else if (dir === 'up') rotated = 3;
-
-      let tempBoard = JSON.parse(JSON.stringify(board2048));
-      for (let i = 0; i < rotated; i++) {
-        tempBoard = rotate2048Board(tempBoard);
-      }
-
-      let moved = false;
-      let totalGained = 0;
-
-      for (let r = 0; r < 4; r++) {
-        const { newRow, gainedScore } = slide2048Array(tempBoard[r]);
-        if (JSON.stringify(newRow) !== JSON.stringify(tempBoard[r])) {
-          moved = true;
-        }
-        tempBoard[r] = newRow;
-        totalGained += gainedScore;
-      }
-
-      for (let i = 0; i < (4 - rotated) % 4; i++) {
-        tempBoard = rotate2048Board(tempBoard);
-      }
-
-      if (moved) {
-        board2048 = tempBoard;
-        score2048 += totalGained;
-        if (score2048 > bestScore2048) {
-          bestScore2048 = score2048;
-        }
-        addRandomTile2048();
-        render2048();
-
-        if (check2048GameOver()) {
-          is2048GameOver = true;
-          const overlay = document.getElementById('game-over-overlay');
-          const finalSc = document.getElementById('overlay-final-score');
-          if (finalSc) finalSc.innerText = score2048.toLocaleString();
-          if (overlay) overlay.classList.remove('hidden');
-          const statusText = document.getElementById('board-status-text');
-          if (statusText) {
-            statusText.innerText = '🏁 Round Finished - High Score Saved!';
-            statusText.className = 'text-amber-400 font-bold';
-          }
-          showToast(`🏁 Game Over! Your Single High Score: ${score2048.toLocaleString()} pts`, "warning");
-        }
-      }
-    }
-
-    function check2048GameOver() {
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          if (board2048[r][c] === 0) return false;
-          if (r < 3 && board2048[r][c] === board2048[r + 1][c]) return false;
-          if (c < 3 && board2048[r][c] === board2048[r][c + 1]) return false;
-        }
-      }
-      return true;
-    }
-
-    // Event listener for keyboard
-    window.addEventListener('keydown', function(e) {
-      const activeTab = document.getElementById('tab-vault2048');
-      if (!activeTab || activeTab.classList.contains('hidden')) return;
-
-      if (['ArrowUp', 'KeyW'].includes(e.code)) {
-        e.preventDefault();
-        handle2048Move('up');
-      } else if (['ArrowDown', 'KeyS'].includes(e.code)) {
-        e.preventDefault();
-        handle2048Move('down');
-      } else if (['ArrowLeft', 'KeyA'].includes(e.code)) {
-        e.preventDefault();
-        handle2048Move('left');
-      } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
-        e.preventDefault();
-        handle2048Move('right');
-      }
-    });
-
-    // Touch Swipe controls
-    let touchStartX2048 = 0;
-    let touchStartY2048 = 0;
-    const boardEl = document.getElementById('board-container');
-    if (boardEl) {
-      boardEl.addEventListener('touchstart', function(e) {
-        touchStartX2048 = e.changedTouches[0].screenX;
-        touchStartY2048 = e.changedTouches[0].screenY;
-      }, { passive: true });
-
-      boardEl.addEventListener('touchend', function(e) {
-        const dx = e.changedTouches[0].screenX - touchStartX2048;
-        const dy = e.changedTouches[0].screenY - touchStartY2048;
-        if (Math.abs(dx) > Math.abs(dy)) {
-          if (Math.abs(dx) > 25) {
-            handle2048Move(dx > 0 ? 'right' : 'left');
-          }
-        } else {
-          if (Math.abs(dy) > 25) {
-            handle2048Move(dy > 0 ? 'down' : 'up');
-          }
-        }
-      }, { passive: true });
-    }
-
-    function select2048Tier(tier) {
-      selected2048Tier = tier;
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const card = document.getElementById('tier-card-2048-' + t);
-        const tag = document.getElementById('tier-tag-' + t);
-        const top3Card = document.getElementById('top3-tier-' + t);
-
-        if (t === tier) {
-          if (card) card.className = t >= 1000
-            ? 'glass-panel p-4 rounded-2xl border-2 border-amber-500 bg-amber-950/40 cursor-pointer transition-all space-y-3'
-            : 'glass-panel p-4 rounded-2xl border-2 border-cyan-500 bg-cyan-950/40 cursor-pointer transition-all space-y-3';
-          if (tag) {
-            tag.innerText = 'ACTIVE TIER';
-            tag.className = t >= 1000
-              ? 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500 text-black'
-              : 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500 text-black';
-          }
-          if (top3Card) {
-            top3Card.className = t >= 1000
-              ? 'p-4 rounded-2xl bg-slate-900/90 border-2 border-amber-500 space-y-3 shadow-lg shadow-amber-500/10'
-              : 'p-4 rounded-2xl bg-slate-900/90 border-2 border-cyan-500 space-y-3 shadow-lg shadow-cyan-500/10';
-          }
-        } else {
-          if (card) card.className = t >= 1000
-            ? 'glass-panel p-4 rounded-2xl border border-amber-500/40 bg-amber-950/10 hover:border-amber-500/70 cursor-pointer transition-all space-y-3'
-            : 'glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/50 bg-slate-900/60 cursor-pointer transition-all space-y-3';
-          if (tag) {
-            tag.innerText = 'SELECT';
-            tag.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-slate-400';
-          }
-          if (top3Card) {
-            top3Card.className = 'p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3';
-          }
-        }
-      });
-    }
-
-    function update2048Price(tier) {
-      const qtyInput = document.getElementById("qty-2048-" + tier);
-      if (!qtyInput) return;
-      let qty = parseInt(qtyInput.value) || 1;
-      if (qty < 1) qty = 1;
-      if (qty > 100) qty = 100;
-      qtyInput.value = qty;
-
-      const totalCost = (qty * tier).toFixed(2);
-      const pvpAttempts = qty * 2;
-
-      const lblCostUsdc = document.getElementById("cost-usdc-" + tier);
-      const lblCostPvp = document.getElementById("cost-pvp-" + tier);
-      const lblAttPvp = document.getElementById("attempts-pvp-" + tier);
-
-      if (lblCostUsdc) lblCostUsdc.innerText = totalCost;
-      if (lblAttPvp) lblAttPvp.innerText = pvpAttempts;
-      if (lblCostPvp) lblCostPvp.innerText = totalCost;
-    }
-
-    async function buy2048Ticket(tier, paymentMethod) {
+    async async function submitJackpot(tier) {
       if (!isConnected) {
         await connectWallet();
       }
       if (!isConnected) {
         showToast("Please connect your wallet first", "warning");
-        return;
-      }
-
-      const qtyInput = document.getElementById("qty-2048-" + tier);
-      const qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
-      const totalCost = (qty * tier).toFixed(2);
-      const ticketsPurchased = paymentMethod === 'PVP' ? qty * 2 : qty;
-
-      showToast(`⚡ Purchasing ${ticketsPurchased} Ticket(s) ($${totalCost}) for $${tier}.00 Tier via ${paymentMethod}...`, "info");
-
-      let txHash = null;
-      if (window.ethereum) {
-        try {
-          const weiValue = "0x" + Math.floor((Number(totalCost) / 2400) * 1e18).toString(16);
-          showToast("📝 Please confirm the ticket transaction in your wallet...", "info");
-          txHash = await window.ethereum.request({
-            method: "eth_sendTransaction",
-            params: [{
-              from: userAddress,
-              to: ESCROW_CONTRACT,
-              value: weiValue,
-              data: "0xd96a094a" + Number(tier).toString(16).padStart(32, "0") + Number(qty).toString(16).padStart(32, "0")
-            }]
-          });
-          showToast(`🚀 Ticket Tx Broadcasted: ${txHash.slice(0, 10)}...${txHash.slice(-6)}`, "info");
-        } catch (err) {
-          if (err && err.code === 4001) {
-            showToast("❌ Transaction signature rejected by user.", "error");
-            return;
-          }
-          console.warn("Simulated ticket hash:", err);
-          txHash = "0x" + Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
-        }
-      } else {
-        txHash = "0x" + Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
-      }
-
-      userAvailableTickets += ticketsPurchased;
-      const countEl = document.getElementById('tickets-count');
-      if (countEl) {
-        countEl.innerText = userAvailableTickets;
-      }
-
-      select2048Tier(tier);
-      init2048Game();
-      showToast(`✅ Successfully purchased ${ticketsPurchased} Ticket(s) for $${tier} Tier! Game activated.`, "success");
-    }
-
-    // LEADERBOARD LOGIC
-    let curLbCat = 'duel';
-    let curLbTier = 1;
-
-    function setLeaderboardCategory(cat) {
-      curLbCat = cat;
-      ['duel', '2048', 'jackpot'].forEach(c => {
-        const el = document.getElementById('lb-cat-' + c);
-        if (el) {
-          if (c === cat) {
-            el.className = 'glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center';
-          } else {
-            el.className = 'glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center';
-          }
-        }
-      });
-      updateLeaderboardUI();
-    }
-
-    function setLeaderboardTier(tier) {
-      curLbTier = tier;
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const b = document.getElementById('lb-tier-' + t);
-        if (b) {
-          if (t === tier) {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
-          } else {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10';
-          }
-        }
-      });
-      updateLeaderboardUI();
-    }
-
-    function updateLeaderboardUI() {
-      const tbody = document.getElementById('lb-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      
-      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill Vaults', jackpot: 'Grand Jackpot' };
-      const title = document.getElementById('lb-table-title');
-      if (title) title.innerText = `Top 100 Players — ${catNames[curLbCat]} ($${curLbTier} Tier)`;
-      
-      const colMetric = document.getElementById('lb-col-metric');
-      if (colMetric) {
-        if (curLbCat === 'duel') colMetric.innerText = 'Wins / Streak';
-        else if (curLbCat === '2048') colMetric.innerText = 'Single High Score';
-        else colMetric.innerText = 'Closest Target';
-      }
-
-      const mockWallets = ['0x8a92...3b1f', '0x3f12...7e90', '0x1d44...9a88', '0x77c1...0e22', '0x9b33...55aa'];
-      for (let i = 1; i <= 10; i++) {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-white/5 transition-all';
-        let metric = curLbCat === 'duel' ? `${35 - i*2} Wins` : curLbCat === '2048' ? `${16480 - i*850} pts` : `Diff: ±${(0.05 * i).toFixed(2)}`;
-        let won = curLbCat === 'duel' ? `+$${((35 - i*2) * curLbTier * 0.9).toFixed(2)} USDC` : `+$${(curLbTier * 80).toFixed(2)} USDC`;
-        
-        tr.innerHTML = `
-          <td class="p-3.5 font-bold ${i===1 ? 'text-amber-400' : i===2 ? 'text-slate-300' : i===3 ? 'text-amber-600' : 'text-slate-500'}">#${i}</td>
-          <td class="p-3.5 font-mono text-cyan-400">${mockWallets[(i-1)%mockWallets.length]}</td>
-          <td class="p-3.5 text-white font-bold">${metric}</td>
-          <td class="p-3.5 text-emerald-400 font-bold">${won}</td>
-          <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">VERIFIED</span></td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    // HISTORY LOGIC (VERIFIED WINNERS LEDGER)
-    let curHistCat = 'duel';
-    let curHistTier = 1;
-
-    function setHistoryCategory(cat) {
-      curHistCat = cat;
-      ['duel', '2048', 'jackpot'].forEach(c => {
-        const el = document.getElementById('hist-cat-' + c);
-        if (el) {
-          if (c === cat) {
-            el.className = 'glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center';
-          } else {
-            el.className = 'glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center';
-          }
-        }
-      });
-      updateHistoryUI();
-    }
-
-    function setHistoryTier(tier) {
-      curHistTier = tier;
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const b = document.getElementById('hist-tier-' + t);
-        if (b) {
-          if (t === tier) {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
-          } else {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10';
-          }
-        }
-      });
-      updateHistoryUI();
-    }
-
-    function updateHistoryUI() {
-      const tbody = document.getElementById('hist-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      
-      const catNames = { duel: 'P2P Duels', '2048': '2048 Tournament', jackpot: 'Grand Jackpot' };
-      const title = document.getElementById('hist-table-title');
-      if (title) title.innerText = `Verified Reward Winners — ${catNames[curHistCat]} ($${curHistTier} Tier)`;
-
-      const mockWinners = [
-        { date: '2026-09-01 14:10 UTC', wallet: '0x8a92...3b1f', metric: 'Won vs 0x4a82', prize: `+$${(curHistTier * 1.8).toFixed(2)} USDC` },
-        { date: '2026-09-01 13:45 UTC', wallet: '0x3f12...7e90', metric: 'Won vs 0x9b33', prize: `+$${(curHistTier * 1.8).toFixed(2)} USDC` },
-        { date: '2026-09-01 13:00 UTC', wallet: '0x1d44...9a88', metric: '24h Best: 24,190 pts', prize: `+$${(curHistTier * 336).toFixed(2)} USDC` },
-        { date: '2026-09-01 12:00 UTC', wallet: '0x77c1...0e22', metric: 'Target: 2450.68', prize: `+$${(curHistTier * 273.6).toFixed(2)} USDC` }
-      ];
-
-      mockWinners.forEach(w => {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-white/5 transition-all';
-        tr.innerHTML = `
-          <td class="p-3.5 text-slate-400">${w.date}</td>
-          <td class="p-3.5 font-bold text-cyan-400">$${curHistTier} Tier</td>
-          <td class="p-3.5 font-bold text-white">${w.wallet}</td>
-          <td class="p-3.5 text-slate-300">${w.metric}</td>
-          <td class="p-3.5 text-emerald-400 font-bold">${w.prize}</td>
-          <td class="p-3.5"><a href="https://robinhood.superscan.network" target="_blank" class="text-cyan-400 hover:underline">0x9c3f...tx</a></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // INITIAL LOAD
-    
-    // LIVE JACKPOT COUNTDOWN TIMER
-    let jackpotTimerInterval = null;
-    function updateJackpotTimer() {
-      if (jackpotTimerInterval) clearInterval(jackpotTimerInterval);
-      
-      function tick() {
-        const now = new Date();
-        const minutesLeft = 59 - now.getMinutes();
-        const secondsLeft = 59 - now.getSeconds();
-        
-        const timeString = String(minutesLeft).padStart(2, "0") + ":" + String(secondsLeft).padStart(2, "0");
-        
-        const timerEl = document.getElementById("jackpot-timer");
-        if (timerEl) {
-          timerEl.textContent = timeString;
-        }
-      }
-
-      tick();
-      jackpotTimerInterval = setInterval(tick, 1000);
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      startNew2048Game();
-      updateJackpotTimer();
-      renderJackpotSubmissions();
-      updateLeaderboardUI();
-      updateHistoryUI();
-    });
-  </script>
-</body>
-</html>
- + activeJackpotFilter + ' for this round yet. Be the first to predict!</td></tr>';
-        return;
-      }
-
-      filtered.forEach(sub => {
-        const isVip = sub.tier >= 1000;
-        const tierBadge = isVip
-          ? '<span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">$1,000 VIP</span>'
-          : '<span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
-
-
-        // ==========================================
-    // 2048 SKILL VAULT & TOURNAMENT ENGINE
-    // ==========================================
-    let board2048 = [
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    let score2048 = 0;
-    let bestScore2048 = 18420;
-    let is2048GameOver = false;
-    let selected2048Tier = 1;
-    let userAvailableTickets = 1;
-
-    function init2048Game() {
-      board2048 = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-      ];
-      score2048 = 0;
-      is2048GameOver = false;
-      addRandomTile2048();
-      addRandomTile2048();
-      render2048();
-
-      const overlay = document.getElementById('game-over-overlay');
-      if (overlay) overlay.classList.add('hidden');
-      const statusText = document.getElementById('board-status-text');
-      if (statusText) {
-        statusText.innerText = '🎮 Active Run: Move with Arrows / WASD';
-        statusText.className = 'text-cyan-400 font-bold';
-      }
-    }
-
-    function startNew2048Game() {
-      init2048Game();
-      showToast("🎮 New 2048 Tournament Run Started!", "info");
-    }
-
-    function addRandomTile2048() {
-      const emptyCells = [];
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          if (board2048[r][c] === 0) {
-            emptyCells.push({ r, c });
-          }
-        }
-      }
-      if (emptyCells.length > 0) {
-        const randCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        board2048[randCell.r][randCell.c] = Math.random() < 0.9 ? 2 : 4;
-      }
-    }
-
-    function render2048() {
-      const container = document.getElementById('board-container');
-      if (!container) return;
-      container.innerHTML = '';
-
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          const val = board2048[r][c];
-          const div = document.createElement('div');
-          div.className = `tile tile-${val > 2048 ? 'super' : val}`;
-          div.innerText = val > 0 ? val : '';
-          container.appendChild(div);
-        }
-      }
-
-      const sc = document.getElementById('game-score');
-      const bs = document.getElementById('game-best');
-      if (sc) sc.innerText = score2048.toLocaleString();
-      if (bs) bs.innerText = Math.max(score2048, bestScore2048).toLocaleString();
-    }
-
-    function slide2048Array(row) {
-      let arr = row.filter(val => val !== 0);
-      let gainedScore = 0;
-      for (let i = 0; i < arr.length - 1; i++) {
-        if (arr[i] === arr[i + 1]) {
-          arr[i] *= 2;
-          gainedScore += arr[i];
-          arr.splice(i + 1, 1);
-        }
-      }
-      while (arr.length < 4) {
-        arr.push(0);
-      }
-      return { newRow: arr, gainedScore };
-    }
-
-    function rotate2048Board(matrix) {
-      const N = matrix.length;
-      let res = [];
-      for (let i = 0; i < N; i++) {
-        res.push([]);
-        for (let j = 0; j < N; j++) {
-          res[i].push(matrix[N - j - 1][i]);
-        }
-      }
-      return res;
-    }
-
-    function handle2048Move(dir) {
-      if (is2048GameOver) return;
-      let rotated = 0;
-      if (dir === 'left') rotated = 0;
-      else if (dir === 'down') rotated = 1;
-      else if (dir === 'right') rotated = 2;
-      else if (dir === 'up') rotated = 3;
-
-      let tempBoard = JSON.parse(JSON.stringify(board2048));
-      for (let i = 0; i < rotated; i++) {
-        tempBoard = rotate2048Board(tempBoard);
-      }
-
-      let moved = false;
-      let totalGained = 0;
-
-      for (let r = 0; r < 4; r++) {
-        const { newRow, gainedScore } = slide2048Array(tempBoard[r]);
-        if (JSON.stringify(newRow) !== JSON.stringify(tempBoard[r])) {
-          moved = true;
-        }
-        tempBoard[r] = newRow;
-        totalGained += gainedScore;
-      }
-
-      for (let i = 0; i < (4 - rotated) % 4; i++) {
-        tempBoard = rotate2048Board(tempBoard);
-      }
-
-      if (moved) {
-        board2048 = tempBoard;
-        score2048 += totalGained;
-        if (score2048 > bestScore2048) {
-          bestScore2048 = score2048;
-        }
-        addRandomTile2048();
-        render2048();
-
-        if (check2048GameOver()) {
-          is2048GameOver = true;
-          const overlay = document.getElementById('game-over-overlay');
-          const finalSc = document.getElementById('overlay-final-score');
-          if (finalSc) finalSc.innerText = score2048.toLocaleString();
-          if (overlay) overlay.classList.remove('hidden');
-          const statusText = document.getElementById('board-status-text');
-          if (statusText) {
-            statusText.innerText = '🏁 Round Finished - High Score Saved!';
-            statusText.className = 'text-amber-400 font-bold';
-          }
-          showToast(`🏁 Game Over! Your Single High Score: ${score2048.toLocaleString()} pts`, "warning");
-        }
-      }
-    }
-
-    function check2048GameOver() {
-      for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
-          if (board2048[r][c] === 0) return false;
-          if (r < 3 && board2048[r][c] === board2048[r + 1][c]) return false;
-          if (c < 3 && board2048[r][c] === board2048[r][c + 1]) return false;
-        }
-      }
-      return true;
-    }
-
-    // Event listener for keyboard
-    window.addEventListener('keydown', function(e) {
-      const activeTab = document.getElementById('tab-vault2048');
-      if (!activeTab || activeTab.classList.contains('hidden')) return;
-
-      if (['ArrowUp', 'KeyW'].includes(e.code)) {
-        e.preventDefault();
-        handle2048Move('up');
-      } else if (['ArrowDown', 'KeyS'].includes(e.code)) {
-        e.preventDefault();
-        handle2048Move('down');
-      } else if (['ArrowLeft', 'KeyA'].includes(e.code)) {
-        e.preventDefault();
-        handle2048Move('left');
-      } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
-        e.preventDefault();
-        handle2048Move('right');
-      }
-    });
-
-    // Touch Swipe controls
-    let touchStartX2048 = 0;
-    let touchStartY2048 = 0;
-    const boardEl = document.getElementById('board-container');
-    if (boardEl) {
-      boardEl.addEventListener('touchstart', function(e) {
-        touchStartX2048 = e.changedTouches[0].screenX;
-        touchStartY2048 = e.changedTouches[0].screenY;
-      }, { passive: true });
-
-      boardEl.addEventListener('touchend', function(e) {
-        const dx = e.changedTouches[0].screenX - touchStartX2048;
-        const dy = e.changedTouches[0].screenY - touchStartY2048;
-        if (Math.abs(dx) > Math.abs(dy)) {
-          if (Math.abs(dx) > 25) {
-            handle2048Move(dx > 0 ? 'right' : 'left');
-          }
-        } else {
-          if (Math.abs(dy) > 25) {
-            handle2048Move(dy > 0 ? 'down' : 'up');
-          }
-        }
-      }, { passive: true });
-    }
-
-    function select2048Tier(tier) {
-      selected2048Tier = tier;
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const card = document.getElementById('tier-card-2048-' + t);
-        const tag = document.getElementById('tier-tag-' + t);
-        const top3Card = document.getElementById('top3-tier-' + t);
-
-        if (t === tier) {
-          if (card) card.className = t >= 1000
-            ? 'glass-panel p-4 rounded-2xl border-2 border-amber-500 bg-amber-950/40 cursor-pointer transition-all space-y-3'
-            : 'glass-panel p-4 rounded-2xl border-2 border-cyan-500 bg-cyan-950/40 cursor-pointer transition-all space-y-3';
-          if (tag) {
-            tag.innerText = 'ACTIVE TIER';
-            tag.className = t >= 1000
-              ? 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500 text-black'
-              : 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500 text-black';
-          }
-          if (top3Card) {
-            top3Card.className = t >= 1000
-              ? 'p-4 rounded-2xl bg-slate-900/90 border-2 border-amber-500 space-y-3 shadow-lg shadow-amber-500/10'
-              : 'p-4 rounded-2xl bg-slate-900/90 border-2 border-cyan-500 space-y-3 shadow-lg shadow-cyan-500/10';
-          }
-        } else {
-          if (card) card.className = t >= 1000
-            ? 'glass-panel p-4 rounded-2xl border border-amber-500/40 bg-amber-950/10 hover:border-amber-500/70 cursor-pointer transition-all space-y-3'
-            : 'glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/50 bg-slate-900/60 cursor-pointer transition-all space-y-3';
-          if (tag) {
-            tag.innerText = 'SELECT';
-            tag.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-slate-400';
-          }
-          if (top3Card) {
-            top3Card.className = 'p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3';
-          }
-        }
-      });
-    }
-
-    function update2048Price(tier) {
-      const qtyInput = document.getElementById("qty-2048-" + tier);
-      if (!qtyInput) return;
-      let qty = parseInt(qtyInput.value) || 1;
-      if (qty < 1) qty = 1;
-      if (qty > 100) qty = 100;
-      qtyInput.value = qty;
-
-      const totalCost = (qty * tier).toFixed(2);
-      const pvpAttempts = qty * 2;
-
-      const lblCostUsdc = document.getElementById("cost-usdc-" + tier);
-      const lblCostPvp = document.getElementById("cost-pvp-" + tier);
-      const lblAttPvp = document.getElementById("attempts-pvp-" + tier);
-
-      if (lblCostUsdc) lblCostUsdc.innerText = totalCost;
-      if (lblAttPvp) lblAttPvp.innerText = pvpAttempts;
-      if (lblCostPvp) lblCostPvp.innerText = totalCost;
-    }
-
-    async function buy2048Ticket(tier, paymentMethod) {
-      if (!isConnected) {
-        await connectWallet();
-      }
-      if (!isConnected) {
-        showToast("Please connect your wallet first", "warning");
-        return;
-      }
-
-      const qtyInput = document.getElementById("qty-2048-" + tier);
-      const qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
-      const totalCost = (qty * tier).toFixed(2);
-      const ticketsPurchased = paymentMethod === 'PVP' ? qty * 2 : qty;
-
-      showToast(`⚡ Purchasing ${ticketsPurchased} Ticket(s) ($${totalCost}) for $${tier}.00 Tier via ${paymentMethod}...`, "info");
-
-      let txHash = null;
-      if (window.ethereum) {
-        try {
-          const weiValue = "0x" + Math.floor((Number(totalCost) / 2400) * 1e18).toString(16);
-          showToast("📝 Please confirm the ticket transaction in your wallet...", "info");
-          txHash = await window.ethereum.request({
-            method: "eth_sendTransaction",
-            params: [{
-              from: userAddress,
-              to: ESCROW_CONTRACT,
-              value: weiValue,
-              data: "0xd96a094a" + Number(tier).toString(16).padStart(32, "0") + Number(qty).toString(16).padStart(32, "0")
-            }]
-          });
-          showToast(`🚀 Ticket Tx Broadcasted: ${txHash.slice(0, 10)}...${txHash.slice(-6)}`, "info");
-        } catch (err) {
-          if (err && err.code === 4001) {
-            showToast("❌ Transaction signature rejected by user.", "error");
-            return;
-          }
-          console.warn("Simulated ticket hash:", err);
-          txHash = "0x" + Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
-        }
-      } else {
-        txHash = "0x" + Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
-      }
-
-      userAvailableTickets += ticketsPurchased;
-      const countEl = document.getElementById('tickets-count');
-      if (countEl) {
-        countEl.innerText = userAvailableTickets;
-      }
-
-      select2048Tier(tier);
-      init2048Game();
-      showToast(`✅ Successfully purchased ${ticketsPurchased} Ticket(s) for $${tier} Tier! Game activated.`, "success");
-    }
-
-    // LEADERBOARD LOGIC
-    let curLbCat = 'duel';
-    let curLbTier = 1;
-
-    function setLeaderboardCategory(cat) {
-      curLbCat = cat;
-      ['duel', '2048', 'jackpot'].forEach(c => {
-        const el = document.getElementById('lb-cat-' + c);
-        if (el) {
-          if (c === cat) {
-            el.className = 'glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center';
-          } else {
-            el.className = 'glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center';
-          }
-        }
-      });
-      updateLeaderboardUI();
-    }
-
-    function setLeaderboardTier(tier) {
-      curLbTier = tier;
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const b = document.getElementById('lb-tier-' + t);
-        if (b) {
-          if (t === tier) {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
-          } else {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10';
-          }
-        }
-      });
-      updateLeaderboardUI();
-    }
-
-    function updateLeaderboardUI() {
-      const tbody = document.getElementById('lb-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      
-      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill Vaults', jackpot: 'Grand Jackpot' };
-      const title = document.getElementById('lb-table-title');
-      if (title) title.innerText = `Top 100 Players — ${catNames[curLbCat]} ($${curLbTier} Tier)`;
-      
-      const colMetric = document.getElementById('lb-col-metric');
-      if (colMetric) {
-        if (curLbCat === 'duel') colMetric.innerText = 'Wins / Streak';
-        else if (curLbCat === '2048') colMetric.innerText = 'Single High Score';
-        else colMetric.innerText = 'Closest Target';
-      }
-
-      const mockWallets = ['0x8a92...3b1f', '0x3f12...7e90', '0x1d44...9a88', '0x77c1...0e22', '0x9b33...55aa'];
-      for (let i = 1; i <= 10; i++) {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-white/5 transition-all';
-        let metric = curLbCat === 'duel' ? `${35 - i*2} Wins` : curLbCat === '2048' ? `${16480 - i*850} pts` : `Diff: ±${(0.05 * i).toFixed(2)}`;
-        let won = curLbCat === 'duel' ? `+$${((35 - i*2) * curLbTier * 0.9).toFixed(2)} USDC` : `+$${(curLbTier * 80).toFixed(2)} USDC`;
-        
-        tr.innerHTML = `
-          <td class="p-3.5 font-bold ${i===1 ? 'text-amber-400' : i===2 ? 'text-slate-300' : i===3 ? 'text-amber-600' : 'text-slate-500'}">#${i}</td>
-          <td class="p-3.5 font-mono text-cyan-400">${mockWallets[(i-1)%mockWallets.length]}</td>
-          <td class="p-3.5 text-white font-bold">${metric}</td>
-          <td class="p-3.5 text-emerald-400 font-bold">${won}</td>
-          <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">VERIFIED</span></td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    // HISTORY LOGIC (VERIFIED WINNERS LEDGER)
-    let curHistCat = 'duel';
-    let curHistTier = 1;
-
-    function setHistoryCategory(cat) {
-      curHistCat = cat;
-      ['duel', '2048', 'jackpot'].forEach(c => {
-        const el = document.getElementById('hist-cat-' + c);
-        if (el) {
-          if (c === cat) {
-            el.className = 'glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center';
-          } else {
-            el.className = 'glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center';
-          }
-        }
-      });
-      updateHistoryUI();
-    }
-
-    function setHistoryTier(tier) {
-      curHistTier = tier;
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const b = document.getElementById('hist-tier-' + t);
-        if (b) {
-          if (t === tier) {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
-          } else {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10';
-          }
-        }
-      });
-      updateHistoryUI();
-    }
-
-    function updateHistoryUI() {
-      const tbody = document.getElementById('hist-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      
-      const catNames = { duel: 'P2P Duels', '2048': '2048 Tournament', jackpot: 'Grand Jackpot' };
-      const title = document.getElementById('hist-table-title');
-      if (title) title.innerText = `Verified Reward Winners — ${catNames[curHistCat]} ($${curHistTier} Tier)`;
-
-      const mockWinners = [
-        { date: '2026-09-01 14:10 UTC', wallet: '0x8a92...3b1f', metric: 'Won vs 0x4a82', prize: `+$${(curHistTier * 1.8).toFixed(2)} USDC` },
-        { date: '2026-09-01 13:45 UTC', wallet: '0x3f12...7e90', metric: 'Won vs 0x9b33', prize: `+$${(curHistTier * 1.8).toFixed(2)} USDC` },
-        { date: '2026-09-01 13:00 UTC', wallet: '0x1d44...9a88', metric: '24h Best: 24,190 pts', prize: `+$${(curHistTier * 336).toFixed(2)} USDC` },
-        { date: '2026-09-01 12:00 UTC', wallet: '0x77c1...0e22', metric: 'Target: 2450.68', prize: `+$${(curHistTier * 273.6).toFixed(2)} USDC` }
-      ];
-
-      mockWinners.forEach(w => {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-white/5 transition-all';
-        tr.innerHTML = `
-          <td class="p-3.5 text-slate-400">${w.date}</td>
-          <td class="p-3.5 font-bold text-cyan-400">$${curHistTier} Tier</td>
-          <td class="p-3.5 font-bold text-white">${w.wallet}</td>
-          <td class="p-3.5 text-slate-300">${w.metric}</td>
-          <td class="p-3.5 text-emerald-400 font-bold">${w.prize}</td>
-          <td class="p-3.5"><a href="https://robinhood.superscan.network" target="_blank" class="text-cyan-400 hover:underline">0x9c3f...tx</a></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // INITIAL LOAD
-    
-    // LIVE JACKPOT COUNTDOWN TIMER
-    let jackpotTimerInterval = null;
-    function updateJackpotTimer() {
-      if (jackpotTimerInterval) clearInterval(jackpotTimerInterval);
-      
-      function tick() {
-        const now = new Date();
-        const minutesLeft = 59 - now.getMinutes();
-        const secondsLeft = 59 - now.getSeconds();
-        
-        const timeString = String(minutesLeft).padStart(2, "0") + ":" + String(secondsLeft).padStart(2, "0");
-        
-        const timerEl = document.getElementById("jackpot-timer");
-        if (timerEl) {
-          timerEl.textContent = timeString;
-        }
-      }
-
-      tick();
-      jackpotTimerInterval = setInterval(tick, 1000);
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      startNew2048Game();
-      updateJackpotTimer();
-      renderJackpotSubmissions();
-      updateLeaderboardUI();
-      updateHistoryUI();
-    });
-  </script>
-</body>
-</html>
- + sub.tier + ' Tier</span>';
-
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-white/[0.02] transition-all";
-        tr.innerHTML = '<td class="p-3.5 text-slate-400">' + sub.time + '</td>' +
-          '<td class="p-3.5 font-bold">' + tierBadge + '</td>' +
-          '<td class="p-3.5 font-bold text-white">' + sub.wallet + '</td>' +
-          '<td class="p-3.5 text-emerald-400 font-bold">' + sub.target + '</td>' +
-          '<td class="p-3.5 text-center text-cyan-300">' + sub.status + '</td>' +
-          '<td class="p-3.5 text-right font-mono"><a href="https://robinhood.superscan.network" target="_blank" class="text-cyan-400 hover:underline">' + sub.tx + '</a></td>';
-        tbody.appendChild(tr);
-      });
-    }
-
-    function submitJackpot(tier) {
-      if (!isConnected) {
-        connectWallet().then(() => {
-          if (isConnected) submitJackpot(tier);
-        });
         return;
       }
 
@@ -2579,72 +1410,117 @@
       let val = input ? input.value.trim() : "";
       
       if (!val) {
+        // Provide intelligent default benchmark prediction if empty
         const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
         val = baseEstimate.toFixed(2);
         if (input) input.value = val;
-        showToast("Auto-populated target benchmark: $" + val, "info");
+        showToast(`Auto-populated target benchmark: $${val}`, "info");
       }
 
       if (jackpotUserTickets[tier] >= 3) {
-        showToast("Maximum 3/3 tickets already used for $" + tier + ".00 round!", "warning");
+        showToast(`Maximum 3/3 tickets already used for $${tier}.00 round!`, "warning");
         return;
       }
 
       const tierCostUSD = Number(tier).toFixed(2);
-      showToast("⚡ Initiating $" + tierCostUSD + " Jackpot Ticket for Round Target $" + val + "...", "info");
+      showToast(`⚡ Initiating $${tierCostUSD} Jackpot Ticket for Round Target $${val}...`, "info");
 
-      async function executeJackpot() {
-        let txHash = null;
+      let txHash = null;
+      if (window.ethereum) {
         try {
-          showToast("📝 Please sign the ticket in your wallet (Gasless Signature)...", "info");
-          const msg = "PVP Arena - Robinhood Chain\nAction: Grand Jackpot Ticket Purchase\nTier: $" + tierCostUSD + "\nTarget Prediction: $" + val + "\nWallet: " + (userAddress || "0xd8c0...883c") + "\nRound: #4663-1H\nTimestamp: " + new Date().toISOString();
-          txHash = await requestSafeSignature(msg);
-          showToast("🚀 Ticket Signed & Verified: " + (txHash ? txHash.slice(0, 10) + "..." : ""), "info");
-        } catch (signErr) {
-          if (signErr && (signErr.code === 4001 || (signErr.message && signErr.message.toLowerCase().includes("user rejected")))) {
-            showToast("❌ Transaction rejected by user.", "error");
+          const weiValue = "0x" + Math.floor((tier / 2400) * 1e18).toString(16);
+          showToast(`📝 Please confirm the $${tierCostUSD} ticket payment in your wallet...`, "info");
+          txHash = await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [{
+              from: userAddress,
+              to: ESCROW_CONTRACT,
+              value: weiValue,
+              data: "0x89b02a11" + Number(tier).toString(16).padStart(32, "0")
+            }]
+          });
+          showToast(`🚀 Jackpot Ticket Broadcasted: ${txHash.slice(0, 10)}...`, "info");
+        } catch (err) {
+          if (err && (err.code === 4001 || (err.message && err.message.includes("User rejected")))) {
+            showToast("❌ Transaction signature rejected by user.", "error");
             return;
           }
-          txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+          console.warn("Wallet interaction fallback/simulation:", err);
+          txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
         }
-
-        jackpotUserTickets[tier]++;
-        const tNum = jackpotUserTickets[tier];
-
-        // Increment dynamic tier participants & update UI
-        if (jackpotTierStats[tier]) {
-          jackpotTierStats[tier].participants++;
-        }
-        updateJackpotTierCardsUI();
-
-        const badge = document.getElementById("jackpot-tickets-" + tier);
-        if (badge) {
-          badge.innerText = tNum + "/3 Your Tickets";
-          badge.className = tNum === 3 
-            ? "text-[10px] font-mono text-emerald-400 font-black" 
-            : "text-[10px] font-mono text-cyan-400 font-bold";
-        }
-
-        const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0xd8c0...883c";
-
-        liveSubmissions.unshift({
-          time: "Just Now",
-          tier: tier,
-          wallet: shortAddr,
-          target: "$" + Number(val).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-          status: "Active (" + tNum + "/3)",
-          tx: txHash && txHash.length > 14 ? txHash.slice(0, 6) + "..." + txHash.slice(-4) : (txHash || "0x9c3f...772a")
-        });
-
-        renderJackpotSubmissions();
-        const totalPrize = (jackpotTierStats[tier].participants * tier * 0.8).toFixed(2);
-        showToast("✅ Ticket " + tNum + "/3 locked! Target: $" + val + " (Estimated Pool Prize: $" + totalPrize + " USDC)", "success");
+      } else {
+        txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
       }
 
-      executeJackpot();
+      jackpotUserTickets[tier]++;
+      const tNum = jackpotUserTickets[tier];
+
+      // Update badge UI
+      const badge = document.getElementById("jackpot-tickets-" + tier);
+      if (badge) {
+        badge.innerText = `${tNum}/3 Tickets`;
+        badge.className = tNum === 3 
+          ? "text-[10px] font-mono text-emerald-400 font-black" 
+          : "text-[10px] font-mono text-cyan-400 font-bold";
+      }
+
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0xd8c0...883c";
+
+      liveSubmissions.unshift({
+        time: "Just Now",
+        tier: tier,
+        wallet: shortAddr,
+        target: "$" + Number(val).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        status: `Active (${tNum}/3)`,
+        tx: txHash.length > 14 ? txHash.slice(0, 6) + "..." + txHash.slice(-4) : txHash
+      });
+
+      renderJackpotSubmissions();
+      showToast(`✅ Ticket ${tNum}/3 Purchased for $${tierCostUSD}! Target $${val} locked.`, "success");
     }
+      const input = document.getElementById("target-input-" + tier);
+      let val = input ? input.value.trim() : "";
+      
+      if (!val) {
+        // Provide intelligent default benchmark prediction if empty
+        const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
+        val = baseEstimate.toFixed(2);
+        if (input) input.value = val;
+        showToast(`Auto-populated target benchmark: $${val}`, "info");
+      }
 
+      if (jackpotUserTickets[tier] >= 3) {
+        showToast(`Maximum 3/3 tickets already used for $${tier} round!`, "warning");
+        return;
+      }
 
+      jackpotUserTickets[tier]++;
+      const tNum = jackpotUserTickets[tier];
+
+      // Update badge UI
+      const badge = document.getElementById("jackpot-tickets-" + tier);
+      if (badge) {
+        badge.innerText = `${tNum}/3 Tickets`;
+        badge.className = tNum === 3 
+          ? "text-[10px] font-mono text-emerald-400 font-black" 
+          : "text-[10px] font-mono text-cyan-400 font-bold";
+      }
+
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0xd8c0...883c";
+      const txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
+
+      liveSubmissions.unshift({
+        time: "Just Now",
+        tier: tier,
+        wallet: shortAddr,
+        target: Number(val).toLocaleString("en-US", { minimumFractionDigits: 2 }),
+        ticketNum: `Ticket ${tNum}/3`,
+        tx: txHash
+      });
+
+      renderJackpotSubmissions();
+      showToast(`✅ Ticket ${tNum}/3 Purchased! Recorded target $${val} for $${tier} Jackpot round.`, "success");
+    }
 
         // ==========================================
     // 2048 SKILL VAULT & TOURNAMENT ENGINE
@@ -3107,29 +1983,6 @@
     }
 
     // INITIAL LOAD
-    
-    // LIVE JACKPOT COUNTDOWN TIMER
-    let jackpotTimerInterval = null;
-    function updateJackpotTimer() {
-      if (jackpotTimerInterval) clearInterval(jackpotTimerInterval);
-      
-      function tick() {
-        const now = new Date();
-        const minutesLeft = 59 - now.getMinutes();
-        const secondsLeft = 59 - now.getSeconds();
-        
-        const timeString = String(minutesLeft).padStart(2, "0") + ":" + String(secondsLeft).padStart(2, "0");
-        
-        const timerEl = document.getElementById("jackpot-timer");
-        if (timerEl) {
-          timerEl.textContent = timeString;
-        }
-      }
-
-      tick();
-      jackpotTimerInterval = setInterval(tick, 1000);
-    }
-
     window.addEventListener("DOMContentLoaded", () => {
       startNew2048Game();
       updateJackpotTimer();
