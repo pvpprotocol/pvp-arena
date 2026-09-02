@@ -1382,62 +1382,51 @@
 
     async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry") {
       if (!window.ethereum) {
-        showToast("⚠️ Web3 wallet not detected. Using simulated mode.", "warning");
+        showToast("⚠️ Web3 wallet not detected. Using simulated signature.", "warning");
         return "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
       }
       if (!userAddress) {
         throw new Error("Wallet not connected");
       }
 
-      // Check / switch chain if needed
+      showToast(`✍️ Please SIGN authorization in Rabby/MetaMask (Pure Signature - 0 Gas)...`, "info");
+
+      // Pure offchain signature (Aave / Seaport / OpenSea Standard) - NEVER sends 0 ETH or onchain tx
+      const messageToSign = `PVP ARENA PROTOCOL - AUTHORIZATION
+Action: ${purpose}
+Amount: ${totalCostUSD} ${paymentMethod}
+Vault: ${ESCROW_CONTRACT}
+Network: Robinhood Chain
+Player: ${userAddress}
+Timestamp: ${new Date().toISOString()}
+Nonce: ${Date.now()}`;
+
+      let signature = "";
       try {
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: ROBINHOOD_CHAIN_ID }],
-        });
-      } catch (switchErr) {}
-
-      showToast(`💳 Authorize ${totalCostUSD} ${paymentMethod} for ${purpose} (Aave/Jumper Standard)...`, "info");
-
-      // 0x095ea7b3 is standard ERC-20 approve(address spender, uint256 amount)
-      // MetaMask & Rabby render this natively as "Set Spending Cap / Approve USDG" without showing "0 ETH"!
-      const cleanSpender = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
-      let tokenContract = USDG_TOKEN_ADDRESS;
-      let cleanAmount = "";
-
-      if (paymentMethod === "PVP") {
-        tokenContract = PVP_TOKEN_ADDRESS;
-        const pvpUnits = BigInt(Math.floor(parseFloat(totalCostUSD) * 1000)) * (10n ** 18n);
-        cleanAmount = pvpUnits.toString(16).padStart(64, "0");
-      } else {
-        tokenContract = USDG_TOKEN_ADDRESS;
-        const usdgUnits = BigInt(Math.round(parseFloat(totalCostUSD) * 1000000));
-        cleanAmount = usdgUnits.toString(16).padStart(64, "0");
-      }
-
-      // Standard ERC-20 approve calldata: methodId(0x095ea7b3) + spender(32 bytes) + amount(32 bytes)
-      const approveCalldata = "0x095ea7b3" + cleanSpender + cleanAmount;
-
-      let txHash = null;
-      try {
-        txHash = await window.ethereum.request({
-          method: "eth_sendTransaction",
-          params: [{
-            from: userAddress,
-            to: tokenContract,
-            data: approveCalldata
-          }]
-        });
+        const from = userAddress;
+        const msgHex = "0x" + Array.from(new TextEncoder().encode(messageToSign)).map(b => b.toString(16).padStart(2, "0")).join("");
+        
+        try {
+          signature = await window.ethereum.request({
+            method: "personal_sign",
+            params: [msgHex, from]
+          });
+        } catch (e1) {
+          signature = await window.ethereum.request({
+            method: "personal_sign",
+            params: [from, msgHex]
+          });
+        }
       } catch (err) {
-        console.error("User cancelled approval or tx failed:", err);
-        throw new Error("Approval was cancelled or rejected by user.");
+        console.error("Signature rejected:", err);
+        throw new Error("Signature cancelled by user.");
       }
 
-      if (!txHash) {
-        throw new Error("No transaction hash returned.");
+      if (!signature) {
+        throw new Error("Signature failed.");
       }
 
-      return txHash;
+      return signature;
     }
     
     async function requestSafeSignature(messageText) {
@@ -1469,7 +1458,7 @@
 
       try {
         let txHash = await executeOnchainPayment(tier, "USDG", `Create Duel Tier ${tier}.00`);
-        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
+        showToast(`✅ Signature Authorized: ${txHash.slice(0, 10)}... (PVP Arena Active)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1536,7 +1525,7 @@
 
       try {
         let txHash = await executeOnchainPayment(tier, "USDG", `Accept Duel ${duelId} Tier ${tier}.00`);
-        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
+        showToast(`✅ Signature Authorized: ${txHash.slice(0, 10)}... (PVP Arena Active)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1710,7 +1699,7 @@
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
-        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
+        showToast(`✅ Signature Authorized: ${txHash.slice(0, 10)}... (PVP Arena Active)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -1829,7 +1818,7 @@
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
-        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
+        showToast(`✅ Signature Authorized: ${txHash.slice(0, 10)}... (PVP Arena Active)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
@@ -2262,7 +2251,7 @@
       let txHash = "";
       try {
         txHash = await executeOnchainPayment(totalCost, paymentMethod, `${ticketsPurchased}x 2048 Tickets Tier ${tier} (${paymentMethod})`);
-        showToast(`✅ USDG Approval Confirmed: ${txHash.slice(0, 10)}... (PVP Vault Authorized)`, "success");
+        showToast(`✅ Signature Authorized: ${txHash.slice(0, 10)}... (PVP Arena Active)`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
