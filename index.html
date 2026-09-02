@@ -2656,22 +2656,8 @@
     }
 
     function updateDuelSummary() {
-      const summaryEl = document.getElementById("duel-summary-text");
-      if (!summaryEl) return;
-      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
-      const oppositeOpt = selectedDuelOption === 'YES' ? 'NO' : 'YES';
-      const optColor = selectedDuelOption === 'YES' ? 'text-emerald-400' : 'text-rose-400';
-      const oppColor = oppositeOpt === 'YES' ? 'text-emerald-400' : 'text-rose-400';
-      const qDeadline = getQuestionDeadline(q.id);
-      const timeObj = formatRemainingTime(qDeadline);
-
-      summaryEl.innerHTML = `
-        <span class="text-white font-bold">#${q.id} ${q.title}</span> • 
-        Pick: <span class="${optColor} font-bold">${selectedDuelOption}</span> • 
-        Opponent: <span class="${oppColor} font-bold">${oppositeOpt}</span> • 
-        Stake: <span class="text-cyan-400 font-bold">${selectedDuelTier} USDG</span> • 
-        <span class="text-amber-300 font-bold">⏳ Deadline: <span id="summary-deadline-timer">${timeObj.text}</span></span>
-      `;
+      // Summary text removed as requested
+      return;
     }
 
     function extractDuelPayload(raw) {
