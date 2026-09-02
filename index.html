@@ -2899,8 +2899,41 @@ async function connectWallet() {
         return cat === currentDuelTab;
       });
 
-      // Sort newest first
-      filteredKeys.sort((a,b) => ((store[b].createdAt || 0) - (store[a].createdAt || 0)));
+      function isUserDuelParticipant(d) {
+        if (!d) return false;
+        let myCreated = [];
+        let myAccepted = [];
+        try { myCreated = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]'); } catch(e){}
+        try { myAccepted = JSON.parse(localStorage.getItem('my_accepted_duel_ids') || '[]'); } catch(e){}
+        if (myCreated.includes(d.id) || myAccepted.includes(d.id)) return true;
+        if (userAddress) {
+          const u = userAddress.toLowerCase();
+          if (d.creator && String(d.creator).toLowerCase() === u) return true;
+          if (d.opponent && String(d.opponent).toLowerCase() === u) return true;
+        }
+        return false;
+      }
+
+      if (currentDuelTab === 'matched') {
+        filteredKeys.sort((a, b) => {
+          const itemA = store[a];
+          const itemB = store[b];
+          const partA = isUserDuelParticipant(itemA);
+          const partB = isUserDuelParticipant(itemB);
+
+          // 1. User's own duels ALWAYS appear at the very top of the matched table
+          if (partA && !partB) return -1;
+          if (!partA && partB) return 1;
+
+          // 2. Secondary sort: which match was matched earlier ("کدام مسابقه زودتر مچ شده")
+          const timeA = itemA.acceptedAt || itemA.createdAt || 0;
+          const timeB = itemB.acceptedAt || itemB.createdAt || 0;
+          return timeA - timeB;
+        });
+      } else {
+        // Sort newest first for other tabs
+        filteredKeys.sort((a,b) => ((store[b].createdAt || 0) - (store[a].createdAt || 0)));
+      }
 
       if (filteredKeys.length === 0) {
         let emptyIcon = "⚔️";
@@ -3276,7 +3309,7 @@ async function connectWallet() {
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-mono font-bold text-white">${questionText}</span>
                 <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${safeTier} USDG</span>
-                ${isCreator ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">Your Match</span>' : ''}
+                ${isParticipant ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">⚡ Your Match</span>' : ''}
                 <span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                   ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-qid="${resolvedQId}" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
                 </span>
@@ -3299,7 +3332,9 @@ async function connectWallet() {
       if (existingEl) {
         existingEl.outerHTML = cardHtml;
       } else {
-        container.insertAdjacentHTML("afterbegin", cardHtml);
+        // Re-render sorted list to ensure user's duels remain at the top
+        renderAllDuels();
+        return;
       }
       updateDuelCounter();
     }
@@ -3446,6 +3481,13 @@ async function connectWallet() {
       duelData.opponent = userAddress;
       duelData.opponentOption = opponentOption;
       duelData.acceptedAt = Date.now();
+      try {
+        let myAcc = JSON.parse(localStorage.getItem('my_accepted_duel_ids') || '[]');
+        if (!myAcc.includes(duelData.id)) {
+          myAcc.push(duelData.id);
+          localStorage.setItem('my_accepted_duel_ids', JSON.stringify(myAcc));
+        }
+      } catch (e) {}
       duelData.acceptTxHash = txHash;
       
       saveLocalDuel(duelData);
