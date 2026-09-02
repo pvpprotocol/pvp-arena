@@ -2459,9 +2459,8 @@
     const DUEL_QUESTIONS = [
       { 
         id: 1, 
-        icon: "₿", 
         category: "CRYPTO", 
-        title: "#1 Will BTC Daily Candle Close GREEN?", 
+        title: "Will BTC Daily Candle Close GREEN?", 
         desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green).",
         optA: "YES",
         optALabel: "YES",
@@ -2472,9 +2471,8 @@
       },
       { 
         id: 2, 
-        icon: "Ξ", 
         category: "CRYPTO", 
-        title: "#2 Will ETH Daily Candle Close GREEN?", 
+        title: "Will ETH Daily Candle Close GREEN?", 
         desc: "Predict whether Ethereum daily candle (UTC 00:00) closes bullish (Green).",
         optA: "YES",
         optALabel: "YES",
@@ -2485,9 +2483,8 @@
       },
       { 
         id: 3, 
-        icon: "₿", 
         category: "CRYPTO", 
-        title: "#3 Will BTC Stay Above $65,000 This Week?", 
+        title: "Will BTC Stay Above $65,000 This Week?", 
         desc: "Bitcoin maintains support level above $65,000 through the end of the current week.",
         optA: "YES",
         optALabel: "YES",
@@ -2498,9 +2495,8 @@
       },
       { 
         id: 4, 
-        icon: "🏹", 
         category: "ROBINHOOD", 
-        title: "#4 Will Robinhood Chain Daily Transactions Exceed 100,000?", 
+        title: "Will Robinhood Chain Daily Transactions Exceed 100,000?", 
         desc: "Robinhood Chain records more than 100k on-chain transactions within 24 hours.",
         optA: "YES",
         optALabel: "YES",
@@ -2511,9 +2507,8 @@
       },
       { 
         id: 5, 
-        icon: "◎", 
         category: "CRYPTO", 
-        title: "#5 Will SOL Outperform ETH in 24h Percentage Gain?", 
+        title: "Will SOL Outperform ETH in 24h Percentage Gain?", 
         desc: "Solana 24-hour return percentage exceeds Ethereum 24-hour return.",
         optA: "YES",
         optALabel: "YES",
@@ -2524,9 +2519,8 @@
       },
       { 
         id: 6, 
-        icon: "🪙", 
         category: "COMMODITIES", 
-        title: "#6 Will Gold (XAU/USD) Close Above $2,500 Today?", 
+        title: "Will Gold (XAU/USD) Close Above $2,500 Today?", 
         desc: "Spot gold market daily closing price sustains above $2,500/oz.",
         optA: "YES",
         optALabel: "YES",
@@ -2537,9 +2531,8 @@
       },
       { 
         id: 7, 
-        icon: "🔵", 
         category: "BASE", 
-        title: "#7 Will Base Daily Active Addresses Surpass 2 Million?", 
+        title: "Will Base Daily Active Addresses Surpass 2 Million?", 
         desc: "Daily unique active addresses on Base Layer 2 reach 2,000,000+.",
         optA: "YES",
         optALabel: "YES",
@@ -2550,9 +2543,8 @@
       },
       { 
         id: 8, 
-        icon: "📈", 
         category: "EQUITIES", 
-        title: "#8 Will Tokenized Apple (AAPL) Close GREEN Today?", 
+        title: "Will Tokenized Apple (AAPL) Close GREEN Today?", 
         desc: "Robinhood tokenized Apple equity candle closes positive on trading session.",
         optA: "YES",
         optALabel: "YES",
@@ -2563,9 +2555,8 @@
       },
       { 
         id: 9, 
-        icon: "🎮", 
         category: "ARENA", 
-        title: "#9 Will Any Player Reach 2048 Tile in Arena Today?", 
+        title: "Will Any Player Reach 2048 Tile in Arena Today?", 
         desc: "A player successfully unlocks the 2048 tile in tournament skill leaderboard.",
         optA: "YES",
         optALabel: "YES",
@@ -2576,9 +2567,8 @@
       },
       { 
         id: 10, 
-        icon: "🌐", 
         category: "MACRO", 
-        title: "#10 Will Total Crypto Market Cap Consolidate Above $2.5T?", 
+        title: "Will Total Crypto Market Cap Consolidate Above $2.5T?", 
         desc: "Global cryptocurrency market capitalization remains sustained above $2.50 Trillion.",
         optA: "YES",
         optALabel: "YES",
@@ -2602,16 +2592,11 @@
         const isSelected = q.id === selectedDuelQuestionId;
         const borderClass = isSelected ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-500/50" : "border-white/10 bg-slate-900/60 hover:border-cyan-500/40";
         const dotClass = isSelected ? "bg-cyan-400 animate-pulse" : "bg-slate-600";
-        const numBadge = `<span class="w-6 h-6 rounded-lg ${isSelected ? 'bg-cyan-500 text-black font-black' : 'bg-white/10 text-slate-300 font-bold'} text-xs font-mono flex items-center justify-center shrink-0 border border-white/10">${idx + 1}</span>`;
+        const numBadge = `<div class="w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-sm font-mono flex items-center justify-center shrink-0 transition-all">${idx + 1}</div>`;
         
         const qHtml = `
           <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
-            <div class="flex items-center gap-2 shrink-0">
-              ${numBadge}
-              <div class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-all">
-                ${q.icon}
-              </div>
-            </div>
+            ${numBadge}
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
                 <span class="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.category}</span>
@@ -2666,8 +2651,7 @@
       if (btnYes) {
         btnYes.setAttribute("onclick", "selectDuelOption('YES')");
         btnYes.innerHTML = `
-          <span class="text-lg">🟢</span>
-          <span class="text-base font-black tracking-wider">YES</span>
+          <span class="text-base font-black tracking-wider text-emerald-400">YES</span>
           <span class="text-[10px] font-mono text-emerald-300/80 font-medium">${q.optASub || 'Affirmative'}</span>
         `;
       }
@@ -2675,8 +2659,7 @@
       if (btnNo) {
         btnNo.setAttribute("onclick", "selectDuelOption('NO')");
         btnNo.innerHTML = `
-          <span class="text-lg">🔴</span>
-          <span class="text-base font-black tracking-wider">NO</span>
+          <span class="text-base font-black tracking-wider text-rose-400">NO</span>
           <span class="text-[10px] font-mono text-slate-400 font-medium">${q.optBSub || 'Negative'}</span>
         `;
       }
@@ -2713,7 +2696,7 @@
       const oppColor = oppositeOpt === 'YES' ? 'text-emerald-400' : 'text-rose-400';
 
       summaryEl.innerHTML = `
-        <span class="text-white">${q.title}</span> • 
+        <span class="text-white font-bold">#${q.id} ${q.title}</span> • 
         You Pick: <span class="${optColor} font-bold">${selectedDuelOption}</span> • 
         Opponent Takes: <span class="${oppColor} font-bold">${oppositeOpt}</span> • 
         Stake: <span class="text-cyan-400 font-bold">${selectedDuelTier} USDG</span>
