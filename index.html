@@ -1560,15 +1560,22 @@
     
     function updateJackpotDynamicUI() {
       [1, 5, 10, 100, 1000].forEach(t => {
-        const pCount = jackpotParticipants[t] || 0;
+        const pCount = jackpotTierStats[t] ? jackpotTierStats[t].tickets : 0;
         const poolSize = pCount * t;
         const netReward = poolSize * 0.8;
 
-        const partEl = document.getElementById('jackpot-participants-' + t);
-        if (partEl) partEl.innerText = pCount + ' tickets';
+        const partEl = document.getElementById("jackpot-participants-" + t);
+        if (partEl) partEl.innerText = pCount + " tickets";
 
-        const poolEl = document.getElementById('jackpot-pool-' + t);
-        if (poolEl) poolEl.innerText = '(tier) {
+        const poolEl = document.getElementById("jackpot-pool-" + t);
+        if (poolEl) poolEl.innerText = "$" + poolSize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDC";
+
+        const rewEl = document.getElementById("jackpot-reward-" + t);
+        if (rewEl) rewEl.innerText = "$" + netReward.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDC";
+      });
+    }
+
+    async function submitJackpot(tier) {
       if (!isConnected) {
         await connectWallet();
       }
