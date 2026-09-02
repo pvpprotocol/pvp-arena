@@ -310,7 +310,7 @@
         <!-- SUMMARY & CREATE BUTTON -->
         <div class="mt-6 flex justify-center">
           <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold font-mono text-sm shadow-xl shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-            <span>⚔️</span> CREATE 1v1 DUEL
+            <span>⚔️</span> CREATE P2P DUEL
           </button>
         </div>
       </div>
@@ -2515,6 +2515,26 @@
     let selectedDuelTier = 5;
     let selectedDuelOption = 'YES';
 
+        function getDuelEffectiveDeadline(duelData) {
+      if (!duelData) return getQuestionDeadline(1);
+      if (duelData.questionId != null) {
+        return getQuestionDeadline(Number(duelData.questionId));
+      }
+      if (duelData.questionText) {
+        const qLower = String(duelData.questionText).toLowerCase();
+        if (qLower.includes("btc") || qLower.includes("candle")) {
+          return getQuestionDeadline(1);
+        }
+        if (qLower.includes("robinhood") || qLower.includes("revenue")) {
+          return getQuestionDeadline(2);
+        }
+      }
+      if (duelData.deadline && typeof duelData.deadline === "number" && duelData.deadline > 0) {
+        return duelData.deadline;
+      }
+      return getQuestionDeadline(1);
+    }
+
     function getQuestionDeadline(qId) {
       const q = DUEL_QUESTIONS.find(x => x.id === qId) || DUEL_QUESTIONS[0];
       if (typeof q.getDeadline === 'function') return q.getDeadline();
@@ -2770,7 +2790,7 @@
           <div id="no-duels-msg" class="text-center py-12 text-slate-500">
             <p class="text-4xl mb-3">⚔️</p>
             <p class="text-base font-semibold text-slate-400">No active duel matches found</p>
-            <p class="text-xs text-slate-500 mt-1">Select a question and tier above, then click "CREATE 1v1 DUEL" to start!</p>
+            <p class="text-xs text-slate-500 mt-1">Select a question and tier above, then click "CREATE P2P DUEL" to start!</p>
           </div>
         `;
       } else {
@@ -2921,7 +2941,7 @@
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
       const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
 
-      const duelDeadline = duelData.deadline || (Date.now() + 24 * 3600 * 1000);
+      const duelDeadline = getDuelEffectiveDeadline(duelData);
       const isExpired = Date.now() >= duelDeadline;
       const timeObj = formatRemainingTime(duelDeadline);
 
@@ -3254,7 +3274,7 @@
 </body>
 </html<div class="mt-6 flex justify-center">
           <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold font-mono text-sm shadow-xl shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-            <span>⚔️</span> CREATE 1v1 DUEL
+            <span>⚔️</span> CREATE P2P DUEL
           </button>
         </div>
       </div>
@@ -5459,6 +5479,26 @@
     let selectedDuelTier = 5;
     let selectedDuelOption = 'YES';
 
+        function getDuelEffectiveDeadline(duelData) {
+      if (!duelData) return getQuestionDeadline(1);
+      if (duelData.questionId != null) {
+        return getQuestionDeadline(Number(duelData.questionId));
+      }
+      if (duelData.questionText) {
+        const qLower = String(duelData.questionText).toLowerCase();
+        if (qLower.includes("btc") || qLower.includes("candle")) {
+          return getQuestionDeadline(1);
+        }
+        if (qLower.includes("robinhood") || qLower.includes("revenue")) {
+          return getQuestionDeadline(2);
+        }
+      }
+      if (duelData.deadline && typeof duelData.deadline === "number" && duelData.deadline > 0) {
+        return duelData.deadline;
+      }
+      return getQuestionDeadline(1);
+    }
+
     function getQuestionDeadline(qId) {
       const q = DUEL_QUESTIONS.find(x => x.id === qId) || DUEL_QUESTIONS[0];
       if (typeof q.getDeadline === 'function') return q.getDeadline();
@@ -5714,7 +5754,7 @@
           <div id="no-duels-msg" class="text-center py-12 text-slate-500">
             <p class="text-4xl mb-3">⚔️</p>
             <p class="text-base font-semibold text-slate-400">No active duel matches found</p>
-            <p class="text-xs text-slate-500 mt-1">Select a question and tier above, then click "CREATE 1v1 DUEL" to start!</p>
+            <p class="text-xs text-slate-500 mt-1">Select a question and tier above, then click "CREATE P2P DUEL" to start!</p>
           </div>
         `;
       } else {
@@ -5865,7 +5905,7 @@
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
       const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
 
-      const duelDeadline = duelData.deadline || (Date.now() + 24 * 3600 * 1000);
+      const duelDeadline = getDuelEffectiveDeadline(duelData);
       const isExpired = Date.now() >= duelDeadline;
       const timeObj = formatRemainingTime(duelDeadline);
 
