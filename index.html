@@ -3318,8 +3318,9 @@ async function connectWallet() {
 
       const oppositeOption = selectedDuelOption === 'YES' ? 'NO' : 'YES';
 
+      let txHash = "";
       try {
-        let txHash = await executeOnchainPayment(selectedDuelTier, "USDG", `Create Duel Tier ${selectedDuelTier}.00 [${selectedDuelOption}]`);
+        txHash = await executeOnchainPayment(selectedDuelTier, "USDG", `Create Duel Tier ${selectedDuelTier}.00 [${selectedDuelOption}]`);
         showToast(`⚔️ Duel Created! Deposit Successful.`, "success");
       } catch (err) {
         console.error(err);
@@ -3339,7 +3340,7 @@ async function connectWallet() {
         creator: userAddress,
         status: 'open',
         deadline: qDeadline,
-        createTxHash: txHash,
+        createTxHash: txHash || "",
         payout: (selectedDuelTier * 1.8).toFixed(2),
         cashback: (selectedDuelTier * 0.03).toFixed(2),
         createdAt: Date.now()
@@ -3352,11 +3353,17 @@ async function connectWallet() {
           localStorage.setItem('my_created_duel_ids', JSON.stringify(myCreated));
         }
       } catch(e){}
+
+      saveLocalDuel(newDuel);
       await broadcastDuel(newDuel);
-      renderDuelCard(newDuel);
+      switchDuelTab('open');
+      renderAllDuels();
+
       if (btn) btn.disabled = false;
-      showToast(`🎉 Duel Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Closes at deadline.`, "success");
+      showToast(`🎉 Duel Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
     }
+
+    
 
     async function acceptDuel(duelId, tier) {
       if (!isConnected) {
