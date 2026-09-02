@@ -7,25 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>PVP Protocol | Onchain Skill & Duel Arena on Robinhood Chain</title>
-  <script src="https://cdn.tailwindcss.com">
-  // Explicitly export all functions to global window scope for inline onclick handlers
-  window.connectWallet = typeof connectWallet !== "undefined" ? connectWallet : function(){};
-  window.createDuel = typeof createDuel !== "undefined" ? createDuel : function(){};
-  window.cancelDuel = typeof cancelDuel !== "undefined" ? cancelDuel : function(){};
-  window.select2048Tier = typeof select2048Tier !== "undefined" ? select2048Tier : function(){};
-  window.buy2048Ticket = typeof buy2048Ticket !== "undefined" ? buy2048Ticket : function(){};
-  window.startNew2048Game = typeof startNew2048Game !== "undefined" ? startNew2048Game : function(){};
-  window.handle2048Move = typeof handle2048Move !== "undefined" ? handle2048Move : function(){};
-  window.changeJackpotTicketQty = typeof changeJackpotTicketQty !== "undefined" ? changeJackpotTicketQty : function(){};
-  window.buyJackpotTicket = typeof buyJackpotTicket !== "undefined" ? buyJackpotTicket : function(){};
-  window.setLeaderboardCategory = typeof setLeaderboardCategory !== "undefined" ? setLeaderboardCategory : function(){};
-  window.setLeaderboardTier = typeof setLeaderboardTier !== "undefined" ? setLeaderboardTier : function(){};
-  window.setHistoryCategory = typeof setHistoryCategory !== "undefined" ? setHistoryCategory : function(){};
-  window.setHistoryTier = typeof setHistoryTier !== "undefined" ? setHistoryTier : function(){};
-  window.copyPvpContract = typeof copyPvpContract !== "undefined" ? copyPvpContract : function(){};
-  window.showToast = typeof showToast !== "undefined" ? showToast : function(){};
-  
-</script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
@@ -1203,6 +1185,7 @@
 
   <!-- INTERACTIVE JAVASCRIPT -->
   <script>
+
     function copyPvpContract() {
       const addr = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3";
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1517,17 +1500,17 @@
       const duelHtml = `
         <div id="duel-row-${duelId}" class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white/[0.02] transition-all bg-cyan-950/20 border border-cyan-500/30 rounded-2xl my-2">
           <div class="flex items-center gap-3.5">
-            <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">$${tier} TIER</span>
+            <span class="px-3 py-1.5 rounded-xl font-bold border ${tierBadgeClass}">${tier} TIER</span>
             <div>
               <p class="font-bold text-white flex items-center gap-2">Creator: <span class="text-cyan-300">${userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2"}</span> <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span></p>
-              <p class="text-[11px] text-slate-400">Collateral Locked: $${tier}.00 USDC (Your Open Match)</p>
+              <p class="text-[11px] text-slate-400">Collateral Locked: ${tier}.00 USDC (Your Open Match)</p>
             </div>
           </div>
           <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/10 text-[11px]">
-              <span class="text-emerald-400 font-bold">🏆 Winner: +$${winnerPayout} (+90%)</span>
+              <span class="text-emerald-400 font-bold">🏆 Winner: +${winnerPayout} (+90%)</span>
               <span class="text-slate-500">|</span>
-              <span class="text-cyan-400 font-bold">🛡️ Cashback: $${cashback} (3%)</span>
+              <span class="text-cyan-400 font-bold">🛡️ Cashback: ${cashback} (3%)</span>
             </div>
             <div class="flex items-center gap-2">
               <span class="px-3 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-1.5">
@@ -1545,7 +1528,7 @@
       if (container) {
         container.insertAdjacentHTML("afterbegin", duelHtml);
       }
-      showToast(`✅ Duel created! $${tier}.00 USDC duel registered on Robinhood Chain.`, "success");
+      showToast(`✅ Duel created! ${tier}.00 USDC duel registered on Robinhood Chain.`, "success");
     }
 
     async function acceptDuel(duelId, tier = 1) {
@@ -1679,9 +1662,9 @@
       const label = newQty === 1 ? "TICKET" : "TICKETS";
       
       const btn1 = document.getElementById("btn-jackpot-" + tier);
-      if (btn1) btn1.innerText = `BUY ${newQty} ${label} ($${totalCost})`;
+      if (btn1) btn1.innerText = `BUY ${newQty} ${label} (${totalCost})`;
       const btn2 = document.getElementById("jackpot-btn-" + tier);
-      if (btn2) btn2.innerText = `BUY ${newQty} ${label} ($${totalCost})`;
+      if (btn2) btn2.innerText = `BUY ${newQty} ${label} (${totalCost})`;
 
       // Show/Hide target prediction inputs dynamically
       const row2 = document.getElementById(`target-row-${tier}-2`);
@@ -1755,7 +1738,7 @@
       }
 
       const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
-      let txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+      txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
       const shortTx = txHash.slice(0, 6) + "..." + txHash.slice(-4);
 
       // Add live submissions for each ticket
@@ -1772,7 +1755,7 @@
       });
 
       renderJackpotSubmissions();
-      showToast(`🎉 Successfully submitted ${qty}x $${tier}.00 Jackpot Ticket(s)! Targets: ${targetsStr}`, "success");
+      showToast(`🎉 Successfully submitted ${qty}x ${tier}.00 Jackpot Ticket(s)! Targets: ${targetsStr}`, "success");
     }
 
     function updateJackpotMetrics() {
@@ -1845,14 +1828,14 @@
         const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
         val = baseEstimate.toFixed(2);
         if (input) input.value = val;
-        showToast(`Auto-populated benchmark: $${val}`, "info");
+        showToast(`Auto-populated benchmark: ${val}`, "info");
       }
 
       const totalCost = (tier * qty).toFixed(2);
-      showToast(`⚡ Sign verification for ${qty}x $${tier}.00 Jackpot Ticket ($${totalCost} USDC, Target $${val})...`, "info");
+      showToast(`⚡ Sign verification for ${qty}x ${tier}.00 Jackpot Ticket (${totalCost} USDC, Target ${val})...`, "info");
 
       try {
-        const sig = await requestSafeSignature(`PVP Protocol: ${qty}x Jackpot Ticket(s) ($${totalCost} USDC)\nTier: $${tier}\nTarget: $${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
+        const sig = await requestSafeSignature(`PVP Protocol: ${qty}x Jackpot Ticket(s) (${totalCost} USDC)\nTier: ${tier}\nTarget: ${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
         showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
       } catch (err) {
         showToast("❌ Signature cancelled.", "error");
@@ -1873,7 +1856,7 @@
       }
 
       const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
-      let txHash = "0x" + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join("") + "...";
+      txHash = "0x" + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16)).join("") + "...";
 
       liveSubmissions.unshift({
         time: "Just now",
@@ -1889,7 +1872,7 @@
       // Update qty stepper to safe remaining
       changeJackpotTicketQty(tier, 0);
 
-      showToast(`🎉 ${qty} Ticket(s) Entered in $${tier} Jackpot Round! Target: $${val}`, "info");
+      showToast(`🎉 ${qty} Ticket(s) Entered in ${tier} Jackpot Round! Target: ${val}`, "info");
     }
 
     function renderJackpotSubmissions() {
@@ -1915,7 +1898,7 @@
       liveSubmissions.forEach(s => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-white/5 transition-all";
-        const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `$${s.tier} Tier`;
+        const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `${s.tier} Tier`;
         tr.innerHTML = `
           <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-amber-400' : 'text-cyan-400'}">${tierDisplay}</td>
           <td class="p-3.5 text-slate-400">${s.time}</td>
@@ -1961,18 +1944,18 @@
         const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
         val = baseEstimate.toFixed(2);
         if (input) input.value = val;
-        showToast(`Auto-populated benchmark: $${val}`, "info");
+        showToast(`Auto-populated benchmark: ${val}`, "info");
       }
 
       if (jackpotUserTickets[tier] >= 3) {
-        showToast(`Maximum 3/3 tickets already used for $${tier} round!`, "warning");
+        showToast(`Maximum 3/3 tickets already used for ${tier} round!`, "warning");
         return;
       }
 
-      showToast(`⚡ Sign verification for $${tier}.00 Jackpot Ticket (Target $${val})...`, "info");
+      showToast(`⚡ Sign verification for ${tier}.00 Jackpot Ticket (Target ${val})...`, "info");
 
       try {
-        const sig = await requestSafeSignature(`PVP Protocol: Jackpot Ticket $${tier}.00 USDC\nTarget: $${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
+        const sig = await requestSafeSignature(`PVP Protocol: Jackpot Ticket ${tier}.00 USDC\nTarget: ${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
         showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
       } catch (err) {
         showToast("❌ Signature cancelled.", "error");
@@ -2006,7 +1989,7 @@
       });
 
       renderJackpotSubmissions();
-      showToast(`✅ Ticket ${tNum}/3 Purchased! Target $${val} locked for $${tier} Jackpot.`, "success");
+      showToast(`✅ Ticket ${tNum}/3 Purchased! Target ${val} locked for ${tier} Jackpot.`, "success");
     }
 
     // 2048 SKILL VAULT & TOURNAMENT ENGINE
@@ -2300,7 +2283,7 @@
 
       select2048Tier(tier);
       init2048Game();
-      showToast(`✅ Purchased ${ticketsPurchased} Ticket(s) for $${tier} Tier! Game activated.`, "success");
+      showToast(`✅ Purchased ${ticketsPurchased} Ticket(s) for ${tier} Tier! Game activated.`, "success");
     }
 
     // LEADERBOARD LOGIC
@@ -2344,7 +2327,7 @@
       
       const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('lb-table-title');
-      if (title) title.innerText = `Top 100 Players — ${catNames[curLbCat]} ($${curLbTier} Tier)`;
+      if (title) title.innerText = `Top 100 Players — ${catNames[curLbCat]} (${curLbTier} Tier)`;
       
       const colMetric = document.getElementById('lb-col-metric');
       if (colMetric) {
@@ -2426,7 +2409,7 @@
       
       const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('hist-table-title');
-      if (title) title.innerText = `Verified Reward Winners — ${catNames[curHistCat]} ($${curHistTier} Tier)`;
+      if (title) title.innerText = `Verified Reward Winners — ${catNames[curHistCat]} (${curHistTier} Tier)`;
 
       const settledWinners = []; // Real-time onchain settlement records
 
@@ -2450,7 +2433,7 @@
         tr.className = 'hover:bg-white/5 transition-all';
         tr.innerHTML = `
           <td class="p-3.5 text-slate-400">${w.date}</td>
-          <td class="p-3.5 font-bold text-cyan-400">$${curHistTier} Tier</td>
+          <td class="p-3.5 font-bold text-cyan-400">${curHistTier} Tier</td>
           <td class="p-3.5 font-bold text-white">${w.wallet}</td>
           <td class="p-3.5 text-slate-300">${w.metric}</td>
           <td class="p-3.5 text-emerald-400 font-bold">${w.prize}</td>
@@ -2468,7 +2451,27 @@
       updateLeaderboardUI();
       updateHistoryUI();
     });
-  </script>
+  
+
+  // Explicitly export all interactive functions to window scope
+  window.connectWallet = typeof connectWallet !== "undefined" ? connectWallet : function(){};
+  window.createDuel = typeof createDuel !== "undefined" ? createDuel : function(){};
+  window.cancelDuel = typeof cancelDuel !== "undefined" ? cancelDuel : function(){};
+  window.select2048Tier = typeof select2048Tier !== "undefined" ? select2048Tier : function(){};
+  window.buy2048Ticket = typeof buy2048Ticket !== "undefined" ? buy2048Ticket : function(){};
+  window.startNew2048Game = typeof startNew2048Game !== "undefined" ? startNew2048Game : function(){};
+  window.handle2048Move = typeof handle2048Move !== "undefined" ? handle2048Move : function(){};
+  window.changeJackpotTicketQty = typeof changeJackpotTicketQty !== "undefined" ? changeJackpotTicketQty : function(){};
+  window.buyJackpotTicket = typeof buyJackpotTicket !== "undefined" ? buyJackpotTicket : function(){};
+  window.setLeaderboardCategory = typeof setLeaderboardCategory !== "undefined" ? setLeaderboardCategory : function(){};
+  window.setLeaderboardTier = typeof setLeaderboardTier !== "undefined" ? setLeaderboardTier : function(){};
+  window.setHistoryCategory = typeof setHistoryCategory !== "undefined" ? setHistoryCategory : function(){};
+  window.setHistoryTier = typeof setHistoryTier !== "undefined" ? setHistoryTier : function(){};
+  window.copyPvpContract = typeof copyPvpContract !== "undefined" ? copyPvpContract : function(){};
+  window.showToast = typeof showToast !== "undefined" ? showToast : function(){};
+  
+
+</script>
 
   <!-- MOBILE BOTTOM FLOATING NAVIGATION BAR -->
   <div id="mobile-bottom-nav" class="lg:hidden fixed bottom-3 left-3 right-3 z-50 bg-[#070b14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-1.5 shadow-2xl flex items-center justify-around">
