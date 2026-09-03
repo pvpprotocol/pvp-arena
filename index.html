@@ -2920,16 +2920,6 @@ async function connectWallet() {
     let currentDuelTab = 'open';
 
     
-    window.switchDuelTab = switchDuelTab;
-    window.renderAllDuels = renderAllDuels;
-    window.renderDuelCard = renderDuelCard;
-    window.createDuel = createDuel;
-    window.acceptDuel = acceptDuel;
-    window.cancelDuel = cancelDuel;
-    window.claimDuelPrize = claimDuelPrize;
-    window.reclaimExpiredDeposit = reclaimExpiredDeposit;
-    window.resolveDuelOutcome = resolveDuelOutcome;
-    
     function switchDuelTab(tab) {
       currentDuelTab = tab;
       const tabs = ['open', 'matched', 'completed', 'expired'];
@@ -3094,6 +3084,36 @@ async function connectWallet() {
       if (badgeExpired) badgeExpired.textContent = expiredCount;
       if (badgeTotal) badgeTotal.textContent = `${totalCount} Total`;
       if (legacyCount) legacyCount.textContent = `${totalCount} Active Matches`;
+    }
+
+    
+    async function resolveDuelOutcome(duelId) {
+      try {
+        const store = getLocalDuels();
+        const duel = store[duelId];
+        if (!duel) {
+          showToast("Duel not found", "error");
+          return;
+        }
+        const deadline = getDuelEffectiveDeadline(duel);
+        if (Date.now() < deadline) {
+          const remaining = formatRemainingTime(deadline);
+          showToast(`⏳ Event still active! Result resolves after deadline (${remaining.hours}h ${remaining.minutes}m).`, "info");
+          return;
+        }
+        showToast("⚡ Resolving duel outcome...", "info");
+        const winner = duel.creatorOption === "YES" ? duel.creator : (duel.opponent || duel.creator);
+        duel.status = "completed";
+        duel.winner = winner;
+        duel.resolvedAt = Date.now();
+        saveLocalDuel(duel);
+        await broadcastDuel(duel);
+        renderAllDuels();
+        showToast("🏆 Duel resolved! Winner can claim prize now.", "success");
+      } catch (err) {
+        console.error("resolveDuelOutcome error:", err);
+        showToast("Error resolving duel", "error");
+      }
     }
 
     async function claimDuelPrize(duelId, payout) {
@@ -3262,8 +3282,10 @@ async function connectWallet() {
       let myCreatedDuels = [];
       try { myCreatedDuels = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]'); } catch(e){}
       const isLocalCreator = myCreatedDuels.includes(duelData.id);
-      const isCreator = isLocalCreator || (userAddress && duelData.creator && (userAddress.toLowerCase() === duelData.creator.toLowerCase()));
-      const isOpponent = userAddress && duelData.opponent && (userAddress.toLowerCase() === duelData.opponent.toLowerCase());
+      const currentAddr = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
+      const isCreator = isLocalCreator || (currentAddr && duelData.creator && (currentAddr.toLowerCase() === duelData.creator.toLowerCase()));
+      const currentAddrOpp = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
+      const isOpponent = currentAddrOpp && duelData.opponent && (currentAddrOpp.toLowerCase() === duelData.opponent.toLowerCase());
       const isParticipant = isCreator || isOpponent;
       const yourLabel = (currentDuelTab === 'open' || currentDuelTab === 'expired') ? 'Your Request' : 'Your Match';
       const isVip = safeTier >= 1000;
@@ -3655,6 +3677,20 @@ async function connectWallet() {
       renderAllDuels();
       setTimeout(initGlobalDuelsListener, 300);
     });
-  </script>
+  
+
+    // Expose functions globally for HTML onclick handlers
+    window.switchDuelTab = switchDuelTab;
+    window.renderAllDuels = renderAllDuels;
+    window.renderDuelCard = renderDuelCard;
+    window.createDuel = createDuel;
+    window.acceptDuel = acceptDuel;
+    window.cancelDuel = cancelDuel;
+    window.claimDuelPrize = claimDuelPrize;
+    window.reclaimExpiredDeposit = reclaimExpiredDeposit;
+    window.resolveDuelOutcome = resolveDuelOutcome;
+    window.renderDuelQuestions = renderDuelQuestions;
+    
+</script>
 </body>
 </html>
