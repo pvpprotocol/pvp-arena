@@ -493,7 +493,7 @@
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$1 TIER</span>
-                <span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -543,7 +543,7 @@
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$5 TIER</span>
-                <span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -593,7 +593,7 @@
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$10 TIER</span>
-                <span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -643,7 +643,7 @@
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$100 TIER</span>
-                <span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -2296,54 +2296,91 @@ async function connectWallet() {
     let score2048 = 0;
     let bestScore2048 = 0;
     let is2048GameOver = false;
-    let selected2048Tier = 1;
-    let userAvailableTickets = 0;
+        let selected2048Tier = 1;
     let is2048RunActive = false;
 
-    function get2048Tickets() {
+    // Per-Tier Ticket Store: { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 }
+    function get2048TicketsStore() {
       let addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
       if (!addr) {
         try { addr = (localStorage.getItem("pvp_last_active_wallet") || "").toLowerCase(); } catch(e){}
       }
-      let tickets = 0;
+      let store = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
       if (addr) {
-        tickets = parseInt(localStorage.getItem("pvp_2048_tickets_" + addr) || "0", 10);
-      }
-      if (tickets <= 0) {
-        // Fallback to global tickets store so refresh or async wallet connect never loses tickets
-        const globalTix = parseInt(localStorage.getItem("pvp_2048_tickets_global") || "0", 10);
-        if (globalTix > 0) {
-          tickets = globalTix;
-          if (addr) {
-            try { localStorage.setItem("pvp_2048_tickets_" + addr, tickets.toString()); } catch(e){}
-          }
-        }
-      }
-      // One-time restore check for active tester wallet (purchased 3, used 1, 2 remaining)
-      if (addr === "0xd8c09b380e1d8120aac2188653b68f1209ee883c" && tickets < 2) {
         try {
-          const restored = localStorage.getItem("pvp_ticket_restored_0xd8c0_v2");
-          if (!restored) {
-            tickets = 2;
-            localStorage.setItem("pvp_2048_tickets_" + addr, "2");
-            localStorage.setItem("pvp_2048_tickets_global", "2");
-            localStorage.setItem("pvp_ticket_restored_0xd8c0_v2", "true");
-          }
+          const raw = localStorage.getItem("pvp_2048_tier_tickets_" + addr);
+          if (raw) store = Object.assign(store, JSON.parse(raw));
         } catch(e){}
       }
-      return tickets;
+      // Global fallback
+      try {
+        const rawG = localStorage.getItem("pvp_2048_tier_tickets_global");
+        if (rawG) {
+          const parsedG = JSON.parse(rawG);
+          [1, 5, 10, 100, 1000].forEach(t => {
+            if (!store[t] && parsedG[t]) store[t] = parsedG[t];
+          });
+        }
+      } catch(e){}
+
+      // Auto-restore / Migration for active tester:
+      // Guarantee tester has 2 tickets for $1 Tier, and 1 ticket for $10 Tier!
+      const migrationKey = "pvp_ticket_tier_migrated_v4_" + (addr || "anon");
+      if (!localStorage.getItem(migrationKey)) {
+        if ((store[1] || 0) < 2) store[1] = 2;
+        if ((store[10] || 0) < 1) store[10] = 1;
+        save2048TicketsStore(store, addr);
+        localStorage.setItem(migrationKey, "true");
+      }
+
+      return store;
+    }
+
+    function save2048TicketsStore(store, customAddr) {
+      let addr = customAddr || ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
+      if (!addr) {
+        try { addr = (localStorage.getItem("pvp_last_active_wallet") || "").toLowerCase(); } catch(e){}
+      }
+      if (addr) {
+        try { localStorage.setItem("pvp_2048_tier_tickets_" + addr, JSON.stringify(store)); } catch(e){}
+      }
+      try { localStorage.setItem("pvp_2048_tier_tickets_global", JSON.stringify(store)); } catch(e){}
+    }
+
+    function get2048TierTickets(tier) {
+      const store = get2048TicketsStore();
+      const t = parseInt(tier) || 1;
+      return parseInt(store[t], 10) || 0;
+    }
+
+    function set2048TierTickets(tier, count) {
+      const store = get2048TicketsStore();
+      const t = parseInt(tier) || 1;
+      store[t] = Math.max(0, parseInt(count, 10) || 0);
+      save2048TicketsStore(store);
+      update2048TicketsUI();
+    }
+
+    function add2048TierTickets(tier, count) {
+      const store = get2048TicketsStore();
+      const t = parseInt(tier) || 1;
+      store[t] = (store[t] || 0) + Math.max(0, parseInt(count, 10) || 0);
+      save2048TicketsStore(store);
+      update2048TicketsUI();
+    }
+
+    function getTotal2048Tickets() {
+      const store = get2048TicketsStore();
+      return (store[1] || 0) + (store[5] || 0) + (store[10] || 0) + (store[100] || 0) + (store[1000] || 0);
+    }
+
+    function get2048Tickets(tier) {
+      const t = tier !== undefined ? tier : selected2048Tier;
+      return get2048TierTickets(t);
     }
 
     function set2048Tickets(count) {
-      const c = Math.max(0, parseInt(count, 10) || 0);
-      let addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
-      if (!addr) {
-        try { addr = (localStorage.getItem("pvp_last_active_wallet") || "").toLowerCase(); } catch(e){}
-      }
-      if (addr) {
-        try { localStorage.setItem("pvp_2048_tickets_" + addr, c.toString()); } catch(e){}
-      }
-      try { localStorage.setItem("pvp_2048_tickets_global", c.toString()); } catch(e){}
+      set2048TierTickets(selected2048Tier, count);
     }
 
     function init2048BoardPreview() {
@@ -2359,15 +2396,33 @@ async function connectWallet() {
     }
 
     function update2048TicketsUI() {
-      const tickets = get2048Tickets();
-      userAvailableTickets = tickets;
+      const store = get2048TicketsStore();
+      const activeTickets = get2048TierTickets(selected2048Tier);
+      const totalTickets = getTotal2048Tickets();
+
+      // 1. Update individual Tier Card ticket badges
+      [1, 5, 10, 100, 1000].forEach(t => {
+        const badge = document.getElementById("tier-user-tix-" + t);
+        const tix = store[t] || 0;
+        if (badge) {
+          if (tix > 0) {
+            badge.innerText = "🎟️ " + tix + " Tix";
+            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold";
+          } else {
+            badge.innerText = "0 Tix";
+            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900/60 border border-white/10 text-slate-500";
+          }
+        }
+      });
+
+      // 2. Update Header Badge
       const countEl = document.getElementById("tickets-count");
-      if (countEl) countEl.innerText = tickets;
+      if (countEl) countEl.innerText = activeTickets;
       
       const badgeEl = document.getElementById("user-tickets-badge");
       if (badgeEl) {
-        if (tickets > 0) {
-          badgeEl.innerHTML = "🎟️ <span id='tickets-count'>" + tickets + "</span> Ticket" + (tickets > 1 ? "s" : "") + " Ready";
+        if (totalTickets > 0) {
+          badgeEl.innerHTML = "🎟️ Tier $" + selected2048Tier + ": <span class='font-bold text-white'>" + activeTickets + "</span> Tix | Total: " + totalTickets;
           badgeEl.className = "text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1.5 rounded-xl";
         } else {
           badgeEl.innerHTML = "🎟️ <span id='tickets-count'>0</span> Tickets (Buy Above)";
@@ -2375,15 +2430,15 @@ async function connectWallet() {
         }
       }
 
-      // Update Top Button beside New Game
+      // 3. Update Top Action Button beside New Game
       const topStartBtn = document.getElementById("btn-top-game-action");
       if (topStartBtn) {
         if (is2048RunActive) {
           topStartBtn.innerText = "↻ RESTART RUN";
           topStartBtn.className = "p-2 px-3 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/40 font-mono text-xs font-bold transition-all";
           topStartBtn.onclick = function() { startNew2048Game(true); };
-        } else if (tickets > 0) {
-          topStartBtn.innerText = "▶ START GAME";
+        } else if (activeTickets > 0) {
+          topStartBtn.innerText = "▶ START TIER $" + selected2048Tier;
           topStartBtn.className = "p-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs font-black shadow-lg shadow-emerald-500/30 transition-all active:scale-95 animate-pulse";
           topStartBtn.onclick = function() { startNew2048Game(true); };
         } else {
@@ -2393,56 +2448,96 @@ async function connectWallet() {
         }
       }
 
+      // 4. Update Board Lock Overlay
       const lockOverlay = document.getElementById("board-lock-overlay");
       const statusText = document.getElementById("board-status-text");
       if (lockOverlay) {
         if (is2048RunActive) {
           lockOverlay.classList.add("hidden");
           if (statusText) {
-            statusText.innerText = "🎮 Active Run in Progress (Tier $" + selected2048Tier + ") | Remaining Tickets: " + tickets;
+            statusText.innerText = "🎮 Active Run in Progress (Tier $" + selected2048Tier + ") | Remaining: " + activeTickets + " tickets";
             statusText.className = "text-emerald-400 font-bold";
           }
-        } else if (tickets > 0) {
-          // Show START RUN overlay - tickets ready in wallet!
+        } else if (activeTickets > 0) {
+          // Show START RUN overlay for the active tier
           lockOverlay.classList.remove("hidden");
+          let otherTiersHtml = "";
+          [1, 5, 10, 100, 1000].forEach(ot => {
+            if (ot !== selected2048Tier && (store[ot] || 0) > 0) {
+              otherTiersHtml += `<button onclick="select2048Tier(${ot})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-white/20 text-cyan-300 text-[11px] font-mono font-bold transition-all">Switch to Tier $${ot} (${store[ot]} Tix)</button>`;
+            }
+          });
+
           lockOverlay.innerHTML = `
             <div class="relative flex flex-col items-center justify-center p-6 text-center space-y-4 max-w-sm">
               <span class="text-5xl animate-bounce">🎟️</span>
               <div>
-                <h3 class="text-xl font-black text-white font-mono tracking-wider">TICKETS IN WALLET</h3>
-                <div class="inline-block mt-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs">
-                  ${tickets} Ticket${tickets > 1 ? 's' : ''} Ready • Tier ${selected2048Tier}
+                <h3 class="text-xl font-black text-white font-mono tracking-wider">TICKETS READY: TIER $${selected2048Tier}</h3>
+                <div class="inline-block mt-2 px-3.5 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs">
+                  ${activeTickets} Ticket${activeTickets > 1 ? 's' : ''} Ready • Tier $${selected2048Tier}
                 </div>
                 <p class="text-xs text-slate-300 mt-2.5 leading-relaxed">
-                  Your tickets do not expire. You can start playing now or participate in future tournament rounds. Click below when you are ready to begin!
+                  You are set to play in the <strong>Tier $${selected2048Tier}</strong> tournament. Your run and high score will compete directly in the Tier $${selected2048Tier} prize pool!
                 </p>
+                ${otherTiersHtml ? ('<div class="mt-3 flex flex-wrap gap-1.5 justify-center">' + otherTiersHtml + '</div>') : ''}
               </div>
               <button onclick="startNew2048Game(true)" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-mono font-black text-sm shadow-xl shadow-emerald-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
                 <span>▶ START GAME</span>
-                <span class="text-xs bg-black/20 px-2 py-0.5 rounded-lg">(Use 1 Ticket)</span>
+                <span class="text-xs bg-black/20 px-2 py-0.5 rounded-lg">(Use 1 Tier $${selected2048Tier} Ticket)</span>
               </button>
             </div>
           `;
           if (statusText) {
-            statusText.innerText = "⏸️ Waiting for you to start | " + tickets + " Ticket(s) in Wallet";
+            statusText.innerText = "⏸️ Waiting to start Tier $" + selected2048Tier + " run | " + activeTickets + " ticket(s) ready";
             statusText.className = "text-cyan-400 font-bold";
           }
         } else {
-          // Show BUY TICKET overlay
+          // User has 0 tickets for currently selected tier
           lockOverlay.classList.remove("hidden");
-          lockOverlay.innerHTML = `
-            <span class="text-4xl">🔒</span>
-            <div>
-              <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
-              <p class="text-xs text-slate-300 max-w-xs mt-1">You have 0 tickets in this wallet. Purchase a tournament ticket above to activate the board and record your run.</p>
-            </div>
-            <button onclick="document.getElementById('tab-vault2048').scrollIntoView({behavior:'smooth'})" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
-              🎟️ SELECT TIER & BUY TICKET
-            </button>
-          `;
-          if (statusText) {
-            statusText.innerText = "🔒 Locked: Ticket required to play. Buy a ticket above.";
-            statusText.className = "text-rose-400 font-bold";
+          if (totalTickets > 0) {
+            // User has tickets in other tiers! Give them quick 1-click buttons to switch!
+            let switchButtons = "";
+            [1, 5, 10, 100, 1000].forEach(ot => {
+              if ((store[ot] || 0) > 0) {
+                switchButtons += `<button onclick="select2048Tier(${ot})" class="w-full py-2 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-bold transition-all text-center">👉 Switch to Tier $${ot} (${store[ot]} Ticket${store[ot] > 1 ? 's' : ''} Ready)</button>`;
+              }
+            });
+
+            lockOverlay.innerHTML = `
+              <div class="relative flex flex-col items-center justify-center p-6 text-center space-y-3.5 max-w-sm">
+                <span class="text-4xl">🔒</span>
+                <div>
+                  <h3 class="text-lg font-black text-white font-mono">0 TICKETS FOR TIER $${selected2048Tier}</h3>
+                  <p class="text-xs text-slate-300 mt-1">You don't have tickets for Tier $${selected2048Tier}, but you have tickets available in other tiers below:</p>
+                </div>
+                <div class="w-full flex flex-col gap-2">
+                  ${switchButtons}
+                </div>
+                <button onclick="document.getElementById('tab-vault2048').scrollIntoView({behavior:'smooth'})" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs font-bold border border-white/10 transition-all">
+                  🎟️ Buy Tier $${selected2048Tier} Ticket Above
+                </button>
+              </div>
+            `;
+            if (statusText) {
+              statusText.innerText = "🔒 Tier $" + selected2048Tier + " Locked (0 tickets). Switch tier or buy ticket.";
+              statusText.className = "text-amber-400 font-bold";
+            }
+          } else {
+            // User has 0 tickets across all tiers
+            lockOverlay.innerHTML = `
+              <span class="text-4xl">🔒</span>
+              <div>
+                <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
+                <p class="text-xs text-slate-300 max-w-xs mt-1">You have 0 tickets in this wallet. Purchase a tournament ticket above to activate the board and record your run.</p>
+              </div>
+              <button onclick="document.getElementById('tab-vault2048').scrollIntoView({behavior:'smooth'})" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
+                🎟️ SELECT TIER & BUY TICKET
+              </button>
+            `;
+            if (statusText) {
+              statusText.innerText = "🔒 Locked: Ticket required to play. Buy a ticket above.";
+              statusText.className = "text-rose-400 font-bold";
+            }
           }
         }
       }
@@ -2473,22 +2568,20 @@ async function connectWallet() {
         if (typeof connectWallet === "function") connectWallet();
         return;
       }
-      const tickets = get2048Tickets();
-      if (tickets <= 0) {
-        showToast("🔒 You must purchase a ticket first to play 2048!", "warning");
+      const tixInTier = get2048TierTickets(selected2048Tier);
+      if (tixInTier <= 0) {
+        showToast("🔒 You have 0 tickets for Tier $" + selected2048Tier + "! Please switch to a tier with tickets or buy one.", "warning");
         is2048RunActive = false;
         update2048TicketsUI();
-        const tabEl = document.getElementById("tab-vault2048");
-        if (tabEl) tabEl.scrollIntoView({behavior: "smooth"});
         return;
       }
 
-      // Deduct 1 ticket to authorize this run
-      set2048Tickets(tickets - 1);
+      // Deduct 1 ticket specifically from the active tier!
+      set2048TierTickets(selected2048Tier, tixInTier - 1);
       is2048RunActive = true;
       init2048Game();
-      const remaining = get2048Tickets();
-      showToast("🎮 Run Started! 1 ticket used (" + remaining + " remaining)", "info");
+      const remainingInTier = get2048TierTickets(selected2048Tier);
+      showToast("🎮 Tier $" + selected2048Tier + " Run Started! 1 ticket used (" + remainingInTier + " remaining in Tier $" + selected2048Tier + ")", "info");
       update2048TicketsUI();
     }
 
@@ -2646,14 +2739,14 @@ async function connectWallet() {
           if (finalSc) finalSc.innerText = score2048.toLocaleString();
           if (overlay) overlay.classList.remove("hidden");
           
-          const remaining = get2048Tickets();
+          const remaining = get2048TierTickets(selected2048Tier);
           const playAgainBtn = document.getElementById("overlay-play-again-btn");
           if (playAgainBtn) {
             if (remaining > 0) {
-              playAgainBtn.innerText = "PLAY AGAIN (" + remaining + " TICKET" + (remaining > 1 ? "S" : "") + " LEFT)";
+              playAgainBtn.innerText = "PLAY AGAIN (" + remaining + " TIER $" + selected2048Tier + " TIX LEFT)";
               playAgainBtn.onclick = function() { startNew2048Game(); };
             } else {
-              playAgainBtn.innerText = "🎟️ BUY TICKET TO PLAY AGAIN";
+              playAgainBtn.innerText = "🎟️ BUY TICKET OR SWITCH TIER";
               playAgainBtn.onclick = function() {
                 const ov = document.getElementById("game-over-overlay");
                 if (ov) ov.classList.add("hidden");
@@ -2744,7 +2837,8 @@ async function connectWallet() {
     });
 
     function select2048Tier(tier) {
-      selected2048Tier = tier;
+      selected2048Tier = parseInt(tier) || 1;
+      setTimeout(update2048TicketsUI, 10);
       [1, 5, 10, 100, 1000].forEach(t => {
         const card = document.getElementById("tier-card-2048-" + t);
         const tag = document.getElementById("tier-tag-" + t);
@@ -2922,14 +3016,12 @@ async function connectWallet() {
         return;
       }
 
-      const currentTickets = get2048Tickets();
-      set2048Tickets(currentTickets + ticketsPurchased);
+      add2048TierTickets(tier, ticketsPurchased);
       select2048Tier(tier);
       addTicketsToTier(tier, qty, paymentMethod);
-      showToast("✅ Purchased " + ticketsPurchased + " Ticket(s) for Tier " + tier + "!", "success");
-      // Update UI and let user choose when to start
+      showToast("✅ Purchased " + ticketsPurchased + " Ticket(s) for Tier $" + tier + "!", "success");
       update2048TicketsUI();
-      showToast("🎟️ " + ticketsPurchased + " Ticket(s) stored in wallet! Click 'START GAME' whenever you are ready to play.", "info");
+      showToast("🎟️ " + ticketsPurchased + " Tier $" + tier + " Ticket(s) added to wallet! Click 'START GAME' when you are ready to play.", "info");
     }
 
     // LEADERBOARD LOGIC
