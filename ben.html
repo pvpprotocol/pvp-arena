@@ -3167,16 +3167,10 @@ async function connectWallet() {
 
       function isUserDuelParticipant(d) {
         if (!d) return false;
-        let myCreated = [];
-        let myAccepted = [];
-        try { myCreated = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]'); } catch(e){}
-        try { myAccepted = JSON.parse(localStorage.getItem('my_accepted_duel_ids') || '[]'); } catch(e){}
-        if (myCreated.includes(d.id) || myAccepted.includes(d.id)) return true;
-        if (userAddress) {
-          const u = userAddress.toLowerCase();
-          if (d.creator && String(d.creator).toLowerCase() === u) return true;
-          if (d.opponent && String(d.opponent).toLowerCase() === u) return true;
-        }
+        const cur = (typeof userAddress !== "undefined" && userAddress) ? userAddress.toLowerCase() : (window.userAddress ? window.userAddress.toLowerCase() : null);
+        if (!cur) return false;
+        if (d.creator && String(d.creator).toLowerCase() === cur) return true;
+        if (d.opponent && String(d.opponent).toLowerCase() === cur) return true;
         return false;
       }
 
@@ -3235,19 +3229,6 @@ async function connectWallet() {
             if (cur && loseAddr && cur === loseAddr) return 2;
             if (cur && winAddr && (cur === (item.creator || "").toLowerCase() || cur === (item.opponent || "").toLowerCase())) return 2;
 
-            // Fallback to local storage ids
-            let myCr = [];
-            let myAc = [];
-            try { myCr = JSON.parse(localStorage.getItem("my_created_duel_ids") || "[]"); } catch(e){}
-            try { myAc = JSON.parse(localStorage.getItem("my_accepted_duel_ids") || "[]"); } catch(e){}
-            const wOpt = item.winningOption || "YES";
-            if (myCr.includes(item.id)) {
-              return item.creatorOption === wOpt ? 1 : 2;
-            }
-            if (myAc.includes(item.id)) {
-              const oppOpt = item.creatorOption === "YES" ? "NO" : "YES";
-              return oppOpt === wOpt ? 1 : 2;
-            }
             return 3;
           }
 
@@ -3585,9 +3566,7 @@ async function connectWallet() {
       const creatorColor = creatorOption === "YES" ? "text-emerald-400" : "text-rose-400";
       const opponentColor = requiredOpponentOption === "YES" ? "text-emerald-400" : "text-rose-400";
 
-      let myCreatedDuels = [];
-      try { myCreatedDuels = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]'); } catch(e){}
-      const isLocalCreator = myCreatedDuels.includes(duelData.id);
+      const isLocalCreator = false;
       const currentAddr = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
       const isCreator = isLocalCreator || (currentAddr && duelData.creator && (currentAddr.toLowerCase() === duelData.creator.toLowerCase()));
       const currentAddrOpp = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
@@ -3702,22 +3681,7 @@ async function connectWallet() {
           }
         }
 
-        // Fallback for isWinner / isLoser using localStorage if wallet address not yet matched
-        if (!isWinner && !isLoser) {
-          let myCr = [];
-          let myAc = [];
-          try { myCr = JSON.parse(localStorage.getItem("my_created_duel_ids") || "[]"); } catch(e){}
-          try { myAc = JSON.parse(localStorage.getItem("my_accepted_duel_ids") || "[]"); } catch(e){}
-          const wOpt = duelData.winningOption || "YES";
-          if (myCr.includes(duelData.id)) {
-            if (duelData.creatorOption === wOpt) isWinner = true;
-            else isLoser = true;
-          } else if (myAc.includes(duelData.id)) {
-            const oppOpt = duelData.creatorOption === "YES" ? "NO" : "YES";
-            if (oppOpt === wOpt) isWinner = true;
-            else isLoser = true;
-          }
-        }
+        // Only strict wallet match - non-participants NEVER get winner or loser status
 
         // Color distinction for Completed tab:
         // WIN = Green border
