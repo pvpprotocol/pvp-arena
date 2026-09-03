@@ -18,7 +18,7 @@ contract PvP2048Tournament {
     address public protocolVerifier;
     address public treasury;
 
-    uint256 public constant CYCLE_DURATION = 36000; // 10 Hours in seconds
+    uint256 public cycleDuration = 36000; // Default 10 Hours (configurable)
     uint256 public tournamentStartTime;
 
     struct LeaderRecord {
@@ -67,6 +67,7 @@ contract PvP2048Tournament {
         uint256 prizeAmount,
         uint256 treasuryFee
     );
+    event CycleDurationUpdated(uint256 oldDuration, uint256 newDuration);
     event VerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
     event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
 
@@ -94,11 +95,11 @@ contract PvP2048Tournament {
 
     function getCurrentCycleId() public view returns (uint256) {
         if (block.timestamp < tournamentStartTime) return 0;
-        return (block.timestamp - tournamentStartTime) / CYCLE_DURATION;
+        return (block.timestamp - tournamentStartTime) / cycleDuration;
     }
 
     function getCycleEndTimestamp(uint256 cycleId) public view returns (uint256) {
-        return tournamentStartTime + ((cycleId + 1) * CYCLE_DURATION);
+        return tournamentStartTime + ((cycleId + 1) * cycleDuration);
     }
 
     /**
