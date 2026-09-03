@@ -2717,6 +2717,12 @@ async function connectWallet() {
           if (proofEl) {
             proofEl.innerHTML = `<div style="background:rgba(0,255,163,0.08);border:1px solid #00ffa3;border-radius:10px;padding:8px 12px;margin:10px 0;font-size:0.75rem;text-align:left;">
               <div style="color:#00ffa3;font-weight:700;">🛡️ ANTI-CHEAT FAIR RUN VERIFIED</div>
+              <div style="margin-top:6px;">
+                <button onclick="submit2048ScoreOnchain()" id="btn-submit-score-onchain" style="background:linear-gradient(90deg, #00ffa3, #00d2ff);color:#020617;font-weight:800;font-size:0.75rem;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;">
+                  ⚡ RECORD SCORE ON-CHAIN (ROBINHOOD CHAIN)
+                </button>
+                <div id="score-onchain-status" style="font-size:0.68rem;color:#94a3b8;margin-top:4px;font-family:monospace;text-align:center;"></div>
+              </div>
               <div style="color:#94a3b8;margin-top:2px;font-family:monospace;">Proof Hash: ${proofHash.slice(0, 16)}...</div>
               <div style="color:#cbd5e1;font-size:0.7rem;margin-top:2px;">Moves Logged: ${active2048RunProof ? active2048RunProof.moves.length : 0} deterministic steps</div>
               </div>`;
