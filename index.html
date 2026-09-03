@@ -3634,7 +3634,7 @@ async function connectWallet() {
             actionSection = `
               <div class="flex items-center gap-2">
                 ${statusBadge}
-                <button onclick="claimDuelCashback('${safeId}', '${cashbackAmount}')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 text-white font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-purple-500/30 flex items-center gap-1.5 animate-pulse cursor-pointer">
+                <button onclick="claimDuelCashback('${duelData.id}', '${cashbackAmount}')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 text-white font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-purple-500/30 flex items-center gap-1.5 animate-pulse cursor-pointer">
                   💸 CLAIM 3% CASHBACK (+${cashbackAmount} USDG)
                 </button>
               </div>
