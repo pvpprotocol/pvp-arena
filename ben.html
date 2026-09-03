@@ -1588,8 +1588,11 @@ async function connectWallet() {
 
       if (paymentMethod === "PVP") {
         tokenContract = PVP_TOKEN_ADDRESS;
-        const pvpUnits = BigInt(Math.floor(parseFloat(totalCostUSD) * 1000)) * (10n ** 18n);
+        const effectivePrice = (typeof liveNativeTokenPriceUSD !== "undefined" && liveNativeTokenPriceUSD > 0) ? liveNativeTokenPriceUSD : 0.005;
+        const tokensNeeded = Math.ceil(parseFloat(totalCostUSD) / effectivePrice);
+        const pvpUnits = BigInt(tokensNeeded) * (10n ** 18n);
         cleanAmount = pvpUnits.toString(16).padStart(64, "0");
+        console.log(`[Payment] Transferring ${tokensNeeded} $PVP for ${totalCostUSD} USDG entry at live price ${effectivePrice}`);
       } else {
         tokenContract = USDG_TOKEN_ADDRESS;
         const usdgUnits = BigInt(Math.round(parseFloat(totalCostUSD) * 1000000));
@@ -2380,6 +2383,80 @@ async function connectWallet() {
       });
     }
 
+        // ==========================================
+    // DYNAMIC LIVE NATIVE TOKEN PRICING ENGINE
+    // Token: 0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3
+    // ==========================================
+    let liveNativeTokenPriceUSD = 0.005; // Default / base price ($0.005 per 1 PVP -> $5 = 1,000 PVP)
+    let isFetchingLivePrice = false;
+    let lastPriceFetchTimestamp = 0;
+
+    async function fetchLiveNativeTokenPrice() {
+      if (isFetchingLivePrice) return;
+      isFetchingLivePrice = true;
+      try {
+        // Try DexScreener API
+        const dexRes = await fetch("https://api.dexscreener.com/latest/dex/tokens/0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3");
+        if (dexRes.ok) {
+          const dexJson = await dexRes.json();
+          if (dexJson.pairs && dexJson.pairs.length > 0 && dexJson.pairs[0].priceUsd) {
+            const parsed = parseFloat(dexJson.pairs[0].priceUsd);
+            if (!isNaN(parsed) && parsed > 0) {
+              liveNativeTokenPriceUSD = parsed;
+              lastPriceFetchTimestamp = Date.now();
+              console.log("[Pricing] Updated $PVP live price from DexScreener:", liveNativeTokenPriceUSD);
+              updateAll2048TierPrices();
+              updatePriceDisplayBadges();
+              isFetchingLivePrice = false;
+              return;
+            }
+          }
+        }
+
+        // Try GeckoTerminal Robinhood token API
+        const geckoRes = await fetch("https://api.geckoterminal.com/api/v2/networks/robinhood/tokens/0x5c5ceae38eed5178b567fc8d779e38c19f473ba3");
+        if (geckoRes.ok) {
+          const geckoJson = await geckoRes.json();
+          if (geckoJson.data && geckoJson.data.attributes && geckoJson.data.attributes.price_usd) {
+            const parsed = parseFloat(geckoJson.data.attributes.price_usd);
+            if (!isNaN(parsed) && parsed > 0) {
+              liveNativeTokenPriceUSD = parsed;
+              lastPriceFetchTimestamp = Date.now();
+              console.log("[Pricing] Updated $PVP live price from GeckoTerminal:", liveNativeTokenPriceUSD);
+              updateAll2048TierPrices();
+              updatePriceDisplayBadges();
+              isFetchingLivePrice = false;
+              return;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("[Pricing] Could not fetch external price, using current live rate:", liveNativeTokenPriceUSD);
+      } finally {
+        isFetchingLivePrice = false;
+        updatePriceDisplayBadges();
+      }
+    }
+
+    function updatePriceDisplayBadges() {
+      const priceBadge = document.getElementById("live-native-price-badge");
+      if (priceBadge) {
+        priceBadge.innerHTML = "1 $PVP ≈ $" + (liveNativeTokenPriceUSD < 0.01 ? liveNativeTokenPriceUSD.toFixed(4) : liveNativeTokenPriceUSD.toFixed(3)) + " USDG";
+      }
+      const syncDot = document.getElementById("price-sync-indicator");
+      if (syncDot) {
+        syncDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+      }
+    }
+
+    function updateAll2048TierPrices() {
+      [1, 5, 10, 100, 1000].forEach(t => update2048Price(t));
+    }
+
+    // Auto-fetch price periodically every 30 seconds
+    setInterval(fetchLiveNativeTokenPrice, 30000);
+    setTimeout(fetchLiveNativeTokenPrice, 1000);
+
     function update2048Price(tier) {
       const qtyInput = document.getElementById("qty-2048-" + tier);
       if (!qtyInput) return;
@@ -2391,11 +2468,17 @@ async function connectWallet() {
       const totalCost = (qty * tier).toFixed(2);
       const pvpAttempts = qty * 2;
 
+      // Calculate exact native tokens needed at live price
+      const effectivePrice = (liveNativeTokenPriceUSD && liveNativeTokenPriceUSD > 0) ? liveNativeTokenPriceUSD : 0.005;
+      const tokensNeeded = Math.ceil((qty * tier) / effectivePrice);
+      const formattedTokens = tokensNeeded.toLocaleString();
+
       const lblQtyUsdc = document.getElementById("lbl-qty-usdc-" + tier);
       const lblCostUsdc = document.getElementById("cost-usdc-" + tier);
       const lblCostPvp = document.getElementById("cost-pvp-" + tier);
       const lblAttPvp = document.getElementById("attempts-pvp-" + tier);
       const buyBtnUsdc = document.getElementById("buy-btn-usdc-" + tier);
+      const buyBtnPvp = document.getElementById("buy-btn-pvp-" + tier);
 
       if (lblQtyUsdc) lblQtyUsdc.innerText = qty;
       if (lblCostUsdc) lblCostUsdc.innerText = totalCost;
@@ -2406,9 +2489,14 @@ async function connectWallet() {
         const ticketWord = qty === 1 ? "TICKET" : "TICKETS";
         buyBtnUsdc.innerHTML = "BUY <span id='lbl-qty-usdc-" + tier + "'>" + qty + "</span> " + ticketWord + " ($<span id='cost-usdc-" + tier + "'>" + totalCost + "</span> USDG)";
       }
-      const buyBtnPvp = document.getElementById("buy-btn-pvp-" + tier);
       if (buyBtnPvp) {
-        buyBtnPvp.innerHTML = "BUY NATIVE ($<span id='cost-pvp-" + tier + "'>" + totalCost + "</span> • <span id='attempts-pvp-" + tier + "'>" + pvpAttempts + "</span> TIX 🔥 2X)";
+        buyBtnPvp.innerHTML = "BUY NATIVE ($<span id='cost-pvp-" + tier + "'>" + totalCost + "</span> • " + formattedTokens + " $PVP • <span id='attempts-pvp-" + tier + "'>" + pvpAttempts + "</span> TIX 🔥 2X)";
+      }
+
+      // Update helper label if present
+      const tokenRateLbl = document.getElementById("token-rate-lbl-" + tier);
+      if (tokenRateLbl) {
+        tokenRateLbl.innerText = formattedTokens + " $PVP needed at live rate";
       }
     }
 
