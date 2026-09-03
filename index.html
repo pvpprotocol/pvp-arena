@@ -114,7 +114,11 @@
         const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab='" + tabId + "']");
         activeBtns.forEach(function(b) { b.classList.add("active"); });
 
-        if (tabId === "vault2048") { if (typeof update2048TicketsUI === "function") update2048TicketsUI(); if (typeof window.render2048 === "function") window.render2048(); }
+        if (tabId === "vault2048") { 
+    if (typeof update2048TicketsUI === "function") update2048TicketsUI(); 
+    if (typeof syncInitial2048History === "function") syncInitial2048History();
+    if (typeof window.render2048 === "function") window.render2048(); 
+  }
         if (tabId === "jackpot") {
           if (typeof window.renderJackpotSubmissions === "function") window.renderJackpotSubmissions();
           if (typeof window.updateJackpotMetrics === "function") window.updateJackpotMetrics();
@@ -4983,17 +4987,24 @@ async function connectWallet() {
         const t = payload.tier;
         const w = payload.wallet;
         const s = parseInt(payload.score) || 0;
+        const fullW = payload.fullWallet || "";
         if (!data.scores[t]) data.scores[t] = [];
-        const exIdx = data.scores[t].findIndex(item => item.wallet.toLowerCase() === w.toLowerCase());
+        const exIdx = data.scores[t].findIndex(item => 
+          (fullW && item.fullWallet && item.fullWallet.toLowerCase() === fullW.toLowerCase()) ||
+          item.wallet.toLowerCase() === w.toLowerCase()
+        );
         if (exIdx >= 0) {
           if (s > data.scores[t][exIdx].score) {
             data.scores[t][exIdx].score = s;
             data.scores[t][exIdx].timestamp = Date.now();
           }
+          if (fullW && !data.scores[t][exIdx].fullWallet) {
+            data.scores[t][exIdx].fullWallet = fullW;
+          }
         } else {
           data.scores[t].push({
             wallet: w,
-            fullWallet: payload.fullWallet || "",
+            fullWallet: fullW,
             score: s,
             timestamp: Date.now()
           });
