@@ -114,7 +114,7 @@
         const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab='" + tabId + "']");
         activeBtns.forEach(function(b) { b.classList.add("active"); });
 
-        if (tabId === "vault2048" && typeof window.render2048 === "function") window.render2048();
+        if (tabId === "vault2048") { if (typeof update2048TicketsUI === "function") update2048TicketsUI(); if (typeof window.render2048 === "function") window.render2048(); }
         if (tabId === "jackpot") {
           if (typeof window.renderJackpotSubmissions === "function") window.renderJackpotSubmissions();
           if (typeof window.updateJackpotMetrics === "function") window.updateJackpotMetrics();
@@ -392,7 +392,7 @@
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1.5 rounded-xl" id="user-tickets-badge">🎟️ <span id="tickets-count">1</span> Ticket Ready</span>
+          <span class="text-xs font-mono text-slate-400 bg-slate-900 border border-white/10 px-3 py-1.5 rounded-xl" id="user-tickets-badge">🎟️ <span id="tickets-count">0</span> Tickets (Buy Above)</span>
           <span class="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-400 text-black">24H CYCLE: 00:00 UTC RESET</span>
         </div>
       </div>
@@ -614,6 +614,18 @@
             <!-- Tiles rendered dynamically by JS -->
           </div>
 
+          <!-- BOARD LOCK OVERLAY (NO TICKETS) -->
+          <div id="board-lock-overlay" class="absolute inset-0 bg-slate-950/90 rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-4 backdrop-blur-md z-30 transition-all">
+            <span class="text-4xl">🔒</span>
+            <div>
+              <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
+              <p class="text-xs text-slate-300 max-w-xs mt-1">Free play is disabled. You must purchase a tournament ticket above to activate the board and record your run.</p>
+            </div>
+            <button onclick="document.getElementById('tab-vault2048').scrollIntoView({behavior:'smooth'})" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
+              🎟️ SELECT TIER & BUY TICKET
+            </button>
+          </div>
+
           <!-- GAME OVER OVERLAY -->
           <div id="game-over-overlay" class="hidden absolute inset-0 bg-slate-950/90 rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-4 backdrop-blur-sm z-20">
             <span class="text-4xl">🎮</span>
@@ -626,7 +638,7 @@
               <span id="overlay-final-score" class="text-2xl font-black text-cyan-400 block">0</span>
             </div>
             <div class="flex gap-3">
-              <button onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400">PLAY AGAIN</button>
+              <button id="overlay-play-again-btn" onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400">PLAY AGAIN</button>
               <button onclick="switchTab('leaderboard'); setLeaderboardCategory('2048');" class="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-mono font-bold text-xs hover:bg-slate-700">VIEW LEADERBOARD</button>
             </div>
           </div>
@@ -2021,7 +2033,62 @@ async function connectWallet() {
     let bestScore2048 = 18420;
     let is2048GameOver = false;
     let selected2048Tier = 1;
-    let userAvailableTickets = 1;
+    let userAvailableTickets = 0;
+    let is2048RunActive = false;
+
+    function get2048Tickets() {
+      const addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
+      if (!addr) return 0;
+      return parseInt(localStorage.getItem("pvp_2048_tickets_" + addr) || "0", 10);
+    }
+
+    function set2048Tickets(count) {
+      const addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
+      if (!addr) return;
+      localStorage.setItem("pvp_2048_tickets_" + addr, Math.max(0, count).toString());
+    }
+
+    function update2048TicketsUI() {
+      const tickets = get2048Tickets();
+      userAvailableTickets = tickets;
+      const countEl = document.getElementById("tickets-count");
+      if (countEl) countEl.innerText = tickets;
+      
+      const badgeEl = document.getElementById("user-tickets-badge");
+      if (badgeEl) {
+        if (tickets > 0) {
+          badgeEl.innerHTML = "🎟️ <span id='tickets-count'>" + tickets + "</span> Ticket" + (tickets > 1 ? "s" : "") + " Ready";
+          badgeEl.className = "text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1.5 rounded-xl";
+        } else {
+          badgeEl.innerHTML = "🎟️ <span id='tickets-count'>0</span> Tickets (Buy Above)";
+          badgeEl.className = "text-xs font-mono text-slate-400 bg-slate-900 border border-white/10 px-3 py-1.5 rounded-xl";
+        }
+      }
+
+      const lockOverlay = document.getElementById("board-lock-overlay");
+      const statusText = document.getElementById("board-status-text");
+      if (lockOverlay) {
+        if (is2048RunActive) {
+          lockOverlay.classList.add("hidden");
+          if (statusText) {
+            statusText.innerText = "🎮 Active Run in Progress | Remaining Tickets: " + tickets;
+            statusText.className = "text-cyan-400 font-bold";
+          }
+        } else if (tickets > 0) {
+          lockOverlay.classList.add("hidden");
+          if (statusText) {
+            statusText.innerText = "🎟️ " + tickets + " Ticket(s) Ready - Press Any Key or New Game to Start Run";
+            statusText.className = "text-cyan-400 font-bold";
+          }
+        } else {
+          lockOverlay.classList.remove("hidden");
+          if (statusText) {
+            statusText.innerText = "🔒 Locked: Ticket required to play. Buy a ticket above.";
+            statusText.className = "text-rose-400 font-bold";
+          }
+        }
+      }
+    }
 
     function init2048Game() {
       board2048 = [
@@ -2036,18 +2103,35 @@ async function connectWallet() {
       addRandomTile2048();
       render2048();
 
-      const overlay = document.getElementById('game-over-overlay');
-      if (overlay) overlay.classList.add('hidden');
-      const statusText = document.getElementById('board-status-text');
-      if (statusText) {
-        statusText.innerText = '🎮 Active Run: Move with Arrows / WASD';
-        statusText.className = 'text-cyan-400 font-bold';
-      }
+      const overlay = document.getElementById("game-over-overlay");
+      if (overlay) overlay.classList.add("hidden");
+      update2048TicketsUI();
     }
 
-    function startNew2048Game() {
+    function startNew2048Game(forceStart) {
+      const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "");
+      if (!activeWallet) {
+        showToast("🔒 Please connect your wallet first", "warning");
+        if (typeof connectWallet === "function") connectWallet();
+        return;
+      }
+      const tickets = get2048Tickets();
+      if (tickets <= 0) {
+        showToast("🔒 You must purchase a ticket first to play 2048!", "warning");
+        is2048RunActive = false;
+        update2048TicketsUI();
+        const tabEl = document.getElementById("tab-vault2048");
+        if (tabEl) tabEl.scrollIntoView({behavior: "smooth"});
+        return;
+      }
+
+      // Deduct 1 ticket to authorize this run
+      set2048Tickets(tickets - 1);
+      is2048RunActive = true;
       init2048Game();
-      showToast("🎮 New 2048 Tournament Run Started!", "info");
+      const remaining = get2048Tickets();
+      showToast("🎮 Run Started! 1 ticket used (" + remaining + " remaining)", "info");
+      update2048TicketsUI();
     }
 
     function addRandomTile2048() {
@@ -2066,45 +2150,46 @@ async function connectWallet() {
     }
 
     function render2048() {
-      const container = document.getElementById('board-container');
+      const container = document.getElementById("board-container");
       if (!container) return;
-      container.innerHTML = '';
+      container.innerHTML = "";
 
       for (let r = 0; r < 4; r++) {
         for (let c = 0; c < 4; c++) {
           const val = board2048[r][c];
-          const div = document.createElement('div');
-          div.className = `tile tile-${val > 2048 ? 'super' : val}`;
-          div.innerText = val > 0 ? val : '';
+          const div = document.createElement("div");
+          div.className = "tile tile-" + (val > 2048 ? "super" : val);
+          div.innerText = val > 0 ? val : "";
           container.appendChild(div);
         }
       }
 
-      const sc = document.getElementById('game-score');
-      const bs = document.getElementById('game-best');
+      const sc = document.getElementById("game-score");
+      const bs = document.getElementById("game-best");
       if (sc) sc.innerText = score2048.toLocaleString();
       if (bs) bs.innerText = Math.max(score2048, bestScore2048).toLocaleString();
     }
 
     function slide2048Array(row) {
-      let arr = row.filter(val => val !== 0);
+      let filtered = row.filter(val => val !== 0);
       let gainedScore = 0;
-      for (let i = 0; i < arr.length - 1; i++) {
-        if (arr[i] === arr[i + 1]) {
-          arr[i] *= 2;
-          gainedScore += arr[i];
-          arr.splice(i + 1, 1);
+      for (let i = 0; i < filtered.length - 1; i++) {
+        if (filtered[i] === filtered[i + 1]) {
+          filtered[i] *= 2;
+          gainedScore += filtered[i];
+          filtered[i + 1] = 0;
         }
       }
-      while (arr.length < 4) {
-        arr.push(0);
+      filtered = filtered.filter(val => val !== 0);
+      while (filtered.length < 4) {
+        filtered.push(0);
       }
-      return { newRow: arr, gainedScore };
+      return { newRow: filtered, gainedScore };
     }
 
     function rotate2048Board(matrix) {
       const N = matrix.length;
-      let res = [];
+      const res = [];
       for (let i = 0; i < N; i++) {
         res.push([]);
         for (let j = 0; j < N; j++) {
@@ -2115,12 +2200,21 @@ async function connectWallet() {
     }
 
     function handle2048Move(dir) {
+      if (!is2048RunActive) {
+        const tickets = get2048Tickets();
+        if (tickets <= 0) {
+          showToast("🔒 You must purchase a ticket first to play 2048!", "warning");
+          update2048TicketsUI();
+          return;
+        }
+        startNew2048Game();
+      }
       if (is2048GameOver) return;
       let rotated = 0;
-      if (dir === 'left') rotated = 0;
-      else if (dir === 'down') rotated = 1;
-      else if (dir === 'right') rotated = 2;
-      else if (dir === 'up') rotated = 3;
+      if (dir === "left") rotated = 0;
+      else if (dir === "down") rotated = 1;
+      else if (dir === "right") rotated = 2;
+      else if (dir === "up") rotated = 3;
 
       let tempBoard = JSON.parse(JSON.stringify(board2048));
       for (let i = 0; i < rotated; i++) {
@@ -2154,22 +2248,49 @@ async function connectWallet() {
 
         if (check2048GameOver()) {
           is2048GameOver = true;
-          const overlay = document.getElementById('game-over-overlay');
-          const finalSc = document.getElementById('overlay-final-score');
+          is2048RunActive = false;
+          const overlay = document.getElementById("game-over-overlay");
+          const finalSc = document.getElementById("overlay-final-score");
           if (finalSc) finalSc.innerText = score2048.toLocaleString();
-          if (overlay) overlay.classList.remove('hidden');
-          const statusText = document.getElementById('board-status-text');
-          if (statusText) {
-            statusText.innerText = '🏁 Round Finished - High Score Saved!';
-            statusText.className = 'text-amber-400 font-bold';
+          if (overlay) overlay.classList.remove("hidden");
+          
+          const remaining = get2048Tickets();
+          const playAgainBtn = document.getElementById("overlay-play-again-btn");
+          if (playAgainBtn) {
+            if (remaining > 0) {
+              playAgainBtn.innerText = "PLAY AGAIN (" + remaining + " TICKET" + (remaining > 1 ? "S" : "") + " LEFT)";
+              playAgainBtn.onclick = function() { startNew2048Game(); };
+            } else {
+              playAgainBtn.innerText = "🎟️ BUY TICKET TO PLAY AGAIN";
+              playAgainBtn.onclick = function() {
+                const ov = document.getElementById("game-over-overlay");
+                if (ov) ov.classList.add("hidden");
+                update2048TicketsUI();
+                const tabEl = document.getElementById("tab-vault2048");
+                if (tabEl) tabEl.scrollIntoView({behavior: "smooth"});
+              };
+            }
           }
-          showToast(`🏁 Game Over! Your Single High Score: ${score2048.toLocaleString()} pts`, "warning");
-          if (userAddress) {
-            const shortW = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+
+          const statusText = document.getElementById("board-status-text");
+          if (statusText) {
+            if (remaining > 0) {
+              statusText.innerText = "🏁 Round Finished - High Score Saved! (" + remaining + " tickets left)";
+              statusText.className = "text-amber-400 font-bold";
+            } else {
+              statusText.innerText = "🔒 Round Finished - No tickets left. Buy a ticket to play again";
+              statusText.className = "text-rose-400 font-bold";
+            }
+          }
+          showToast("🏁 Game Over! Your Single High Score: " + score2048.toLocaleString() + " pts", "warning");
+          const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "");
+          if (activeWallet) {
+            const shortW = activeWallet.slice(0, 6) + "..." + activeWallet.slice(-4);
             const estPrize = "$" + (selected2048Tier * 0.8).toFixed(2) + " USDG";
             recordLiveLeaderboardEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
             recordLiveHistoryEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
           }
+          update2048TicketsUI();
         }
       }
     }
@@ -2185,57 +2306,57 @@ async function connectWallet() {
       return true;
     }
 
-    window.addEventListener('keydown', function(e) {
-      const activeTab = document.getElementById('tab-vault2048');
-      if (!activeTab || activeTab.classList.contains('hidden')) return;
+    window.addEventListener("keydown", function(e) {
+      const activeTab = document.getElementById("tab-vault2048");
+      if (!activeTab || activeTab.classList.contains("hidden")) return;
 
-      if (['ArrowUp', 'KeyW'].includes(e.code)) {
+      if (["ArrowUp", "KeyW"].includes(e.code)) {
         e.preventDefault();
-        handle2048Move('up');
-      } else if (['ArrowDown', 'KeyS'].includes(e.code)) {
+        handle2048Move("up");
+      } else if (["ArrowDown", "KeyS"].includes(e.code)) {
         e.preventDefault();
-        handle2048Move('down');
-      } else if (['ArrowLeft', 'KeyA'].includes(e.code)) {
+        handle2048Move("down");
+      } else if (["ArrowLeft", "KeyA"].includes(e.code)) {
         e.preventDefault();
-        handle2048Move('left');
-      } else if (['ArrowRight', 'KeyD'].includes(e.code)) {
+        handle2048Move("left");
+      } else if (["ArrowRight", "KeyD"].includes(e.code)) {
         e.preventDefault();
-        handle2048Move('right');
+        handle2048Move("right");
       }
     });
 
     function select2048Tier(tier) {
       selected2048Tier = tier;
       [1, 5, 10, 100, 1000].forEach(t => {
-        const card = document.getElementById('tier-card-2048-' + t);
-        const tag = document.getElementById('tier-tag-' + t);
-        const top3Card = document.getElementById('top3-tier-' + t);
+        const card = document.getElementById("tier-card-2048-" + t);
+        const tag = document.getElementById("tier-tag-" + t);
+        const top3Card = document.getElementById("top3-tier-" + t);
 
         if (t === tier) {
           if (card) card.className = t >= 1000
-            ? 'glass-panel p-4 rounded-2xl border-2 border-amber-500 bg-amber-950/40 cursor-pointer transition-all space-y-3'
-            : 'glass-panel p-4 rounded-2xl border-2 border-cyan-500 bg-cyan-950/40 cursor-pointer transition-all space-y-3';
+            ? "glass-panel p-4 rounded-2xl border-2 border-amber-500 bg-amber-950/40 cursor-pointer transition-all space-y-3"
+            : "glass-panel p-4 rounded-2xl border-2 border-cyan-500 bg-cyan-950/40 cursor-pointer transition-all space-y-3";
           if (tag) {
-            tag.innerText = 'ACTIVE TIER';
+            tag.innerText = "ACTIVE TIER";
             tag.className = t >= 1000
-              ? 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500 text-black'
-              : 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500 text-black';
+              ? "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500 text-black"
+              : "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500 text-black";
           }
           if (top3Card) {
             top3Card.className = t >= 1000
-              ? 'p-4 rounded-2xl bg-slate-900/90 border-2 border-amber-500 space-y-3 shadow-lg shadow-amber-500/10'
-              : 'p-4 rounded-2xl bg-slate-900/90 border-2 border-cyan-500 space-y-3 shadow-lg shadow-cyan-500/10';
+              ? "p-4 rounded-2xl bg-slate-900/90 border-2 border-amber-500 space-y-3 shadow-lg shadow-amber-500/10"
+              : "p-4 rounded-2xl bg-slate-900/90 border-2 border-cyan-500 space-y-3 shadow-lg shadow-cyan-500/10";
           }
         } else {
           if (card) card.className = t >= 1000
-            ? 'glass-panel p-4 rounded-2xl border border-amber-500/40 bg-amber-950/10 hover:border-amber-500/70 cursor-pointer transition-all space-y-3'
-            : 'glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/50 bg-slate-900/60 cursor-pointer transition-all space-y-3';
+            ? "glass-panel p-4 rounded-2xl border border-amber-500/40 bg-amber-950/10 hover:border-amber-500/70 cursor-pointer transition-all space-y-3"
+            : "glass-panel p-4 rounded-2xl border border-white/10 hover:border-cyan-500/50 bg-slate-900/60 cursor-pointer transition-all space-y-3";
           if (tag) {
-            tag.innerText = 'SELECT';
-            tag.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-slate-400';
+            tag.innerText = "SELECT";
+            tag.className = "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-slate-400";
           }
           if (top3Card) {
-            top3Card.className = 'p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3';
+            top3Card.className = "p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3";
           }
         }
       });
@@ -2265,7 +2386,7 @@ async function connectWallet() {
 
       if (buyBtnUsdc) {
         const ticketWord = qty === 1 ? "TICKET" : "TICKETS";
-        buyBtnUsdc.innerHTML = `BUY <span id="lbl-qty-usdc-${tier}">${qty}</span> ${ticketWord} ($<span id="cost-usdc-${tier}">${totalCost}</span> USDG)`;
+        buyBtnUsdc.innerHTML = "BUY <span id='lbl-qty-usdc-" + tier + "'>" + qty + "</span> " + ticketWord + " ($<span id='cost-usdc-" + tier + "'>" + totalCost + "</span> USDG)";
       }
     }
 
@@ -2281,27 +2402,24 @@ async function connectWallet() {
       const qtyInput = document.getElementById("qty-2048-" + tier);
       const qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
       const totalCost = (qty * tier).toFixed(2);
-      const ticketsPurchased = paymentMethod === 'PVP' ? qty * 2 : qty;
+      const ticketsPurchased = paymentMethod === "PVP" ? qty * 2 : qty;
 
       let txHash = "";
       try {
-        txHash = await executeOnchainPayment(totalCost, paymentMethod, `${ticketsPurchased}x 2048 Tickets Tier ${tier} (${paymentMethod})`);
-        showToast(`✅ Step 1 Signed & Step 2 USDG Transferred: ${txHash.slice(0, 10)}...`, "success");
+        txHash = await executeOnchainPayment(totalCost, paymentMethod, ticketsPurchased + "x 2048 Tickets Tier " + tier + " (" + paymentMethod + ")");
+        showToast("✅ Payment Confirmed: " + txHash.slice(0, 10) + "...", "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
         return;
       }
 
-      userAvailableTickets += ticketsPurchased;
-      const countEl = document.getElementById('tickets-count');
-      if (countEl) {
-        countEl.innerText = userAvailableTickets;
-      }
-
+      const currentTickets = get2048Tickets();
+      set2048Tickets(currentTickets + ticketsPurchased);
       select2048Tier(tier);
-      init2048Game();
-      showToast(`✅ Purchased ${ticketsPurchased} Ticket(s) for ${tier} Tier! Game activated.`, "success");
+      showToast("✅ Purchased " + ticketsPurchased + " Ticket(s) for Tier " + tier + "!", "success");
+      // Auto-start run immediately with 1 ticket
+      startNew2048Game(true);
     }
 
     // LEADERBOARD LOGIC
