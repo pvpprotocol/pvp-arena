@@ -3322,10 +3322,26 @@ async function connectWallet() {
       if (!isConnected) {
         await connectWallet();
       }
+      const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
       const store = getLocalDuels();
       let duelData = store[duelId];
       if (!duelData) {
         showToast("Duel not found", "error");
+        return;
+      }
+
+      // Determine verified loser
+      let loser = (duelData.loser || "").toLowerCase();
+      if (!loser) {
+        const creatorAddr = (duelData.creator || "").toLowerCase();
+        const oppAddr = (duelData.opponent || "").toLowerCase();
+        const winner = (duelData.winner || "").toLowerCase();
+        if (winner === creatorAddr) loser = oppAddr;
+        else if (winner === oppAddr) loser = creatorAddr;
+      }
+
+      if (!activeWallet || activeWallet !== loser) {
+        showToast("❌ Only the verified losing participant can claim the 3% cashback!", "error");
         return;
       }
       
@@ -3343,10 +3359,17 @@ async function connectWallet() {
       if (!isConnected) {
         await connectWallet();
       }
+      const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
       const store = getLocalDuels();
       let duelData = store[duelId];
       if (!duelData) {
         showToast("Duel not found", "error");
+        return;
+      }
+
+      const winner = (duelData.winner || "").toLowerCase();
+      if (!activeWallet || activeWallet !== winner) {
+        showToast("❌ Only the verified winner can claim the prize!", "error");
         return;
       }
       
@@ -3358,6 +3381,7 @@ async function connectWallet() {
 
       showToast(`🎉 +${payout} USDG Prize Claimed & Withdrawn to your wallet!`, "success");
     }
+    window.claimDuelPrize = claimDuelPrize;
 
     async function reclaimExpiredDeposit(duelId, tier) {
       if (!isConnected) {
