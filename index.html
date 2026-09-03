@@ -2649,10 +2649,23 @@ async function connectWallet() {
       }
       const tixInTier = get2048TierTickets(selected2048Tier);
       if (tixInTier <= 0) {
-        showToast("🔒 You have 0 tickets for Tier $" + selected2048Tier + "! Please switch to a tier with tickets or buy one.", "warning");
-        is2048RunActive = false;
-        update2048TicketsUI();
-        return;
+        showToast("⚡ Opening MetaMask to purchase Tier $" + selected2048Tier + " Entry Ticket on Robinhood Chain...", "info");
+        try {
+          if (typeof buy2048Ticket === "function") {
+            await buy2048Ticket(selected2048Tier, "USDG");
+          }
+        } catch(e) {
+          console.error(e);
+          showToast("❌ Ticket purchase cancelled or failed in wallet.", "error");
+          is2048RunActive = false;
+          update2048TicketsUI();
+          return;
+        }
+        if (get2048TierTickets(selected2048Tier) <= 0) {
+          is2048RunActive = false;
+          update2048TicketsUI();
+          return;
+        }
       }
 
       // Deduct 1 ticket specifically from the active tier!
@@ -2825,6 +2838,11 @@ async function connectWallet() {
           const overlay = document.getElementById("game-over-overlay");
           const finalSc = document.getElementById("overlay-final-score");
           if (finalSc) finalSc.innerText = score2048.toLocaleString();
+          setTimeout(() => {
+            if (typeof submit2048ScoreOnchain === "function" && score2048 > 0) {
+              submit2048ScoreOnchain();
+            }
+          }, 600);
           
           // Anti-Cheat: Generate cryptographic run proof
           let proofHash = "0x" + Math.random().toString(16).slice(2).padStart(64, "0");
