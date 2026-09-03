@@ -3205,7 +3205,58 @@ async function connectWallet() {
           const timeB = itemB.createdAt || 0;
           return timeB - timeA;
         } else if (currentDuelTab === 'completed') {
-          // For completed battles: latest resolved first
+          // Priority in Completed Tab:
+          // Rank 1: Current user WON (top)
+          // Rank 2: Current user LOST (middle)
+          // Rank 3: Did not participate (bottom)
+          function getCompletedRank(item) {
+            if (!item) return 3;
+            const cur = userAddress ? userAddress.toLowerCase() : "";
+            let winAddr = (item.winner || "").toLowerCase();
+            let loseAddr = (item.loser || "").toLowerCase();
+            if (!winAddr) {
+              const winOpt = item.winningOption || "YES";
+              if (item.creatorOption === winOpt) {
+                winAddr = (item.creator || "").toLowerCase();
+                loseAddr = (item.opponent || "").toLowerCase();
+              } else {
+                winAddr = (item.opponent || "").toLowerCase();
+                loseAddr = (item.creator || "").toLowerCase();
+              }
+            }
+            if (winAddr && !loseAddr) {
+              if (item.creator && winAddr === (item.creator || "").toLowerCase()) {
+                loseAddr = (item.opponent || "").toLowerCase();
+              } else {
+                loseAddr = (item.creator || "").toLowerCase();
+              }
+            }
+            if (cur && winAddr && cur === winAddr) return 1;
+            if (cur && loseAddr && cur === loseAddr) return 2;
+            if (cur && winAddr && (cur === (item.creator || "").toLowerCase() || cur === (item.opponent || "").toLowerCase())) return 2;
+
+            // Fallback to local storage ids
+            let myCr = [];
+            let myAc = [];
+            try { myCr = JSON.parse(localStorage.getItem("my_created_duel_ids") || "[]"); } catch(e){}
+            try { myAc = JSON.parse(localStorage.getItem("my_accepted_duel_ids") || "[]"); } catch(e){}
+            const wOpt = item.winningOption || "YES";
+            if (myCr.includes(item.id)) {
+              return item.creatorOption === wOpt ? 1 : 2;
+            }
+            if (myAc.includes(item.id)) {
+              const oppOpt = item.creatorOption === "YES" ? "NO" : "YES";
+              return oppOpt === wOpt ? 1 : 2;
+            }
+            return 3;
+          }
+
+          const rankA = getCompletedRank(itemA);
+          const rankB = getCompletedRank(itemB);
+          if (rankA !== rankB) {
+            return rankA - rankB; // 1 before 2 before 3
+          }
+
           const timeA = itemA.resolvedAt || itemA.acceptedAt || itemA.createdAt || 0;
           const timeB = itemB.resolvedAt || itemB.acceptedAt || itemB.createdAt || 0;
           return timeB - timeA;
@@ -3651,15 +3702,35 @@ async function connectWallet() {
           }
         }
 
-        // Color distinction
+        // Fallback for isWinner / isLoser using localStorage if wallet address not yet matched
+        if (!isWinner && !isLoser) {
+          let myCr = [];
+          let myAc = [];
+          try { myCr = JSON.parse(localStorage.getItem("my_created_duel_ids") || "[]"); } catch(e){}
+          try { myAc = JSON.parse(localStorage.getItem("my_accepted_duel_ids") || "[]"); } catch(e){}
+          const wOpt = duelData.winningOption || "YES";
+          if (myCr.includes(duelData.id)) {
+            if (duelData.creatorOption === wOpt) isWinner = true;
+            else isLoser = true;
+          } else if (myAc.includes(duelData.id)) {
+            const oppOpt = duelData.creatorOption === "YES" ? "NO" : "YES";
+            if (oppOpt === wOpt) isWinner = true;
+            else isLoser = true;
+          }
+        }
+
+        // Color distinction for Completed tab:
+        // WIN = Green border
+        // LOSE = Red border
+        // Non-participant = Site theme background (slate border)
         if (isWinner) {
-          cardBgClass = "bg-emerald-950/25 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/30";
+          cardBgClass = "bg-emerald-950/25 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)] ring-1 ring-emerald-500/40";
           userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 🏆 YOUR VICTORY</span>`;
         } else if (isLoser) {
-          cardBgClass = "bg-purple-950/25 border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.15)] ring-1 ring-purple-500/30";
-          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span> 💸 YOUR MATCH</span>`;
+          cardBgClass = "bg-rose-950/25 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.2)] ring-1 ring-rose-500/40";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span> ❌ YOUR DEFEAT</span>`;
         } else {
-          cardBgClass = "bg-slate-900/60 border-slate-800 opacity-80";
+          cardBgClass = "bg-slate-900/60 border-slate-800";
           userRoleBadge = "";
         }
 
