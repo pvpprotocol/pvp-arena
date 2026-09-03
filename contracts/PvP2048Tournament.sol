@@ -76,8 +76,8 @@ contract PvP2048Tournament {
         _;
     }
 
-    constructor(address _protocolVerifier, address _treasury, uint256 _startTime) {
-        owner = msg.sender;
+    constructor(address _owner, address _protocolVerifier, address _treasury, uint256 _startTime) {
+        owner = _owner != address(0) ? _owner : msg.sender;
         protocolVerifier = _protocolVerifier;
         treasury = _treasury;
         tournamentStartTime = _startTime > 0 ? _startTime : block.timestamp;
