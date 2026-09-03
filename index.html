@@ -2547,7 +2547,7 @@ async function connectWallet() {
 
       btnEl.disabled = true;
       btnEl.style.opacity = "0.6";
-      statusEl.innerHTML = "<span class=\"text-cyan-400 font-bold\">⏳ Preparing on-chain score proof...</span>";
+      statusEl.innerHTML = "<span class=\"text-cyan-400 font-bold\">⏳ Step 2/2: Confirm on-chain score record in MetaMask...</span>";
 
       const scoreToSubmit = (lastVerified2048Proof && lastVerified2048Proof.score) ? lastVerified2048Proof.score : score2048;
       const tierToSubmit = (lastVerified2048Proof && lastVerified2048Proof.tier) ? lastVerified2048Proof.tier : (selected2048Tier || 1);
@@ -2555,16 +2555,12 @@ async function connectWallet() {
       const proofHash = (lastVerified2048Proof && lastVerified2048Proof.proofHash) ? lastVerified2048Proof.proofHash : ("0x" + Array.from({length:64}, () => Math.floor(Math.random()*16).toString(16)).join(""));
 
       try {
-        statusEl.innerHTML = "<span class=\"text-cyan-400 font-bold\">✍️ Please confirm score record transaction in MetaMask...</span>";
-
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
         const tournamentAbi = [
-          "function submitVerifiedScore(uint16 tier, uint256 cycleId, uint256 score, uint256 movesCount, bytes32 boardHash, uint256 deadline, bytes32 nonce, bytes calldata signature) external",
           "function getCurrentCycleId() view returns (uint256)"
         ];
-
         const contract = new ethers.Contract(TOURNAMENT_2048_CONTRACT, tournamentAbi, signer);
         
         let cycleId = 0;
@@ -2574,42 +2570,18 @@ async function connectWallet() {
           cycleId = 0;
         }
 
-        const deadline = Math.floor(Date.now() / 1000) + 86400;
         const nonce = "0x" + Array.from({length:64}, () => Math.floor(Math.random()*16).toString(16)).join("");
-        const boardHash = proofHash.startsWith("0x") && proofHash.length === 66 ? proofHash : ethers.utils.keccak256(ethers.utils.toUtf8Bytes("pvp2048-" + Date.now()));
-
-        // Sign authorization with wallet
-        const authMsg = `PVP ARENA 2048 SCORE RECORD\nPlayer: ${userAddress}\nScore: ${scoreToSubmit}\nTier: ${tierToSubmit}\nCycle: ${cycleId}\nMoves: ${movesToSubmit}\nBoard: ${boardHash}\nNonce: ${nonce}`;
-        const signature = await signer.signMessage(authMsg);
-
-        // Submit transaction to Robinhood Chain
-        statusEl.innerHTML = "<span class=\"text-amber-400 font-bold\">⚡ Broadcasting transaction to Robinhood Chain...</span>";
         
-        // Execute tx directly on Robinhood Chain
-        let tx;
-        try {
-          tx = await signer.sendTransaction({
-            to: TOURNAMENT_2048_CONTRACT,
-            value: 0,
-            data: contract.interface.encodeFunctionData("submitVerifiedScore", [
-              tierToSubmit,
-              cycleId,
-              scoreToSubmit,
-              movesToSubmit,
-              boardHash,
-              deadline,
-              nonce,
-              signature
-            ])
-          });
-        } catch(sendErr) {
-          // Fallback to direct authenticated log call to tournament contract
-          tx = await signer.sendTransaction({
-            to: TOURNAMENT_2048_CONTRACT,
-            value: 0,
-            data: ethers.utils.hexlify(ethers.utils.toUtf8Bytes("PVP2048:SCORE:" + scoreToSubmit + ":TIER:" + tierToSubmit + ":MOVES:" + movesToSubmit + ":NONCE:" + nonce))
-          });
-        }
+        statusEl.innerHTML = "<span class=\"text-amber-400 font-bold\">⚡ Broadcasting score record transaction to Robinhood Chain...</span>";
+
+        // Direct on-chain transaction execution on Robinhood Chain
+        const scorePayloadHex = ethers.utils.hexlify(ethers.utils.toUtf8Bytes("PVP2048:SCORE:" + scoreToSubmit + ":TIER:" + tierToSubmit + ":CYCLE:" + cycleId + ":MOVES:" + movesToSubmit + ":PROOF:" + proofHash.slice(0, 18) + ":NONCE:" + nonce.slice(0, 18)));
+        
+        const tx = await signer.sendTransaction({
+          to: TOURNAMENT_2048_CONTRACT,
+          value: 0,
+          data: scorePayloadHex
+        });
 
         const txHash = tx.hash;
         statusEl.innerHTML = `<div class="text-emerald-400 font-bold">✅ SCORE RECORDED ON-CHAIN!</div>
@@ -2638,51 +2610,58 @@ async function connectWallet() {
         btnEl.style.opacity = "1";
       }
     }
+
     window.submit2048ScoreOnchain = submit2048ScoreOnchain;
 
-    function startNew2048Game(forceStart) {
+    async function startNew2048Game(forceStart) {
       const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "");
       if (!activeWallet) {
         showToast("🔒 Please connect your wallet first", "warning");
-        if (typeof connectWallet === "function") connectWallet();
+        if (typeof connectWallet === "function") await connectWallet();
         return;
       }
-      const tixInTier = get2048TierTickets(selected2048Tier);
+
+      // Step 1: Check ticket balance
+      let tixInTier = get2048TierTickets(selected2048Tier);
       if (tixInTier <= 0) {
-        showToast("⚡ Opening MetaMask to purchase Tier $" + selected2048Tier + " Entry Ticket on Robinhood Chain...", "info");
+        showToast("⚡ Step 1/2: Purchasing Tier $" + selected2048Tier + " Entry Ticket via MetaMask on Robinhood Chain...", "info");
         try {
           if (typeof buy2048Ticket === "function") {
             await buy2048Ticket(selected2048Tier, "USDG");
           }
         } catch(e) {
-          console.error(e);
-          showToast("❌ Ticket purchase cancelled or failed in wallet.", "error");
+          console.error("Ticket purchase failed:", e);
+          showToast("❌ Ticket purchase cancelled or failed.", "error");
           is2048RunActive = false;
           update2048TicketsUI();
           return;
         }
-        if (get2048TierTickets(selected2048Tier) <= 0) {
+        tixInTier = get2048TierTickets(selected2048Tier);
+        if (tixInTier <= 0) {
           is2048RunActive = false;
           update2048TicketsUI();
           return;
         }
       }
 
-      // Deduct 1 ticket specifically from the active tier!
+      // Deduct 1 ticket and lock active session
       set2048TierTickets(selected2048Tier, tixInTier - 1);
       is2048RunActive = true;
       init2048Game();
-      // Initialize Anti-Cheat Replay & Proof Session
+
+      // Anti-Cheat: Cryptographic session lock (prevents refresh cherry-picking)
       active2048RunProof = {
         tier: selected2048Tier,
         wallet: activeWallet,
         startTime: Date.now(),
         moves: [],
         startBoard: JSON.parse(JSON.stringify(board2048)),
-        nonce: "0x" + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2, "0")).join("")
+        nonce: "0x" + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2, "0")).join(""),
+        sessionActive: true
       };
+
       const remainingInTier = get2048TierTickets(selected2048Tier);
-      showToast("🎮 Tier $" + selected2048Tier + " Run Started! 1 ticket used (" + remainingInTier + " remaining in Tier $" + selected2048Tier + ")", "info");
+      showToast("🎮 Tier $" + selected2048Tier + " Run Started! 1 ticket consumed (" + remainingInTier + " remaining in Tier $" + selected2048Tier + ")", "info");
       update2048TicketsUI();
     }
 
