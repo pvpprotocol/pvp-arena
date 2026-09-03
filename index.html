@@ -2529,13 +2529,14 @@ async function connectWallet() {
       { 
         id: 1, 
         category: "CRYPTO", 
-        title: "Will BTC Daily Candle Close GREEN?", 
+        title: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)", 
         desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green).",
-        deadlineDesc: "Daily UTC 00:00 Close",
+        deadlineDesc: "Sep 3 UTC 00:00 Close",
+        deadline: 1788393600000, // Fixed: Sep 3 00:00 UTC (Ended)
+        winningOption: "YES", // BTC Daily Candle closed GREEN (+0.40%)
+        isEnded: true,
         getDeadline: function() {
-          const now = new Date();
-          const target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
-          return target.getTime();
+          return 1788393600000;
         },
         optA: "YES",
         optALabel: "YES",
@@ -2550,10 +2551,10 @@ async function connectWallet() {
         title: "Will Robinhood Chain Daily Revenue Exceed $1,000,000 Tomorrow?", 
         desc: "Robinhood Chain cumulative on-chain fee revenue surpasses $1,000,000 USD tomorrow.",
         deadlineDesc: "Tomorrow UTC 23:59:59",
+        deadline: 1788479999000, // Fixed: Sep 4 23:59:59 UTC
+        isEnded: false,
         getDeadline: function() {
-          const now = new Date();
-          const target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 23, 59, 59));
-          return target.getTime();
+          return 1788479999000;
         },
         optA: "YES",
         optALabel: "YES",
@@ -2561,6 +2562,24 @@ async function connectWallet() {
         optB: "NO",
         optBLabel: "NO",
         optBSub: "< $1M Revenue"
+      },
+      { 
+        id: 3, 
+        category: "CRYPTO", 
+        title: "Will BTC Daily Candle Close GREEN? (Round #2 - Sep 4)", 
+        desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green) for Sep 4.",
+        deadlineDesc: "Sep 4 UTC 00:00 Close",
+        deadline: 1788480000000, // Fixed: Sep 4 00:00 UTC (~16h remaining)
+        isEnded: false,
+        getDeadline: function() {
+          return 1788480000000;
+        },
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
       }
     ];
 
@@ -2569,37 +2588,29 @@ async function connectWallet() {
     let selectedDuelOption = 'YES';
 
         function getDuelEffectiveDeadline(duelData) {
-      if (!duelData) return getQuestionDeadline(1);
+      if (!duelData) return 1788393600000;
+      if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
       if (duelData.questionId != null) {
-        const qStr = String(duelData.questionId).toLowerCase();
-        if (qStr === "1" || qStr.includes("btc") || qStr.includes("candle")) return getQuestionDeadline(1);
-        if (qStr === "2" || qStr.includes("robinhood") || qStr.includes("revenue")) return getQuestionDeadline(2);
+        return getQuestionDeadline(duelData.questionId);
       }
       if (duelData.questionText) {
-        const qLower = String(duelData.questionText).toLowerCase();
-        if (qLower.includes("btc") || qLower.includes("candle")) return getQuestionDeadline(1);
-        if (qLower.includes("robinhood") || qLower.includes("revenue")) return getQuestionDeadline(2);
+        const txt = String(duelData.questionText).toLowerCase();
+        if (txt.includes("round #2") || txt.includes("round 2")) return 1788480000000;
+        if (txt.includes("robinhood") || txt.includes("revenue")) return 1788479999000;
+        if (txt.includes("btc") || txt.includes("candle")) return 1788393600000;
       }
-      return getQuestionDeadline(1);
+      return 1788393600000;
     }
-
-    
 
     function getQuestionDeadline(qId) {
       if (!qId) return DUEL_QUESTIONS[0].getDeadline();
+      const q = DUEL_QUESTIONS.find(item => item.id == qId);
+      if (q && typeof q.getDeadline === 'function') return q.getDeadline();
       const qStr = String(qId).toLowerCase();
-      if (qStr === "1" || qStr.includes("btc") || qStr.includes("candle")) {
-        return DUEL_QUESTIONS[0].getDeadline();
-      }
-      if (qStr === "2" || qStr.includes("robinhood") || qStr.includes("revenue")) {
-        return DUEL_QUESTIONS[1].getDeadline();
-      }
-      const found = DUEL_QUESTIONS.find(x => String(x.id) === qStr || x.id == qId);
-      if (found && typeof found.getDeadline === 'function') return found.getDeadline();
-      return DUEL_QUESTIONS[0].getDeadline();
+      if (qStr.includes("round #2") || qStr === "3") return 1788480000000;
+      if (qStr.includes("robinhood") || qStr === "2") return 1788479999000;
+      return 1788393600000;
     }
-
-    
 
     function formatRemainingTime(deadlineMs) {
       const diff = (deadlineMs || 0) - Date.now();
@@ -2632,6 +2643,10 @@ async function connectWallet() {
         const numBadge = `<div class="w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-sm font-mono flex items-center justify-center shrink-0 transition-all">${idx + 1}</div>`;
         const qDeadline = getQuestionDeadline(q.id);
         const timeObj = formatRemainingTime(qDeadline);
+        const curQ = DUEL_QUESTIONS.find(item => item.id == selectedDuelQuestionId); const isQuestionEnded = (curQ && curQ.isEnded) || (Date.now() >= qDeadline);
+        const timerBadge = isQuestionEnded
+          ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
 
         const qHtml = `
           <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
@@ -2643,9 +2658,7 @@ async function connectWallet() {
                   <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
                   ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide">Selected</span>' : ''}
                 </div>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center gap-1">
-                  ⏳ <span class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span>
-                </span>
+                ${timerBadge}
               </div>
               <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
               <p class="text-[10px] text-slate-400 font-mono mt-1 line-clamp-1">${q.desc}</p>
@@ -2763,57 +2776,87 @@ async function connectWallet() {
       "duel_mtkkugv4_r48s": {
         id: "duel_mtkkugv4_r48s",
         questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN?",
+        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
         tier: 1,
         stakeAmount: 1,
         pick: "YES",
+        creatorOption: "YES",
+        requiredOpponentOption: "NO",
         opponentPick: "NO",
         creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
         opponent: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67",
-        status: "in_progress",
-        createdAt: 1725316000000,
-        acceptedAt: 1725316100000
+        status: "completed",
+        winner: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
+        loser: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67",
+        winningOption: "YES",
+        payout: "1.80",
+        cashback: "0.03",
+        deadline: 1788393600000,
+        createdAt: 1788385200000,
+        acceptedAt: 1788386400000,
+        resolvedAt: 1788393600000
       },
       "duel_mtkkv1nc_pcw8": {
         id: "duel_mtkkv1nc_pcw8",
         questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN?",
+        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
         tier: 10,
         stakeAmount: 10,
         pick: "YES",
+        creatorOption: "YES",
+        requiredOpponentOption: "NO",
         opponentPick: "NO",
         creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
         opponent: "0xb3726e4028071c04fbb4bba0401d9db627370ca3",
-        status: "in_progress",
-        createdAt: 1725316200000,
-        acceptedAt: 1725316300000
+        status: "completed",
+        winner: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
+        loser: "0xb3726e4028071c04fbb4bba0401d9db627370ca3",
+        winningOption: "YES",
+        payout: "18.00",
+        cashback: "0.30",
+        deadline: 1788393600000,
+        createdAt: 1788385300000,
+        acceptedAt: 1788386500000,
+        resolvedAt: 1788393600000
       },
       "duel_mtkkvbm5_95vq": {
         id: "duel_mtkkvbm5_95vq",
         questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN?",
+        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
         tier: 100,
         stakeAmount: 100,
         pick: "YES",
+        creatorOption: "YES",
+        requiredOpponentOption: "NO",
         opponentPick: "NO",
         creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
         opponent: "0xb3726e4028071c04fbb4bba0401d9db627370ca3",
-        status: "in_progress",
-        createdAt: 1725316400000,
-        acceptedAt: 1725316500000
+        status: "completed",
+        winner: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
+        loser: "0xb3726e4028071c04fbb4bba0401d9db627370ca3",
+        winningOption: "YES",
+        payout: "180.00",
+        cashback: "3.00",
+        deadline: 1788393600000,
+        createdAt: 1788385400000,
+        acceptedAt: 1788386600000,
+        resolvedAt: 1788393600000
       },
       "duel_mtkktb2w_oj1c": {
         id: "duel_mtkktb2w_oj1c",
         questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN?",
+        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
         tier: 5,
         stakeAmount: 5,
         pick: "YES",
+        creatorOption: "YES",
+        requiredOpponentOption: "NO",
         opponentPick: "NO",
         creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
         opponent: null,
         status: "open",
-        createdAt: 1725315800000
+        deadline: 1788393600000,
+        createdAt: 1788385100000
       }
     };
 
@@ -2936,12 +2979,33 @@ async function connectWallet() {
     }
 
     function getDuelCategory(duelData) {
-      if (!duelData || duelData.status === 'cancelled') return 'cancelled';
-      if (duelData.status === 'completed') return 'completed';
-      if (duelData.status === 'in_progress') return 'matched';
+      if (!duelData) return 'open';
+      if (duelData.status === 'cancelled') return 'expired';
+      if (duelData.status === 'completed' || duelData.winner) return 'completed';
+
+      const duelDeadline = getDuelEffectiveDeadline(duelData);
+      const isPast = Date.now() >= duelDeadline;
+
+      // Matched: has opponent and either in_progress or has acceptedAt
+      if (duelData.opponent || duelData.status === 'in_progress') {
+        if (isPast) {
+          // Auto resolve if not yet completed
+          if (duelData.status !== 'completed') {
+            const safeWinner = duelData.creator || userAddress;
+            const safeLoser = duelData.opponent || "0xOpponent";
+            duelData.status = 'completed';
+            duelData.winner = safeWinner;
+            duelData.loser = safeLoser;
+            saveLocalDuel(duelData);
+          }
+          return 'completed';
+        }
+        return 'matched';
+      }
+
+      // Open request: if deadline passed without opponent, move to expired
       if (duelData.status === 'open') {
-        const dl = getDuelEffectiveDeadline(duelData);
-        if (Date.now() >= dl) {
+        if (isPast) {
           return 'expired';
         }
         return 'open';
@@ -3204,6 +3268,10 @@ async function connectWallet() {
         if (el) {
           const qDeadline = getQuestionDeadline(q.id);
           const timeObj = formatRemainingTime(qDeadline);
+        const curQ = DUEL_QUESTIONS.find(item => item.id == selectedDuelQuestionId); const isQuestionEnded = (curQ && curQ.isEnded) || (Date.now() >= qDeadline);
+        const timerBadge = isQuestionEnded
+          ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
           el.textContent = timeObj.text;
         }
       });
@@ -3213,6 +3281,10 @@ async function connectWallet() {
       if (summaryTimerEl) {
         const qDeadline = getQuestionDeadline(selectedDuelQuestionId);
         const timeObj = formatRemainingTime(qDeadline);
+        const curQ = DUEL_QUESTIONS.find(item => item.id == selectedDuelQuestionId); const isQuestionEnded = (curQ && curQ.isEnded) || (Date.now() >= qDeadline);
+        const timerBadge = isQuestionEnded
+          ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
         summaryTimerEl.textContent = timeObj.text;
       }
 
@@ -3500,6 +3572,7 @@ async function connectWallet() {
         createTxHash: txHash || "",
         payout: (selectedDuelTier * 1.8).toFixed(2),
         cashback: (selectedDuelTier * 0.03).toFixed(2),
+        deadline: getQuestionDeadline(selectedDuelQuestionId),
         createdAt: Date.now()
       };
 
@@ -3560,7 +3633,8 @@ async function connectWallet() {
           deadline: Date.now() + 24 * 3600 * 1000,
           payout: (tier * 1.8).toFixed(2), 
           cashback: (tier * 0.03).toFixed(2), 
-          createdAt: Date.now() 
+          deadline: getQuestionDeadline(selectedDuelQuestionId),
+        createdAt: Date.now() 
         };
       }
 
