@@ -4349,229 +4349,24 @@ async function connectWallet() {
     // 2048 10-HOUR TOURNAMENT & REAL-TIME ENGINE
     // ==========================================
     const CYCLE_DURATION_2048 = 10 * 3600 * 1000; // 10 Hours in ms
-    const RELAY_2048_TOPIC = "pvp-arena-2048-live-scores-v1";
+    const RELAY_2048_TOPIC = "pvp-arena-2048-live-scores-v2";
     let syncChannel2048 = null;
+    let seen2048EventIds = new Set();
+    let last2048PollTime = Math.floor(Date.now() / 1000) - 10;
     try {
       if (typeof BroadcastChannel !== "undefined") {
-        syncChannel2048 = new BroadcastChannel("pvp_2048_sync_channel_v1");
+        syncChannel2048 = new BroadcastChannel("pvp_2048_sync_channel_v2");
       }
     } catch(e){}
-
-    function get2048CycleInfo() {
-      const now = Date.now();
-      const cycleNum = Math.floor(now / CYCLE_DURATION_2048);
-      const cycleStart = cycleNum * CYCLE_DURATION_2048;
-      const cycleEnd = cycleStart + CYCLE_DURATION_2048;
-      const remainingMs = Math.max(0, cycleEnd - now);
-      const isEnded = remainingMs <= 0;
-      return {
-        cycleId: "2048_10h_" + cycleNum,
-        cycleNum,
-        cycleStart,
-        cycleEnd,
-        remainingMs,
-        isEnded
-      };
-    }
-
-    function get2048CycleData() {
-      const cycle = get2048CycleInfo();
-      const storageKey = "pvp_2048_dual_cycle_store_v1_" + cycle.cycleId;
-      let data = null;
-      try {
-        const raw = localStorage.getItem(storageKey);
-        if (raw) data = JSON.parse(raw);
-      } catch(e){}
-
-      if (!data) {
-        data = {
-          cycleId: cycle.cycleId,
-          pools: {
-            "1": { usdgTickets: 0, usdgGross: 0, usdgNetPrize: 0, pvpTickets: 0, pvpTokensGross: 0, pvpTokensNetPrize: 0 },
-            "5": { usdgTickets: 0, usdgGross: 0, usdgNetPrize: 0, pvpTickets: 0, pvpTokensGross: 0, pvpTokensNetPrize: 0 },
-            "10": { usdgTickets: 0, usdgGross: 0, usdgNetPrize: 0, pvpTickets: 0, pvpTokensGross: 0, pvpTokensNetPrize: 0 },
-            "100": { usdgTickets: 0, usdgGross: 0, usdgNetPrize: 0, pvpTickets: 0, pvpTokensGross: 0, pvpTokensNetPrize: 0 },
-            "1000": { usdgTickets: 0, usdgGross: 0, usdgNetPrize: 0, pvpTickets: 0, pvpTokensGross: 0, pvpTokensNetPrize: 0 }
-          },
-          scores: {
-            "1": [],
-            "5": [],
-            "10": [],
-            "100": [],
-            "1000": []
-          },
-          claimedPrizes: {}
-        };
-        try {
-          localStorage.setItem(storageKey, JSON.stringify(data));
-        } catch(e){}
-      }
-      return data;
-    }
-
-    function save2048CycleData(data) {
-      try {
-        const storageKey = "pvp_2048_dual_cycle_store_v1_" + data.cycleId;
-        localStorage.setItem(storageKey, JSON.stringify(data));
-      } catch(e){}
-    }
-
-    // Dynamic Prize Calculation:
-    // Total gross = ticketsCount * tier
-    // Protocol fee = 20%
-    // Net Prize pool = 80% (Awarded ONLY to rank #1 of that tier)
-    function calculateTierPool(tier) {
-      const data = get2048CycleData();
-      const p = (data.pools && data.pools[tier]) ? data.pools[tier] : {
-        usdgTickets: 0, usdgGross: 0, usdgNetPrize: 0,
-        pvpTickets: 0, pvpTokensGross: 0, pvpTokensNetPrize: 0
-      };
-
-      const usdgTickets = p.usdgTickets || 0;
-      const usdgGross = p.usdgGross || 0;
-      const usdgFee = usdgGross * 0.20;
-      const usdgNetPrize = p.usdgNetPrize !== undefined ? p.usdgNetPrize : (usdgGross * 0.80);
-
-      const pvpTickets = p.pvpTickets || 0;
-      const pvpTokensGross = p.pvpTokensGross || 0;
-      const pvpFeeTokens = Math.floor(pvpTokensGross * 0.20);
-      const pvpTokensNetPrize = p.pvpTokensNetPrize !== undefined ? p.pvpTokensNetPrize : Math.floor(pvpTokensGross * 0.80);
-
-      const totalTickets = usdgTickets + pvpTickets;
-
-      return {
-        tier,
-        tickets: totalTickets,
-        gross: usdgGross,
-        protocolFee: usdgFee,
-        netPrize: usdgNetPrize,
-        usdgTickets,
-        usdgGross,
-        usdgFee,
-        usdgNetPrize,
-        pvpTickets,
-        pvpTokensGross,
-        pvpFeeTokens,
-        pvpTokensNetPrize
-      };
-    }
-
-    function addTicketsToTier(tier, qty, method, tokenAmount) {
-      const data = get2048CycleData();
-      if (!data.pools) data.pools = {};
-      if (!data.pools[tier]) {
-        data.pools[tier] = {
-          usdgTickets: 0, usdgGross: 0, usdgNetPrize: 0,
-          pvpTickets: 0, pvpTokensGross: 0, pvpTokensNetPrize: 0
-        };
-      }
-
-      if (method === "PVP") {
-        data.pools[tier].pvpTickets = (data.pools[tier].pvpTickets || 0) + qty;
-        data.pools[tier].pvpTokensGross = (data.pools[tier].pvpTokensGross || 0) + (tokenAmount || 0);
-        data.pools[tier].pvpTokensNetPrize = Math.floor(data.pools[tier].pvpTokensGross * 0.80);
-      } else {
-        data.pools[tier].usdgTickets = (data.pools[tier].usdgTickets || 0) + qty;
-        data.pools[tier].usdgGross = (data.pools[tier].usdgGross || 0) + (qty * tier);
-        data.pools[tier].usdgNetPrize = data.pools[tier].usdgGross * 0.80;
-      }
-
-      save2048CycleData(data);
-      renderAll2048PoolsAndCards();
-
-      // Broadcast ticket purchase event
-      const payload = {
-        type: "TICKET_BOUGHT",
-        cycleId: data.cycleId,
-        tier: tier,
-        qty: qty,
-        method: method || "USDG",
-        tokenAmount: tokenAmount || 0,
-        wallet: (typeof userAddress !== "undefined" && userAddress) ? userAddress : "",
-        timestamp: Date.now()
-      };
-      broadcast2048Event(payload);
-    }
-
-    function record2048ScoreOnline(tier, wallet, score) {
-      if (!wallet || score <= 0) return;
-      const cycle = get2048CycleInfo();
-      if (cycle.isEnded) {
-        showToast("🔒 Tournament round has ended! Scores are locked. Wait for the next round.", "warning");
-        return;
-      }
-      const data = get2048CycleData();
-      if (!data.scores) data.scores = {};
-      if (!data.scores[tier]) data.scores[tier] = [];
-
-      const shortW = wallet.length > 10 ? (wallet.slice(0, 6) + "..." + wallet.slice(-4)) : wallet;
-      
-      // Update or insert player score
-      const existingIdx = data.scores[tier].findIndex(s => s.wallet.toLowerCase() === shortW.toLowerCase() || (s.fullWallet && s.fullWallet.toLowerCase() === wallet.toLowerCase()));
-      if (existingIdx >= 0) {
-        if (score > data.scores[tier][existingIdx].score) {
-          data.scores[tier][existingIdx].score = score;
-          data.scores[tier][existingIdx].timestamp = Date.now();
-        }
-      } else {
-        data.scores[tier].push({
-          wallet: shortW,
-          fullWallet: wallet,
-          score: score,
-          timestamp: Date.now()
-        });
-      }
-
-      // Sort descending by score
-      data.scores[tier].sort((a, b) => b.score - a.score);
-      save2048CycleData(data);
-      renderAll2048PoolsAndCards();
-
-      // Check if user reached #1
-      if (data.scores[tier][0] && (data.scores[tier][0].wallet.toLowerCase() === shortW.toLowerCase() || (data.scores[tier][0].fullWallet && data.scores[tier][0].fullWallet.toLowerCase() === wallet.toLowerCase()))) {
-        const poolInfo = calculateTierPool(tier);
-        showToast("👑 NEW #1 RECORD! You are leading Tier $" + tier + "! Est. Prize: $" + poolInfo.netPrize.toFixed(2) + " USDG", "success");
-      }
-
-      // Broadcast score event to network
-      const payload = {
-        type: "NEW_2048_SCORE",
-        cycleId: data.cycleId,
-        tier: tier,
-        wallet: shortW,
-        fullWallet: wallet,
-        score: score,
-        timestamp: Date.now()
-      };
-      broadcast2048Event(payload);
-
-      // If user is viewing the leaderboard tab, update it live
-      if (typeof updateLeaderboardUI === "function") {
-        updateLeaderboardUI();
-      }
-    }
-
-    function broadcast2048Event(payload) {
-      // 1. BroadcastChannel for other open tabs
-      if (syncChannel2048) {
-        try {
-          syncChannel2048.postMessage(payload);
-        } catch(e){}
-      }
-      // 2. Publish to ntfy relay for all other users
-      try {
-        fetch("https://ntfy.sh/" + RELAY_2048_TOPIC, {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: { "Content-Type": "application/json" }
-        }).catch(err => console.debug("2048 relay post err:", err));
-      } catch(e){}
-    }
 
     function init2048RelayListener() {
       // 1. Listen to BroadcastChannel
       if (syncChannel2048) {
         syncChannel2048.onmessage = (event) => {
+          if (event.data && event.data.eventId) {
+            if (seen2048EventIds.has(event.data.eventId)) return;
+            seen2048EventIds.add(event.data.eventId);
+          }
           handleIncoming2048Event(event.data);
         };
       }
@@ -4582,8 +4377,14 @@ async function connectWallet() {
         evtSource.onmessage = function(e) {
           try {
             const data = JSON.parse(e.data);
+            if (data && data.id) {
+              if (seen2048EventIds.has(data.id)) return;
+              seen2048EventIds.add(data.id);
+            }
             if (data && data.message) {
               const payload = JSON.parse(data.message);
+              if (payload.eventId && seen2048EventIds.has(payload.eventId)) return;
+              if (payload.eventId) seen2048EventIds.add(payload.eventId);
               handleIncoming2048Event(payload);
             }
           } catch(err){}
@@ -4592,21 +4393,29 @@ async function connectWallet() {
         console.debug("SSE setup notice:", err);
       }
 
-      // 3. Fallback Poll every 6 seconds
-      setInterval(poll2048Relay, 6000);
+      // 3. Fallback Poll (ONLY fetches events since lastPollTime to prevent repeat counting)
+      setInterval(poll2048Relay, 10000);
     }
 
     async function poll2048Relay() {
       try {
-        const res = await fetch("https://ntfy.sh/" + RELAY_2048_TOPIC + "/json?poll=1");
+        const sinceParam = last2048PollTime > 0 ? ("&since=" + last2048PollTime) : "";
+        const res = await fetch("https://ntfy.sh/" + RELAY_2048_TOPIC + "/json?poll=1" + sinceParam);
         if (!res.ok) return;
+        last2048PollTime = Math.floor(Date.now() / 1000);
         const text = await res.text();
         const lines = text.trim().split("\n");
         lines.forEach(l => {
           try {
             const parsed = JSON.parse(l);
+            if (parsed && parsed.id) {
+              if (seen2048EventIds.has(parsed.id)) return; // DEDUPLICATE!
+              seen2048EventIds.add(parsed.id);
+            }
             if (parsed && parsed.message) {
               const payload = JSON.parse(parsed.message);
+              if (payload.eventId && seen2048EventIds.has(payload.eventId)) return; // DEDUPLICATE!
+              if (payload.eventId) seen2048EventIds.add(payload.eventId);
               handleIncoming2048Event(payload);
             }
           } catch(e){}
