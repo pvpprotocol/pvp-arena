@@ -1618,7 +1618,11 @@
 
     // WEB3 & WALLET CONNECTION
     let isConnected = false;
-    let userAddress = null;
+    let userAddress = (function() {
+    try {
+      return localStorage.getItem("pvp_last_active_wallet") || null;
+    } catch(e) { return null; }
+  })();
     var ROBINHOOD_CHAIN_ID = "0x1237"; // 4663 in hex (Robinhood Chain)
     var ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
 
@@ -1680,11 +1684,15 @@ async function connectWallet() {
           if (accounts && accounts.length > 0) {
             userAddress = accounts[0];
             isConnected = true;
+            try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
             const shortAddr = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
             if (btnText) btnText.innerText = shortAddr;
             if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
             showToast("Connected: " + shortAddr, "success");
             if (typeof renderAllDuels === 'function') renderAllDuels();
+            if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
+            if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
+            if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
 
             try {
               await ensureRobinhoodNetwork();
@@ -1720,11 +1728,15 @@ async function connectWallet() {
         } else {
           userAddress = accs[0];
           isConnected = true;
+          try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
           const btnText = document.getElementById("walletBtnText");
           const dot = document.getElementById("walletDot");
           if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
           if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
           if (typeof renderAllDuels === 'function') renderAllDuels();
+          if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
+          if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
+          if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
           try { ensureRobinhoodNetwork(); } catch (e) {}
         }
       });
@@ -1743,11 +1755,15 @@ async function connectWallet() {
           if (accs && accs.length > 0) {
             userAddress = accs[0];
             isConnected = true;
+            try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
             const btnText = document.getElementById("walletBtnText");
             const dot = document.getElementById("walletDot");
             if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
             if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
             if (typeof renderAllDuels === 'function') renderAllDuels();
+            if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
+            if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
+            if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
           }
         } catch(err) {
           console.warn("Auto-connect check:", err);
@@ -2281,15 +2297,49 @@ async function connectWallet() {
     let is2048RunActive = false;
 
     function get2048Tickets() {
-      const addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
-      if (!addr) return 0;
-      return parseInt(localStorage.getItem("pvp_2048_tickets_" + addr) || "0", 10);
+      let addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
+      if (!addr) {
+        try { addr = (localStorage.getItem("pvp_last_active_wallet") || "").toLowerCase(); } catch(e){}
+      }
+      let tickets = 0;
+      if (addr) {
+        tickets = parseInt(localStorage.getItem("pvp_2048_tickets_" + addr) || "0", 10);
+      }
+      if (tickets <= 0) {
+        // Fallback to global tickets store so refresh or async wallet connect never loses tickets
+        const globalTix = parseInt(localStorage.getItem("pvp_2048_tickets_global") || "0", 10);
+        if (globalTix > 0) {
+          tickets = globalTix;
+          if (addr) {
+            try { localStorage.setItem("pvp_2048_tickets_" + addr, tickets.toString()); } catch(e){}
+          }
+        }
+      }
+      // One-time restore check for active tester wallet (purchased 3, used 1, 2 remaining)
+      if (addr === "0xd8c09b380e1d8120aac2188653b68f1209ee883c" && tickets < 2) {
+        try {
+          const restored = localStorage.getItem("pvp_ticket_restored_0xd8c0_v2");
+          if (!restored) {
+            tickets = 2;
+            localStorage.setItem("pvp_2048_tickets_" + addr, "2");
+            localStorage.setItem("pvp_2048_tickets_global", "2");
+            localStorage.setItem("pvp_ticket_restored_0xd8c0_v2", "true");
+          }
+        } catch(e){}
+      }
+      return tickets;
     }
 
     function set2048Tickets(count) {
-      const addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
-      if (!addr) return;
-      localStorage.setItem("pvp_2048_tickets_" + addr, Math.max(0, count).toString());
+      const c = Math.max(0, parseInt(count, 10) || 0);
+      let addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
+      if (!addr) {
+        try { addr = (localStorage.getItem("pvp_last_active_wallet") || "").toLowerCase(); } catch(e){}
+      }
+      if (addr) {
+        try { localStorage.setItem("pvp_2048_tickets_" + addr, c.toString()); } catch(e){}
+      }
+      try { localStorage.setItem("pvp_2048_tickets_global", c.toString()); } catch(e){}
     }
 
     function init2048BoardPreview() {
@@ -4585,6 +4635,7 @@ async function connectWallet() {
       update2048CountdownTimer();
       setInterval(update2048CountdownTimer, 1000);
       setTimeout(init2048RelayListener, 500);
+      setTimeout(function() { if (typeof update2048TicketsUI === 'function') update2048TicketsUI(); }, 200);
     });
   
 
