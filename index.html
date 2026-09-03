@@ -2580,10 +2580,29 @@ async function connectWallet() {
         optB: "NO",
         optBLabel: "NO",
         optBSub: "Red Close"
+      },
+      { 
+        id: 4, 
+        category: "BASE MEME", 
+        title: "Will BASECAT Hit a New ATH Today?", 
+        contract: "0xB2000000000000000000004c27f6523082f41D01",
+        desc: "Predict whether BaseCat ($BASECAT) reaches a new all-time high price before the end of today (Sep 3 UTC 23:59:59). Contract on Base: 0xB2000000000000000000004c27f6523082f41D01.",
+        deadlineDesc: "Sep 3 UTC 23:59:59",
+        deadline: 1788479999000, // Fixed: Sep 3 23:59:59 UTC
+        isEnded: false,
+        getDeadline: function() {
+          return 1788479999000;
+        },
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "New ATH",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "No ATH"
       }
     ];
 
-    let selectedDuelQuestionId = 1;
+    let selectedDuelQuestionId = 4;
     let selectedDuelTier = 5;
     let selectedDuelOption = 'YES';
 
@@ -2629,7 +2648,7 @@ async function connectWallet() {
     function renderDuelQuestions() {
       const topicsBadge = document.getElementById("active-topics-count-badge");
       if (topicsBadge && typeof DUEL_QUESTIONS !== "undefined") {
-        const count = DUEL_QUESTIONS.length;
+        const count = DUEL_QUESTIONS.filter(item => !item.isEnded && Date.now() < getQuestionDeadline(item.id)).length;
         topicsBadge.textContent = `${count} Active Topic${count === 1 ? "" : "s"} Live`;
       }
       const grid = document.getElementById("duel-questions-grid");
@@ -2643,7 +2662,7 @@ async function connectWallet() {
         const numBadge = `<div class="w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-sm font-mono flex items-center justify-center shrink-0 transition-all">${idx + 1}</div>`;
         const qDeadline = getQuestionDeadline(q.id);
         const timeObj = formatRemainingTime(qDeadline);
-        const curQ = DUEL_QUESTIONS.find(item => item.id == selectedDuelQuestionId); const isQuestionEnded = (curQ && curQ.isEnded) || (Date.now() >= qDeadline);
+        const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
           : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
@@ -3268,7 +3287,7 @@ async function connectWallet() {
         if (el) {
           const qDeadline = getQuestionDeadline(q.id);
           const timeObj = formatRemainingTime(qDeadline);
-        const curQ = DUEL_QUESTIONS.find(item => item.id == selectedDuelQuestionId); const isQuestionEnded = (curQ && curQ.isEnded) || (Date.now() >= qDeadline);
+        const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
           : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
@@ -3281,7 +3300,7 @@ async function connectWallet() {
       if (summaryTimerEl) {
         const qDeadline = getQuestionDeadline(selectedDuelQuestionId);
         const timeObj = formatRemainingTime(qDeadline);
-        const curQ = DUEL_QUESTIONS.find(item => item.id == selectedDuelQuestionId); const isQuestionEnded = (curQ && curQ.isEnded) || (Date.now() >= qDeadline);
+        const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
           : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
