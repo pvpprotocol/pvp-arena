@@ -438,7 +438,7 @@
                   BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="cost-usdc-1">1.00</span> USDG)
                 </button>
                 <button onclick="buy2048Ticket(1, 'PVP')" id="buy-btn-pvp-1" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
-                  BUY $PVP ($<span id="cost-pvp-1">1.00</span> • <span id="attempts-pvp-1">2</span> TIX 🔥)
+                  BUY NATIVE ($<span id="cost-pvp-1">1.00</span> • <span id="attempts-pvp-1">2</span> TIX 🔥 2X)
                 </button>
               </div>
             </div>
@@ -473,7 +473,7 @@
                   BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="cost-usdc-5">5.00</span> USDG)
                 </button>
                 <button onclick="buy2048Ticket(5, 'PVP')" id="buy-btn-pvp-5" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
-                  BUY $PVP ($<span id="cost-pvp-5">5.00</span> • <span id="attempts-pvp-5">2</span> TIX 🔥)
+                  BUY NATIVE ($<span id="cost-pvp-5">5.00</span> • <span id="attempts-pvp-5">2</span> TIX 🔥 2X)
                 </button>
               </div>
             </div>
@@ -508,7 +508,7 @@
                   BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="cost-usdc-10">10.00</span> USDG)
                 </button>
                 <button onclick="buy2048Ticket(10, 'PVP')" id="buy-btn-pvp-10" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
-                  BUY $PVP ($<span id="cost-pvp-10">10.00</span> • <span id="attempts-pvp-10">2</span> TIX 🔥)
+                  BUY NATIVE ($<span id="cost-pvp-10">10.00</span> • <span id="attempts-pvp-10">2</span> TIX 🔥 2X)
                 </button>
               </div>
             </div>
@@ -543,7 +543,7 @@
                   BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="cost-usdc-100">100.00</span> USDG)
                 </button>
                 <button onclick="buy2048Ticket(100, 'PVP')" id="buy-btn-pvp-100" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
-                  BUY $PVP ($<span id="cost-pvp-100">100.00</span> • <span id="attempts-pvp-100">2</span> TIX 🔥)
+                  BUY NATIVE ($<span id="cost-pvp-100">100.00</span> • <span id="attempts-pvp-100">2</span> TIX 🔥 2X)
                 </button>
               </div>
             </div>
@@ -578,7 +578,7 @@
                   BUY <span id="lbl-qty-usdc-1000">1</span> TICKET ($<span id="cost-usdc-1000">1,000.00</span>)
                 </button>
                 <button onclick="buy2048Ticket(1000, 'PVP')" id="buy-btn-pvp-1000" class="w-full py-2 px-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-mono font-bold transition-all text-center shadow-sm">
-                  BUY $PVP ($<span id="cost-pvp-1000">1,000</span> • <span id="attempts-pvp-1000">2</span> TIX 🔥)
+                  BUY NATIVE ($<span id="cost-pvp-1000">1,000</span> • <span id="attempts-pvp-1000">2</span> TIX 🔥 2X)
                 </button>
               </div>
             </div>
@@ -2405,6 +2405,10 @@ async function connectWallet() {
       if (buyBtnUsdc) {
         const ticketWord = qty === 1 ? "TICKET" : "TICKETS";
         buyBtnUsdc.innerHTML = "BUY <span id='lbl-qty-usdc-" + tier + "'>" + qty + "</span> " + ticketWord + " ($<span id='cost-usdc-" + tier + "'>" + totalCost + "</span> USDG)";
+      }
+      const buyBtnPvp = document.getElementById("buy-btn-pvp-" + tier);
+      if (buyBtnPvp) {
+        buyBtnPvp.innerHTML = "BUY NATIVE ($<span id='cost-pvp-" + tier + "'>" + totalCost + "</span> • <span id='attempts-pvp-" + tier + "'>" + pvpAttempts + "</span> TIX 🔥 2X)";
       }
     }
 
@@ -4676,7 +4680,7 @@ async function connectWallet() {
       addTicketsToTier(tier, ticketsPurchased);
 
       select2048Tier(tier);
-      showToast("✅ Purchased " + ticketsPurchased + " Ticket(s)! 80% added to #1 Prize Pool!", "success");
+      showToast("✅ Purchased " + ticketsPurchased + " Ticket(s)" + (paymentMethod === "PVP" ? " (🔥 2X NATIVE BONUS)" : "") + "! 80% added to #1 Prize Pool!", "success");
       startNew2048Game(true);
     };
 
