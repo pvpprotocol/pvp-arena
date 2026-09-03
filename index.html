@@ -2562,13 +2562,13 @@ async function connectWallet() {
       { 
         id: 2, 
         category: "ROBINHOOD", 
-        title: "Will Robinhood Chain Daily Revenue Exceed $1,000,000 Tomorrow?", 
-        desc: "Robinhood Chain cumulative on-chain fee revenue surpasses $1,000,000 USD tomorrow.",
-        deadlineDesc: "Tomorrow UTC 23:59:59",
-        deadline: 1788479999000, // Fixed: Sep 4 23:59:59 UTC
+        title: "Will Robinhood Chain Daily Revenue Exceed $1,000,000 on Sep 5?", 
+        desc: "Robinhood Chain cumulative on-chain fee revenue surpasses $1,000,000 USD on Sep 5 (Day After Tomorrow).",
+        deadlineDesc: "Sep 5 UTC 23:59:59",
+        deadline: 1788652799000, // Fixed: Sep 5 23:59:59 UTC (Day after tomorrow)
         isEnded: false,
         getDeadline: function() {
-          return 1788479999000;
+          return 1788652799000;
         },
         optA: "YES",
         optALabel: "YES",
@@ -2643,7 +2643,7 @@ async function connectWallet() {
       if (q && typeof q.getDeadline === 'function') return q.getDeadline();
       const qStr = String(qId).toLowerCase();
       if (qStr.includes("basecat") || qStr === "4") return 1788479999000;
-      if (qStr.includes("robinhood") || qStr === "2") return 1788479999000;
+      if (qStr.includes("robinhood") || qStr === "2") return 1788652799000;
       if (qStr.includes("round #2") || qStr.includes("round 2") || qStr === "3") return 1788480000000;
       if (qStr.includes("round #1") || qStr.includes("round 1") || qStr.includes("btc") || qStr === "1") return 1788393600000;
       return 1788479999000;
@@ -2655,7 +2655,7 @@ async function connectWallet() {
       if (duelData.questionText) {
         const txt = String(duelData.questionText).toLowerCase();
         if (txt.includes("basecat") || txt.includes("ath")) return 1788479999000;
-        if (txt.includes("robinhood") || txt.includes("revenue")) return 1788479999000;
+        if (txt.includes("robinhood") || txt.includes("revenue")) return 1788652799000;
         if (txt.includes("round #2") || txt.includes("round 2")) return 1788480000000;
         if (txt.includes("round #1") || txt.includes("round 1") || txt.includes("btc") || txt.includes("sep 3")) return 1788393600000;
       }
@@ -2878,120 +2878,12 @@ async function connectWallet() {
     }
 
     // Predefined seed ensuring matched duels persist across refreshes
-    const SEED_ACTIVE_DUELS = {
-      "duel_mtkkugv4_r48s": {
-        id: "duel_mtkkugv4_r48s",
-        questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
-        tier: 1,
-        stakeAmount: 1,
-        pick: "YES",
-        creatorOption: "YES",
-        requiredOpponentOption: "NO",
-        opponentPick: "NO",
-        creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        opponent: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67",
-        status: "completed",
-        winner: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        loser: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67",
-        winningOption: "YES",
-        payout: "1.80",
-        cashback: "0.03",
-        deadline: 1788393600000,
-        createdAt: 1788385200000,
-        acceptedAt: 1788386400000,
-        resolvedAt: 1788393600000
-      },
-      "duel_mtkkv1nc_pcw8": {
-        id: "duel_mtkkv1nc_pcw8",
-        questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
-        tier: 10,
-        stakeAmount: 10,
-        pick: "YES",
-        creatorOption: "YES",
-        requiredOpponentOption: "NO",
-        opponentPick: "NO",
-        creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        opponent: "0xb3726e4028071c04fbb4bba0401d9db627370ca3",
-        status: "completed",
-        winner: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        loser: "0xb3726e4028071c04fbb4bba0401d9db627370ca3",
-        winningOption: "YES",
-        payout: "18.00",
-        cashback: "0.30",
-        deadline: 1788393600000,
-        createdAt: 1788385300000,
-        acceptedAt: 1788386500000,
-        resolvedAt: 1788393600000
-      },
-            "duel_mtknzc53_kha2": {
-        id: "duel_mtknzc53_kha2",
-        questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
-        tier: 1,
-        stakeAmount: 1,
-        pick: "YES",
-        creatorOption: "YES",
-        requiredOpponentOption: "NO",
-        opponentPick: "NO",
-        creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        opponent: "0x7290ac43b1717ce914c679a941544a42217f7396",
-        status: "completed",
-        winner: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        loser: "0x7290ac43b1717ce914c679a941544a42217f7396",
-        winningOption: "YES",
-        payout: "1.80",
-        cashback: "0.03",
-        deadline: 1788393600000,
-        createdAt: 1788385500000,
-        acceptedAt: 1788386700000,
-        resolvedAt: 1788393600000
-      },
-      "duel_mtkkvbm5_95vq": {
-        id: "duel_mtkkvbm5_95vq",
-        questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
-        tier: 100,
-        stakeAmount: 100,
-        pick: "YES",
-        creatorOption: "YES",
-        requiredOpponentOption: "NO",
-        opponentPick: "NO",
-        creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        opponent: "0xb3726e4028071c04fbb4bba0401d9db627370ca3",
-        status: "completed",
-        winner: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        loser: "0xb3726e4028071c04fbb4bba0401d9db627370ca3",
-        winningOption: "YES",
-        payout: "180.00",
-        cashback: "3.00",
-        deadline: 1788393600000,
-        createdAt: 1788385400000,
-        acceptedAt: 1788386600000,
-        resolvedAt: 1788393600000
-      },
-      "duel_mtkktb2w_oj1c": {
-        id: "duel_mtkktb2w_oj1c",
-        questionId: "1",
-        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
-        tier: 5,
-        stakeAmount: 5,
-        pick: "YES",
-        creatorOption: "YES",
-        requiredOpponentOption: "NO",
-        opponentPick: "NO",
-        creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
-        opponent: null,
-        status: "open",
-        deadline: 1788393600000,
-        createdAt: 1788385100000
-      }
-    };
+    const SEED_ACTIVE_DUELS = {};
 
     function getLocalDuels() {
       try {
-        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v7') || '{}');
+        try { localStorage.removeItem('pvp_active_duels_store_v7'); localStorage.removeItem('pvp_active_duels_store_v6'); } catch(e) {}
+        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v8') || '{}');
         const cleanStore = {};
         
         // Merge seed first so established matches are guaranteed to display
@@ -3006,7 +2898,7 @@ async function connectWallet() {
           }
         });
 
-        localStorage.setItem('pvp_active_duels_store_v7', JSON.stringify(cleanStore));
+        localStorage.setItem('pvp_active_duels_store_v8', JSON.stringify(cleanStore));
         return cleanStore;
       } catch(e) {
         return SEED_ACTIVE_DUELS;
@@ -3036,7 +2928,7 @@ async function connectWallet() {
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
           if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
         }
-        localStorage.setItem('pvp_active_duels_store_v7', JSON.stringify(store));
+        localStorage.setItem('pvp_active_duels_store_v8', JSON.stringify(store));
       } catch(e) {}
     }
 
@@ -3469,7 +3361,7 @@ async function connectWallet() {
       }
 
       window.addEventListener('storage', (e) => {
-        if (e.key === 'pvp_active_duels_store_v7') {
+        if (e.key === 'pvp_active_duels_store_v8') {
           renderAllDuels();
         }
       });
