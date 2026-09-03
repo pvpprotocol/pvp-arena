@@ -94,8 +94,8 @@ contract PvPBinaryDuel {
         _;
     }
 
-    constructor(address _oracleVerifier, address _treasury) {
-        owner = msg.sender;
+    constructor(address _owner, address _oracleVerifier, address _treasury) {
+        owner = _owner != address(0) ? _owner : msg.sender;
         oracleVerifier = _oracleVerifier;
         treasury = _treasury;
 
