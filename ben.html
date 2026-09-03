@@ -2644,25 +2644,25 @@ async function connectWallet() {
       const qStr = String(qId).toLowerCase();
       if (qStr.includes("basecat") || qStr === "4") return 1788479999000;
       if (qStr.includes("robinhood") || qStr === "2") return 1788479999000;
-      if (qStr.includes("round #2") || qStr === "3") return 1788480000000;
-      if (qStr.includes("round #1") || qStr === "1") return 1788393600000;
+      if (qStr.includes("round #2") || qStr.includes("round 2") || qStr === "3") return 1788480000000;
+      if (qStr.includes("round #1") || qStr.includes("round 1") || qStr.includes("btc") || qStr === "1") return 1788393600000;
       return 1788479999000;
     }
 
     function getDuelEffectiveDeadline(duelData) {
       if (!duelData) return 1788479999000;
-      // 1. Sync directly with question ID if set
-      if (duelData.questionId != null) {
-        const qDl = getQuestionDeadline(duelData.questionId);
-        if (qDl) return qDl;
-      }
-      // 2. Sync with question text keywords
+      // 1. Keyword check in questionText takes priority
       if (duelData.questionText) {
         const txt = String(duelData.questionText).toLowerCase();
         if (txt.includes("basecat") || txt.includes("ath")) return 1788479999000;
         if (txt.includes("robinhood") || txt.includes("revenue")) return 1788479999000;
         if (txt.includes("round #2") || txt.includes("round 2")) return 1788480000000;
-        if (txt.includes("round #1") || txt.includes("sep 3") || txt.includes("btc")) return 1788393600000;
+        if (txt.includes("round #1") || txt.includes("round 1") || txt.includes("btc") || txt.includes("sep 3")) return 1788393600000;
+      }
+      // 2. QuestionId check
+      if (duelData.questionId != null) {
+        const qDl = getQuestionDeadline(duelData.questionId);
+        if (qDl) return qDl;
       }
       if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
       return 1788479999000;
@@ -2923,6 +2923,29 @@ async function connectWallet() {
         deadline: 1788393600000,
         createdAt: 1788385300000,
         acceptedAt: 1788386500000,
+        resolvedAt: 1788393600000
+      },
+            "duel_mtknzc53_kha2": {
+        id: "duel_mtknzc53_kha2",
+        questionId: "1",
+        questionText: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)",
+        tier: 1,
+        stakeAmount: 1,
+        pick: "YES",
+        creatorOption: "YES",
+        requiredOpponentOption: "NO",
+        opponentPick: "NO",
+        creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
+        opponent: "0x7290ac43b1717ce914c679a941544a42217f7396",
+        status: "completed",
+        winner: "0xd8c09b380e1d8120aac2188653b68f1209ee883c",
+        loser: "0x7290ac43b1717ce914c679a941544a42217f7396",
+        winningOption: "YES",
+        payout: "1.80",
+        cashback: "0.03",
+        deadline: 1788393600000,
+        createdAt: 1788385500000,
+        acceptedAt: 1788386700000,
         resolvedAt: 1788393600000
       },
       "duel_mtkkvbm5_95vq": {
