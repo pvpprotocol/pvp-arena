@@ -4641,9 +4641,10 @@ async function connectWallet() {
       };
     }
 
-    function get2048CycleData() {
+    function get2048CycleData(customCycleId) {
       const cycle = get2048CycleInfo();
-      const key = "pvp_2048_cycle_store_" + cycle.cycleId;
+      const cId = customCycleId || cycle.cycleId;
+      const key = "pvp_2048_cycle_store_" + cId;
       try {
         const raw = localStorage.getItem(key);
         if (raw) return JSON.parse(raw);
@@ -4671,17 +4672,18 @@ async function connectWallet() {
       };
     }
 
-    function save2048CycleData(data) {
+    function save2048CycleData(data, customCycleId) {
       const cycle = get2048CycleInfo();
-      const key = "pvp_2048_cycle_store_" + cycle.cycleId;
+      const cId = customCycleId || (data && data.cycleId) || cycle.cycleId;
+      const key = "pvp_2048_cycle_store_" + cId;
       try {
         localStorage.setItem(key, JSON.stringify(data));
       } catch(e){}
     }
 
-    function calculateTierPool(tier) {
+    function calculateTierPool(tier, customCycleId) {
       const t = parseInt(tier) || 1;
-      const data = get2048CycleData();
+      const data = get2048CycleData(customCycleId);
       const p = (data.pools && data.pools[t]) ? data.pools[t] : { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 };
       
       const usdgTickets = p.ticketsUsdg || 0;
@@ -5149,38 +5151,74 @@ async function connectWallet() {
         return;
       }
 
-      const data = get2048CycleData();
+      // STRICT DEADLINE RULE:
+      // While the 10-Hour tournament round is still active and ongoing (timeLeft > 0),
+      // the Claim Prize banner MUST NEVER be displayed. Scores can still be beaten!
+      const cycle = get2048CycleInfo();
       const tiers = [1, 5, 10, 100, 1000];
       let wonTier = null;
       let wonPrizeUsdg = 0;
       let wonPrizePvp = 0;
+      let wonCycleId = null;
 
-      for (const t of tiers) {
-        const scores = (data.scores && data.scores[t]) ? data.scores[t] : [];
-        if (scores.length > 0) {
-          const top1 = scores[0];
-          const isMe = (
-            (top1.fullWallet && top1.fullWallet.toLowerCase() === currentWallet.toLowerCase()) ||
-            (top1.wallet.toLowerCase() === (currentWallet.slice(0, 6) + "..." + currentWallet.slice(-4)).toLowerCase())
-          );
-          const alreadyClaimed = data.claimedPrizes && data.claimedPrizes[t] && data.claimedPrizes[t].toLowerCase() === currentWallet.toLowerCase();
-          if (isMe && !alreadyClaimed) {
-            wonTier = t;
-            const pInfo = calculateTierPool(t);
-            wonPrizeUsdg = pInfo.usdgNetPrize;
-            wonPrizePvp = pInfo.pvpTokensNetPrize;
-            break;
+      // Check current cycle ONLY if it has officially ended (scores locked)
+      if (cycle && cycle.isEnded) {
+        const data = get2048CycleData(cycle.cycleId);
+        for (const t of tiers) {
+          const scores = (data.scores && data.scores[t]) ? data.scores[t] : [];
+          if (scores.length > 0) {
+            const top1 = scores[0];
+            const isMe = (
+              (top1.fullWallet && top1.fullWallet.toLowerCase() === currentWallet.toLowerCase()) ||
+              (top1.wallet.toLowerCase() === (currentWallet.slice(0, 6) + "..." + currentWallet.slice(-4)).toLowerCase())
+            );
+            const alreadyClaimed = data.claimedPrizes && data.claimedPrizes[t] && data.claimedPrizes[t].toLowerCase() === currentWallet.toLowerCase();
+            if (isMe && !alreadyClaimed) {
+              wonTier = t;
+              wonCycleId = cycle.cycleId;
+              const pInfo = calculateTierPool(t, cycle.cycleId);
+              wonPrizeUsdg = pInfo.usdgNetPrize;
+              wonPrizePvp = pInfo.pvpTokensNetPrize;
+              break;
+            }
           }
         }
       }
 
-      if (wonTier) {
+      // Also check immediate previous ended cycle (cycleIndex - 1) if a new round has started
+      if (!wonTier && cycle && cycle.cycleIndex > 0) {
+        const prevCycleId = "cycle_10h_" + (cycle.cycleIndex - 1);
+        const data = get2048CycleData(prevCycleId);
+        for (const t of tiers) {
+          const scores = (data.scores && data.scores[t]) ? data.scores[t] : [];
+          if (scores.length > 0) {
+            const top1 = scores[0];
+            const isMe = (
+              (top1.fullWallet && top1.fullWallet.toLowerCase() === currentWallet.toLowerCase()) ||
+              (top1.wallet.toLowerCase() === (currentWallet.slice(0, 6) + "..." + currentWallet.slice(-4)).toLowerCase())
+            );
+            const alreadyClaimed = data.claimedPrizes && data.claimedPrizes[t] && data.claimedPrizes[t].toLowerCase() === currentWallet.toLowerCase();
+            if (isMe && !alreadyClaimed) {
+              wonTier = t;
+              wonCycleId = prevCycleId;
+              const pInfo = calculateTierPool(t, prevCycleId);
+              wonPrizeUsdg = pInfo.usdgNetPrize;
+              wonPrizePvp = pInfo.pvpTokensNetPrize;
+              break;
+            }
+          }
+        }
+      }
+
+      // Display banner ONLY for verified #1 winner of an ended round who has not yet claimed
+      if (wonTier && wonCycleId) {
         banner.classList.remove("hidden");
         const titleEl = document.getElementById("claim-banner-title");
         const subEl = document.getElementById("claim-banner-sub");
-        if (titleEl) titleEl.innerText = "🎉 YOU WON #1 SPOT IN TIER $" + wonTier + "!";
-        if (subEl) subEl.innerText = "Claim Dual Rewards: $" + wonPrizeUsdg.toFixed(2) + " USDG + " + wonPrizePvp.toLocaleString() + " $PVP (80% Net of both pools)";
+        if (titleEl) titleEl.innerText = "🎉 YOU WON #1 SPOT IN TIER $" + wonTier + " (OFFICIAL WINNER)!";
+        if (subEl) subEl.innerText = "Tournament deadline ended. Claim Dual Rewards: $" + wonPrizeUsdg.toFixed(2) + " USDG + " + wonPrizePvp.toLocaleString() + " $PVP (80% Net Prize)";
         banner.setAttribute("data-won-tier", wonTier);
+        banner.setAttribute("data-won-cycle", wonCycleId);
         banner.setAttribute("data-won-usdg", wonPrizeUsdg);
         banner.setAttribute("data-won-pvp", wonPrizePvp);
       } else {
@@ -5192,11 +5230,12 @@ async function connectWallet() {
       const banner = document.getElementById("banner-claim-2048");
       if (!banner) return;
       const tier = banner.getAttribute("data-won-tier");
+      const cycleId = banner.getAttribute("data-won-cycle");
       const usdg = parseFloat(banner.getAttribute("data-won-usdg")) || 0;
       const pvp = parseInt(banner.getAttribute("data-won-pvp")) || 0;
       const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
 
-      if (!tier || !currentWallet) return;
+      if (!tier || !currentWallet || !cycleId) return;
 
       const btn = document.getElementById("claim-banner-btn");
       if (btn) {
@@ -5206,10 +5245,10 @@ async function connectWallet() {
 
       try {
         await new Promise(r => setTimeout(r, 1200));
-        const data = get2048CycleData();
+        const data = get2048CycleData(cycleId);
         if (!data.claimedPrizes) data.claimedPrizes = {};
         data.claimedPrizes[tier] = currentWallet;
-        save2048CycleData(data);
+        save2048CycleData(data, cycleId);
 
         showToast("🎉 Successfully Claimed Dual Prize: $" + usdg.toFixed(2) + " USDG + " + pvp.toLocaleString() + " $PVP! Funds sent to your wallet.", "success");
         checkWinnerClaimBanner();
