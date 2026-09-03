@@ -4179,12 +4179,14 @@ async function connectWallet() {
       const cycleStart = cycleNum * CYCLE_DURATION_2048;
       const cycleEnd = cycleStart + CYCLE_DURATION_2048;
       const remainingMs = Math.max(0, cycleEnd - now);
+      const isEnded = remainingMs <= 0;
       return {
         cycleId: "2048_10h_" + cycleNum,
         cycleNum,
         cycleStart,
         cycleEnd,
-        remainingMs
+        remainingMs,
+        isEnded
       };
     }
 
@@ -4290,6 +4292,11 @@ async function connectWallet() {
 
     function record2048ScoreOnline(tier, wallet, score) {
       if (!wallet || score <= 0) return;
+      const cycle = get2048CycleInfo();
+      if (cycle.isEnded) {
+        showToast("🔒 Tournament round has ended! Scores are locked. Wait for the next round.", "warning");
+        return;
+      }
       const data = get2048CycleData();
       if (!data.scores) data.scores = {};
       if (!data.scores[tier]) data.scores[tier] = [];
@@ -4615,18 +4622,29 @@ async function connectWallet() {
       const el = document.getElementById("cycle-countdown-2048");
       if (!el) return;
 
-      const totalSec = Math.floor(cycle.remainingMs / 1000);
-      const h = Math.floor(totalSec / 3600);
-      const m = Math.floor((totalSec % 3600) / 60);
-      const s = totalSec % 60;
+      if (cycle.isEnded) {
+        el.innerText = "🔒 ROUND ENDED • SCORES LOCKED • NEXT ROUND STARTING SOON";
+        el.className = "text-xs font-mono font-bold text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3 py-1.5 rounded-xl shadow-inner animate-pulse";
+      } else {
+        const totalSec = Math.floor(cycle.remainingMs / 1000);
+        const h = Math.floor(totalSec / 3600);
+        const m = Math.floor((totalSec % 3600) / 60);
+        const s = totalSec % 60;
 
-      const pad = (n) => String(n).padStart(2, '0');
-      el.innerText = "⏳ 10H CYCLE: " + pad(h) + "h " + pad(m) + "m " + pad(s) + "s";
+        const pad = (n) => String(n).padStart(2, '0');
+        el.innerText = "⏳ 10H CYCLE: " + pad(h) + "h " + pad(m) + "m " + pad(s) + "s";
+        el.className = "text-xs font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl shadow-inner";
+      }
     }
 
     // Connect into buy2048Ticket to dynamically increase tickets and pool
     const origBuy2048Ticket = window.buy2048Ticket;
     window.buy2048Ticket = async function(tier, paymentMethod) {
+      const cycleInfo = get2048CycleInfo();
+      if (cycleInfo.isEnded) {
+        showToast("🔒 Current round has ended. Please wait for the next tournament round to buy tickets.", "warning");
+        return;
+      }
       if (!isConnected) {
         await connectWallet();
       }
