@@ -252,81 +252,6 @@
           </button>
         </div>
 
-        <!-- YOUR PERSONAL TOURNAMENT STANDINGS (ALL TIERS) -->
-        <div id="my-all-tiers-summary-box" class="p-4 rounded-2xl bg-gradient-to-r from-slate-900/95 via-cyan-950/40 to-slate-900/95 border border-cyan-500/40 space-y-3 shadow-lg">
-          <div class="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-white/10">
-            <div class="flex items-center gap-2">
-              <span class="text-xl">👤</span>
-              <div>
-                <h4 class="font-mono font-black text-white text-xs sm:text-sm">YOUR LIVE TOURNAMENT STANDINGS (ALL TIERS)</h4>
-                <span class="text-[10px] text-slate-400 block font-mono" id="my-summary-wallet-label">Connected Wallet: 0x...</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> Live Sync
-              </span>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="my-summary-tiers-grid">
-            <div id="my-summary-tier-1" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-slate-300 text-xs">$1 TIER</span>
-                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
-              </div>
-              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
-              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
-                <span>Personal Best:</span>
-                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
-              </div>
-            </div>
-            <div id="my-summary-tier-5" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-slate-300 text-xs">$5 TIER</span>
-                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
-              </div>
-              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
-              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
-                <span>Personal Best:</span>
-                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
-              </div>
-            </div>
-            <div id="my-summary-tier-10" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-slate-300 text-xs">$10 TIER</span>
-                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
-              </div>
-              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
-              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
-                <span>Personal Best:</span>
-                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
-              </div>
-            </div>
-            <div id="my-summary-tier-100" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-slate-300 text-xs">$100 TIER</span>
-                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
-              </div>
-              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
-              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
-                <span>Personal Best:</span>
-                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
-              </div>
-            </div>
-            <div id="my-summary-tier-1000" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-slate-300 text-xs">$1,000 TIER</span>
-                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
-              </div>
-              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
-              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
-                <span>Personal Best:</span>
-                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Interactive Questions Grid -->
         <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <!-- Populated by JavaScript renderDuelQuestions() -->
@@ -816,6 +741,81 @@
         </div>
 
       </div>
+
+      <!-- YOUR PERSONAL TOURNAMENT STANDINGS (ALL TIERS) -->
+        <div id="my-all-tiers-summary-box" class="p-4 rounded-2xl bg-gradient-to-r from-slate-900/95 via-cyan-950/40 to-slate-900/95 border border-cyan-500/40 space-y-3 shadow-lg">
+          <div class="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-white/10">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">👤</span>
+              <div>
+                <h4 class="font-mono font-black text-white text-xs sm:text-sm">YOUR LIVE TOURNAMENT STANDINGS (ALL TIERS)</h4>
+                <span class="text-[10px] text-slate-400 block font-mono" id="my-summary-wallet-label">Connected Wallet: 0x...</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> Live Sync
+              </span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="my-summary-tiers-grid">
+            <div id="my-summary-tier-1" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$1 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+            <div id="my-summary-tier-5" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$5 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+            <div id="my-summary-tier-10" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$10 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+            <div id="my-summary-tier-100" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$100 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+            <div id="my-summary-tier-1000" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$1,000 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
       <!-- LIVE TOP 3 RECORD HOLDERS -->
       <div class="glass-panel p-6 rounded-3xl border border-white/10 space-y-5 mt-6">
