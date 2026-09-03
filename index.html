@@ -716,6 +716,20 @@
               <span class="text-xs text-slate-400">Final Score:</span>
               <span id="overlay-final-score" class="text-2xl font-black text-cyan-400 block">0</span>
             </div>
+            
+            <!-- ANTI-CHEAT & ONCHAIN SCORE RECORD -->
+            <div id="overlay-anticheat-proof" class="w-full max-w-xs">
+              <div class="bg-cyan-950/40 border border-cyan-500/40 rounded-xl p-3 text-left">
+                <div class="flex items-center justify-between text-xs text-cyan-400 font-bold mb-2">
+                  <span>🛡️ ANTI-CHEAT FAIR RUN</span>
+                  <span class="text-[10px] text-slate-400 font-mono">Robinhood Chain</span>
+                </div>
+                <button onclick="submit2048ScoreOnchain()" id="btn-submit-score-onchain" class="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-black text-xs hover:from-cyan-300 hover:to-blue-400 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-500/20">
+                  ⚡ RECORD SCORE ON-CHAIN
+                </button>
+                <div id="score-onchain-status" class="text-[10px] text-center text-slate-400 mt-2 font-mono"></div>
+              </div>
+            </div>
             <div class="flex gap-3">
               <button id="overlay-play-again-btn" onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400">PLAY AGAIN</button>
               <button onclick="switchTab('leaderboard'); setLeaderboardCategory('2048');" class="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-mono font-bold text-xs hover:bg-slate-700">VIEW LEADERBOARD</button>
