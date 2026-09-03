@@ -3206,7 +3206,14 @@ async function connectWallet() {
       
       const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('lb-table-title');
-      if (title) title.innerText = `Top 100 Players — ${catNames[curLbCat]} (${curLbTier} Tier)`;
+      if (title) {
+        if (curLbCat === "2048") {
+          const cInfo = get2048CycleInfo();
+          title.innerText = "Top 100 Players — 2048 Skill ($" + curLbTier + " Tier) — Round #" + (cInfo.cycleIndex + 1) + " (Active)";
+        } else {
+          title.innerText = "Top 100 Players — " + catNames[curLbCat] + " ($" + curLbTier + " Tier)";
+        }
+      }
       
       const colMetric = document.getElementById('lb-col-metric');
       if (colMetric) {
@@ -4993,36 +5000,65 @@ async function connectWallet() {
         }
       } catch(e){}
       
+      // STRICT CYCLE RESET:
+      // If requesting the archived initial Round #0, return its historical records.
+      // For the active current cycle or any new cycle (Round #1, #2, etc.), return a clean, FRESH leaderboard!
+      const isPastInitialCycle = (cId === "cycle_10h_0");
+      if (isPastInitialCycle) {
+        return {
+          cycleId: "cycle_10h_0",
+          cycleStart: CYCLE_EPOCH_ANCHOR,
+          cycleEnd: CYCLE_EPOCH_ANCHOR + CYCLE_DURATION_2048,
+          processedEvents: {},
+          pools: {
+            1: { ticketsUsdg: 5, ticketsPvp: 0, pvpTokensGross: 0 },
+            5: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
+            10: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
+            100: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
+            1000: { ticketsUsdg: 2, ticketsPvp: 0, pvpTokensGross: 0 }
+          },
+          scores: {
+            1: [
+              { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 5392, timestamp: 1788439027207 },
+              { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 4820, timestamp: 1788439941680 }
+            ],
+            5: [
+              { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3464, timestamp: 1788439615046 }
+            ],
+            10: [
+              { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 1672, timestamp: 1788440100000 }
+            ],
+            100: [
+              { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3180, timestamp: 1788470206030 }
+            ],
+            1000: [
+              { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 6480, timestamp: 1788470500000 },
+              { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 5120, timestamp: 1788470600000 }
+            ]
+          },
+          claimedPrizes: { 1: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", 1000: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6" }
+        };
+      }
+
+      // Fresh cycle: All scores and pools start completely clean & empty!
       return {
         cycleId: cycle.cycleId,
         cycleStart: cycle.cycleStart,
         cycleEnd: cycle.cycleEnd,
         processedEvents: {},
         pools: {
-          1: { ticketsUsdg: 5, ticketsPvp: 0, pvpTokensGross: 0 },
-          5: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
-          10: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
-          100: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
-          1000: { ticketsUsdg: 2, ticketsPvp: 0, pvpTokensGross: 0 }
+          1: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          5: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          10: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          100: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          1000: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 }
         },
         scores: {
-          1: [
-            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 5392, timestamp: 1788439027207 },
-            { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 4820, timestamp: 1788439941680 }
-          ],
-          5: [
-            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3464, timestamp: 1788439615046 }
-          ],
-          10: [
-            { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 1672, timestamp: 1788440100000 }
-          ],
-          100: [
-            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3180, timestamp: 1788470206030 }
-          ],
-          1000: [
-            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 6480, timestamp: 1788470500000 },
-            { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 5120, timestamp: 1788470600000 }
-          ]
+          1: [],
+          5: [],
+          10: [],
+          100: [],
+          1000: []
         },
         claimedPrizes: {}
       };
