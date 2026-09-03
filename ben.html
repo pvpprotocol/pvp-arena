@@ -3778,6 +3778,14 @@ async function connectWallet() {
             <span class="text-emerald-400 font-bold">Prize: $${safePayout} USDG</span>
           </div>
         `;
+      } else if (category === "expired") {
+        completedDetailsHtml = `
+          <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
+            <span>Creator: <span class="text-slate-200">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
+            <span class="text-slate-500">•</span>
+            <span class="text-amber-400 font-mono">Refundable Deposit: ${safeTier} USDG</span>
+          </div>
+        `;
       } else {
         completedDetailsHtml = `
           <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
@@ -3785,7 +3793,7 @@ async function connectWallet() {
             <span class="text-slate-600 font-bold">VS</span>
             <span>P2: <span class="text-slate-200">${duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent'}</span> [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>
             <span class="text-slate-500">•</span>
-            <span class="text-emerald-400 font-semibold">Prize: $${safePayout} USDG</span>
+            <span class="text-emerald-400 font-semibold">Prize: ${safePayout} USDG</span>
           </div>
         `;
       }
