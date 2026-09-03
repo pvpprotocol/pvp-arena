@@ -3197,7 +3197,9 @@ async function connectWallet() {
       if (title) {
         if (curLbCat === "2048") {
           const cInfo = get2048CycleInfo();
-          title.innerText = "Top 100 Players — 2048 Skill ($" + curLbTier + " Tier) — Round #" + (cInfo.cycleIndex + 1) + " (Active)";
+          const selectedRound = window.selectedLb2048Round !== undefined ? window.selectedLb2048Round : cInfo.cycleIndex;
+          const isRoundActive = selectedRound === cInfo.cycleIndex;
+          title.innerHTML = "Top 100 Players — 2048 Skill ($" + curLbTier + " Tier) — Round #" + (selectedRound + 1) + (isRoundActive ? " <span class=\"text-emerald-400 text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 ml-2\">● ACTIVE</span>" : " <span class=\"text-slate-400 text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 ml-2\">ENDED</span>");
         } else {
           title.innerText = "Top 100 Players — " + catNames[curLbCat] + " ($" + curLbTier + " Tier)";
         }
@@ -3212,7 +3214,10 @@ async function connectWallet() {
 
       let leaderboardData = [];
       if (curLbCat === '2048') {
-        const cycleData = get2048CycleData();
+        const cInfo = get2048CycleInfo();
+        const selectedRound = window.selectedLb2048Round !== undefined ? window.selectedLb2048Round : cInfo.cycleIndex;
+        const targetCycleId = "cycle_10h_" + selectedRound;
+        const cycleData = get2048CycleData(targetCycleId);
         const tierScores = (cycleData.scores && cycleData.scores[curLbTier]) ? cycleData.scores[curLbTier] : [];
         const poolInfo = calculateTierPool(curLbTier);
         const myWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
@@ -4963,64 +4968,87 @@ async function connectWallet() {
       const cycle = get2048CycleInfo();
       const cId = customCycleId || cycle.cycleId;
       const key = "pvp_2048_cycle_store_" + cId;
+      
+      // If requesting archived Round #0, return historical data
+      if (cId === "cycle_10h_0") {
+        try {
+          const raw0 = localStorage.getItem(key);
+          if (raw0) return JSON.parse(raw0);
+        } catch(e){}
+        return {
+          cycleId: "cycle_10h_0",
+          cycleStart: CYCLE_EPOCH_ANCHOR,
+          cycleEnd: CYCLE_EPOCH_ANCHOR + CYCLE_DURATION_2048,
+          processedEvents: {},
+          pools: {
+            1: { ticketsUsdg: 5, ticketsPvp: 0, pvpTokensGross: 0 },
+            5: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
+            10: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
+            100: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
+            1000: { ticketsUsdg: 2, ticketsPvp: 0, pvpTokensGross: 0 }
+          },
+          scores: {
+            1: [
+              { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 5392, timestamp: 1788439027207 },
+              { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 4820, timestamp: 1788439941680 }
+            ],
+            5: [
+              { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3464, timestamp: 1788439615046 }
+            ],
+            10: [
+              { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 1672, timestamp: 1788440100000 }
+            ],
+            100: [
+              { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3180, timestamp: 1788470206030 }
+            ],
+            1000: [
+              { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 6480, timestamp: 1788470500000 },
+              { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 5120, timestamp: 1788470600000 }
+            ]
+          },
+          claimedPrizes: { 1: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", 1000: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6" }
+        };
+      }
+
+      // ACTIVE & NEW ROUNDS: Completely clean slate!
+      // Read saved data if players have actually played in this cycle
       try {
         const raw = localStorage.getItem(key);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (!parsed.processedEvents) parsed.processedEvents = {};
-          // Enforce exact clean pool limits if corrupted by prior multi-counting
-          if (parsed.pools && parsed.pools[1] && parsed.pools[1].ticketsUsdg > 5) {
-            parsed.pools[1].ticketsUsdg = 5;
-          }
-          if (parsed.pools && parsed.pools[5] && parsed.pools[5].ticketsUsdg > 1) {
-            parsed.pools[5].ticketsUsdg = 1;
-          }
-          if (parsed.pools && parsed.pools[10] && parsed.pools[10].ticketsUsdg > 1) {
-            parsed.pools[10].ticketsUsdg = 1;
-          }
-          if (parsed.pools && parsed.pools[100]) {
-            parsed.pools[100].ticketsUsdg = 0;
-          }
-          if (parsed.pools && parsed.pools[1000]) {
-            parsed.pools[1000].ticketsUsdg = 0;
+          // Purge any leaked Round #0 mock scores that might have been copied into this cycle
+          if (parsed && parsed.scores) {
+            [1, 5, 10, 100, 1000].forEach(t => {
+              if (parsed.scores[t]) {
+                parsed.scores[t] = parsed.scores[t].filter(item => {
+                  return item.timestamp > (CYCLE_EPOCH_ANCHOR + CYCLE_DURATION_2048);
+                });
+              }
+            });
           }
           return parsed;
         }
       } catch(e){}
-      
-      // UNIVERSAL PUBLIC LEADERBOARD:
-      // Guaranteed baseline public tournament scores so EVERY visitor and EVERY wallet (connected or disconnected)
-      // sees the exact same official rankings across all tiers (1, 5, 10, 100, 1000).
+
+      // Clean empty slate for the new active round
       return {
-        cycleId: cycle.cycleId,
+        cycleId: cId,
         cycleStart: cycle.cycleStart,
         cycleEnd: cycle.cycleEnd,
         processedEvents: {},
         pools: {
-          1: { ticketsUsdg: 5, ticketsPvp: 0, pvpTokensGross: 0 },
-          5: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
-          10: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
-          100: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
-          1000: { ticketsUsdg: 2, ticketsPvp: 0, pvpTokensGross: 0 }
+          1: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          5: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          10: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          100: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          1000: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 }
         },
         scores: {
-          1: [
-            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 5392, timestamp: 1788439027207 },
-            { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 4820, timestamp: 1788439941680 }
-          ],
-          5: [
-            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3464, timestamp: 1788439615046 }
-          ],
-          10: [
-            { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 1672, timestamp: 1788440100000 }
-          ],
-          100: [
-            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3180, timestamp: 1788470206030 }
-          ],
-          1000: [
-            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 6480, timestamp: 1788470500000 },
-            { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 5120, timestamp: 1788470600000 }
-          ]
+          1: [],
+          5: [],
+          10: [],
+          100: [],
+          1000: []
         },
         claimedPrizes: {}
       };
