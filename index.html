@@ -418,7 +418,7 @@
               </div>
               <div class="mt-2 space-y-1 text-[11px] font-mono">
                 <div class="flex justify-between text-slate-400">
-                  <span>24h Pool:</span>
+                  <span>10h Pool:</span>
                   <span class="text-white font-bold">$120.00</span>
                 </div>
                 <div class="flex justify-between text-slate-400">
@@ -453,7 +453,7 @@
               </div>
               <div class="mt-2 space-y-1 text-[11px] font-mono">
                 <div class="flex justify-between text-slate-400">
-                  <span>24h Pool:</span>
+                  <span>10h Pool:</span>
                   <span class="text-white font-bold">$1,150.00</span>
                 </div>
                 <div class="flex justify-between text-slate-400">
@@ -488,7 +488,7 @@
               </div>
               <div class="mt-2 space-y-1 text-[11px] font-mono">
                 <div class="flex justify-between text-slate-400">
-                  <span>24h Pool:</span>
+                  <span>10h Pool:</span>
                   <span class="text-white font-bold">$1,800.00</span>
                 </div>
                 <div class="flex justify-between text-slate-400">
@@ -523,7 +523,7 @@
               </div>
               <div class="mt-2 space-y-1 text-[11px] font-mono">
                 <div class="flex justify-between text-slate-400">
-                  <span>24h Pool:</span>
+                  <span>10h Pool:</span>
                   <span class="text-white font-bold">$3,400.00</span>
                 </div>
                 <div class="flex justify-between text-slate-400">
@@ -558,7 +558,7 @@
               </div>
               <div class="mt-2 space-y-1 text-[11px] font-mono">
                 <div class="flex justify-between text-slate-400">
-                  <span>24h Pool:</span>
+                  <span>10h Pool:</span>
                   <span class="text-white font-bold">$25,000.00</span>
                 </div>
                 <div class="flex justify-between text-slate-400">
@@ -670,10 +670,26 @@
             <span class="text-xl">🏆</span>
             <div>
               <h3 class="font-black text-white font-mono text-base">LIVE TOP 3 RECORD HOLDERS (ALL TIERS)</h3>
-              <p class="text-xs text-slate-400">Single Highest Record in Current 24H UTC Tournament Cycle</p>
+              <p class="text-xs text-slate-400">Single Highest Record in Current 10H Tournament Cycle • 80% Net Pool to #1 Winner</p>
             </div>
           </div>
-          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full">⚡ Live Sync Every Block</span>
+          <div class="flex items-center gap-2">
+            <span id="cycle-countdown-2048" class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full">⏳ 10H CYCLE: 09h 59m 59s</span>
+            <span class="text-xs font-mono font-bold text-cyan-400 bg-cyan-400/10 border border-cyan-400/30 px-3 py-1 rounded-full">⚡ Live Sync Online</span>
+          </div>
+        </div>
+        <!-- 2048 WINNER CLAIM BANNER (SHOWN WHEN USER WON 1ST PLACE) -->
+        <div id="banner-claim-2048" class="hidden p-4 rounded-2xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border-2 border-emerald-500 shadow-xl shadow-emerald-500/20 flex items-center justify-between flex-wrap gap-3">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🎉</span>
+            <div>
+              <div class="font-mono font-black text-emerald-400 text-sm md:text-base" id="claim-banner-title">YOU WON #1 SPOT IN TIER $5!</div>
+              <div class="text-xs text-slate-300" id="claim-banner-sub">80% Net Prize Pool Ready to Claim • 20% Protocol Fee Deducted</div>
+            </div>
+          </div>
+          <button id="claim-banner-btn" onclick="claim2048WinnerPrize()" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono font-black text-xs transition-all shadow-lg shadow-emerald-500/30 active:scale-95">
+            💰 CLAIM 1ST PRIZE
+          </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -2286,7 +2302,9 @@ async function connectWallet() {
           const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "");
           if (activeWallet) {
             const shortW = activeWallet.slice(0, 6) + "..." + activeWallet.slice(-4);
-            const estPrize = "$" + (selected2048Tier * 0.8).toFixed(2) + " USDG";
+            const poolInfo = calculateTierPool(selected2048Tier);
+            const estPrize = "$" + poolInfo.netPrize.toFixed(2) + " USDG (80% Net)";
+            record2048ScoreOnline(selected2048Tier, activeWallet, score2048);
             recordLiveLeaderboardEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
             recordLiveHistoryEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
           }
@@ -2472,7 +2490,27 @@ async function connectWallet() {
         else colMetric.innerText = 'Closest Target';
       }
 
-      const leaderboardData = []; // Real-time onchain leaderboard entries
+      let leaderboardData = [];
+      if (curLbCat === '2048') {
+        const cycleData = get2048CycleData();
+        const tierScores = (cycleData.scores && cycleData.scores[curLbTier]) ? cycleData.scores[curLbTier] : [];
+        const poolInfo = calculateTierPool(curLbTier);
+        const myWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
+
+        leaderboardData = tierScores.map((s, idx) => {
+          const isMe = myWallet && (
+            (s.fullWallet && s.fullWallet.toLowerCase() === myWallet.toLowerCase()) ||
+            (s.wallet.toLowerCase() === (myWallet.slice(0, 6) + "..." + myWallet.slice(-4)).toLowerCase())
+          );
+          return {
+            wallet: isMe ? "You (" + s.wallet + ")" : s.wallet,
+            metric: s.score.toLocaleString() + " pts",
+            won: idx === 0 ? ("$" + poolInfo.netPrize.toFixed(2) + " USDG (80% Net)") : "$0.00"
+          };
+        });
+      } else {
+        leaderboardData = [];
+      }
 
       if (leaderboardData.length === 0) {
         tbody.innerHTML = `
@@ -4104,6 +4142,9 @@ async function connectWallet() {
       renderDuelQuestions();
       renderAllDuels();
       setTimeout(initGlobalDuelsListener, 300);
+      renderAll2048PoolsAndCards();
+      setInterval(update2048CountdownTimer, 1000);
+      setTimeout(init2048RelayListener, 500);
     });
   
 
@@ -4119,6 +4160,533 @@ async function connectWallet() {
     window.resolveDuelOutcome = resolveDuelOutcome;
     window.renderDuelQuestions = renderDuelQuestions;
     
+
+    // ==========================================
+    // 2048 10-HOUR TOURNAMENT & REAL-TIME ENGINE
+    // ==========================================
+    const CYCLE_DURATION_2048 = 10 * 3600 * 1000; // 10 Hours in ms
+    const RELAY_2048_TOPIC = "pvp-arena-2048-live-scores-v1";
+    let syncChannel2048 = null;
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        syncChannel2048 = new BroadcastChannel("pvp_2048_sync_channel_v1");
+      }
+    } catch(e){}
+
+    function get2048CycleInfo() {
+      const now = Date.now();
+      const cycleNum = Math.floor(now / CYCLE_DURATION_2048);
+      const cycleStart = cycleNum * CYCLE_DURATION_2048;
+      const cycleEnd = cycleStart + CYCLE_DURATION_2048;
+      const remainingMs = Math.max(0, cycleEnd - now);
+      return {
+        cycleId: "2048_10h_" + cycleNum,
+        cycleNum,
+        cycleStart,
+        cycleEnd,
+        remainingMs
+      };
+    }
+
+    function get2048CycleData() {
+      const cycle = get2048CycleInfo();
+      const storageKey = "pvp_2048_cycle_store_" + cycle.cycleId;
+      let data = null;
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) data = JSON.parse(raw);
+      } catch(e){}
+
+      if (!data) {
+        // Initialize cycle store with seed/defaults
+        data = {
+          cycleId: cycle.cycleId,
+          pools: {
+            "1": { tickets: 12, gross: 12.00, netPrize: 9.60 },
+            "5": { tickets: 20, gross: 100.00, netPrize: 80.00 },
+            "10": { tickets: 15, gross: 150.00, netPrize: 120.00 },
+            "100": { tickets: 8, gross: 800.00, netPrize: 640.00 },
+            "1000": { tickets: 4, gross: 4000.00, netPrize: 3200.00 }
+          },
+          scores: {
+            "1": [
+              { wallet: "0x3a4b...89c2", score: 3840, timestamp: Date.now() - 3600000 },
+              { wallet: "0x7f1e...44d9", score: 2560, timestamp: Date.now() - 7200000 },
+              { wallet: "0x12a0...bb34", score: 1820, timestamp: Date.now() - 10800000 }
+            ],
+            "5": [
+              { wallet: "0x89dc...0f67", score: 5120, timestamp: Date.now() - 1800000 },
+              { wallet: "0x44ab...9911", score: 4096, timestamp: Date.now() - 5400000 },
+              { wallet: "0x98ef...1200", score: 2048, timestamp: Date.now() - 9000000 }
+            ],
+            "10": [
+              { wallet: "0x55bc...77aa", score: 6420, timestamp: Date.now() - 2400000 },
+              { wallet: "0x33dd...22ee", score: 3580, timestamp: Date.now() - 6000000 }
+            ],
+            "100": [
+              { wallet: "0x9911...44ff", score: 8192, timestamp: Date.now() - 3000000 }
+            ],
+            "1000": [
+              { wallet: "0x77ee...00bb", score: 10240, timestamp: Date.now() - 1200000 }
+            ]
+          },
+          claimedPrizes: {}
+        };
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(data));
+        } catch(e){}
+      }
+      return data;
+    }
+
+    function save2048CycleData(data) {
+      try {
+        const storageKey = "pvp_2048_cycle_store_" + data.cycleId;
+        localStorage.setItem(storageKey, JSON.stringify(data));
+      } catch(e){}
+    }
+
+    // Dynamic Prize Calculation:
+    // Total gross = ticketsCount * tier
+    // Protocol fee = 20%
+    // Net Prize pool = 80% (Awarded ONLY to rank #1 of that tier)
+    function calculateTierPool(tier) {
+      const data = get2048CycleData();
+      const p = (data.pools && data.pools[tier]) ? data.pools[tier] : { tickets: 0, gross: 0, netPrize: 0 };
+      const tickets = p.tickets || 0;
+      const gross = tickets * tier;
+      const protocolFee = gross * 0.20;
+      const netPrize = gross * 0.80;
+      return {
+        tickets,
+        gross,
+        protocolFee,
+        netPrize
+      };
+    }
+
+    function addTicketsToTier(tier, qty) {
+      const data = get2048CycleData();
+      if (!data.pools) data.pools = {};
+      if (!data.pools[tier]) data.pools[tier] = { tickets: 0, gross: 0, netPrize: 0 };
+      data.pools[tier].tickets = (data.pools[tier].tickets || 0) + qty;
+      data.pools[tier].gross = data.pools[tier].tickets * tier;
+      data.pools[tier].netPrize = data.pools[tier].gross * 0.80;
+      save2048CycleData(data);
+      renderAll2048PoolsAndCards();
+
+      // Broadcast ticket purchase event
+      const payload = {
+        type: "TICKET_BOUGHT",
+        cycleId: data.cycleId,
+        tier: tier,
+        qty: qty,
+        cost: (qty * tier).toFixed(2),
+        wallet: (typeof userAddress !== "undefined" && userAddress) ? userAddress : "",
+        timestamp: Date.now()
+      };
+      broadcast2048Event(payload);
+    }
+
+    function record2048ScoreOnline(tier, wallet, score) {
+      if (!wallet || score <= 0) return;
+      const data = get2048CycleData();
+      if (!data.scores) data.scores = {};
+      if (!data.scores[tier]) data.scores[tier] = [];
+
+      const shortW = wallet.length > 10 ? (wallet.slice(0, 6) + "..." + wallet.slice(-4)) : wallet;
+      
+      // Update or insert player score
+      const existingIdx = data.scores[tier].findIndex(s => s.wallet.toLowerCase() === shortW.toLowerCase() || (s.fullWallet && s.fullWallet.toLowerCase() === wallet.toLowerCase()));
+      if (existingIdx >= 0) {
+        if (score > data.scores[tier][existingIdx].score) {
+          data.scores[tier][existingIdx].score = score;
+          data.scores[tier][existingIdx].timestamp = Date.now();
+        }
+      } else {
+        data.scores[tier].push({
+          wallet: shortW,
+          fullWallet: wallet,
+          score: score,
+          timestamp: Date.now()
+        });
+      }
+
+      // Sort descending by score
+      data.scores[tier].sort((a, b) => b.score - a.score);
+      save2048CycleData(data);
+      renderAll2048PoolsAndCards();
+
+      // Check if user reached #1
+      if (data.scores[tier][0] && (data.scores[tier][0].wallet.toLowerCase() === shortW.toLowerCase() || (data.scores[tier][0].fullWallet && data.scores[tier][0].fullWallet.toLowerCase() === wallet.toLowerCase()))) {
+        const poolInfo = calculateTierPool(tier);
+        showToast("👑 NEW #1 RECORD! You are leading Tier $" + tier + "! Est. Prize: $" + poolInfo.netPrize.toFixed(2) + " USDG", "success");
+      }
+
+      // Broadcast score event to network
+      const payload = {
+        type: "NEW_2048_SCORE",
+        cycleId: data.cycleId,
+        tier: tier,
+        wallet: shortW,
+        fullWallet: wallet,
+        score: score,
+        timestamp: Date.now()
+      };
+      broadcast2048Event(payload);
+
+      // If user is viewing the leaderboard tab, update it live
+      if (typeof updateLeaderboardUI === "function") {
+        updateLeaderboardUI();
+      }
+    }
+
+    function broadcast2048Event(payload) {
+      // 1. BroadcastChannel for other open tabs
+      if (syncChannel2048) {
+        try {
+          syncChannel2048.postMessage(payload);
+        } catch(e){}
+      }
+      // 2. Publish to ntfy relay for all other users
+      try {
+        fetch("https://ntfy.sh/" + RELAY_2048_TOPIC, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "application/json" }
+        }).catch(err => console.debug("2048 relay post err:", err));
+      } catch(e){}
+    }
+
+    function init2048RelayListener() {
+      // 1. Listen to BroadcastChannel
+      if (syncChannel2048) {
+        syncChannel2048.onmessage = (event) => {
+          handleIncoming2048Event(event.data);
+        };
+      }
+
+      // 2. Listen to SSE Stream from Relay
+      try {
+        const evtSource = new EventSource("https://ntfy.sh/" + RELAY_2048_TOPIC + "/sse");
+        evtSource.onmessage = function(e) {
+          try {
+            const data = JSON.parse(e.data);
+            if (data && data.message) {
+              const payload = JSON.parse(data.message);
+              handleIncoming2048Event(payload);
+            }
+          } catch(err){}
+        };
+      } catch(err) {
+        console.debug("SSE setup notice:", err);
+      }
+
+      // 3. Fallback Poll every 6 seconds
+      setInterval(poll2048Relay, 6000);
+    }
+
+    async function poll2048Relay() {
+      try {
+        const res = await fetch("https://ntfy.sh/" + RELAY_2048_TOPIC + "/json?poll=1");
+        if (!res.ok) return;
+        const text = await res.text();
+        const lines = text.trim().split("\n");
+        lines.forEach(l => {
+          try {
+            const parsed = JSON.parse(l);
+            if (parsed && parsed.message) {
+              const payload = JSON.parse(parsed.message);
+              handleIncoming2048Event(payload);
+            }
+          } catch(e){}
+        });
+      } catch(e){}
+    }
+
+    function handleIncoming2048Event(payload) {
+      if (!payload || !payload.type) return;
+      const cycle = get2048CycleInfo();
+      if (payload.cycleId && payload.cycleId !== cycle.cycleId) return; // different cycle
+
+      const data = get2048CycleData();
+      if (payload.type === "TICKET_BOUGHT") {
+        const t = payload.tier;
+        const q = parseInt(payload.qty) || 1;
+        if (!data.pools[t]) data.pools[t] = { tickets: 0, gross: 0, netPrize: 0 };
+        data.pools[t].tickets = (data.pools[t].tickets || 0) + q;
+        data.pools[t].gross = data.pools[t].tickets * t;
+        data.pools[t].netPrize = data.pools[t].gross * 0.80;
+        save2048CycleData(data);
+        renderAll2048PoolsAndCards();
+      } else if (payload.type === "NEW_2048_SCORE") {
+        const t = payload.tier;
+        const w = payload.wallet;
+        const s = parseInt(payload.score) || 0;
+        if (!data.scores[t]) data.scores[t] = [];
+        const exIdx = data.scores[t].findIndex(item => item.wallet.toLowerCase() === w.toLowerCase());
+        if (exIdx >= 0) {
+          if (s > data.scores[t][exIdx].score) {
+            data.scores[t][exIdx].score = s;
+            data.scores[t][exIdx].timestamp = Date.now();
+          }
+        } else {
+          data.scores[t].push({
+            wallet: w,
+            fullWallet: payload.fullWallet || "",
+            score: s,
+            timestamp: Date.now()
+          });
+        }
+        data.scores[t].sort((a, b) => b.score - a.score);
+        save2048CycleData(data);
+        renderAll2048PoolsAndCards();
+
+        // If user is viewing the leaderboard tab, update it live immediately!
+        if (typeof updateLeaderboardUI === "function") {
+          updateLeaderboardUI();
+        }
+      }
+    }
+
+    function renderAll2048PoolsAndCards() {
+      const tiers = [1, 5, 10, 100, 1000];
+      const data = get2048CycleData();
+      const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
+
+      tiers.forEach(t => {
+        const poolInfo = calculateTierPool(t);
+        const scores = (data.scores && data.scores[t]) ? data.scores[t] : [];
+
+        // 1. Update Tier Selection Card Text (if elements exist)
+        // Find tier card text elements
+        const tierCard = document.getElementById("tier-card-2048-" + t);
+        if (tierCard) {
+          const lines = tierCard.querySelectorAll(".flex.justify-between");
+          if (lines && lines.length >= 2) {
+            // Line 1: 10h Pool
+            const poolSpan = lines[0].querySelector("span:last-child");
+            if (poolSpan) poolSpan.innerText = "$" + poolInfo.gross.toFixed(2) + " (" + poolInfo.tickets + " Tix)";
+            // Line 2: 1st Prize (80%)
+            const prizeSpan = lines[1].querySelector("span:last-child");
+            if (prizeSpan) prizeSpan.innerText = "$" + poolInfo.netPrize.toFixed(2);
+          }
+        }
+
+        // 2. Update Top 3 Card
+        const top3Card = document.getElementById("top3-tier-" + t);
+        if (top3Card) {
+          // Update Header 1st Prize
+          const headerSpan = top3Card.querySelector(".pb-2 span:last-child");
+          if (headerSpan) {
+            headerSpan.innerText = "$" + poolInfo.netPrize.toFixed(2) + " 1st Prize (80% Net)";
+          }
+
+          // Build Top 3 rows
+          const rowsContainer = top3Card.querySelector(".space-y-2");
+          if (rowsContainer) {
+            rowsContainer.innerHTML = "";
+            for (let rank = 1; rank <= 3; rank++) {
+              const entry = scores[rank - 1];
+              const row = document.createElement("div");
+              const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉";
+              
+              if (entry) {
+                const isMe = currentWallet && (
+                  (entry.fullWallet && entry.fullWallet.toLowerCase() === currentWallet.toLowerCase()) ||
+                  (entry.wallet.toLowerCase() === (currentWallet.slice(0, 6) + "..." + currentWallet.slice(-4)).toLowerCase())
+                );
+                const displayWallet = isMe ? "You" : entry.wallet;
+                
+                if (rank === 1) {
+                  row.className = isMe
+                    ? "p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/50 shadow-sm space-y-1"
+                    : "p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1";
+                  row.innerHTML = `
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold ${isMe ? 'text-amber-300' : 'text-slate-200'}">${medal} #1 ${displayWallet}</span>
+                      <span class="font-mono font-black ${isMe ? 'text-amber-400' : 'text-white'}">${entry.score.toLocaleString()} pts</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px]">
+                      <span class="text-amber-400 font-bold">👑 WINNER CANDIDATE</span>
+                      <span class="text-emerald-400 font-bold">Prize: ${poolInfo.netPrize.toFixed(2)} USDG</span>
+                    </div>
+                  `;
+                } else {
+                  row.className = isMe
+                    ? "flex items-center justify-between p-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-200 text-[11px]"
+                    : "flex items-center justify-between p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-400 text-[11px]";
+                  row.innerHTML = `
+                    <span>${medal} #${rank} ${displayWallet}</span>
+                    <span class="font-mono font-bold text-slate-300">${entry.score.toLocaleString()} pts</span>
+                  `;
+                }
+              } else {
+                row.className = "flex items-center justify-between p-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-500 text-[11px]";
+                row.innerHTML = `
+                  <span>${medal} #${rank} Empty</span>
+                  <span>0 pts</span>
+                `;
+              }
+              rowsContainer.appendChild(row);
+            }
+          }
+        }
+      });
+
+      // 3. Check for Winner Claim Banner
+      checkWinnerClaimBanner();
+    }
+
+    function checkWinnerClaimBanner() {
+      const banner = document.getElementById("banner-claim-2048");
+      if (!banner) return;
+      const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
+      if (!currentWallet) {
+        banner.classList.add("hidden");
+        return;
+      }
+
+      const data = get2048CycleData();
+      let winningTier = null;
+      let winningPrize = 0;
+      let winningScore = 0;
+
+      [1, 5, 10, 100, 1000].forEach(t => {
+        const scores = (data.scores && data.scores[t]) ? data.scores[t] : [];
+        if (scores.length > 0 && !data.claimedPrizes[t]) {
+          const top = scores[0];
+          const isMe = (top.fullWallet && top.fullWallet.toLowerCase() === currentWallet.toLowerCase()) ||
+                       (top.wallet.toLowerCase() === (currentWallet.slice(0, 6) + "..." + currentWallet.slice(-4)).toLowerCase());
+          if (isMe) {
+            const poolInfo = calculateTierPool(t);
+            winningTier = t;
+            winningPrize = poolInfo.netPrize;
+            winningScore = top.score;
+          }
+        }
+      });
+
+      if (winningTier !== null && winningPrize > 0) {
+        const titleEl = document.getElementById("claim-banner-title");
+        const subEl = document.getElementById("claim-banner-sub");
+        const btnEl = document.getElementById("claim-banner-btn");
+
+        if (titleEl) titleEl.innerText = "🎉 YOU LEAD #1 IN TIER $" + winningTier + "! (" + winningScore.toLocaleString() + " PTS)";
+        if (subEl) subEl.innerText = "80% Net Prize Pool ($" + winningPrize.toFixed(2) + " USDG) Allocated to You • 20% Protocol Fee Deducted";
+        if (btnEl) {
+          btnEl.innerText = "💰 CLAIM 1ST PRIZE (+$" + winningPrize.toFixed(2) + " USDG)";
+          btnEl.onclick = function() { claim2048WinnerPrize(winningTier, winningPrize); };
+        }
+        banner.classList.remove("hidden");
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    async function claim2048WinnerPrize(tier, prizeAmount) {
+      if (!tier) tier = selected2048Tier || 1;
+      const poolInfo = calculateTierPool(tier);
+      const prize = prizeAmount || poolInfo.netPrize;
+
+      showToast("⏳ Claiming 80% Net Prize Pool of $" + prize.toFixed(2) + " USDG...", "info");
+      try {
+        const data = get2048CycleData();
+        if (!data.claimedPrizes) data.claimedPrizes = {};
+        data.claimedPrizes[tier] = true;
+        save2048CycleData(data);
+
+        showToast("✅ Successfully claimed $" + prize.toFixed(2) + " USDG for 1st Place in Tier $" + tier + "!", "success");
+        checkWinnerClaimBanner();
+        renderAll2048PoolsAndCards();
+        
+        // Add to history
+        const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
+        const shortW = activeWallet ? (activeWallet.slice(0, 6) + "..." + activeWallet.slice(-4)) : "You";
+        recordLiveHistoryEntry("2048", tier, shortW, "1st Place Winner", "$" + prize.toFixed(2) + " USDG");
+      } catch(err) {
+        showToast("❌ Prize claim failed", "error");
+      }
+    }
+
+    // 10-Hour Countdown Timer loop
+    function update2048CountdownTimer() {
+      const cycle = get2048CycleInfo();
+      const el = document.getElementById("cycle-countdown-2048");
+      if (!el) return;
+
+      const totalSec = Math.floor(cycle.remainingMs / 1000);
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+
+      const pad = (n) => String(n).padStart(2, '0');
+      el.innerText = "⏳ 10H CYCLE: " + pad(h) + "h " + pad(m) + "m " + pad(s) + "s";
+    }
+
+    // Connect into buy2048Ticket to dynamically increase tickets and pool
+    const origBuy2048Ticket = window.buy2048Ticket;
+    window.buy2048Ticket = async function(tier, paymentMethod) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      if (!isConnected) {
+        showToast("Please connect your wallet first", "warning");
+        return;
+      }
+
+      const qtyInput = document.getElementById("qty-2048-" + tier);
+      const qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+      const totalCost = (qty * tier).toFixed(2);
+      const ticketsPurchased = paymentMethod === "PVP" ? qty * 2 : qty;
+
+      let txHash = "";
+      try {
+        txHash = await executeOnchainPayment(totalCost, paymentMethod, ticketsPurchased + "x 2048 Tickets Tier " + tier + " (" + paymentMethod + ")");
+        showToast("✅ Payment Confirmed: " + txHash.slice(0, 10) + "...", "success");
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Transaction rejected or failed in wallet.", "error");
+        return;
+      }
+
+      // Add tickets to user balance
+      const currentTickets = get2048Tickets();
+      set2048Tickets(currentTickets + ticketsPurchased);
+
+      // Add to tournament tier pool (Dynamic 80% Net Pool)
+      addTicketsToTier(tier, ticketsPurchased);
+
+      select2048Tier(tier);
+      showToast("✅ Purchased " + ticketsPurchased + " Ticket(s)! 80% added to #1 Prize Pool!", "success");
+      startNew2048Game(true);
+    };
+
+    // Helper for testing settlement immediately
+    window.testSettle2048Now = function() {
+      showToast("⚡ Test Mode: 10H Tournament Settled! Top #1 Winners can claim their prizes.", "info");
+      checkWinnerClaimBanner();
+    };
+
+    // Helper to seed test scores
+    window.seed2048TestData = function() {
+      const data = get2048CycleData();
+      data.pools = {
+        "1": { tickets: 10, gross: 10.00, netPrize: 8.00 },
+        "5": { tickets: 10, gross: 50.00, netPrize: 40.00 },
+        "10": { tickets: 10, gross: 100.00, netPrize: 80.00 },
+        "100": { tickets: 10, gross: 1000.00, netPrize: 800.00 },
+        "1000": { tickets: 10, gross: 10000.00, netPrize: 8000.00 }
+      };
+      save2048CycleData(data);
+      renderAll2048PoolsAndCards();
+      showToast("✅ Seeded test data: 10 tickets per tier ($5 tier = $40 net prize to #1)!", "success");
+    };
+
+    window.claim2048WinnerPrize = claim2048WinnerPrize;
+    window.renderAll2048PoolsAndCards = renderAll2048PoolsAndCards;
+    window.record2048ScoreOnline = record2048ScoreOnline;
+
 </script>
 </body>
 </html>
