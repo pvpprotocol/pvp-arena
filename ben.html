@@ -3684,10 +3684,10 @@ async function connectWallet() {
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-mono font-bold text-white">${questionText}</span>
                 <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${safeTier} USDG</span>
-                ${isParticipant ? `<span class=\"px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30\">⚡ ${yourLabel}</span>` : ''}
-                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                                ${(isParticipant && category !== 'completed') ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">⚡ ${yourLabel}</span>` : ''}
+                ${category !== 'completed' ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                   ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-qid="${resolvedQId}" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
-                </span>
+                </span>` : ''}
               </div>
               <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
                 <span>P1: <span class="text-slate-200">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
