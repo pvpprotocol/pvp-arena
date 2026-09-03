@@ -2618,7 +2618,7 @@ async function connectWallet() {
       const currentTickets = get2048Tickets();
       set2048Tickets(currentTickets + ticketsPurchased);
       select2048Tier(tier);
-      addTicketsToTier(tier, qty);
+      addTicketsToTier(tier, qty, paymentMethod);
       showToast("✅ Purchased " + ticketsPurchased + " Ticket(s) for Tier " + tier + "!", "success");
       // Auto-start run immediately with 1 ticket
       startNew2048Game(true);
@@ -4327,6 +4327,7 @@ async function connectWallet() {
       renderAllDuels();
       setTimeout(initGlobalDuelsListener, 300);
       renderAll2048PoolsAndCards();
+      update2048CountdownTimer();
       setInterval(update2048CountdownTimer, 1000);
       setTimeout(init2048RelayListener, 500);
     });
@@ -4345,9 +4346,10 @@ async function connectWallet() {
     window.renderDuelQuestions = renderDuelQuestions;
     
 
-    // ==========================================
+        // ==========================================
     // 2048 10-HOUR TOURNAMENT & REAL-TIME ENGINE
     // ==========================================
+    const CYCLE_EPOCH_ANCHOR = 1788436800000; // 12:00:00 UTC Sep 3, 2026 universal anchor
     const CYCLE_DURATION_2048 = 10 * 3600 * 1000; // 10 Hours in ms
     const RELAY_2048_TOPIC = "pvp-arena-2048-live-scores-v2";
     let syncChannel2048 = null;
@@ -4358,6 +4360,231 @@ async function connectWallet() {
         syncChannel2048 = new BroadcastChannel("pvp_2048_sync_channel_v2");
       }
     } catch(e){}
+
+    function get2048CycleInfo() {
+      const now = Date.now();
+      let elapsed = now - CYCLE_EPOCH_ANCHOR;
+      if (elapsed < 0) elapsed = 0;
+      const cycleIndex = Math.floor(elapsed / CYCLE_DURATION_2048);
+      const cycleStart = CYCLE_EPOCH_ANCHOR + (cycleIndex * CYCLE_DURATION_2048);
+      const cycleEnd = cycleStart + CYCLE_DURATION_2048;
+      const timeLeft = Math.max(0, cycleEnd - now);
+      
+      const h = Math.floor(timeLeft / 3600000);
+      const m = Math.floor((timeLeft % 3600000) / 60000);
+      const s = Math.floor((timeLeft % 60000) / 1000);
+      const formatted = String(h).padStart(2, '0') + "h " + String(m).padStart(2, '0') + "m " + String(s).padStart(2, '0') + "s";
+      
+      return {
+        cycleId: "cycle_10h_" + cycleIndex,
+        cycleIndex,
+        cycleStart,
+        cycleEnd,
+        timeLeft,
+        isEnded: timeLeft <= 0,
+        formatted
+      };
+    }
+
+    function get2048CycleData() {
+      const cycle = get2048CycleInfo();
+      const key = "pvp_2048_cycle_store_" + cycle.cycleId;
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) return JSON.parse(raw);
+      } catch(e){}
+      
+      return {
+        cycleId: cycle.cycleId,
+        cycleStart: cycle.cycleStart,
+        cycleEnd: cycle.cycleEnd,
+        pools: {
+          1: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          5: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          10: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          100: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
+          1000: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 }
+        },
+        scores: {
+          1: [],
+          5: [],
+          10: [],
+          100: [],
+          1000: []
+        },
+        claimedPrizes: {}
+      };
+    }
+
+    function save2048CycleData(data) {
+      const cycle = get2048CycleInfo();
+      const key = "pvp_2048_cycle_store_" + cycle.cycleId;
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch(e){}
+    }
+
+    function calculateTierPool(tier) {
+      const t = parseInt(tier) || 1;
+      const data = get2048CycleData();
+      const p = (data.pools && data.pools[t]) ? data.pools[t] : { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 };
+      
+      const usdgTickets = p.ticketsUsdg || 0;
+      const usdgGross = usdgTickets * t;
+      const usdgProtocolFee = usdgGross * 0.20;
+      const usdgNetPrize = usdgGross * 0.80;
+      
+      const pvpTickets = p.ticketsPvp || 0;
+      const pvpTokensGross = p.pvpTokensGross || 0;
+      const pvpTokensProtocolFee = Math.floor(pvpTokensGross * 0.20);
+      const pvpTokensNetPrize = Math.floor(pvpTokensGross * 0.80);
+      
+      return {
+        tier: t,
+        usdgTickets,
+        usdgGross,
+        usdgProtocolFee,
+        usdgNetPrize,
+        pvpTickets,
+        pvpTokensGross,
+        pvpTokensProtocolFee,
+        pvpTokensNetPrize
+      };
+    }
+
+    function update2048CountdownTimer() {
+      const el = document.getElementById("cycle-countdown-2048");
+      if (!el) return;
+      const cycle = get2048CycleInfo();
+      if (cycle.isEnded) {
+        el.className = "text-xs font-mono font-bold text-rose-400 bg-rose-400/10 border border-rose-400/30 px-3 py-1 rounded-full animate-pulse";
+        el.innerText = "⏳ 10H CYCLE: ROUND ENDED • SCORES LOCKED";
+      } else {
+        el.className = "text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full";
+        el.innerText = "⏳ 10H CYCLE: " + cycle.formatted;
+      }
+    }
+
+    function addTicketsToTier(tier, qty, paymentMethod) {
+      const t = parseInt(tier) || 1;
+      const q = parseInt(qty) || 1;
+      const method = (paymentMethod || "USDG").toUpperCase();
+      const cycle = get2048CycleInfo();
+      const data = get2048CycleData();
+      
+      if (!data.pools[t]) {
+        data.pools[t] = { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 };
+      }
+      
+      let pvpPaid = 0;
+      if (method === "PVP") {
+        data.pools[t].ticketsPvp = (data.pools[t].ticketsPvp || 0) + (q * 2);
+        const pvpRate = (typeof currentPvpRateUsd === "number" && currentPvpRateUsd > 0) ? currentPvpRateUsd : 0.0485;
+        pvpPaid = Math.round((t * q) / pvpRate);
+        data.pools[t].pvpTokensGross = (data.pools[t].pvpTokensGross || 0) + pvpPaid;
+      } else {
+        data.pools[t].ticketsUsdg = (data.pools[t].ticketsUsdg || 0) + q;
+      }
+      
+      save2048CycleData(data);
+      renderAll2048PoolsAndCards();
+      
+      const eventPayload = {
+        type: "TICKET_BOUGHT",
+        eventId: "tix_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        cycleId: cycle.cycleId,
+        tier: t,
+        qty: q,
+        paymentMethod: method,
+        pvpTokensPaid: pvpPaid,
+        timestamp: Date.now()
+      };
+      
+      if (syncChannel2048) {
+        try { syncChannel2048.postMessage(eventPayload); } catch(e){}
+      }
+      try {
+        fetch("https://ntfy.sh/" + RELAY_2048_TOPIC, {
+          method: "POST",
+          body: JSON.stringify(eventPayload),
+          headers: { "Content-Type": "application/json" }
+        }).catch(() => {});
+      } catch(e){}
+    }
+
+    function record2048ScoreOnline(tier, wallet, score) {
+      const cycle = get2048CycleInfo();
+      if (cycle.isEnded) {
+        if (typeof showToast === "function") {
+          showToast("⚠️ Tournament round has ended! Scores are locked. Wait for the next round.", "warning");
+        }
+        return;
+      }
+      
+      const t = parseInt(tier) || 1;
+      const s = parseInt(score) || 0;
+      if (s <= 0) return;
+      
+      const rawWallet = wallet || (typeof userAddress !== "undefined" ? userAddress : "") || "0x0000";
+      const shortW = rawWallet.length > 10 ? (rawWallet.slice(0, 6) + "..." + rawWallet.slice(-4)) : rawWallet;
+      
+      const data = get2048CycleData();
+      if (!data.scores[t]) data.scores[t] = [];
+      
+      const exIdx = data.scores[t].findIndex(item => 
+        (item.fullWallet && item.fullWallet.toLowerCase() === rawWallet.toLowerCase()) ||
+        item.wallet.toLowerCase() === shortW.toLowerCase()
+      );
+      
+      let isNewHigh = false;
+      if (exIdx >= 0) {
+        if (s > data.scores[t][exIdx].score) {
+          data.scores[t][exIdx].score = s;
+          data.scores[t][exIdx].timestamp = Date.now();
+          isNewHigh = true;
+        }
+      } else {
+        data.scores[t].push({
+          wallet: shortW,
+          fullWallet: rawWallet,
+          score: s,
+          timestamp: Date.now()
+        });
+        isNewHigh = true;
+      }
+      
+      data.scores[t].sort((a, b) => b.score - a.score);
+      save2048CycleData(data);
+      renderAll2048PoolsAndCards();
+      
+      if (typeof updateLeaderboardUI === "function") {
+        updateLeaderboardUI();
+      }
+      
+      if (isNewHigh) {
+        const eventPayload = {
+          type: "NEW_2048_SCORE",
+          eventId: "score_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+          cycleId: cycle.cycleId,
+          tier: t,
+          wallet: shortW,
+          fullWallet: rawWallet,
+          score: s,
+          timestamp: Date.now()
+        };
+        
+        if (syncChannel2048) {
+          try { syncChannel2048.postMessage(eventPayload); } catch(e){}
+        }
+        try {
+          fetch("https://ntfy.sh/" + RELAY_2048_TOPIC, {
+            method: "POST",
+            body: JSON.stringify(eventPayload),
+            headers: { "Content-Type": "application/json" }
+          }).catch(() => {});
+        } catch(e){}
+      }
+    }
 
     function init2048RelayListener() {
       // 1. Listen to BroadcastChannel
@@ -4432,10 +4659,15 @@ async function connectWallet() {
       if (payload.type === "TICKET_BOUGHT") {
         const t = payload.tier;
         const q = parseInt(payload.qty) || 1;
-        if (!data.pools[t]) data.pools[t] = { tickets: 0, gross: 0, netPrize: 0 };
-        data.pools[t].tickets = (data.pools[t].tickets || 0) + q;
-        data.pools[t].gross = data.pools[t].tickets * t;
-        data.pools[t].netPrize = data.pools[t].gross * 0.80;
+        const method = (payload.paymentMethod || "USDG").toUpperCase();
+        if (!data.pools[t]) data.pools[t] = { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 };
+        if (method === "PVP") {
+          data.pools[t].ticketsPvp = (data.pools[t].ticketsPvp || 0) + (q * 2);
+          const pvpPaid = payload.pvpTokensPaid || Math.round((t * q) / 0.0485);
+          data.pools[t].pvpTokensGross = (data.pools[t].pvpTokensGross || 0) + pvpPaid;
+        } else {
+          data.pools[t].ticketsUsdg = (data.pools[t].ticketsUsdg || 0) + q;
+        }
         save2048CycleData(data);
         renderAll2048PoolsAndCards();
       } else if (payload.type === "NEW_2048_SCORE") {
@@ -4655,6 +4887,12 @@ async function connectWallet() {
     window.claim2048WinnerPrize = claim2048WinnerPrize;
     window.renderAll2048PoolsAndCards = renderAll2048PoolsAndCards;
     window.record2048ScoreOnline = record2048ScoreOnline;
+    window.get2048CycleInfo = get2048CycleInfo;
+    window.get2048CycleData = get2048CycleData;
+    window.save2048CycleData = save2048CycleData;
+    window.calculateTierPool = calculateTierPool;
+    window.update2048CountdownTimer = update2048CountdownTimer;
+    window.addTicketsToTier = addTicketsToTier;
 
 </script>
 </body>
