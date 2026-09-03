@@ -2883,7 +2883,8 @@ async function connectWallet() {
     function getLocalDuels() {
       try {
         try {
-          ['pvp_active_duels_store', 'pvp_active_duels_store_v1', 'pvp_active_duels_store_v2', 'pvp_active_duels_store_v3', 'pvp_active_duels_store_v4', 'pvp_active_duels_store_v5', 'pvp_active_duels_store_v6', 'pvp_active_duels_store_v7', 'pvp_active_duels_store_v9'].forEach(k => localStorage.removeItem(k));
+          // One-time legacy cleanup only
+          ['pvp_active_duels_store', 'pvp_active_duels_store_v1', 'pvp_active_duels_store_v2', 'pvp_active_duels_store_v3', 'pvp_active_duels_store_v4', 'pvp_active_duels_store_v5', 'pvp_active_duels_store_v6', 'pvp_active_duels_store_v7', 'pvp_active_duels_store_v8'].forEach(k => localStorage.removeItem(k));
         } catch(e) {}
         const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v9') || '{}');
         const cleanStore = {};
