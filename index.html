@@ -751,8 +751,8 @@
               <span id="game-score" class="text-lg font-black text-white">0</span>
             </div>
             <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 font-mono text-center">
-              <span class="text-[10px] text-slate-400 block">BEST RECORD</span>
-              <span id="game-best" class="text-lg font-black text-amber-400">3,240</span>
+              <span class="text-[10px] text-amber-400/80 block font-bold">OVERALL BEST (ALL TIERS)</span>
+              <span id="game-best" class="text-lg font-black text-amber-400">0</span>
             </div>
             <button id="btn-top-game-action" onclick="startNew2048Game(true)" class="p-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all">▶ START GAME</button>
           </div>
@@ -2274,7 +2274,7 @@ async function connectWallet() {
       [0, 0, 0, 0]
     ];
     let score2048 = 0;
-    let bestScore2048 = 18420;
+    let bestScore2048 = 0;
     let is2048GameOver = false;
     let selected2048Tier = 1;
     let userAvailableTickets = 0;
@@ -2453,6 +2453,35 @@ async function connectWallet() {
       }
     }
 
+    
+    function getOverallBestScore2048AllTiers() {
+      let maxScore = 0;
+      let topHolder = "";
+      let topTier = 0;
+      try {
+        if (typeof get2048CycleData === "function") {
+          const data = get2048CycleData();
+          if (data && data.scores) {
+            [1, 5, 10, 100, 1000].forEach(t => {
+              const list = data.scores[t] || [];
+              list.forEach(entry => {
+                const sc = parseInt(entry.score, 10) || 0;
+                if (sc > maxScore) {
+                  maxScore = sc;
+                  topHolder = entry.wallet || "";
+                  topTier = t;
+                }
+              });
+            });
+          }
+        }
+      } catch(e) {}
+      if (typeof score2048 !== "undefined" && score2048 > maxScore) {
+        maxScore = score2048;
+      }
+      return { maxScore, topHolder, topTier };
+    }
+  
     function render2048() {
       const container = document.getElementById("board-container");
       if (!container) return;
@@ -2471,7 +2500,10 @@ async function connectWallet() {
       const sc = document.getElementById("game-score");
       const bs = document.getElementById("game-best");
       if (sc) sc.innerText = score2048.toLocaleString();
-      if (bs) bs.innerText = Math.max(score2048, bestScore2048).toLocaleString();
+      if (bs) {
+        const overall = getOverallBestScore2048AllTiers();
+        bs.innerText = overall.maxScore.toLocaleString();
+      }
     }
 
     function slide2048Array(row) {
