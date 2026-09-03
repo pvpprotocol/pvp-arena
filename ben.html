@@ -2392,14 +2392,38 @@ async function connectWallet() {
             }
           }
           showToast("🏁 Game Over! Your Single High Score: " + score2048.toLocaleString() + " pts", "warning");
-          const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "");
-          if (activeWallet) {
-            const shortW = activeWallet.slice(0, 6) + "..." + activeWallet.slice(-4);
+          let activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
+          if (!activeWallet && window.ethereum && window.ethereum.selectedAddress) {
+            activeWallet = window.ethereum.selectedAddress;
+          }
+          if (!activeWallet) {
+            try {
+              let stored = localStorage.getItem("pvp_player_wallet");
+              if (!stored) {
+                stored = "0x" + Math.random().toString(16).slice(2, 10) + "...anon";
+                localStorage.setItem("pvp_player_wallet", stored);
+              }
+              activeWallet = stored;
+            } catch(e) {
+              activeWallet = "0xPlayer";
+            }
+          }
+          try {
+            const shortW = activeWallet.length > 10 ? (activeWallet.slice(0, 6) + "..." + activeWallet.slice(-4)) : activeWallet;
             const poolInfo = calculateTierPool(selected2048Tier);
-            const estPrize = "$" + poolInfo.netPrize.toFixed(2) + " USDG (80% Net)";
+            const estUsdg = (poolInfo && (poolInfo.usdgNetPrize !== undefined ? poolInfo.usdgNetPrize : poolInfo.netPrize)) || 0;
+            const estPvp = (poolInfo && poolInfo.pvpTokensNetPrize) || 0;
+            const estPrize = "$" + estUsdg.toFixed(2) + " USDG" + (estPvp > 0 ? (" + " + estPvp.toLocaleString() + " $PVP") : "") + " (80% Net)";
+            
             record2048ScoreOnline(selected2048Tier, activeWallet, score2048);
-            recordLiveLeaderboardEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
-            recordLiveHistoryEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
+            if (typeof recordLiveLeaderboardEntry === "function") {
+              recordLiveLeaderboardEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
+            }
+            if (typeof recordLiveHistoryEntry === "function") {
+              recordLiveHistoryEntry("2048", selected2048Tier, shortW, score2048.toLocaleString() + " pts", estPrize);
+            }
+          } catch(err) {
+            console.error("Error recording 2048 score:", err);
           }
           update2048TicketsUI();
         }
@@ -2689,7 +2713,7 @@ async function connectWallet() {
           return {
             wallet: isMe ? "You (" + s.wallet + ")" : s.wallet,
             metric: s.score.toLocaleString() + " pts",
-            won: idx === 0 ? ("$" + poolInfo.netPrize.toFixed(2) + " USDG (80% Net)") : "$0.00"
+            won: idx === 0 ? ("$" + ((poolInfo.usdgNetPrize !== undefined ? poolInfo.usdgNetPrize : poolInfo.netPrize) || 0).toFixed(2) + " USDG (80% Net)") : "$0.00"
           };
         });
       } else {
@@ -4445,6 +4469,7 @@ async function connectWallet() {
         usdgGross,
         usdgProtocolFee,
         usdgNetPrize,
+        netPrize: usdgNetPrize,
         pvpTickets,
         pvpTokensGross,
         pvpTokensProtocolFee,
