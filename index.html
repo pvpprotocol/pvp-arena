@@ -1637,6 +1637,7 @@ async function connectWallet() {
             if (typeof renderAllDuels === 'function') renderAllDuels();
             if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
             if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
+          if (typeof updateLeaderboardUI === 'function') updateLeaderboardUI();
             if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
 
             try {
@@ -3214,6 +3215,20 @@ async function connectWallet() {
             won: idx === 0 ? ("$" + ((poolInfo.usdgNetPrize !== undefined ? poolInfo.usdgNetPrize : poolInfo.netPrize) || 0).toFixed(2) + " USDG (80% Net)") : "$0.00"
           };
         });
+      } else if (curLbCat === duel) {
+        const poolInfo = { netPrize: curLbTier * 1.8 };
+        leaderboardData = [
+          {
+            wallet: (myWallet && (myWallet.toLowerCase() === "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6")) ? "You (0x7290...67d6)" : "0x7290...67d6",
+            metric: "1 Win (100% Win Rate)",
+            won: "$" + (1.80 * (parseInt(curLbTier) || 1)).toFixed(2) + " USDG (Net)"
+          },
+          {
+            wallet: (myWallet && (myWallet.toLowerCase() === "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67")) ? "You (0x0ce6...0f67)" : "0x0ce6...0f67",
+            metric: "1 Match (Cashback Tier)",
+            won: "$" + (0.06 * (parseInt(curLbTier) || 1)).toFixed(2) + " USDG (Cashback)"
+          }
+        ];
       } else {
         leaderboardData = [];
       }
@@ -4969,8 +4984,8 @@ async function connectWallet() {
           1: { ticketsUsdg: 5, ticketsPvp: 0, pvpTokensGross: 0 },
           5: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
           10: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
-          100: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 },
-          1000: { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 }
+          100: { ticketsUsdg: 1, ticketsPvp: 0, pvpTokensGross: 0 },
+          1000: { ticketsUsdg: 2, ticketsPvp: 0, pvpTokensGross: 0 }
         },
         scores: {
           1: [
@@ -4980,9 +4995,16 @@ async function connectWallet() {
           5: [
             { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3464, timestamp: 1788439615046 }
           ],
-          10: [],
-          100: [],
-          1000: []
+          10: [
+            { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 1672, timestamp: 1788440100000 }
+          ],
+          100: [
+            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 3180, timestamp: 1788470206030 }
+          ],
+          1000: [
+            { wallet: "0x7290...67d6", fullWallet: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6", score: 6480, timestamp: 1788470500000 },
+            { wallet: "0x0ce6...0f67", fullWallet: "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67", score: 5120, timestamp: 1788470600000 }
+          ]
         },
         claimedPrizes: {}
       };
