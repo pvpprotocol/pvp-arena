@@ -234,7 +234,21 @@
           <span id="active-topics-count-badge" class="text-xs font-mono text-cyan-400 font-bold bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">2 Active Topics Live</span>
         </div>
 
-        <!-- 10 Interactive Questions Grid -->
+        <!-- Question Tabs: LIVE vs ENDED -->
+        <div class="flex items-center gap-2 border-b border-white/10 pb-3 mb-3">
+          <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>⚡ LIVE QUESTIONS</span>
+            <span id="q-badge-live" class="ml-1 px-1.5 py-0.5 rounded-full bg-cyan-500/30 text-white text-[10px]">3</span>
+          </button>
+          <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-900/60 text-slate-400 border border-white/10 hover:text-white">
+            <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+            <span>🔒 ENDED / RESOLVED</span>
+            <span id="q-badge-ended" class="ml-1 px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px]">1</span>
+          </button>
+        </div>
+
+        <!-- Interactive Questions Grid -->
         <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <!-- Populated by JavaScript renderDuelQuestions() -->
         </div>
@@ -2605,30 +2619,53 @@ async function connectWallet() {
     let selectedDuelQuestionId = 4;
     let selectedDuelTier = 5;
     let selectedDuelOption = 'YES';
+    let activeQuestionTab = 'live'; // 'live' or 'ended'
 
-        function getDuelEffectiveDeadline(duelData) {
-      if (!duelData) return 1788393600000;
-      if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
-      if (duelData.questionId != null) {
-        return getQuestionDeadline(duelData.questionId);
+    window.switchQuestionTab = function(tab) {
+      activeQuestionTab = tab;
+      const liveBtn = document.getElementById("q-tab-live-btn");
+      const endedBtn = document.getElementById("q-tab-ended-btn");
+      if (liveBtn && endedBtn) {
+        if (tab === 'live') {
+          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20";
+          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-900/60 text-slate-400 border border-white/10 hover:text-white";
+        } else {
+          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm shadow-purple-500/20";
+          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-900/60 text-slate-400 border border-white/10 hover:text-white";
+        }
       }
-      if (duelData.questionText) {
-        const txt = String(duelData.questionText).toLowerCase();
-        if (txt.includes("round #2") || txt.includes("round 2")) return 1788480000000;
-        if (txt.includes("robinhood") || txt.includes("revenue")) return 1788479999000;
-        if (txt.includes("btc") || txt.includes("candle")) return 1788393600000;
-      }
-      return 1788393600000;
-    }
+      renderDuelQuestions();
+    };
 
     function getQuestionDeadline(qId) {
-      if (!qId) return DUEL_QUESTIONS[0].getDeadline();
+      if (!qId) return 1788479999000;
       const q = DUEL_QUESTIONS.find(item => item.id == qId);
       if (q && typeof q.getDeadline === 'function') return q.getDeadline();
       const qStr = String(qId).toLowerCase();
-      if (qStr.includes("round #2") || qStr === "3") return 1788480000000;
+      if (qStr.includes("basecat") || qStr === "4") return 1788479999000;
       if (qStr.includes("robinhood") || qStr === "2") return 1788479999000;
-      return 1788393600000;
+      if (qStr.includes("round #2") || qStr === "3") return 1788480000000;
+      if (qStr.includes("round #1") || qStr === "1") return 1788393600000;
+      return 1788479999000;
+    }
+
+    function getDuelEffectiveDeadline(duelData) {
+      if (!duelData) return 1788479999000;
+      // 1. Sync directly with question ID if set
+      if (duelData.questionId != null) {
+        const qDl = getQuestionDeadline(duelData.questionId);
+        if (qDl) return qDl;
+      }
+      // 2. Sync with question text keywords
+      if (duelData.questionText) {
+        const txt = String(duelData.questionText).toLowerCase();
+        if (txt.includes("basecat") || txt.includes("ath")) return 1788479999000;
+        if (txt.includes("robinhood") || txt.includes("revenue")) return 1788479999000;
+        if (txt.includes("round #2") || txt.includes("round 2")) return 1788480000000;
+        if (txt.includes("round #1") || txt.includes("sep 3") || txt.includes("btc")) return 1788393600000;
+      }
+      if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
+      return 1788479999000;
     }
 
     function formatRemainingTime(deadlineMs) {
@@ -2646,26 +2683,73 @@ async function connectWallet() {
     }
 
     function renderDuelQuestions() {
+      // Badges calculation
+      const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && Date.now() < getQuestionDeadline(item.id));
+      const endedQuestions = DUEL_QUESTIONS.filter(item => item.isEnded || Date.now() >= getQuestionDeadline(item.id));
+
       const topicsBadge = document.getElementById("active-topics-count-badge");
-      if (topicsBadge && typeof DUEL_QUESTIONS !== "undefined") {
-        const count = DUEL_QUESTIONS.filter(item => !item.isEnded && Date.now() < getQuestionDeadline(item.id)).length;
-        topicsBadge.textContent = `${count} Active Topic${count === 1 ? "" : "s"} Live`;
+      if (topicsBadge) {
+        topicsBadge.textContent = `${liveQuestions.length} Active Topic${liveQuestions.length === 1 ? "" : "s"} Live`;
       }
+      const liveBadge = document.getElementById("q-badge-live");
+      if (liveBadge) liveBadge.textContent = liveQuestions.length;
+      const endedBadge = document.getElementById("q-badge-ended");
+      if (endedBadge) endedBadge.textContent = endedQuestions.length;
+
       const grid = document.getElementById("duel-questions-grid");
       if (!grid) return;
       grid.innerHTML = "";
 
-      DUEL_QUESTIONS.forEach((q, idx) => {
+      let displayQuestions = [];
+      if (activeQuestionTab === 'live') {
+        // Clone and sort live questions: LEAST time remaining first!
+        displayQuestions = [...liveQuestions].sort((a, b) => {
+          const aRem = getQuestionDeadline(a.id) - Date.now();
+          const bRem = getQuestionDeadline(b.id) - Date.now();
+          return aRem - bRem;
+        });
+
+        // Ensure selected question is live
+        if (displayQuestions.length > 0 && !displayQuestions.some(q => q.id === selectedDuelQuestionId)) {
+          selectedDuelQuestionId = displayQuestions[0].id;
+        }
+      } else {
+        // Ended questions
+        displayQuestions = [...endedQuestions].sort((a, b) => b.id - a.id);
+      }
+
+      if (displayQuestions.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-8 text-center text-slate-500 font-mono text-xs">No questions found in this category.</div>`;
+        return;
+      }
+
+      displayQuestions.forEach((q, idx) => {
         const isSelected = q.id === selectedDuelQuestionId;
-        const borderClass = isSelected ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-500/50" : "border-white/10 bg-slate-900/60 hover:border-cyan-500/40";
-        const dotClass = isSelected ? "bg-cyan-400 animate-pulse" : "bg-slate-600";
+        const isLive = !q.isEnded && Date.now() < getQuestionDeadline(q.id);
+        const borderClass = isSelected 
+          ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-500/50" 
+          : "border-white/10 bg-slate-900/60 hover:border-cyan-500/40";
+        const dotClass = isSelected ? "bg-cyan-400 animate-pulse" : (isLive ? "bg-emerald-400" : "bg-slate-600");
         const numBadge = `<div class="w-9 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-sm font-mono flex items-center justify-center shrink-0 transition-all">${idx + 1}</div>`;
+        
         const qDeadline = getQuestionDeadline(q.id);
         const timeObj = formatRemainingTime(qDeadline);
         const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
+
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
+
+        const winnerBadge = (isQuestionEnded && q.winningOption)
+          ? `<div class="mt-2 text-[10px] font-mono bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-1 rounded-lg flex items-center justify-between">
+               <span>🏆 Settled Result: <strong>${q.winningOption}</strong></span>
+               <span class="text-slate-400">RESOLVED</span>
+             </div>`
+          : '';
+
+        const contractBadge = q.contract
+          ? `<div class="mt-1 text-[9px] font-mono text-slate-500 truncate">Contract: <span class="text-slate-400">${q.contract}</span></div>`
+          : '';
 
         const qHtml = `
           <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
@@ -2681,9 +2765,12 @@ async function connectWallet() {
               </div>
               <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
               <p class="text-[10px] text-slate-400 font-mono mt-1 line-clamp-1">${q.desc}</p>
-              <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center gap-2">
+              ${contractBadge}
+              <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center justify-between">
                 <span>Cutoff: <span class="text-slate-300 font-semibold">${q.deadlineDesc || '24h Cycle'}</span></span>
+                ${isLive ? '<span class="text-cyan-400 font-bold">● LIVE</span>' : '<span class="text-slate-500">CLOSED</span>'}
               </div>
+              ${winnerBadge}
             </div>
           </div>
         `;
@@ -3000,36 +3087,45 @@ async function connectWallet() {
     function getDuelCategory(duelData) {
       if (!duelData) return 'open';
       if (duelData.status === 'cancelled') return 'expired';
-      if (duelData.status === 'completed' || duelData.winner) return 'completed';
 
       const duelDeadline = getDuelEffectiveDeadline(duelData);
       const isPast = Date.now() >= duelDeadline;
 
-      // Matched: has opponent and either in_progress or has acceptedAt
-      if (duelData.opponent || duelData.status === 'in_progress') {
-        if (isPast) {
-          // Auto resolve if not yet completed
-          if (duelData.status !== 'completed') {
-            const safeWinner = duelData.creator || userAddress;
-            const safeLoser = duelData.opponent || "0xOpponent";
-            duelData.status = 'completed';
-            duelData.winner = safeWinner;
-            duelData.loser = safeLoser;
-            saveLocalDuel(duelData);
-          }
-          return 'completed';
+      // If duel question deadline has NOT passed yet (LIVE):
+      if (!isPast) {
+        // If mistakenly marked as completed, restore to in_progress!
+        if (duelData.status === 'completed') {
+          duelData.status = 'in_progress';
+          delete duelData.winner;
+          delete duelData.loser;
+          saveLocalDuel(duelData);
         }
-        return 'matched';
-      }
 
-      // Open request: if deadline passed without opponent, move to expired
-      if (duelData.status === 'open') {
-        if (isPast) {
-          return 'expired';
+        // Matched: has opponent or in_progress
+        if (duelData.opponent || duelData.status === 'in_progress') {
+          return 'matched';
         }
         return 'open';
       }
-      return 'open';
+
+      // If deadline HAS passed (ENDED):
+      if (duelData.opponent || duelData.status === 'in_progress' || duelData.status === 'completed' || duelData.winner) {
+        if (duelData.status !== 'completed') {
+          const safeWinner = duelData.creator || userAddress;
+          const safeLoser = duelData.opponent || "0xOpponent";
+          duelData.status = 'completed';
+          duelData.winner = safeWinner;
+          duelData.loser = safeLoser;
+          saveLocalDuel(duelData);
+        }
+        return 'completed';
+      }
+
+      // Open request that expired without match
+      if (duelData.status === 'open') {
+        return 'expired';
+      }
+      return 'expired';
     }
 
     function renderAllDuels() {
