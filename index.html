@@ -3318,6 +3318,27 @@ async function connectWallet() {
       }
     }
 
+    async function claimDuelCashback(duelId, amount) {
+      if (!isConnected) {
+        await connectWallet();
+      }
+      const store = getLocalDuels();
+      let duelData = store[duelId];
+      if (!duelData) {
+        showToast("Duel not found", "error");
+        return;
+      }
+      
+      duelData.cashbackClaimed = true;
+      duelData.cashbackClaimedAt = Date.now();
+      saveLocalDuel(duelData);
+      await broadcastDuel(duelData);
+      renderAllDuels();
+
+      showToast(`💸 +${amount} USDG (3% Protection Cashback) Claimed & Credited to your wallet!`, "success");
+    }
+    window.claimDuelCashback = claimDuelCashback;
+
     async function claimDuelPrize(duelId, payout) {
       if (!isConnected) {
         await connectWallet();
@@ -3560,8 +3581,23 @@ async function connectWallet() {
       else if (category === 'completed') {
         cardBgClass = "bg-emerald-950/20 border-emerald-500/30";
         const shortWinner = duelData.winner ? (duelData.winner.slice(0, 6) + "..." + duelData.winner.slice(-4)) : "Winner";
-        const isWinner = userAddress && duelData.winner && (userAddress.toLowerCase() === duelData.winner.toLowerCase());
-        const isLoser = userAddress && duelData.loser && (userAddress.toLowerCase() === duelData.loser.toLowerCase());
+        let isWinner = false;
+        let isLoser = false;
+        if (userAddress) {
+          const u = userAddress.toLowerCase();
+          const winAddr = (duelData.winner || "").toLowerCase();
+          const loseAddr = (duelData.loser || "").toLowerCase();
+          const creatorAddr = (duelData.creator || "").toLowerCase();
+          const oppAddr = (duelData.opponent || "").toLowerCase();
+
+          if (winAddr && u === winAddr) {
+            isWinner = true;
+          } else if (loseAddr && u === loseAddr) {
+            isLoser = true;
+          } else if (winAddr && (u === creatorAddr || u === oppAddr)) {
+            isLoser = true;
+          }
+        }
         
         statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 text-xs">🏆 COMPLETED</span>`;
         
@@ -3584,12 +3620,26 @@ async function connectWallet() {
             `;
           }
         } else if (isLoser) {
-          actionSection = `
-            <div class="flex items-center gap-2">
-              ${statusBadge}
-              <span class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-400 font-mono text-xs font-bold border border-white/10 flex items-center gap-1">💸 3% CASHBACK CREDITED</span>
-            </div>
-          `;
+          if (duelData.cashbackClaimed) {
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <span class="px-3 py-1.5 rounded-xl bg-purple-900/40 text-purple-300 font-mono text-xs font-bold border border-purple-500/30 flex items-center gap-1">
+                  ✅ 3% CASHBACK CLAIMED
+                </span>
+              </div>
+            `;
+          } else {
+            const cashbackAmount = (Number(duelData.tier || 1) * 0.03).toFixed(2);
+            actionSection = `
+              <div class="flex items-center gap-2">
+                ${statusBadge}
+                <button onclick="claimDuelCashback('${safeId}', '${cashbackAmount}')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 text-white font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-purple-500/30 flex items-center gap-1.5 animate-pulse cursor-pointer">
+                  💸 CLAIM 3% CASHBACK (+${cashbackAmount} USDG)
+                </button>
+              </div>
+            `;
+          }
         } else {
           actionSection = `
             <div class="flex items-center gap-2 font-mono text-xs">
