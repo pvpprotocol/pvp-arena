@@ -312,13 +312,13 @@
               <button id="opt-btn-yes" onclick="selectDuelOption('YES')" class="p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]">
                 <span class="text-lg">🟢</span>
                 <span class="text-base font-black tracking-wider">YES</span>
-                <span class="text-[10px] font-mono text-emerald-300/80 font-medium">Affirmative</span>
+                <span class="text-[10px] font-mono text-emerald-300/80 font-medium">⚡ Deposit & Start</span>
               </button>
 
               <button id="opt-btn-no" onclick="selectDuelOption('NO')" class="p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]">
                 <span class="text-lg">🔴</span>
                 <span class="text-base font-black tracking-wider">NO</span>
-                <span class="text-[10px] font-mono text-slate-400 font-medium">Negative</span>
+                <span class="text-[10px] font-mono text-rose-300/80 font-medium">⚡ Deposit & Start</span>
               </button>
             </div>
           </div>
@@ -3698,10 +3698,14 @@ async function connectWallet() {
       applyOptionStyles();
     }
 
-    function selectDuelOption(opt) {
+    async function selectDuelOption(opt, triggerOnchain = true) {
       selectedDuelOption = opt;
       applyOptionStyles();
       updateDuelSummary();
+      if (triggerOnchain) {
+        // Instant 1-Click execution on YES / NO tap
+        await createDuel();
+      }
     }
 
     function applyOptionStyles() {
