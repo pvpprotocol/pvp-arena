@@ -754,7 +754,7 @@
               <span class="text-[10px] text-slate-400 block">BEST RECORD</span>
               <span id="game-best" class="text-lg font-black text-amber-400">3,240</span>
             </div>
-            <button onclick="startNew2048Game()" class="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all">↻ NEW GAME</button>
+            <button id="btn-top-game-action" onclick="startNew2048Game(true)" class="p-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all">▶ START GAME</button>
           </div>
         </div>
 
@@ -2292,6 +2292,18 @@ async function connectWallet() {
       localStorage.setItem("pvp_2048_tickets_" + addr, Math.max(0, count).toString());
     }
 
+    function init2048BoardPreview() {
+      board2048 = [
+        [2, 0, 0, 2],
+        [0, 4, 0, 0],
+        [0, 0, 8, 0],
+        [0, 0, 0, 0]
+      ];
+      score2048 = 0;
+      is2048GameOver = false;
+      render2048();
+    }
+
     function update2048TicketsUI() {
       const tickets = get2048Tickets();
       userAvailableTickets = tickets;
@@ -2309,23 +2321,71 @@ async function connectWallet() {
         }
       }
 
+      // Update Top Button beside New Game
+      const topStartBtn = document.getElementById("btn-top-game-action");
+      if (topStartBtn) {
+        if (is2048RunActive) {
+          topStartBtn.innerText = "↻ RESTART RUN";
+          topStartBtn.className = "p-2 px-3 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/40 font-mono text-xs font-bold transition-all";
+          topStartBtn.onclick = function() { startNew2048Game(true); };
+        } else if (tickets > 0) {
+          topStartBtn.innerText = "▶ START GAME";
+          topStartBtn.className = "p-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs font-black shadow-lg shadow-emerald-500/30 transition-all active:scale-95 animate-pulse";
+          topStartBtn.onclick = function() { startNew2048Game(true); };
+        } else {
+          topStartBtn.innerText = "🎟️ BUY TICKET";
+          topStartBtn.className = "p-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all";
+          topStartBtn.onclick = function() { document.getElementById("tab-vault2048").scrollIntoView({behavior:"smooth"}); };
+        }
+      }
+
       const lockOverlay = document.getElementById("board-lock-overlay");
       const statusText = document.getElementById("board-status-text");
       if (lockOverlay) {
         if (is2048RunActive) {
           lockOverlay.classList.add("hidden");
           if (statusText) {
-            statusText.innerText = "🎮 Active Run in Progress | Remaining Tickets: " + tickets;
-            statusText.className = "text-cyan-400 font-bold";
+            statusText.innerText = "🎮 Active Run in Progress (Tier $" + selected2048Tier + ") | Remaining Tickets: " + tickets;
+            statusText.className = "text-emerald-400 font-bold";
           }
         } else if (tickets > 0) {
-          lockOverlay.classList.add("hidden");
+          // Show START RUN overlay - tickets ready in wallet!
+          lockOverlay.classList.remove("hidden");
+          lockOverlay.innerHTML = `
+            <div class="relative flex flex-col items-center justify-center p-6 text-center space-y-4 max-w-sm">
+              <span class="text-5xl animate-bounce">🎟️</span>
+              <div>
+                <h3 class="text-xl font-black text-white font-mono tracking-wider">TICKETS IN WALLET</h3>
+                <div class="inline-block mt-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs">
+                  ${tickets} Ticket${tickets > 1 ? 's' : ''} Ready • Tier ${selected2048Tier}
+                </div>
+                <p class="text-xs text-slate-300 mt-2.5 leading-relaxed">
+                  Your tickets do not expire. You can start playing now or participate in future tournament rounds. Click below when you are ready to begin!
+                </p>
+              </div>
+              <button onclick="startNew2048Game(true)" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-mono font-black text-sm shadow-xl shadow-emerald-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <span>▶ START GAME</span>
+                <span class="text-xs bg-black/20 px-2 py-0.5 rounded-lg">(Use 1 Ticket)</span>
+              </button>
+            </div>
+          `;
           if (statusText) {
-            statusText.innerText = "🎟️ " + tickets + " Ticket(s) Ready - Press Any Key or New Game to Start Run";
+            statusText.innerText = "⏸️ Waiting for you to start | " + tickets + " Ticket(s) in Wallet";
             statusText.className = "text-cyan-400 font-bold";
           }
         } else {
+          // Show BUY TICKET overlay
           lockOverlay.classList.remove("hidden");
+          lockOverlay.innerHTML = `
+            <span class="text-4xl">🔒</span>
+            <div>
+              <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
+              <p class="text-xs text-slate-300 max-w-xs mt-1">You have 0 tickets in this wallet. Purchase a tournament ticket above to activate the board and record your run.</p>
+            </div>
+            <button onclick="document.getElementById('tab-vault2048').scrollIntoView({behavior:'smooth'})" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
+              🎟️ SELECT TIER & BUY TICKET
+            </button>
+          `;
           if (statusText) {
             statusText.innerText = "🔒 Locked: Ticket required to play. Buy a ticket above.";
             statusText.className = "text-rose-400 font-bold";
@@ -2451,7 +2511,9 @@ async function connectWallet() {
           update2048TicketsUI();
           return;
         }
-        startNew2048Game();
+        showToast("⏸️ Game is paused. Click '▶ START GAME' to begin your run!", "info");
+        update2048TicketsUI();
+        return;
       }
       if (is2048GameOver) return;
       let rotated = 0;
@@ -2779,8 +2841,9 @@ async function connectWallet() {
       select2048Tier(tier);
       addTicketsToTier(tier, qty, paymentMethod);
       showToast("✅ Purchased " + ticketsPurchased + " Ticket(s) for Tier " + tier + "!", "success");
-      // Auto-start run immediately with 1 ticket
-      startNew2048Game(true);
+      // Update UI and let user choose when to start
+      update2048TicketsUI();
+      showToast("🎟️ " + ticketsPurchased + " Ticket(s) stored in wallet! Click 'START GAME' whenever you are ready to play.", "info");
     }
 
     // LEADERBOARD LOGIC
@@ -2962,7 +3025,8 @@ async function connectWallet() {
 
     // INITIAL LOAD
     window.addEventListener("DOMContentLoaded", () => {
-      startNew2048Game();
+      init2048BoardPreview();
+      update2048TicketsUI();
       updateJackpotTimer();
       renderJackpotSubmissions();
       updateLeaderboardUI();
