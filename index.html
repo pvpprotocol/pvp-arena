@@ -248,6 +248,81 @@
           </button>
         </div>
 
+        <!-- YOUR PERSONAL TOURNAMENT STANDINGS (ALL TIERS) -->
+        <div id="my-all-tiers-summary-box" class="p-4 rounded-2xl bg-gradient-to-r from-slate-900/95 via-cyan-950/40 to-slate-900/95 border border-cyan-500/40 space-y-3 shadow-lg">
+          <div class="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-white/10">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">👤</span>
+              <div>
+                <h4 class="font-mono font-black text-white text-xs sm:text-sm">YOUR LIVE TOURNAMENT STANDINGS (ALL TIERS)</h4>
+                <span class="text-[10px] text-slate-400 block font-mono" id="my-summary-wallet-label">Connected Wallet: 0x...</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> Live Sync
+              </span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="my-summary-tiers-grid">
+            <div id="my-summary-tier-1" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$1 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+            <div id="my-summary-tier-5" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$5 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+            <div id="my-summary-tier-10" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$10 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+            <div id="my-summary-tier-100" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$100 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+            <div id="my-summary-tier-1000" class="p-3 rounded-xl bg-slate-950/70 border border-white/10 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-slate-300 text-xs">$1,000 TIER</span>
+                <span class="my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">Ready to Play</span>
+              </div>
+              <div class="my-sum-rank font-bold text-xs text-slate-400">No Score Yet</div>
+              <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Personal Best:</span>
+                <span class="my-sum-score font-black text-cyan-300">0 pts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Interactive Questions Grid -->
         <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <!-- Populated by JavaScript renderDuelQuestions() -->
@@ -790,6 +865,18 @@
                 <span>0 pts</span>
               </div>
             </div>
+            <div id="my-card-status-1" class="pt-2 border-t border-white/10 mt-2">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
+                  <span id="my-rank-1" class="font-black text-amber-300">#--</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-400">Best:</span>
+                  <span id="my-score-1" class="font-black text-cyan-300">0 pts</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div id="top3-tier-5" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
@@ -812,6 +899,18 @@
               <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
                 <span>🥉 #3 Empty</span>
                 <span>0 pts</span>
+              </div>
+            </div>
+            <div id="my-card-status-5" class="pt-2 border-t border-white/10 mt-2">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
+                  <span id="my-rank-5" class="font-black text-amber-300">#--</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-400">Best:</span>
+                  <span id="my-score-5" class="font-black text-cyan-300">0 pts</span>
+                </div>
               </div>
             </div>
           </div>
@@ -838,6 +937,18 @@
                 <span>0 pts</span>
               </div>
             </div>
+            <div id="my-card-status-10" class="pt-2 border-t border-white/10 mt-2">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
+                  <span id="my-rank-10" class="font-black text-amber-300">#--</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-400">Best:</span>
+                  <span id="my-score-10" class="font-black text-cyan-300">0 pts</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div id="top3-tier-100" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
@@ -862,6 +973,18 @@
                 <span>0 pts</span>
               </div>
             </div>
+            <div id="my-card-status-100" class="pt-2 border-t border-white/10 mt-2">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
+                  <span id="my-rank-100" class="font-black text-amber-300">#--</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-400">Best:</span>
+                  <span id="my-score-100" class="font-black text-cyan-300">0 pts</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div id="top3-tier-1000" class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3">
@@ -884,6 +1007,18 @@
               <div class="flex items-center justify-between bg-white/5 p-1.5 rounded-lg border border-white/5 text-slate-500">
                 <span>🥉 #3 Empty</span>
                 <span>0 pts</span>
+              </div>
+            </div>
+            <div id="my-card-status-1000" class="pt-2 border-t border-white/10 mt-2">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
+                  <span id="my-rank-1000" class="font-black text-amber-300">#--</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-400">Best:</span>
+                  <span id="my-score-1000" class="font-black text-cyan-300">0 pts</span>
+                </div>
               </div>
             </div>
           </div>
@@ -4728,7 +4863,25 @@ async function connectWallet() {
     function renderAll2048PoolsAndCards() {
       const tiers = [1, 5, 10, 100, 1000];
       const data = get2048CycleData();
-      const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
+      let currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
+      if (!currentWallet && window.ethereum && window.ethereum.selectedAddress) {
+        currentWallet = window.ethereum.selectedAddress;
+      }
+      if (!currentWallet) {
+        try {
+          currentWallet = localStorage.getItem("pvp_player_wallet") || "";
+        } catch(e) {}
+      }
+
+      const walletLabel = document.getElementById("my-summary-wallet-label");
+      if (walletLabel) {
+        if (currentWallet) {
+          const shortW = currentWallet.length > 10 ? (currentWallet.slice(0, 6) + "..." + currentWallet.slice(-4)) : currentWallet;
+          walletLabel.innerText = "Connected Wallet: " + shortW;
+        } else {
+          walletLabel.innerText = "Wallet: Not Connected (Connect wallet to track rankings)";
+        }
+      }
 
       tiers.forEach(t => {
         const poolInfo = calculateTierPool(t);
@@ -4761,6 +4914,21 @@ async function connectWallet() {
         }
         if (top3PvpSpan) {
           top3PvpSpan.innerText = poolInfo.pvpTokensNetPrize.toLocaleString() + " $PVP (80%)";
+        }
+
+        // Calculate user rank and personal best score in this tier
+        let myRank = null;
+        let myScore = 0;
+        if (currentWallet && scores.length > 0) {
+          const myIdx = scores.findIndex(item =>
+            (item.fullWallet && item.fullWallet.toLowerCase() === currentWallet.toLowerCase()) ||
+            (item.wallet.toLowerCase() === currentWallet.toLowerCase()) ||
+            (item.wallet.toLowerCase() === (currentWallet.slice(0, 6) + "..." + currentWallet.slice(-4)).toLowerCase())
+          );
+          if (myIdx >= 0) {
+            myRank = myIdx + 1;
+            myScore = scores[myIdx].score;
+          }
         }
 
         const top3Card = document.getElementById("top3-tier-" + t);
@@ -4816,6 +4984,57 @@ async function connectWallet() {
                 `;
               }
               rowsContainer.appendChild(row);
+            }
+          }
+
+          // Update individual box inside card
+          const myRankEl = document.getElementById("my-rank-" + t);
+          const myScoreEl = document.getElementById("my-score-" + t);
+          if (myRankEl && myScoreEl) {
+            if (myRank) {
+              const rankText = myRank === 1 ? "#1 👑" : ("#" + myRank);
+              myRankEl.innerText = rankText;
+              myRankEl.className = myRank === 1 ? "font-black text-amber-300" : (myRank <= 3 ? "font-black text-emerald-400" : "font-black text-cyan-300");
+              myScoreEl.innerText = myScore.toLocaleString() + " pts";
+            } else {
+              myRankEl.innerText = currentWallet ? "Unranked" : "#--";
+              myRankEl.className = "font-black text-slate-400";
+              myScoreEl.innerText = "0 pts";
+            }
+          }
+        }
+
+        // Update summary pill in the all-tiers summary bar
+        const summaryPill = document.getElementById("my-summary-tier-" + t);
+        if (summaryPill) {
+          const rankSpan = summaryPill.querySelector(".my-sum-rank");
+          const scoreSpan = summaryPill.querySelector(".my-sum-score");
+          const badgeSpan = summaryPill.querySelector(".my-sum-badge");
+          if (rankSpan && scoreSpan) {
+            if (myRank) {
+              rankSpan.innerText = myRank === 1 ? "#1 (LEADER)" : ("Rank #" + myRank);
+              rankSpan.className = "my-sum-rank font-black text-xs " + (myRank === 1 ? "text-amber-400" : myRank <= 3 ? "text-emerald-400" : "text-white");
+              scoreSpan.innerText = myScore.toLocaleString() + " pts";
+              if (badgeSpan) {
+                if (myRank === 1) {
+                  badgeSpan.innerText = "👑 1ST PRIZE!";
+                  badgeSpan.className = "my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30";
+                } else if (myRank <= 3) {
+                  badgeSpan.innerText = "🥈 TOP 3";
+                  badgeSpan.className = "my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-emerald-400/20 text-emerald-300 font-bold border border-emerald-400/30";
+                } else {
+                  badgeSpan.innerText = "#" + myRank + " of " + scores.length;
+                  badgeSpan.className = "my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-300 font-medium";
+                }
+              }
+            } else {
+              rankSpan.innerText = currentWallet ? "No Score Yet" : "Not Connected";
+              rankSpan.className = "my-sum-rank font-bold text-xs text-slate-400";
+              scoreSpan.innerText = "0 pts";
+              if (badgeSpan) {
+                badgeSpan.innerText = "Ready to Play";
+                badgeSpan.className = "my-sum-badge text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500";
+              }
             }
           }
         }
