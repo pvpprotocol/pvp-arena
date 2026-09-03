@@ -3558,11 +3558,14 @@ async function connectWallet() {
 
       let statusBadge = "";
       let actionSection = "";
-      let cardBgClass = "bg-cyan-950/20 border-cyan-500/30";
+      let cardBgClass = "bg-slate-900/60 border-slate-800";
+      let userRoleBadge = "";
 
       // 1. OPEN TAB
-      if (category === 'open') {
+      if (category === "open") {
         if (isCreator) {
+          cardBgClass = "bg-amber-950/25 border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.12)] ring-1 ring-amber-500/30";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> ⚡ YOUR REQUEST</span>`;
           statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-2 shadow-sm"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
           actionSection = `
             <div class="flex items-center gap-2">
@@ -3571,6 +3574,7 @@ async function connectWallet() {
             </div>
           `;
         } else {
+          cardBgClass = "bg-slate-900/60 border-slate-800";
           actionSection = `
             <button onclick="acceptDuel('${duelData.id}', ${safeTier})" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black text-xs font-mono uppercase tracking-wider transition-all shadow-md shadow-cyan-500/20 active:scale-95 flex items-center gap-1.5">
               ⚔️ ACCEPT: TAKE [${requiredOpponentOption}] (${safeTier} USDG)
@@ -3579,8 +3583,14 @@ async function connectWallet() {
         }
       }
       // 2. MATCHED / IN PROGRESS TAB
-      else if (category === 'matched') {
-        cardBgClass = "bg-indigo-950/30 border-indigo-500/40";
+      else if (category === "matched") {
+        if (isParticipant) {
+          cardBgClass = "bg-indigo-950/30 border-indigo-500/50 shadow-[0_0_20px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/30";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span> ⚡ YOUR MATCH</span>`;
+        } else {
+          cardBgClass = "bg-slate-900/60 border-slate-800 opacity-80";
+        }
+
         statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> WAITING OUTCOME (1v1 BATTLE)</span>`;
 
         if (isParticipant) {
@@ -3602,15 +3612,33 @@ async function connectWallet() {
         }
       }
       // 3. COMPLETED & PRIZES TAB
-      else if (category === 'completed') {
-        cardBgClass = "bg-emerald-950/20 border-emerald-500/30";
-        const shortWinner = duelData.winner ? (duelData.winner.slice(0, 6) + "..." + duelData.winner.slice(-4)) : "Winner";
+      else if (category === "completed") {
+        let winnerAddr = duelData.winner || "";
+        let loserAddr = duelData.loser || "";
+        if (!winnerAddr) {
+          const winOpt = duelData.winningOption || "YES";
+          if (duelData.creatorOption === winOpt) {
+            winnerAddr = duelData.creator;
+            loserAddr = duelData.opponent;
+          } else {
+            winnerAddr = duelData.opponent;
+            loserAddr = duelData.creator;
+          }
+        }
+        if (winnerAddr && !loserAddr) {
+          if (duelData.creator && winnerAddr.toLowerCase() === duelData.creator.toLowerCase()) {
+            loserAddr = duelData.opponent;
+          } else {
+            loserAddr = duelData.creator;
+          }
+        }
+
         let isWinner = false;
         let isLoser = false;
-        if (userAddress) {
-          const u = userAddress.toLowerCase();
-          const winAddr = (duelData.winner || "").toLowerCase();
-          const loseAddr = (duelData.loser || "").toLowerCase();
+        if (currentAddr) {
+          const u = currentAddr.toLowerCase();
+          const winAddr = (winnerAddr || "").toLowerCase();
+          const loseAddr = (loserAddr || "").toLowerCase();
           const creatorAddr = (duelData.creator || "").toLowerCase();
           const oppAddr = (duelData.opponent || "").toLowerCase();
 
@@ -3622,21 +3650,32 @@ async function connectWallet() {
             isLoser = true;
           }
         }
-        
-        statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 text-xs">🏆 COMPLETED</span>`;
-        
+
+        // Color distinction
+        if (isWinner) {
+          cardBgClass = "bg-emerald-950/25 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/30";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 🏆 YOUR VICTORY</span>`;
+        } else if (isLoser) {
+          cardBgClass = "bg-purple-950/25 border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.15)] ring-1 ring-purple-500/30";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span> 💸 YOUR MATCH</span>`;
+        } else {
+          cardBgClass = "bg-slate-900/60 border-slate-800 opacity-80";
+          userRoleBadge = "";
+        }
+
+        // User explicitly asked to remove "🏆 COMPLETED" badge!
+        statusBadge = "";
+
         if (isWinner) {
           if (duelData.claimed) {
             actionSection = `
               <div class="flex items-center gap-2">
-                ${statusBadge}
                 <span class="px-3.5 py-2 rounded-xl bg-emerald-950/60 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40 flex items-center gap-1">✅ PRIZE CLAIMED (+${safePayout} USDG)</span>
               </div>
             `;
           } else {
             actionSection = `
               <div class="flex items-center gap-2">
-                ${statusBadge}
                 <button onclick="claimDuelPrize('${duelData.id}', ${safePayout})" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:brightness-110 text-black font-extrabold text-xs shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition-all active:scale-95">
                   💰 CLAIM PRIZE (+${safePayout} USDG)
                 </button>
@@ -3647,7 +3686,6 @@ async function connectWallet() {
           if (duelData.cashbackClaimed) {
             actionSection = `
               <div class="flex items-center gap-2">
-                ${statusBadge}
                 <span class="px-3 py-1.5 rounded-xl bg-purple-900/40 text-purple-300 font-mono text-xs font-bold border border-purple-500/30 flex items-center gap-1">
                   ✅ 3% CASHBACK CLAIMED
                 </span>
@@ -3657,7 +3695,6 @@ async function connectWallet() {
             const cashbackAmount = (Number(duelData.tier || 1) * 0.03).toFixed(2);
             actionSection = `
               <div class="flex items-center gap-2">
-                ${statusBadge}
                 <button onclick="claimDuelCashback('${duelData.id}', '${cashbackAmount}')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 text-white font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-purple-500/30 flex items-center gap-1.5 animate-pulse cursor-pointer">
                   💸 CLAIM 3% CASHBACK (+${cashbackAmount} USDG)
                 </button>
@@ -3665,20 +3702,15 @@ async function connectWallet() {
             `;
           }
         } else {
-          actionSection = `
-            <div class="flex items-center gap-2 font-mono text-xs">
-              ${statusBadge}
-              <span class="text-emerald-400 font-bold">Winner: ${shortWinner} (+${safePayout} USDG)</span>
-            </div>
-          `;
+          actionSection = ``;
         }
       }
       // 4. EXPIRED & REFUNDS TAB
-      else if (category === 'expired') {
-        cardBgClass = "bg-amber-950/20 border-amber-500/30";
-        statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
-
+      else if (category === "expired") {
         if (isCreator) {
+          cardBgClass = "bg-amber-950/25 border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.12)] ring-1 ring-amber-500/30";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> 💰 YOUR DEPOSIT</span>`;
+          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
           actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
@@ -3688,6 +3720,8 @@ async function connectWallet() {
             </div>
           `;
         } else {
+          cardBgClass = "bg-slate-900/60 border-slate-800 opacity-50";
+          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-amber-950/40 text-amber-400 font-bold border border-amber-500/40 text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
           actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
@@ -3695,6 +3729,65 @@ async function connectWallet() {
             </div>
           `;
         }
+      }
+
+      // Determine WIN / LOSE labels for completed view
+      let completedDetailsHtml = "";
+      if (category === "completed") {
+        let winnerAddr = duelData.winner || "";
+        let loserAddr = duelData.loser || "";
+        if (!winnerAddr) {
+          const winOpt = duelData.winningOption || "YES";
+          if (duelData.creatorOption === winOpt) {
+            winnerAddr = duelData.creator;
+            loserAddr = duelData.opponent;
+          } else {
+            winnerAddr = duelData.opponent;
+            loserAddr = duelData.creator;
+          }
+        }
+        if (winnerAddr && !loserAddr) {
+          if (duelData.creator && winnerAddr.toLowerCase() === duelData.creator.toLowerCase()) {
+            loserAddr = duelData.opponent;
+          } else {
+            loserAddr = duelData.creator;
+          }
+        }
+        const isCreatorWinner = duelData.creator && winnerAddr && (duelData.creator.toLowerCase() === winnerAddr.toLowerCase());
+        const winnerOption = isCreatorWinner ? creatorOption : requiredOpponentOption;
+        const loserOption = isCreatorWinner ? requiredOpponentOption : creatorOption;
+
+        const shortWin = winnerAddr ? (winnerAddr.slice(0, 6) + "..." + winnerAddr.slice(-4)) : "0xWinner";
+        const shortLose = loserAddr ? (loserAddr.slice(0, 6) + "..." + loserAddr.slice(-4)) : "0xLoser";
+
+        const isCurrentWinner = currentAddr && winnerAddr && (currentAddr.toLowerCase() === winnerAddr.toLowerCase());
+        const isCurrentLoser = currentAddr && loserAddr && (currentAddr.toLowerCase() === loserAddr.toLowerCase());
+
+        const winLabel = isCurrentWinner ? "You" : shortWin;
+        const loseLabel = isCurrentLoser ? "You" : shortLose;
+
+        completedDetailsHtml = `
+          <div class="text-xs font-mono text-slate-300 mt-1 flex items-center gap-2 flex-wrap">
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-1.5">
+              🏆 WIN: <span class="text-white font-extrabold">${winLabel}</span> [<span class="text-emerald-400 font-black">${winnerOption}</span>]
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold flex items-center gap-1.5">
+              ❌ LOSE: <span class="text-white font-extrabold">${loseLabel}</span> [<span class="text-rose-400 font-black">${loserOption}</span>]
+            </span>
+            <span class="text-slate-500">•</span>
+            <span class="text-emerald-400 font-bold">Prize: $${safePayout} USDG</span>
+          </div>
+        `;
+      } else {
+        completedDetailsHtml = `
+          <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
+            <span>P1: <span class="text-slate-200">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
+            <span class="text-slate-600 font-bold">VS</span>
+            <span>P2: <span class="text-slate-200">${duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent'}</span> [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>
+            <span class="text-slate-500">•</span>
+            <span class="text-emerald-400 font-semibold">Prize: $${safePayout} USDG</span>
+          </div>
+        `;
       }
 
       const cardHtml = `
@@ -3708,18 +3801,12 @@ async function connectWallet() {
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-mono font-bold text-white">${questionText}</span>
                 <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${safeTier} USDG</span>
-                                ${(isParticipant && category !== 'completed') ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">⚡ ${yourLabel}</span>` : ''}
+                ${userRoleBadge}
                 ${category !== 'completed' ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                   ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-qid="${resolvedQId}" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
                 </span>` : ''}
               </div>
-              <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
-                <span>P1: <span class="text-slate-200">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
-                <span class="text-slate-600 font-bold">VS</span>
-                <span>P2: <span class="text-slate-200">${duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent'}</span> [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>
-                <span class="text-slate-500">•</span>
-                <span class="text-emerald-400 font-semibold">Prize: $${safePayout} USDG</span>
-              </div>
+              ${completedDetailsHtml}
             </div>
           </div>
           <div class="shrink-0 flex items-center gap-2">
