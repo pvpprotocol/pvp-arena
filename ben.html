@@ -3843,8 +3843,7 @@ async function connectWallet() {
             <div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-mono font-bold text-white">${questionText}</span>
-                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${tierBadgeClass}">$${safeTier} USDG</span>
-                ${userRoleBadge}
+                                ${userRoleBadge}
                 ${category !== 'completed' ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                   ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-qid="${resolvedQId}" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
                 </span>` : ''}
