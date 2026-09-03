@@ -2325,7 +2325,7 @@ async function connectWallet() {
 
       // Auto-restore / Migration for active tester:
       // Guarantee tester has 2 tickets for $1 Tier, and 1 ticket for $10 Tier!
-      const migrationKey = "pvp_ticket_tier_migrated_v4_" + (addr || "anon");
+      const migrationKey = "pvp_ticket_tier_migrated_v6_" + (addr || "anon");
       if (!localStorage.getItem(migrationKey)) {
         if ((store[1] || 0) < 2) store[1] = 2;
         if ((store[10] || 0) < 1) store[10] = 1;
@@ -2406,10 +2406,10 @@ async function connectWallet() {
         const tix = store[t] || 0;
         if (badge) {
           if (tix > 0) {
-            badge.innerText = "🎟️ " + tix + " Tix";
+            badge.innerHTML = `🎟️ ${tix} Ticket${tix > 1 ? 's' : ''} Ready`;
             badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold";
           } else {
-            badge.innerText = "0 Tix";
+            badge.innerText = "0 Tickets";
             badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900/60 border border-white/10 text-slate-500";
           }
         }
@@ -2422,8 +2422,15 @@ async function connectWallet() {
       const badgeEl = document.getElementById("user-tickets-badge");
       if (badgeEl) {
         if (totalTickets > 0) {
-          badgeEl.innerHTML = "🎟️ Tier $" + selected2048Tier + ": <span class='font-bold text-white'>" + activeTickets + "</span> Tix | Total: " + totalTickets;
-          badgeEl.className = "text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1.5 rounded-xl";
+          let list = [];
+          [1, 5, 10, 100, 1000].forEach(t => {
+            const count = store[t] || 0;
+            if (count > 0) {
+              list.push(`<span class="px-2 py-0.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">${count}x ${t} Ticket${count > 1 ? 's' : ''}</span>`);
+            }
+          });
+          badgeEl.innerHTML = `<div class="flex items-center gap-1.5 flex-wrap"><span class="text-white font-bold">🎟️ Your Tickets:</span> ${list.join("<span class='text-slate-500'>+</span>")} <span class="text-slate-400 text-[11px] font-normal">(${totalTickets} Total)</span></div>`;
+          badgeEl.className = "text-xs font-mono bg-slate-900/90 border border-cyan-500/40 px-3.5 py-1.5 rounded-xl shadow-sm";
         } else {
           badgeEl.innerHTML = "🎟️ <span id='tickets-count'>0</span> Tickets (Buy Above)";
           badgeEl.className = "text-xs font-mono text-slate-400 bg-slate-900 border border-white/10 px-3 py-1.5 rounded-xl";
