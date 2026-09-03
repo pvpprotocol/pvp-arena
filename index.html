@@ -3376,27 +3376,38 @@ async function connectWallet() {
       if (qStr.includes("basecat") || qStr === "4") return 1788479999000;
       if (qStr.includes("robinhood") || qStr === "2") return 1788652799000;
       if (qStr.includes("round #2") || qStr.includes("round 2") || qStr === "3") return 1788480000000;
-      if (qStr.includes("round #1") || qStr.includes("round 1") || qStr.includes("btc") || qStr === "1") return 1788393600000;
+      if (qStr.includes("round #1") || qStr.includes("round 1")) return 1788393600000;
       return 1788479999000;
     }
 
     function getDuelEffectiveDeadline(duelData) {
       if (!duelData) return 1788479999000;
-      // 1. Keyword check in questionText takes priority
-      if (duelData.questionText) {
-        const txt = String(duelData.questionText).toLowerCase();
-        if (txt.includes("basecat") || txt.includes("ath")) return 1788479999000;
-        if (txt.includes("robinhood") || txt.includes("revenue")) return 1788652799000;
-        if (txt.includes("round #2") || txt.includes("round 2")) return 1788480000000;
-        if (txt.includes("round #1") || txt.includes("round 1") || txt.includes("btc") || txt.includes("sep 3")) return 1788393600000;
+      // 1. If in progress or accepted, respect active battle duration
+      if (duelData.status === "in_progress" || duelData.opponent) {
+        const dur = (duelData.duration && Number(duelData.duration) > 0) ? Number(duelData.duration) : 86400000;
+        const acceptedTime = Number(duelData.acceptedAt || duelData.createdAt || Date.now());
+        const matchEnd = acceptedTime + dur;
+        if (matchEnd > Date.now()) return matchEnd;
+      }
+      if (duelData.deadline && Number(duelData.deadline) > Date.now()) {
+        return Number(duelData.deadline);
       }
       // 2. QuestionId check
       if (duelData.questionId != null) {
         const qDl = getQuestionDeadline(duelData.questionId);
         if (qDl) return qDl;
       }
+      // 3. Keyword check in questionText
+      if (duelData.questionText) {
+        const txt = String(duelData.questionText).toLowerCase();
+        if (txt.includes("basecat") || txt.includes("ath")) return 1788479999000;
+        if (txt.includes("robinhood") || txt.includes("revenue")) return 1788652799000;
+        if (txt.includes("round #2") || txt.includes("round 2")) return 1788480000000;
+        if (txt.includes("round #1") || txt.includes("round 1")) return 1788393600000;
+      }
       if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
-      return 1788479999000;
+      const created = Number(duelData.createdAt || Date.now());
+      return Math.max(created + 86400000, 1788479999000);
     }
 
     function formatRemainingTime(deadlineMs) {
@@ -4133,7 +4144,8 @@ async function connectWallet() {
       const cardTimers = document.querySelectorAll(".duel-card-deadline-timer");
       cardTimers.forEach(el => {
         const qId = el.getAttribute("data-qid");
-        const dl = qId ? getQuestionDeadline(qId) : parseInt(el.getAttribute("data-deadline") || "0", 10);
+        const dlAttr = parseInt(el.getAttribute("data-deadline") || "0", 10);
+        const dl = (dlAttr > 0) ? dlAttr : (qId ? getQuestionDeadline(qId) : 1788479999000);
         if (dl > 0) {
           const timeObj = formatRemainingTime(dl);
           el.textContent = timeObj.text;
@@ -4207,7 +4219,7 @@ async function connectWallet() {
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
       const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
 
-      const resolvedQId = (duelData.questionId == 2 || (duelData.questionText && String(duelData.questionText).toLowerCase().includes('robinhood'))) ? 2 : 1;
+      const resolvedQId = duelData.questionId || (duelData.questionText && String(duelData.questionText).toLowerCase().includes('robinhood') ? 2 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('basecat') ? 4 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('round #2') ? 3 : null)));
       const duelDeadline = getDuelEffectiveDeadline(duelData);
       const isExpired = Date.now() >= duelDeadline;
       const timeObj = formatRemainingTime(duelDeadline);
