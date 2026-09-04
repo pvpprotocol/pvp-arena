@@ -3636,6 +3636,14 @@ async function connectWallet() {
 
     function getDuelEffectiveDeadline(duelData) {
       if (!duelData) return 1788566400000;
+      // If Question #1 (BTC 15M Candle), calculate the exact 15-minute candle close boundary:
+      const is15m = duelData.questionId == 1 || (duelData.questionText && (duelData.questionText.toLowerCase().includes("15-minute") || duelData.questionText.toLowerCase().includes("15m")));
+      if (is15m) {
+        if (duelData.targetCandleClose && Number(duelData.targetCandleClose) > 0) return Number(duelData.targetCandleClose);
+        const cAt = Number(duelData.createdAt) || (Number(duelData.createdAtSec) * 1000) || (Date.now() - 900000);
+        const period = 15 * 60 * 1000;
+        return Math.ceil(cAt / period) * period;
+      }
       // 1. If duel has an onchain/explicit deadline, use that EXACT deadline across all wallets:
       if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
       if (duelData.expiresAt && Number(duelData.expiresAt) > 0) return Number(duelData.expiresAt);
