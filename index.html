@@ -1608,14 +1608,177 @@
       return true;
     }
 
+    
+    // DYNAMIC ROUND-AWARE QUESTION SYSTEM FOR PVP ARENA
+    const SHORT_ROUND_DURATION_MS = 5 * 60 * 1000; // 5-Minute Short Duel Round
+
+    function getShortRoundIndex(timestampMs) {
+      const ts = timestampMs || Date.now();
+      return Math.floor(ts / SHORT_ROUND_DURATION_MS);
+    }
+
+    function getShortRoundDeadline(roundIndex) {
+      return (roundIndex + 1) * SHORT_ROUND_DURATION_MS;
+    }
+
+    // BASE QUESTIONS CONFIGURATION
+    const BASE_DUEL_QUESTIONS = [
+      {
+        baseId: 5,
+        category: "CRYPTO 5M",
+        title: "Will BTC Price Close GREEN?",
+        desc: "Predict whether Bitcoin 5-minute candle closes bullish (Green). Auto-renews every round with unique Round ID.",
+        isDynamicRound: true,
+        durationMs: SHORT_ROUND_DURATION_MS,
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
+      },
+      { 
+        id: 1, 
+        baseId: 1,
+        category: "CRYPTO", 
+        title: "Will BTC Daily Candle Close GREEN?", 
+        desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green).",
+        deadlineDesc: "Sep 3 UTC 00:00 Close",
+        deadline: 1788393600000,
+        winningOption: "YES",
+        isEnded: true,
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
+      },
+      { 
+        id: 2, 
+        baseId: 2,
+        category: "ROBINHOOD", 
+        title: "Will Robinhood Chain Daily Revenue Exceed $1,000,000 on Sep 5?", 
+        desc: "Robinhood Chain cumulative on-chain fee revenue surpasses $1,000,000 USD on Sep 5 (Day After Tomorrow).",
+        deadlineDesc: "Sep 5 UTC 23:59:59",
+        deadline: 1788652799000,
+        isEnded: false,
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "> $1M Revenue",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "< $1M Revenue"
+      },
+      { 
+        id: 3, 
+        baseId: 3,
+        category: "CRYPTO", 
+        title: "Will BTC Daily Candle Close GREEN?", 
+        desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green) for Sep 4.",
+        deadlineDesc: "Sep 4 UTC 00:00 Close",
+        deadline: 1788480000000,
+        isEnded: false,
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
+      },
+      { 
+        id: 4, 
+        baseId: 4,
+        category: "BASE MEME", 
+        title: "Will BASECAT Hit a New ATH Today?", 
+        contract: "0xB2000000000000000000004c27f6523082f41D01",
+        desc: "Predict whether BaseCat ($BASECAT) reaches a new all-time high price before the end of today (Sep 3 UTC 23:59:59). Contract on Base: 0xB2000000000000000000004c27f6523082f41D01.",
+        deadlineDesc: "Sep 3 UTC 23:59:59",
+        deadline: 1788479999000,
+        isEnded: false,
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "New ATH",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "No ATH"
+      }
+    ];
+
+    function getAllComputedDuelQuestions() {
+      const now = Date.now();
+      const currentRound = getShortRoundIndex(now);
+      const list = [];
+
+      // Add dynamic 5M question for current live round
+      const liveRoundDeadline = getShortRoundDeadline(currentRound);
+      list.push({
+        id: "q5_r" + currentRound,
+        baseId: 5,
+        round: currentRound,
+        category: "CRYPTO 5M",
+        title: "Will BTC Price Close GREEN?",
+        desc: "Predict whether Bitcoin 5-minute candle closes bullish (Green). Active Round #" + (currentRound % 10000),
+        deadlineDesc: "Round #" + (currentRound % 10000) + " (5-Min)",
+        deadline: liveRoundDeadline,
+        isEnded: false,
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
+      });
+
+      // Also add previous ended round of 5M question so it shows in "Ended" history
+      const prevRound = currentRound - 1;
+      const prevRoundDeadline = getShortRoundDeadline(prevRound);
+      list.push({
+        id: "q5_r" + prevRound,
+        baseId: 5,
+        round: prevRound,
+        category: "CRYPTO 5M",
+        title: "Will BTC Price Close GREEN?",
+        desc: "Expired Round #" + (prevRound % 10000) + " - Ended",
+        deadlineDesc: "Ended Round #" + (prevRound % 10000),
+        deadline: prevRoundDeadline,
+        isEnded: true,
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
+      });
+
+      // Add static/daily questions
+      BASE_DUEL_QUESTIONS.forEach(q => {
+        if (!q.isDynamicRound) {
+          list.push(Object.assign({}, q));
+        }
+      });
+
+      return list;
+    }
+
+    var DUEL_QUESTIONS = getAllComputedDuelQuestions();
+
     function getQuestionDeadline(qId) {
       if (!qId) return 1788479999000;
-      const q = DUEL_QUESTIONS.find(item => item.id == qId);
-      if (q) {
-        if (typeof q.getDeadline === "function") return q.getDeadline();
-        if (q.deadline) return Number(q.deadline);
+      const qStr = String(qId);
+      
+      // Handle dynamic round IDs like q5_r12345
+      if (qStr.startsWith("q5_r")) {
+        const roundNum = parseInt(qStr.replace("q5_r", ""));
+        if (!isNaN(roundNum)) {
+          return getShortRoundDeadline(roundNum);
+        }
       }
-      const qStr = String(qId).toLowerCase();
+
+      const allQ = getAllComputedDuelQuestions();
+      const match = allQ.find(item => String(item.id) === qStr || String(item.baseId) === qStr);
+      if (match && match.deadline) return Number(match.deadline);
+
       if (qStr.includes("basecat") || qStr === "4") return 1788479999000;
       if (qStr.includes("robinhood") || qStr === "2") return 1788652799000;
       if (qStr.includes("round #2") || qStr.includes("round 2") || qStr === "3") return 1788480000000;
@@ -1656,6 +1819,7 @@
     }
 
     function renderDuelQuestions() {
+      DUEL_QUESTIONS = getAllComputedDuelQuestions();
       // Badges calculation
       const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && Date.now() < getQuestionDeadline(item.id));
       const endedQuestions = DUEL_QUESTIONS.filter(item => item.isEnded || Date.now() >= getQuestionDeadline(item.id));
@@ -2449,6 +2613,7 @@
     // Ticking interval to update live countdown timers across all cards
     setInterval(() => {
       // 1. Update questions grid timers
+      DUEL_QUESTIONS = getAllComputedDuelQuestions();
       DUEL_QUESTIONS.forEach(q => {
         const el = document.querySelector(`.q-timer-display[data-qid="${q.id}"]`);
         if (el) {
