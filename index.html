@@ -1570,27 +1570,28 @@
     var ESCROW_CONTRACT = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
 
         async function ensureRobinhoodNetwork() {
-      if (!window.ethereum) return true;
+      const provider = getInjectedProvider();
+      if (!provider) return true;
       try {
-        const fastChain = window.ethereum.chainId || (window.ethereum.networkVersion ? "0x" + parseInt(window.ethereum.networkVersion).toString(16) : null);
+        const fastChain = (provider.chainId || window.ethereum?.chainId) || ((provider.networkVersion || window.ethereum?.networkVersion) ? "0x" + parseInt((provider.networkVersion || window.ethereum?.networkVersion)).toString(16) : null);
         if (fastChain && (parseInt(fastChain, 16) === 4663 || fastChain.toLowerCase() === "0x1237" || fastChain.toLowerCase() === "0x2710")) {
           return true;
         }
-        const currentChain = await window.ethereum.request({ method: "eth_chainId" });
+        const currentChain = await provider.request({ method: "eth_chainId" });
         const chainNum = parseInt(currentChain, 16);
         if (chainNum === 4663 || currentChain.toLowerCase() === "0x1237" || currentChain.toLowerCase() === "0x2710") {
           return true;
         }
 
         try {
-          await window.ethereum.request({
+          await provider.request({
             method: "wallet_switchEthereumChain",
             params: [{ chainId: ROBINHOOD_CHAIN_ID }],
           });
           return true;
         } catch (switchError) {
           if (switchError.code === 4902 || switchError.code === -32603 || (switchError.message && switchError.message.toLowerCase().includes("unrecognized"))) {
-            await window.ethereum.request({
+            await provider.request({
               method: "wallet_addEthereumChain",
               params: [{
                 chainId: ROBINHOOD_CHAIN_ID,
@@ -1612,12 +1613,34 @@
       }
     }
 
-function getInjectedProvider() {
-      if (!window.ethereum) return null;
-      if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
-        return window.ethereum.providers.find(p => p.isMetaMask) || window.ethereum.providers[0];
+// Universal EVM Wallet Connector (Supports Rabby, MetaMask, Coinbase, Trust, OKX, Rainbow, Phantom EVM, Brave, etc.)
+    let eip6963Providers = [];
+    window.addEventListener("eip6963:announceProvider", (event) => {
+      if (event && event.detail && !eip6963Providers.some(p => p.info.uuid === event.detail.info.uuid)) {
+        eip6963Providers.push(event.detail);
       }
-      return window.ethereum;
+    });
+    try { window.dispatchEvent(new Event("eip6963:requestProvider")); } catch(e){}
+
+    function getInjectedProvider() {
+      // 1. Check EIP-6963 discovered providers
+      if (eip6963Providers.length > 0) {
+        return eip6963Providers[0].provider;
+      }
+      // 2. Check window.ethereum
+      if (window.ethereum) {
+        if (window.ethereum.providers && Array.isArray(window.ethereum.providers) && window.ethereum.providers.length > 0) {
+          // Return the selected or first available EVM provider without hardcoded bias
+          return window.ethereum.selectedProvider || window.ethereum.providers[0];
+        }
+        return window.ethereum;
+      }
+      // 3. Check other common injected EVM wallet objects
+      if (window.rabby) return window.rabby;
+      if (window.okxwallet) return window.okxwallet;
+      if (window.trustwallet) return window.trustwallet;
+      if (window.coinbaseWalletExtension) return window.coinbaseWalletExtension;
+      return null;
     }
 
     async function connectWallet() {
@@ -1639,11 +1662,7 @@ function getInjectedProvider() {
 
       const provider = getInjectedProvider();
       if (!provider) {
-        showToast("⚠️ No Web3 Wallet detected! If on mobile, open inside MetaMask app.", "warning");
-        const openMetaMask = confirm("No Web3 wallet detected in this browser.\n\nWould you like to open this page inside MetaMask App?");
-        if (openMetaMask) {
-          window.location.href = "https://metamask.app.link/dapp/pvpprotocol.github.io/pvp-arena/";
-        }
+        showToast("⚠️ No EVM wallet detected! Please install or open in any EVM Web3 wallet (Rabby, MetaMask, Trust, OKX, etc.)", "warning");
         return;
       }
 
@@ -1673,7 +1692,7 @@ function getInjectedProvider() {
           }
         } else {
           if (btnText) btnText.innerText = "Connect Wallet";
-          showToast("No account selected in wallet.", "warning");
+          showToast("No account selected in EVM wallet.", "warning");
         }
       } catch (err) {
         console.error("Wallet connection error:", err);
@@ -1726,7 +1745,7 @@ function getInjectedProvider() {
     async function checkAutoConnect() {
       if (window.ethereum) {
         try {
-          const accs = await window.ethereum.request({ method: 'eth_accounts' });
+          const accs = await provider.request({ method: 'eth_accounts' });
           if (accs && accs.length > 0) {
             userAddress = accs[0];
             isConnected = true;
@@ -1801,7 +1820,7 @@ function getInjectedProvider() {
       // ── STEP 1: CHECK ALLOWANCE & APPROVE (Like Jumper / Aave / Uniswap) ──
       let currentAllowance = 0n;
       try {
-        const allowanceHex = await window.ethereum.request({
+        const allowanceHex = await provider.request({
           method: "eth_call",
           params: [{ to: tokenContract, data: allowanceCalldata }, "latest"]
         });
@@ -1820,7 +1839,7 @@ function getInjectedProvider() {
 
         let approveTxHash = null;
         try {
-          approveTxHash = await window.ethereum.request({
+          approveTxHash = await provider.request({
             method: "eth_sendTransaction",
             params: [{
               from: userAddress,
@@ -1852,7 +1871,7 @@ function getInjectedProvider() {
 
       let txHash = null;
       try {
-        txHash = await window.ethereum.request({
+        txHash = await provider.request({
           method: "eth_sendTransaction",
           params: [{
             from: userAddress,
@@ -1883,7 +1902,7 @@ function getInjectedProvider() {
       }
       const hexMsg = "0x" + Array.from(new TextEncoder().encode(messageText)).map(b => b.toString(16).padStart(2, "0")).join("");
       try {
-        return await window.ethereum.request({
+        return await provider.request({
           method: "personal_sign",
           params: [hexMsg, userAddress]
         });
@@ -2620,7 +2639,7 @@ function getInjectedProvider() {
         const network = await provider.getNetwork();
         if (network.chainId !== 4663 && network.chainId !== 0x1237) {
           try {
-            await window.ethereum.request({
+            await provider.request({
               method: "wallet_switchEthereumChain",
               params: [{ chainId: "0x1237" }]
             });
