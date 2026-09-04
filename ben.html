@@ -764,11 +764,11 @@
             <span class="text-xl">🏆</span>
             <div>
               <h3 class="font-black text-white font-mono text-base">LIVE TOP 3 RECORD HOLDERS (ALL TIERS)</h3>
-              <p class="text-xs text-slate-400">Single Highest Record in Current 10H Tournament Cycle • 80% Net Pool to #1 Winner</p>
+              <p class="text-xs text-slate-400">Single Highest Record in Current 20-Min Tournament Cycle • 80% Net Pool to #1 Winner</p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span id="cycle-countdown-2048" class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full">⏳ 10H CYCLE: 09h 59m 59s</span>
+            <span id="cycle-countdown-2048" class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full">⏳ 20M CYCLE: 19m 59s</span>
             <span class="text-xs font-mono font-bold text-cyan-400 bg-cyan-400/10 border border-cyan-400/30 px-3 py-1 rounded-full">⚡ Live Sync Online</span>
           </div>
         </div>
@@ -2636,7 +2636,7 @@ async function connectWallet() {
           const cId = await contract.getCurrentCycleId();
           cycleId = parseInt(cId.toString());
         } catch (e) {
-          cycleId = Math.floor((Date.now() / 1000) / 36000);
+          cycleId = Math.floor((Date.now() / 1000) / 1200);
         }
 
         // Generate EIP-712 score proof using protocol verifier
@@ -3351,7 +3351,7 @@ async function connectWallet() {
       if (curLbCat === '2048') {
         const cInfo = get2048CycleInfo();
         const selectedRound = window.selectedLb2048Round !== undefined ? window.selectedLb2048Round : cInfo.cycleIndex;
-        const targetCycleId = "cycle_10h_" + selectedRound;
+        const targetCycleId = "cycle_20m_" + selectedRound;
         const cycleData = get2048CycleData(targetCycleId);
         const tierScores = (cycleData.scores && cycleData.scores[curLbTier]) ? cycleData.scores[curLbTier] : [];
         const poolInfo = calculateTierPool(curLbTier);
@@ -5485,7 +5485,7 @@ async function connectWallet() {
     // 2048 10-HOUR TOURNAMENT & REAL-TIME ENGINE
     // ==========================================
     const CYCLE_EPOCH_ANCHOR = 1788436800000; // 12:00:00 UTC Sep 3, 2026 universal anchor
-    const CYCLE_DURATION_2048 = 10 * 3600 * 1000; // 10 Hours in ms
+    const CYCLE_DURATION_2048 = 20 * 60 * 1000; // 20 Minutes in ms (Testing Mode)
     const RELAY_2048_TOPIC = "pvp-arena-2048-live-v3";
     let syncChannel2048 = null;
     let seen2048EventIds = new Set();
@@ -5511,7 +5511,7 @@ async function connectWallet() {
       const formatted = String(h).padStart(2, '0') + "h " + String(m).padStart(2, '0') + "m " + String(s).padStart(2, '0') + "s";
       
       return {
-        cycleId: "cycle_10h_" + cycleIndex,
+        cycleId: "cycle_20m_" + cycleIndex,
         cycleIndex,
         cycleStart,
         cycleEnd,
@@ -5527,13 +5527,13 @@ async function connectWallet() {
       const key = "pvp_2048_cycle_store_" + cId;
       
       // If requesting archived Round #0, return historical data
-      if (cId === "cycle_10h_0") {
+      if (cId === "cycle_20m_0") {
         try {
           const raw0 = localStorage.getItem(key);
           if (raw0) return JSON.parse(raw0);
         } catch(e){}
         return {
-          cycleId: "cycle_10h_0",
+          cycleId: "cycle_20m_0",
           cycleStart: CYCLE_EPOCH_ANCHOR,
           cycleEnd: CYCLE_EPOCH_ANCHOR + CYCLE_DURATION_2048,
           processedEvents: {},
@@ -5658,7 +5658,7 @@ async function connectWallet() {
         el.innerText = "⏳ 10H CYCLE: ROUND ENDED • SCORES LOCKED";
       } else {
         el.className = "text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full";
-        el.innerText = "⏳ 10H CYCLE: " + cycle.formatted;
+        el.innerText = "⏳ 20M CYCLE: " + cycle.formatted;
       }
     }
 
@@ -6128,7 +6128,7 @@ async function connectWallet() {
 
       // Also check immediate previous ended cycle (cycleIndex - 1) if a new round has started
       if (!wonTier && cycle && cycle.cycleIndex > 0) {
-        const prevCycleId = "cycle_10h_" + (cycle.cycleIndex - 1);
+        const prevCycleId = "cycle_20m_" + (cycle.cycleIndex - 1);
         const data = get2048CycleData(prevCycleId);
         for (const t of tiers) {
           const scores = (data.scores && data.scores[t]) ? data.scores[t] : [];
