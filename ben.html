@@ -3501,15 +3501,15 @@ async function connectWallet() {
       { 
         id: 1, 
         qNum: 1,
-        category: "CRYPTO 15M", 
-        title: "#1: Will BTC Price Close GREEN? (15-Minute Candle)", 
-        desc: "Predict whether Bitcoin 15-minute candle closes bullish (Green) or bearish (Red). Synchronized live with BTC 15m candle close.",
-        deadlineDesc: "15-Minute Close",
+        category: "CRYPTO DAILY", 
+        title: "#1: Will Today's BTC Daily Candle Close GREEN? (Sep 4)", 
+        desc: "Predict whether today's Bitcoin daily candle (Sep 4, closes at UTC 00:00) closes Bullish (Green) or Bearish (Red). Strictly 2-Hour Entry Window!",
+        deadlineDesc: "Entry Closes in 2 Hours (18:30 UTC)",
+        deadline: 1788546600000,
+        settlementTime: 1788566400000,
         isEnded: false,
         getDeadline: function() {
-          // Synchronized globally to exact 15-minute UTC candle boundaries (:00, :15, :30, :45)
-          const period = 15 * 60 * 1000;
-          return Math.ceil(Date.now() / period) * period;
+          return 1788546600000;
         },
         optA: "YES",
         optALabel: "YES",
@@ -3598,7 +3598,7 @@ async function connectWallet() {
       }
     ];
 
-    let selectedDuelQuestionId = 5;
+    let selectedDuelQuestionId = 1;
     let selectedDuelTier = 0.01;
     let selectedDuelOption = 'YES';
     let activeQuestionTab = 'live'; // 'live' or 'ended'
@@ -4983,9 +4983,9 @@ async function connectWallet() {
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
       const qDeadline = getQuestionDeadline(q.id);
 
-      // STRICT DEADLINE ENFORCEMENT
-      if (Date.now() >= qDeadline) {
-        showToast("⚠️ Submissions closed for this question! Deadline has passed.", "warning");
+      // STRICT DEADLINE ENFORCEMENT (Single-use question rule)
+      if (Date.now() >= qDeadline || q.isEnded) {
+        showToast("⚠️ Submissions closed for this question! This question has ended.", "warning");
         return;
       }
 
