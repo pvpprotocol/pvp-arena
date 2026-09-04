@@ -1635,7 +1635,7 @@ async function connectWallet() {
             if (btnText) btnText.innerText = shortAddr;
             if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
             showToast("Connected: " + shortAddr, "success");
-            if (typeof renderAllDuels === 'function') renderAllDuels(); syncOnchainDuelsFromContract();
+            if (typeof renderAllDuels === 'function') renderAllDuels(); syncOnchainDuelsFromContract(); setInterval(syncOnchainDuelsFromContract, 15000);
             if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
             if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
           if (typeof updateLeaderboardUI === 'function') updateLeaderboardUI();
@@ -4021,9 +4021,10 @@ async function connectWallet() {
     }
 
     
-    async function syncOnchainDuelsFromContract() {
+    async async function syncOnchainDuelsFromContract() {
       try {
-        const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.robinhood.com");
+        const rpcUrl = "https://rpc.mainnet.chain.robinhood.com";
+        const rpcProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
         const contract = new ethers.Contract(DUEL_CONTRACT_ADDRESS, [
           "function nextDuelId() view returns (uint256)",
           "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
@@ -4031,12 +4032,14 @@ async function connectWallet() {
 
         const nextId = await contract.nextDuelId();
         const total = nextId.toNumber();
+        let changed = false;
+
         for (let i = 1; i < total; i++) {
           try {
             const d = await contract.duels(i);
-            if (!d.creator || d.creator === ethers.constants.AddressZero) continue;
+            if (!d || !d.creator || d.creator === ethers.constants.AddressZero) continue;
             
-            const isNative = d.token === ethers.constants.AddressZero;
+            const isNative = (d.token === ethers.constants.AddressZero);
             const tierVal = isNative 
               ? (parseFloat(ethers.utils.formatEther(d.wagerAmount)) * 2526).toFixed(2)
               : (d.wagerAmount.toNumber() / 1000000).toString();
@@ -4049,29 +4052,35 @@ async function connectWallet() {
             const opt = d.creatorChoice === 1 ? "YES" : "NO";
             const oppOpt = opt === "YES" ? "NO" : "YES";
 
+            const cleanTopic = (d.topic && d.topic.indexOf("?") !== -1) ? d.topic.slice(0, d.topic.indexOf("?") + 1) : (d.topic || "Will BTC Price Close GREEN?");
+            const deadlineMs = d.expiresAt && d.expiresAt.toNumber() > 0 ? d.expiresAt.toNumber() * 1000 : (Date.now() + 24 * 3600 * 1000);
+
             const syncDuel = {
               id: "duel_" + d.duelId.toString(),
               onchainDuelId: d.duelId.toString(),
               questionId: "q_onchain_" + d.duelId.toString(),
-              questionText: d.topic || "Will BTC Price Close GREEN?",
+              questionText: cleanTopic,
               creatorOption: opt,
               requiredOpponentOption: oppOpt,
               tier: tierVal,
               creator: d.creator,
-              opponent: d.challenger !== ethers.constants.AddressZero ? d.challenger : null,
+              opponent: (d.challenger && d.challenger !== ethers.constants.AddressZero) ? d.challenger : null,
               status: st,
-              deadline: d.expiresAt.toNumber() * 1000,
+              deadline: deadlineMs,
               createTxHash: "",
               payout: (parseFloat(tierVal) * 1.8).toFixed(2),
               cashback: (parseFloat(tierVal) * 0.03).toFixed(2),
-              createdAt: d.createdAt.toNumber() * 1000
+              createdAt: d.createdAt && d.createdAt.toNumber() > 0 ? d.createdAt.toNumber() * 1000 : Date.now()
             };
             saveLocalDuel(syncDuel);
+            changed = true;
           } catch(err) {
             console.warn("Error loading duel #" + i, err);
           }
         }
-        renderAllDuels();
+        if (typeof renderAllDuels === "function") {
+          renderAllDuels();
+        }
       } catch(e) {
         console.warn("syncOnchainDuelsFromContract failed:", e);
       }
