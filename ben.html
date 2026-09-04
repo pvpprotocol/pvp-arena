@@ -2285,6 +2285,30 @@
 
     // Anti-Cheat Cryptographic Proof & Move Verification Engine
     let active2048RunProof = null;
+
+    // Unified Ticket & Run ID Lifecycle Manager
+    function getNext2048TicketId(wallet, tier) {
+      const key = "pvp_2048_ticket_counter_" + (wallet ? wallet.toLowerCase() : "anon") + "_t" + tier;
+      let cur = 0;
+      try {
+        cur = parseInt(localStorage.getItem(key) || "0") || 0;
+      } catch(e){}
+      cur += 1;
+      try {
+        localStorage.setItem(key, cur.toString());
+      } catch(e){}
+      return cur;
+    }
+
+    function getCurrent2048TicketId(wallet, tier) {
+      const key = "pvp_2048_ticket_counter_" + (wallet ? wallet.toLowerCase() : "anon") + "_t" + tier;
+      try {
+        return parseInt(localStorage.getItem(key) || "1") || 1;
+      } catch(e){
+        return 1;
+      }
+    }
+    
     let lastVerified2048Proof = null;
 
 
@@ -2619,7 +2643,13 @@
 
         // Generate EIP-712 score proof using protocol verifier
         const deadline = Math.floor(Date.now() / 1000) + 3600;
-        const nonce = ethers.utils.hexlify(ethers.utils.randomBytes(32));
+        const submitTicketId = (active2048RunProof && active2048RunProof.ticketId) ? active2048RunProof.ticketId : (window.active2048TicketId || 1);
+        const nonce = (active2048RunProof && active2048RunProof.nonce) ? active2048RunProof.nonce : ethers.utils.keccak256(
+          ethers.utils.defaultAbiCoder.encode(
+            ["address", "uint16", "uint256", "uint256"],
+            [activeWallet, tierToSubmit, submitTicketId, Date.now()]
+          )
+        );
         const boardHash = ethers.constants.HashZero;
 
         // Anti-cheat verification protocol
@@ -2756,17 +2786,29 @@
 
       // Increment round pool locally and unlock
       addTicketsToTier(selected2048Tier, 1, "USDG");
+      const currentTicketId = getNext2048TicketId(activeWallet, selected2048Tier);
+      window.active2048TicketId = currentTicketId;
       is2048RunActive = true;
       init2048Game();
 
       // Anti-Cheat: Cryptographic session lock (prevents refresh cherry-picking)
+      const assignedTicketId = window.active2048TicketId || getCurrent2048TicketId(activeWallet, selected2048Tier);
+      // Deterministic nonce linked directly to Ticket ID, Wallet, Tier and Start Time
+      const ticketNonceHex = ethers.utils.keccak256(
+        ethers.utils.defaultAbiCoder.encode(
+          ["address", "uint16", "uint256", "uint256"],
+          [activeWallet, selected2048Tier, assignedTicketId, Date.now()]
+        )
+      );
+
       active2048RunProof = {
+        ticketId: assignedTicketId,
         tier: selected2048Tier,
         wallet: activeWallet,
         startTime: Date.now(),
         moves: [],
         startBoard: JSON.parse(JSON.stringify(board2048)),
-        nonce: "0x" + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2, "0")).join(""),
+        nonce: ticketNonceHex,
         sessionActive: true
       };
 
@@ -2959,7 +3001,7 @@
               <div style="color:#00ffa3;font-weight:700;">🛡️ ANTI-CHEAT FAIR RUN VERIFIED</div>
               <div style="margin-top:6px;">
                 <button onclick="submit2048ScoreOnchain()" id="btn-submit-score-onchain" style="background:linear-gradient(90deg, #00ffa3, #00d2ff);color:#020617;font-weight:800;font-size:0.75rem;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;">
-                  ⚡ RECORD SCORE ON-CHAIN (ROBINHOOD CHAIN)
+                  ⚡ RECORD SCORE FOR TICKET #${(active2048RunProof && active2048RunProof.ticketId) ? active2048RunProof.ticketId : (window.active2048TicketId || 1)} ON-CHAIN
                 </button>
                 <div id="score-onchain-status" style="font-size:0.68rem;color:#94a3b8;margin-top:4px;font-family:monospace;text-align:center;"></div>
               </div>
