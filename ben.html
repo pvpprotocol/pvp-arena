@@ -4284,7 +4284,7 @@ async function connectWallet() {
     }
     window.claimDuelPrize = claimDuelPrize;
 
-    async async function reclaimExpiredDeposit(duelId, tier) {
+    async function reclaimExpiredDeposit(duelId, tier) {
       await cancelDuel(duelId, tier);
       return;
 
@@ -4914,7 +4914,7 @@ async function connectWallet() {
       showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${opponentOption}]!`, "success");
     }
 
-    async async function cancelDuel(duelId, tier) {
+    async function cancelDuel(duelId, tier) {
       try {
         if (!isConnected) { await connectWallet(); }
         await ensureRobinhoodNetwork();
