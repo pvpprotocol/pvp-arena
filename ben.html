@@ -3500,7 +3500,7 @@ async function connectWallet() {
         id: 1, 
         qNum: 1,
         category: "CRYPTO 5M", 
-        title: "Q#1: Will BTC Price Close GREEN?", 
+        title: "#1: Will BTC Price Close GREEN?", 
         desc: "Predict whether Bitcoin 5-minute candle closes bullish (Green) or bearish (Red). Rapid 5-minute test duel.",
         deadlineDesc: "5-Minute Close",
         isEnded: false,
@@ -3524,7 +3524,7 @@ async function connectWallet() {
         id: 2, 
         qNum: 2,
         category: "ROBINHOOD", 
-        title: "Q#2: Will Robinhood Chain Daily Revenue Exceed $1,000,000 on Sep 5?", 
+        title: "#2: Will Robinhood Chain Daily Revenue Exceed $1,000,000 on Sep 5?", 
         desc: "Robinhood Chain cumulative on-chain fee revenue surpasses $1,000,000 USD on Sep 5.",
         deadlineDesc: "Sep 5 UTC 23:59:59",
         deadline: 1788652799000,
@@ -3543,7 +3543,7 @@ async function connectWallet() {
         id: 3, 
         qNum: 3,
         category: "CRYPTO", 
-        title: "Q#3: Will BTC Daily Candle Close GREEN?", 
+        title: "#3: Will BTC Daily Candle Close GREEN?", 
         desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green) for Sep 4.",
         deadlineDesc: "Sep 4 UTC 00:00 Close",
         deadline: 1788480000000,
@@ -3562,7 +3562,7 @@ async function connectWallet() {
         id: 4, 
         qNum: 4,
         category: "BASE MEME", 
-        title: "Q#4: Will BASECAT Hit a New ATH Today?", 
+        title: "#4: Will BASECAT Hit a New ATH Today?", 
         contract: "0xB2000000000000000000004c27f6523082f41D01",
         desc: "Predict whether BaseCat ($BASECAT) reaches a new all-time high price before the end of today (Sep 3 UTC 23:59:59).",
         deadlineDesc: "Sep 3 UTC 23:59:59",
@@ -3582,7 +3582,7 @@ async function connectWallet() {
         id: 5, 
         qNum: 5,
         category: "CRYPTO", 
-        title: "Q#5: Will BTC Daily Candle Close GREEN? (Sep 3)", 
+        title: "#5: Will BTC Daily Candle Close GREEN? (Sep 3)", 
         desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green) on Sep 3.",
         deadlineDesc: "Sep 3 UTC 00:00 Close",
         deadline: 1788393600000,
@@ -3716,7 +3716,7 @@ async function connectWallet() {
           ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-500/50" 
           : "border-white/10 bg-slate-900/60 hover:border-cyan-500/40";
         const dotClass = isSelected ? "bg-cyan-400 animate-pulse" : (isLive ? "bg-emerald-400" : "bg-slate-600");
-        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">Q #${q.qNum || (idx + 1)}</div>`;
+        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
         
         const qDeadline = getQuestionDeadline(q.id);
         const timeObj = formatRemainingTime(qDeadline);
