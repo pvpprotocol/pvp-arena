@@ -4857,14 +4857,17 @@ async function connectWallet() {
         // USDG has 6 decimals
         const wagerUnits = BigInt(Math.round(parseFloat(selectedDuelTier) * 1000000));
 
-        const userBal = await USDG_CONTRACT.balanceOf(userAddress);
+        // Fast parallel fetch of balance and allowance
+        const [userBal, currentAllowance] = await Promise.all([
+          USDG_CONTRACT.balanceOf(userAddress),
+          USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS)
+        ]);
+
         if (BigInt(userBal.toString()) < wagerUnits) {
           showToast("❌ Insufficient USDG balance for $" + selectedDuelTier, "error");
           if (btn) btn.disabled = false;
           return;
         }
-
-        const currentAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
         if (BigInt(currentAllowance.toString()) < wagerUnits) {
           showToast("⏳ Please approve USDG in MetaMask...", "info");
           const approveTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256);
