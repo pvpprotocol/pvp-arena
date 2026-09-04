@@ -1778,6 +1778,11 @@
     var ESCROW_CONTRACT = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
 
         async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry") {
+      const provider = getInjectedProvider() || window.ethereum;
+      if (!provider) {
+        showToast("⚠️ Web3 wallet (MetaMask / Rabby / etc.) is required to play.", "error");
+        throw new Error("Web3 wallet not detected");
+      }
       if (!window.ethereum) {
         showToast("⚠️ Web3 wallet (MetaMask / Rabby) is required to play.", "error");
         throw new Error("Web3 wallet not detected");
@@ -1897,7 +1902,8 @@
     }
     
     async function requestSafeSignature(messageText) {
-      if (!window.ethereum) {
+      const provider = getInjectedProvider() || window.ethereum;
+      if (!provider) {
         return "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
       }
       const hexMsg = "0x" + Array.from(new TextEncoder().encode(messageText)).map(b => b.toString(16).padStart(2, "0")).join("");
