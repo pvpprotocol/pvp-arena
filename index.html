@@ -696,14 +696,19 @@
 
           <!-- BOARD LOCK OVERLAY (NO TICKETS) -->
           <div id="board-lock-overlay" class="absolute inset-0 bg-slate-950/90 rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-4 backdrop-blur-md z-30 transition-all">
-            <span class="text-4xl">🔒</span>
+            <span class="text-4xl animate-bounce">🎮</span>
             <div>
-              <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
-              <p class="text-xs text-slate-300 max-w-xs mt-1">Free play is disabled. You must purchase a tournament ticket above to activate the board and record your run.</p>
+              <h3 class="text-xl font-black text-white font-mono">READY TO PLAY 2048</h3>
+              <p class="text-xs text-slate-300 max-w-xs mt-1">Click below to start an instant test run or get free test tickets for all tiers.</p>
             </div>
-            <button onclick="document.getElementById('tab-vault2048').scrollIntoView({behavior:'smooth'})" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
-              🎟️ SELECT TIER & BUY TICKET
-            </button>
+            <div class="flex flex-col sm:flex-row gap-2 w-full max-w-xs">
+              <button onclick="startInstantTestRun()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-mono font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
+                ▶ START TEST RUN (1-CLICK)
+              </button>
+              <button onclick="claimFreeTestTickets()" class="w-full py-2.5 px-4 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs active:scale-95 transition-all">
+                🎁 +10 FREE TICKETS
+              </button>
+            </div>
           </div>
 
           <!-- GAME OVER OVERLAY -->
@@ -2459,9 +2464,9 @@ async function connectWallet() {
           topStartBtn.className = "p-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs font-black shadow-lg shadow-emerald-500/30 transition-all active:scale-95 animate-pulse";
           topStartBtn.onclick = function() { startNew2048Game(true); };
         } else {
-          topStartBtn.innerText = "🎟️ BUY TICKET";
+          topStartBtn.innerText = "▶ START TEST RUN"; topStartBtn.className = "p-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs font-black shadow-lg shadow-emerald-500/30 transition-all active:scale-95 animate-pulse";
           topStartBtn.className = "p-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all";
-          topStartBtn.onclick = function() { document.getElementById("tab-vault2048").scrollIntoView({behavior:"smooth"}); };
+          topStartBtn.onclick = function() { startInstantTestRun(); };
         }
       }
 
@@ -2542,14 +2547,19 @@ async function connectWallet() {
           } else {
             // User has 0 tickets across all tiers
             lockOverlay.innerHTML = `
-              <span class="text-4xl">🔒</span>
+              <span class="text-4xl animate-bounce">🎮</span>
               <div>
-                <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
-                <p class="text-xs text-slate-300 max-w-xs mt-1">You have 0 tickets in this wallet. Purchase a tournament ticket above to activate the board and record your run.</p>
+                <h3 class="text-xl font-black text-white font-mono">START 2048 TEST RUN</h3>
+                <p class="text-xs text-slate-300 max-w-xs mt-1">Start playing immediately with 1-click test mode or claim free test tickets.</p>
               </div>
-              <button onclick="document.getElementById('tab-vault2048').scrollIntoView({behavior:'smooth'})" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
-                🎟️ SELECT TIER & BUY TICKET
-              </button>
+              <div class="flex flex-col sm:flex-row gap-2 w-full max-w-xs">
+                <button onclick="startInstantTestRun()" class="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-mono font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
+                  ▶ START TEST RUN
+                </button>
+                <button onclick="claimFreeTestTickets()" class="w-full py-2.5 px-4 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs active:scale-95 transition-all">
+                  🎁 +5 TEST TICKETS
+                </button>
+              </div>
             `;
             if (statusText) {
               statusText.innerText = "🔒 Locked: Ticket required to play. Buy a ticket above.";
@@ -2751,6 +2761,29 @@ async function connectWallet() {
     window.addLeaderboardEntry = addLeaderboardEntry;
 
 
+    
+    // Instant test helpers for frictionless 2048 testing
+    window.claimFreeTestTickets = function() {
+      [1, 5, 10, 100, 1000].forEach(t => {
+        add2048TierTickets(t, 5);
+      });
+      showToast("🎁 Added 5 Free Test Tickets to every Tier!", "success");
+      update2048TicketsUI();
+    };
+
+    window.startInstantTestRun = function() {
+      let tix = get2048TierTickets(selected2048Tier);
+      if (tix <= 0) {
+        add2048TierTickets(selected2048Tier, 3);
+      }
+      is2048RunActive = true;
+      init2048Game();
+      const lockOverlay = document.getElementById("board-lock-overlay");
+      if (lockOverlay) lockOverlay.classList.add("hidden");
+      update2048TicketsUI();
+      showToast("🎮 Game Activated! Use Arrow Keys or Onscreen Buttons to play.", "success");
+    };
+  
     async function startNew2048Game(forceStart) {
       const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "");
       if (!activeWallet) {
