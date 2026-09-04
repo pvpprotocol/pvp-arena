@@ -5705,7 +5705,8 @@
         if (titleEl) titleEl.innerText = "🎉 YOU WON #1 SPOT IN TIER $" + wonTier + " (OFFICIAL WINNER)!";
         if (subEl) subEl.innerText = "Tournament deadline ended. Claim Prize: $" + wonPrizeUsdg.toFixed(4) + " USDG (80% Net Prize)";
         banner.setAttribute("data-won-tier", wonTier);
-        banner.setAttribute("data-won-cycle", wonCycleId);
+        const cleanCycleNum = parseInt(String(wonCycleId).replace(/\D/g, ""), 10) || 0;
+        banner.setAttribute("data-won-cycle", cleanCycleNum);
         banner.setAttribute("data-won-usdg", wonPrizeUsdg);
         banner.setAttribute("data-won-pvp", wonPrizePvp);
       } else {
@@ -5716,8 +5717,9 @@
     async function claim2048WinnerPrize() {
       const banner = document.getElementById("banner-claim-2048");
       if (!banner) return;
-      const tier = parseInt(banner.getAttribute("data-won-tier") || "1");
-      const cycleId = parseInt(banner.getAttribute("data-won-cycle") || "0");
+      const tier = parseInt(banner.getAttribute("data-won-tier") || "1", 10);
+      const rawCycle = banner.getAttribute("data-won-cycle") || "0";
+      const cycleId = parseInt(String(rawCycle).replace(/\D/g, ""), 10) || 0;
       const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
 
       if (!currentWallet) {
@@ -5738,7 +5740,41 @@
 
         // Claim USDG pool by default
         const usdgToken = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
-        const tx = await contract.claimPrize(cycleId, tier, usdgToken, { gasLimit: 200000 });
+
+        // Pre-check on-chain leader and pool before sending tx
+        try {
+          const leader = await contract.leaders(cycleId, tier);
+          const pool = await contract.tokenPools(cycleId, tier, usdgToken);
+
+          if (!leader.winner || leader.winner.toLowerCase() === ethers.constants.AddressZero) {
+            showToast("ℹ️ Round #" + cycleId + " score was not recorded on-chain before the deadline. Play the new active round to record and win!", "warning");
+            banner.classList.add("hidden");
+            if (btn) { btn.disabled = false; btn.innerText = "🏆 CLAIM 80% PRIZE POOL"; }
+            return;
+          }
+          if (leader.winner.toLowerCase() !== currentWallet.toLowerCase()) {
+            showToast("❌ Only verified #1 winner (" + leader.winner.slice(0, 6) + "...) can claim.", "error");
+            banner.classList.add("hidden");
+            if (btn) { btn.disabled = false; btn.innerText = "🏆 CLAIM 80% PRIZE POOL"; }
+            return;
+          }
+          if (leader.claimed) {
+            showToast("✅ Prize for Round #" + cycleId + " has already been claimed!", "info");
+            banner.classList.add("hidden");
+            if (btn) { btn.disabled = false; btn.innerText = "🏆 CLAIM 80% PRIZE POOL"; }
+            return;
+          }
+          if (pool.isZero()) {
+            showToast("ℹ️ On-chain prize pool is empty for this tier.", "warning");
+            banner.classList.add("hidden");
+            if (btn) { btn.disabled = false; btn.innerText = "🏆 CLAIM 80% PRIZE POOL"; }
+            return;
+          }
+        } catch (checkErr) {
+          console.warn("Pre-claim verification warning:", checkErr);
+        }
+
+        const tx = await contract.claimPrize(cycleId, tier, usdgToken, { gasLimit: 250000 });
         showToast("📡 Claim submitted: " + tx.hash.slice(0, 8) + "...", "info");
         await tx.wait();
 
