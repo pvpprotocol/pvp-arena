@@ -3889,6 +3889,13 @@ async function connectWallet() {
       }
     }
 
+    function saveLocalDuels(store) {
+      try {
+        localStorage.setItem("pvp_active_duels_store_v10", JSON.stringify(store || {}));
+      } catch(e) {}
+    }
+    window.saveLocalDuels = saveLocalDuels;
+
     function saveLocalDuel(duelData) {
       try {
         if (!duelData || !duelData.id) return;
