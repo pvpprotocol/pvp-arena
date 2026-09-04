@@ -1635,7 +1635,7 @@ async function connectWallet() {
             if (btnText) btnText.innerText = shortAddr;
             if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
             showToast("Connected: " + shortAddr, "success");
-            if (typeof renderAllDuels === 'function') renderAllDuels();
+            if (typeof renderAllDuels === 'function') renderAllDuels(); syncOnchainDuelsFromContract();
             if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
             if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
           if (typeof updateLeaderboardUI === 'function') updateLeaderboardUI();
@@ -4020,6 +4020,63 @@ async function connectWallet() {
       return 'expired';
     }
 
+    
+    async function syncOnchainDuelsFromContract() {
+      try {
+        const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.robinhood.com");
+        const contract = new ethers.Contract(DUEL_CONTRACT_ADDRESS, [
+          "function nextDuelId() view returns (uint256)",
+          "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
+        ], rpcProvider);
+
+        const nextId = await contract.nextDuelId();
+        const total = nextId.toNumber();
+        for (let i = 1; i < total; i++) {
+          try {
+            const d = await contract.duels(i);
+            if (!d.creator || d.creator === ethers.constants.AddressZero) continue;
+            
+            const isNative = d.token === ethers.constants.AddressZero;
+            const tierVal = isNative 
+              ? (parseFloat(ethers.utils.formatEther(d.wagerAmount)) * 2526).toFixed(2)
+              : (d.wagerAmount.toNumber() / 1000000).toString();
+            
+            let st = "open";
+            if (d.status === 1) st = "matched";
+            else if (d.status === 2) st = "completed";
+            else if (d.status === 3) st = "cancelled";
+
+            const opt = d.creatorChoice === 1 ? "YES" : "NO";
+            const oppOpt = opt === "YES" ? "NO" : "YES";
+
+            const syncDuel = {
+              id: "duel_" + d.duelId.toString(),
+              onchainDuelId: d.duelId.toString(),
+              questionId: "q_onchain_" + d.duelId.toString(),
+              questionText: d.topic || "Will BTC Price Close GREEN?",
+              creatorOption: opt,
+              requiredOpponentOption: oppOpt,
+              tier: tierVal,
+              creator: d.creator,
+              opponent: d.challenger !== ethers.constants.AddressZero ? d.challenger : null,
+              status: st,
+              deadline: d.expiresAt.toNumber() * 1000,
+              createTxHash: "",
+              payout: (parseFloat(tierVal) * 1.8).toFixed(2),
+              cashback: (parseFloat(tierVal) * 0.03).toFixed(2),
+              createdAt: d.createdAt.toNumber() * 1000
+            };
+            saveLocalDuel(syncDuel);
+          } catch(err) {
+            console.warn("Error loading duel #" + i, err);
+          }
+        }
+        renderAllDuels();
+      } catch(e) {
+        console.warn("syncOnchainDuelsFromContract failed:", e);
+      }
+    }
+    
     function renderAllDuels() {
       const store = getLocalDuels();
       const keys = Object.keys(store);
@@ -4866,7 +4923,7 @@ async function connectWallet() {
         requiredOpponentOption: oppositeOption,
         tier: selectedDuelTier,
         creator: userAddress,
-        status: open,
+        status: "open",
         deadline: qDeadline,
         createTxHash: txHash || "",
         payout: (selectedDuelTier * 1.8).toFixed(2),
@@ -4875,10 +4932,10 @@ async function connectWallet() {
       };
 
       try {
-        const myCreated = JSON.parse(localStorage.getItem(my_created_duel_ids) || []);
+        const myCreated = JSON.parse(localStorage.getItem("my_created_duel_ids") || []);
         if (!myCreated.includes(newDuel.id)) {
           myCreated.push(newDuel.id);
-          localStorage.setItem(my_created_duel_ids, JSON.stringify(myCreated));
+          localStorage.setItem("my_created_duel_ids", JSON.stringify(myCreated));
         }
       } catch(e){}
 
