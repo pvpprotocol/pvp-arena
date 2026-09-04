@@ -273,10 +273,10 @@
             <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDG. Winner takes 90%, 3% auto-cashback, 7% platform fee.</p>
             
             <div class="grid grid-cols-5 gap-2 pt-1">
-              <button onclick="selectDuelTier(1)" id="tier-btn-1" class="tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50">
-                <span class="block text-[10px] text-slate-400 font-bold uppercase">Novice</span>
-                <span class="block text-xs font-black text-white mt-0.5">$1</span>
-                <span class="block text-[9px] text-emerald-400/80 font-bold mt-0.5">+$1.80</span>
+              <button onclick="selectDuelTier(0.01)" id="tier-btn-0.01" class="tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20">
+                <span class="block text-[10px] text-cyan-300 font-bold uppercase">TEST</span>
+                <span class="block text-xs font-black text-white mt-0.5">$0.01</span>
+                <span class="block text-[9px] text-emerald-400/80 font-bold mt-0.5">+$0.018</span>
               </button>
               <button onclick="selectDuelTier(5)" id="tier-btn-5" class="tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20">
                 <span class="block text-[10px] text-cyan-300 font-bold uppercase">Standard</span>
@@ -3585,7 +3585,7 @@ async function connectWallet() {
     ];
 
     let selectedDuelQuestionId = 5;
-    let selectedDuelTier = 5;
+    let selectedDuelTier = 0.01;
     let selectedDuelOption = 'YES';
     let activeQuestionTab = 'live'; // 'live' or 'ended'
 
@@ -3758,7 +3758,7 @@ async function connectWallet() {
 
     function selectDuelTier(tier) {
       selectedDuelTier = tier;
-      const tiers = [1, 5, 10, 100, 1000];
+      const tiers = [0.01, 1, 5, 10, 100, 1000];
       tiers.forEach(t => {
         const btn = document.getElementById(`tier-btn-${t}`);
         if (!btn) return;
@@ -4798,6 +4798,7 @@ async function connectWallet() {
         status: 'open',
         deadline: qDeadline,
         createTxHash: txHash || "",
+        onchainDuelId: onchainDuelId || "",
         payout: (selectedDuelTier * 1.8).toFixed(2),
         cashback: (selectedDuelTier * 0.03).toFixed(2),
         deadline: getQuestionDeadline(selectedDuelQuestionId),
