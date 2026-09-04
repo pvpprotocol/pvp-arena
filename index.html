@@ -3505,13 +3505,9 @@ async function connectWallet() {
         deadlineDesc: "5-Minute Close",
         isEnded: false,
         getDeadline: function() {
-          const stored = localStorage.getItem("pvp_btc_30m_deadline");
-          if (stored && Number(stored) > Date.now()) {
-            return Number(stored);
-          }
-          const fresh = Date.now() + 30 * 60 * 1000;
-          localStorage.setItem("pvp_btc_30m_deadline", String(fresh));
-          return fresh;
+          // Synchronized globally to 5-minute UTC candle boundaries
+          const period = 5 * 60 * 1000;
+          return Math.ceil(Date.now() / period) * period;
         },
         optA: "YES",
         optALabel: "YES",
@@ -3546,10 +3542,10 @@ async function connectWallet() {
         title: "#3: Will BTC Daily Candle Close GREEN?", 
         desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green) for Sep 4.",
         deadlineDesc: "Sep 4 UTC 00:00 Close",
-        deadline: 1788480000000,
+        deadline: 1788566400000,
         isEnded: false,
         getDeadline: function() {
-          return 1788480000000;
+          return 1788566400000;
         },
         optA: "YES",
         optALabel: "YES",
@@ -3566,10 +3562,10 @@ async function connectWallet() {
         contract: "0xB2000000000000000000004c27f6523082f41D01",
         desc: "Predict whether BaseCat ($BASECAT) reaches a new all-time high price before the end of today (Sep 3 UTC 23:59:59).",
         deadlineDesc: "Sep 3 UTC 23:59:59",
-        deadline: 1788479999000,
+        deadline: 1788566399000,
         isEnded: false,
         getDeadline: function() {
-          return 1788479999000;
+          return 1788566399000;
         },
         optA: "YES",
         optALabel: "YES",
@@ -3637,8 +3633,11 @@ async function connectWallet() {
     }
 
     function getDuelEffectiveDeadline(duelData) {
-      if (!duelData) return 1788479999000;
-      // STRICTLY by question deadline:
+      if (!duelData) return 1788566400000;
+      // 1. If duel has an onchain/explicit deadline, use that EXACT deadline across all wallets:
+      if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
+      if (duelData.expiresAt && Number(duelData.expiresAt) > 0) return Number(duelData.expiresAt);
+      // 2. Otherwise fallback to question deadline:
       if (duelData.questionId != null) {
         const qDl = getQuestionDeadline(duelData.questionId);
         if (qDl) return qDl;
@@ -4083,6 +4082,8 @@ async function connectWallet() {
                 const choiceRaw = parseInt(log.data.slice(66, 130), 16);
                 const creatorChoice = choiceRaw === 1 ? "YES" : "NO";
                 const oppChoice = creatorChoice === "YES" ? "NO" : "YES";
+                const onchainDeadlineSec = parseInt(log.data.slice(130, 194), 16);
+                const exactOnchainDeadlineMs = (onchainDeadlineSec > 0 && onchainDeadlineSec < 2500000000) ? (onchainDeadlineSec * 1000) : (Date.now() + 300000);
 
                 let tierStr = "0.01";
                 if (isUsdg) {
@@ -4092,6 +4093,12 @@ async function connectWallet() {
                 }
 
                 const duelKey = "duel_" + dId;
+                if (store[duelKey]) {
+                  if (exactOnchainDeadlineMs > 0) {
+                    store[duelKey].deadline = exactOnchainDeadlineMs;
+                    store[duelKey].expiresAt = exactOnchainDeadlineMs;
+                  }
+                }
                 if (!store[duelKey]) {
                   store[duelKey] = {
                     id: duelKey,
@@ -4105,7 +4112,8 @@ async function connectWallet() {
                     opponent: null,
                     status: "open",
                     createdAt: Date.now(),
-                    expiresAt: Date.now() + 86400000,
+                    deadline: exactOnchainDeadlineMs,
+                    expiresAt: exactOnchainDeadlineMs,
                     tokenType: isUsdg ? "USDG" : "ETH",
                     tokenAddress: token,
                     onChain: true
