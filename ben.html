@@ -3501,14 +3501,14 @@ async function connectWallet() {
       { 
         id: 1, 
         qNum: 1,
-        category: "CRYPTO 5M", 
-        title: "#1: Will BTC Price Close GREEN?", 
-        desc: "Predict whether Bitcoin 5-minute candle closes bullish (Green) or bearish (Red). Rapid 5-minute test duel.",
-        deadlineDesc: "5-Minute Close",
+        category: "CRYPTO 15M", 
+        title: "#1: Will BTC Price Close GREEN? (15-Minute Candle)", 
+        desc: "Predict whether Bitcoin 15-minute candle closes bullish (Green) or bearish (Red). Synchronized live with BTC 15m candle close.",
+        deadlineDesc: "15-Minute Close",
         isEnded: false,
         getDeadline: function() {
-          // Synchronized globally to 5-minute UTC candle boundaries
-          const period = 5 * 60 * 1000;
+          // Synchronized globally to exact 15-minute UTC candle boundaries (:00, :15, :30, :45)
+          const period = 15 * 60 * 1000;
           return Math.ceil(Date.now() / period) * period;
         },
         optA: "YES",
@@ -4085,7 +4085,7 @@ async function connectWallet() {
                 const creatorChoice = choiceRaw === 1 ? "YES" : "NO";
                 const oppChoice = creatorChoice === "YES" ? "NO" : "YES";
                 const onchainDeadlineSec = parseInt(log.data.slice(130, 194), 16);
-                const exactOnchainDeadlineMs = (onchainDeadlineSec > 0 && onchainDeadlineSec < 2500000000) ? (onchainDeadlineSec * 1000) : (Date.now() + 300000);
+                const exactOnchainDeadlineMs = (onchainDeadlineSec > 0 && onchainDeadlineSec < 2500000000) ? (onchainDeadlineSec * 1000) : (Date.now() + 900000);
 
                 let tierStr = "0.01";
                 if (isUsdg) {
@@ -5044,9 +5044,20 @@ async function connectWallet() {
 
         showToast("⏳ Confirm createDuelToken in your Wallet...", "info");
         const creatorChoiceNum = selectedDuelOption === 'YES' ? 1 : 2;
-        // Duels remain open for acceptance for 7 days so opponents can accept without 'Duel expired' error
-        // Duels remain open for acceptance for 1 hour (3600s)
-        let durationSec = 3600;
+        // Synchronize duel duration with Bitcoin 15-minute candle close
+        let durationSec = 900; // 15 minutes default
+        let targetCandleClose = Date.now() + 900000;
+        if (q && q.id === 1) {
+          const candle15m = 15 * 60 * 1000;
+          targetCandleClose = Math.ceil(Date.now() / candle15m) * candle15m;
+          // If less than 2 minutes left in current candle, target next 15m candle
+          if ((targetCandleClose - Date.now()) < 120000) {
+            targetCandleClose += candle15m;
+          }
+          durationSec = Math.max(120, Math.floor((targetCandleClose - Date.now()) / 1000));
+        } else {
+          durationSec = 3600;
+        }
         if (durationSec > 86400 * 30) durationSec = 86400 * 30;
 
         const cleanTopic = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
