@@ -3468,7 +3468,7 @@ async function connectWallet() {
 
     // === MULTI-CHANNEL REALTIME SYNC (GunDB + BroadcastChannel + LocalStorage) ===
         // --- GLOBAL REALTIME DUEL SYNC ENGINE (SSE + REST + Local Sync) ---
-    const REALTIME_TOPIC = "pvp-arena-rh-duels-v3";
+    const REALTIME_TOPIC = "pvp-arena-rh-duels-v4";
     const REALTIME_SSE_URL = `https://ntfy.sh/${REALTIME_TOPIC}/sse`;
     const REALTIME_PUB_URL = `https://ntfy.sh/${REALTIME_TOPIC}`;
     let duelBroadcast = null;
@@ -3860,7 +3860,7 @@ async function connectWallet() {
           // One-time legacy cleanup only
           ['pvp_active_duels_store', 'pvp_active_duels_store_v1', 'pvp_active_duels_store_v2', 'pvp_active_duels_store_v3', 'pvp_active_duels_store_v4', 'pvp_active_duels_store_v5', 'pvp_active_duels_store_v6', 'pvp_active_duels_store_v7', 'pvp_active_duels_store_v8'].forEach(k => localStorage.removeItem(k));
         } catch(e) {}
-        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v9') || '{}');
+        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v10') || '{}');
         const cleanStore = {};
         
         // Merge seed first so established matches are guaranteed to display
@@ -3875,7 +3875,7 @@ async function connectWallet() {
           }
         });
 
-        localStorage.setItem('pvp_active_duels_store_v9', JSON.stringify(cleanStore));
+        localStorage.setItem('pvp_active_duels_store_v10', JSON.stringify(cleanStore));
         return cleanStore;
       } catch(e) {
         return SEED_ACTIVE_DUELS;
@@ -3905,7 +3905,7 @@ async function connectWallet() {
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
           if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
         }
-        localStorage.setItem('pvp_active_duels_store_v9', JSON.stringify(store));
+        localStorage.setItem('pvp_active_duels_store_v10', JSON.stringify(store));
       } catch(e) {}
     }
 
@@ -4341,7 +4341,7 @@ async function connectWallet() {
       }
 
       window.addEventListener('storage', (e) => {
-        if (e.key === 'pvp_active_duels_store_v9') {
+        if (e.key === 'pvp_active_duels_store_v10') {
           renderAllDuels();
         }
       });
