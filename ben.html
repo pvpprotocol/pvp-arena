@@ -1727,7 +1727,7 @@
     var PVP_TOKEN_ADDRESS = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3"; // Native $PVP token
     var ESCROW_CONTRACT = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
 
-        async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry") {
+        async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry", customRecipient = null) {
       const provider = getInjectedProvider() || window.ethereum;
       if (!provider) {
         showToast("⚠️ Web3 wallet (MetaMask / Rabby / etc.) is required to play.", "error");
@@ -1747,7 +1747,8 @@
       // Strict Robinhood Chain Enforcement (Chain ID 4663)
       await ensureRobinhoodNetwork();
 
-      const cleanRecipient = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
+      const targetRecipient = (customRecipient && customRecipient.startsWith("0x")) ? customRecipient : ESCROW_CONTRACT;
+      const cleanRecipient = targetRecipient.replace("0x", "").toLowerCase().padStart(64, "0");
       let tokenContract = USDG_TOKEN_ADDRESS;
       let cleanAmount = "";
       let tokenDecimals = 6;
@@ -3250,7 +3251,7 @@
 
       let txHash = "";
       try {
-        txHash = await executeOnchainPayment(totalCost, paymentMethod, ticketsPurchased + "x 2048 Tickets Tier " + tier + " (" + paymentMethod + ")");
+        txHash = await executeOnchainPayment(totalCost, paymentMethod, ticketsPurchased + "x 2048 Tickets Tier " + tier + " (" + paymentMethod + ")", TOURNAMENT_2048_CONTRACT);
         showToast("✅ Payment Confirmed: " + txHash.slice(0, 10) + "...", "success");
       } catch (err) {
         console.error(err);
