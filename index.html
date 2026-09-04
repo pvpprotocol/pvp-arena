@@ -1569,8 +1569,8 @@
   })();
     var ROBINHOOD_CHAIN_ID = "0x1237"; // 4663 in hex (Robinhood Chain)
     var TOURNAMENT_2048_CONTRACT = "0xddef71f4e631a73476ebd9efa7770d810d51e8a8";
-    var DUEL_CONTRACT_ADDRESS = "0x95e95bd305ad328afed15400903124b59bcc349b";
-    var ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
+    var DUEL_CONTRACT_ADDRESS = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
+    var ESCROW_CONTRACT = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
 
         async function ensureRobinhoodNetwork() {
       if (!window.ethereum) return true;
@@ -4763,7 +4763,7 @@ async function connectWallet() {
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
       const qDeadline = getQuestionDeadline(q.id);
 
-      // STRICT DEADLINE ENFORCEMENT: Cannot submit requests after deadline!
+      // STRICT DEADLINE ENFORCEMENT
       if (Date.now() >= qDeadline) {
         showToast("⚠️ Submissions closed for this question! Deadline has passed.", "warning");
         return;
@@ -4772,53 +4772,124 @@ async function connectWallet() {
       const btn = document.getElementById("create-duel-btn");
       if (btn) btn.disabled = true;
 
-      const oppositeOption = selectedDuelOption === 'YES' ? 'NO' : 'YES';
+      const oppositeOption = selectedDuelOption === YES ? NO : YES;
 
       let txHash = "";
+      let onchainDuelId = null;
+
       try {
-        txHash = await executeOnchainPayment(selectedDuelTier, "USDG", `Create Duel Tier ${selectedDuelTier}.00 [${selectedDuelOption}]`);
-        showToast(`⚔️ Duel Created! Deposit Successful.`, "success");
+        await ensureRobinhoodNetwork();
+        showToast("⏳ Checking USDG balance & approval...", "info");
+
+        if (!window.ethereum) throw new Error("No web3 wallet found");
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        const USDG_CONTRACT = new ethers.Contract(USDG_TOKEN_ADDRESS, [
+          "function allowance(address owner, address spender) view returns (uint256)",
+          "function approve(address spender, uint256 amount) returns (bool)",
+          "function balanceOf(address account) view returns (uint256)"
+        ], signer);
+
+        const DUEL_CONTRACT = new ethers.Contract(DUEL_CONTRACT_ADDRESS, [
+          "function createDuelToken(address token, uint256 wagerAmount, uint8 creatorChoice, uint256 durationInSeconds, string topic) returns (uint256)",
+          "function nextDuelId() view returns (uint256)",
+          "event DuelCreated(uint256 indexed duelId, address indexed creator, address indexed token, uint256 wagerAmount, uint8 creatorChoice, uint256 expiresAt, string topic)"
+        ], signer);
+
+        // USDG has 6 decimals
+        const wagerUnits = BigInt(Math.round(parseFloat(selectedDuelTier) * 1000000));
+
+        const userBal = await USDG_CONTRACT.balanceOf(userAddress);
+        if (BigInt(userBal.toString()) < wagerUnits) {
+          showToast("❌ Insufficient USDG balance for $" + selectedDuelTier, "error");
+          if (btn) btn.disabled = false;
+          return;
+        }
+
+        const currentAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
+        if (BigInt(currentAllowance.toString()) < wagerUnits) {
+          showToast("⏳ Please approve USDG in MetaMask...", "info");
+          const approveTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256);
+          showToast("⏳ Waiting for approval confirmation...", "info");
+          await approveTx.wait();
+          showToast("✅ USDG Approved!", "success");
+        }
+
+        showToast("⏳ Confirm createDuelToken in MetaMask...", "info");
+        const creatorChoiceNum = selectedDuelOption === YES ? 1 : 2;
+        let durationSec = Math.max(60, Math.floor((qDeadline - Date.now()) / 1000));
+        if (durationSec > 86400 * 30) durationSec = 86400 * 30;
+
+        const cleanTopic = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
+
+        const tx = await DUEL_CONTRACT.createDuelToken(
+          USDG_TOKEN_ADDRESS,
+          wagerUnits.toString(),
+          creatorChoiceNum,
+          durationSec,
+          cleanTopic
+        );
+
+        showToast("⏳ Mining transaction on Robinhood Chain...", "info");
+        const receipt = await tx.wait();
+        txHash = tx.hash;
+
+        try {
+          const evt = receipt.events && receipt.events.find(e => e.event === "DuelCreated");
+          if (evt && evt.args && evt.args.duelId) {
+            onchainDuelId = evt.args.duelId.toString();
+          } else {
+            const nextId = await DUEL_CONTRACT.nextDuelId();
+            onchainDuelId = Math.max(1, nextId.toNumber() - 1).toString();
+          }
+        } catch(e) {
+          onchainDuelId = "1";
+        }
+
+        showToast("⚔️ Duel Created on Robinhood Chain! Tx: " + txHash.slice(0, 10) + "...", "success");
       } catch (err) {
-        console.error(err);
-        showToast("❌ Transaction rejected or cancelled.", "error");
+        console.error("Create duel failed:", err);
+        showToast("❌ Transaction failed: " + (err.reason || err.message || "Rejected"), "error");
         if (btn) btn.disabled = false;
         return;
       }
 
-      const duelId = "duel_" + Date.now().toString(36) + "_" + Math.random().toString(36).substr(2, 4);
+      const duelId = "duel_" + (onchainDuelId || Date.now().toString(36));
+      const cleanTitle = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
       const newDuel = {
         id: duelId,
+        onchainDuelId: onchainDuelId || "1",
         questionId: q.id,
-        questionText: q.title,
+        questionText: cleanTitle,
         creatorOption: selectedDuelOption,
         requiredOpponentOption: oppositeOption,
         tier: selectedDuelTier,
         creator: userAddress,
-        status: 'open',
+        status: open,
         deadline: qDeadline,
         createTxHash: txHash || "",
-        onchainDuelId: onchainDuelId || "",
         payout: (selectedDuelTier * 1.8).toFixed(2),
         cashback: (selectedDuelTier * 0.03).toFixed(2),
-        deadline: getQuestionDeadline(selectedDuelQuestionId),
         createdAt: Date.now()
       };
 
       try {
-        const myCreated = JSON.parse(localStorage.getItem('my_created_duel_ids') || '[]');
+        const myCreated = JSON.parse(localStorage.getItem(my_created_duel_ids) || []);
         if (!myCreated.includes(newDuel.id)) {
           myCreated.push(newDuel.id);
-          localStorage.setItem('my_created_duel_ids', JSON.stringify(myCreated));
+          localStorage.setItem(my_created_duel_ids, JSON.stringify(myCreated));
         }
       } catch(e){}
 
       saveLocalDuel(newDuel);
       await broadcastDuel(newDuel);
-      switchDuelTab('open');
+      switchDuelTab(open);
       renderAllDuels();
 
       if (btn) btn.disabled = false;
-      showToast(`🎉 Duel Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
+      showToast(`🎉 Duel #${onchainDuelId || 1} Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
+    } USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
     }
 
     
