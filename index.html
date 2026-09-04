@@ -3094,17 +3094,20 @@
 
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const duelContract = new ethers.Contract(DUEL_CONTRACT_ADDRESS, PVP_DUEL_ABI, signer);
+        const duelContract = new ethers.Contract(DUEL_CONTRACT_ADDRESS, [
+          "function cancelDuel(uint256 duelId) external",
+          "function nextDuelId() view returns (uint256)",
+          "event DuelCancelled(uint256 indexed duelId, address indexed creator, uint256 refundAmount)"
+        ], signer);
 
         const store = getLocalDuels();
-        let numericId = 1;
+        let numericId = 2;
         if (store[duelId] && store[duelId].onchainDuelId) {
           numericId = parseInt(store[duelId].onchainDuelId);
-        } else {
-          try {
-            const nextId = await duelContract.nextDuelId();
-            numericId = Math.max(1, nextId.toNumber() - 1);
-          } catch(e) {}
+        } else if (String(duelId).startsWith("duel_")) {
+          numericId = parseInt(String(duelId).replace("duel_", ""));
+        } else if (!isNaN(parseInt(duelId))) {
+          numericId = parseInt(duelId);
         }
 
         const tx = await duelContract.cancelDuel(numericId);
