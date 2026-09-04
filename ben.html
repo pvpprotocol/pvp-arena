@@ -4858,16 +4858,9 @@ async function connectWallet() {
         const wagerUnits = BigInt(Math.round(parseFloat(selectedDuelTier) * 1000000));
 
         // Fast parallel fetch of balance and allowance
-        const [userBal, currentAllowance] = await Promise.all([
-          USDG_CONTRACT.balanceOf(userAddress),
-          USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS)
-        ]);
-
-        if (BigInt(userBal.toString()) < wagerUnits) {
-          showToast("❌ Insufficient USDG balance for $" + selectedDuelTier, "error");
-          if (btn) btn.disabled = false;
-          return;
-        }
+        // Direct execution: do NOT check wallet balance beforehand.
+        // Let wallet & contract handle execution or revert if insufficient funds.
+        const currentAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
         if (BigInt(currentAllowance.toString()) < wagerUnits) {
           showToast("⏳ Please approve USDG in MetaMask...", "info");
           const approveTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256);
