@@ -3487,17 +3487,17 @@ async function connectWallet() {
       { 
         id: 5, 
         category: "CRYPTO 5M", 
-        title: "Will BTC 5-Minute Candle Close GREEN? (5-Minute Test Duel)", 
+        title: "Will BTC Price Close GREEN? (30-Minute Test Duel)", 
         desc: "Predict whether Bitcoin 5-minute candle closes bullish (Green) or bearish (Red). Rapid 5-minute test duel.",
         deadlineDesc: "5-Minute Close",
         isEnded: false,
         getDeadline: function() {
-          const stored = localStorage.getItem("pvp_btc_5m_deadline");
+          const stored = localStorage.getItem("pvp_btc_30m_deadline");
           if (stored && Number(stored) > Date.now()) {
             return Number(stored);
           }
-          const fresh = Date.now() + 5 * 60 * 1000;
-          localStorage.setItem("pvp_btc_5m_deadline", String(fresh));
+          const fresh = Date.now() + 30 * 60 * 1000;
+          localStorage.setItem("pvp_btc_30m_deadline", String(fresh));
           return fresh;
         },
         optA: "YES",
@@ -4910,13 +4910,26 @@ async function connectWallet() {
       showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${opponentOption}]!`, "success");
     }
 
-    function cancelDuel(duelId, tier) {
-      const cancelObj = { id: duelId, status: 'cancelled' };
-      broadcastDuel(cancelObj);
-      const row = document.getElementById(`duel-row-${duelId}`);
-      if (row) row.remove();
-      updateDuelCounter();
-      showToast(`✅ Duel ${duelId} cancelled. USDG refunded.`, "info");
+    async function cancelDuel(duelId, tier) {
+      try {
+        if (!isConnected) { await connectWallet(); }
+        showToast("Processing cancel and refund...", "info");
+        const store = getLocalDuels();
+        if (store[duelId]) {
+          store[duelId].status = "cancelled";
+          store[duelId].refundedAt = Date.now();
+          saveLocalDuel(store[duelId]);
+          await broadcastDuel(store[duelId]);
+        }
+        const row = document.getElementById("duel-row-" + duelId);
+        if (row) row.remove();
+        updateDuelCounter();
+        renderAllDuels();
+        showToast("✅ Duel " + duelId + " cancelled! " + tier + " USDG refunded to creator.", "success");
+      } catch (err) {
+        console.error("Cancel duel error:", err);
+        showToast("Cancel error: " + (err.message || err), "error");
+      }
     }
 
     async function resolveDuelMatch(duelId, winningOption) {
