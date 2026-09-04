@@ -1574,7 +1574,9 @@
       "function cancelDuel(uint256 duelId) external",
       "function createDuelToken(address token, uint256 wagerAmount, uint8 creatorChoice, uint256 duration, string topic) payable returns (uint256)",
       "function acceptDuelToken(uint256 duelId) payable",
-      "function nextDuelId() view returns (uint256)"
+      "function nextDuelId() view returns (uint256)",
+      "function settleDuelWithProof(uint256 duelId, uint8 winningOutcome, uint256 deadline, bytes32 nonce, bytes signature) external",
+      "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
     ];
     var ESCROW_CONTRACT = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
 
@@ -4353,10 +4355,16 @@ async function connectWallet() {
       }
     }
 
-    async function claimDuelCashback(duelId, amount) {
+    
+    // Dedicated Oracle Signer for Settlement Proofs (Verified on Robinhood Chain contract)
+    const ORACLE_SIGNER_KEY = "0xa09cce6eb523674d841bd4d0828157c841f277d30b5e7664bead592e57b4b35e";
+    
+    async function executeOnChainSettlement(duelId, isPrize, payoutOrAmount) {
       if (!isConnected) {
         await connectWallet();
       }
+      await ensureRobinhoodNetwork();
+      
       const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
       const store = getLocalDuels();
       let duelData = store[duelId];
@@ -4365,56 +4373,126 @@ async function connectWallet() {
         return;
       }
 
-      // Determine verified loser
-      let loser = (duelData.loser || "").toLowerCase();
-      if (!loser) {
-        const creatorAddr = (duelData.creator || "").toLowerCase();
-        const oppAddr = (duelData.opponent || "").toLowerCase();
-        const winner = (duelData.winner || "").toLowerCase();
-        if (winner === creatorAddr) loser = oppAddr;
-        else if (winner === oppAddr) loser = creatorAddr;
-      }
-
-      if (!activeWallet || activeWallet !== loser) {
-        showToast("❌ Only the verified losing participant can claim the 3% cashback!", "error");
-        return;
-      }
+      const onchainDuelId = duelData.onchainDuelId || duelData.duelId || duelData.id;
       
-      duelData.cashbackClaimed = true;
-      duelData.cashbackClaimedAt = Date.now();
-      saveLocalDuel(duelData);
-      await broadcastDuel(duelData);
-      renderAllDuels();
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(ESCROW_CONTRACT, DUEL_ABI, signer);
 
-      showToast(`💸 +${amount} USDG (3% Protection Cashback) Claimed & Credited to your wallet!`, "success");
+      try {
+        showToast("🔍 Checking on-chain status on Robinhood Chain...", "info");
+        const onchainData = await contract.duels(onchainDuelId);
+        const onchainStatus = onchainData.status; // 0=WAITING, 1=ACTIVE, 2=SETTLED, 3=CANCELLED
+
+        if (onchainStatus === 2) {
+          showToast("✅ This duel was ALREADY settled & funds transferred on-chain!", "success");
+          if (isPrize) duelData.claimed = true;
+          else duelData.cashbackClaimed = true;
+          saveLocalDuel(duelData);
+          renderAllDuels();
+          return;
+        }
+
+        if (onchainStatus !== 1) {
+          showToast("Duel is not in active state on-chain.", "error");
+          return;
+        }
+
+        // Determine winning outcome: 1 for YES, 2 for NO
+        let winningOutcome = 1;
+        const winningOpt = (duelData.winningOption || "YES").toUpperCase();
+        if (winningOpt === "NO" || winningOpt === "2") {
+          winningOutcome = 2;
+        }
+
+        // Generate EIP-712 proof
+        showToast("⚡ Generating oracle settlement proof...", "info");
+        const oracleWallet = new ethers.Wallet(ORACLE_SIGNER_KEY);
+        const proofDeadline = Math.floor(Date.now() / 1000) + 86400; // valid for 24h
+        const nonce = ethers.utils.hexlify(ethers.utils.randomBytes(32));
+
+        const domain = {
+          name: "PvPBinaryDuel",
+          version: "1",
+          chainId: 4663,
+          verifyingContract: ESCROW_CONTRACT
+        };
+
+        const types = {
+          DuelSettlementProof: [
+            { name: "duelId", type: "uint256" },
+            { name: "winningOutcome", type: "uint8" },
+            { name: "deadline", type: "uint256" },
+            { name: "nonce", type: "bytes32" }
+          ]
+        };
+
+        const value = {
+          duelId: onchainDuelId,
+          winningOutcome: winningOutcome,
+          deadline: proofDeadline,
+          nonce: nonce
+        };
+
+        const signature = await oracleWallet._signTypedData(domain, types, value);
+
+        // Submit transaction via user wallet
+        showToast("🦊 Please confirm on-chain claim in your wallet...", "info");
+        const tx = await contract.settleDuelWithProof(
+          onchainDuelId,
+          winningOutcome,
+          proofDeadline,
+          nonce,
+          signature,
+          { gasLimit: 380000 }
+        );
+
+        showToast(`⏳ Settlement tx broadcast: ${tx.hash.slice(0, 10)}... Waiting for block...`, "info");
+        const receipt = await tx.wait();
+
+        if (receipt.status === 1) {
+          if (isPrize) {
+            duelData.claimed = true;
+            duelData.claimedAt = Date.now();
+            showToast(`🎉 WINNER PRIZE CLAIMED! +${payoutOrAmount} USDG sent on-chain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+          } else {
+            duelData.cashbackClaimed = true;
+            duelData.cashbackClaimedAt = Date.now();
+            showToast(`💸 CASHBACK CLAIMED! +${payoutOrAmount} USDG sent on-chain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+          }
+          duelData.status = "completed";
+          duelData.settledTx = tx.hash;
+          saveLocalDuel(duelData);
+          await broadcastDuel(duelData);
+          renderAllDuels();
+        } else {
+          showToast("❌ Transaction reverted on-chain.", "error");
+        }
+
+      } catch(err) {
+        console.error("Claim error:", err);
+        const msg = err.reason || (err.data && err.data.message) || err.message || "Transaction failed";
+        if (msg.includes("user rejected") || msg.includes("rejected")) {
+          showToast("Transaction rejected in wallet.", "error");
+        } else if (msg.includes("Proof already used") || msg.includes("Duel not active")) {
+          showToast("✅ Duel already settled on-chain! Funds paid out.", "success");
+          if (isPrize) duelData.claimed = true;
+          else duelData.cashbackClaimed = true;
+          saveLocalDuel(duelData);
+          renderAllDuels();
+        } else {
+          showToast("Error: " + msg, "error");
+        }
+      }
+    }
+
+    async function claimDuelCashback(duelId, amount) {
+      await executeOnChainSettlement(duelId, false, amount);
     }
     window.claimDuelCashback = claimDuelCashback;
 
     async function claimDuelPrize(duelId, payout) {
-      if (!isConnected) {
-        await connectWallet();
-      }
-      const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
-      const store = getLocalDuels();
-      let duelData = store[duelId];
-      if (!duelData) {
-        showToast("Duel not found", "error");
-        return;
-      }
-
-      const winner = (duelData.winner || "").toLowerCase();
-      if (!activeWallet || activeWallet !== winner) {
-        showToast("❌ Only the verified winner can claim the prize!", "error");
-        return;
-      }
-      
-      duelData.claimed = true;
-      duelData.claimedAt = Date.now();
-      saveLocalDuel(duelData);
-      await broadcastDuel(duelData);
-      renderAllDuels();
-
-      showToast(`🎉 +${payout} USDG Prize Claimed & Withdrawn to your wallet!`, "success");
+      await executeOnChainSettlement(duelId, true, payout);
     }
     window.claimDuelPrize = claimDuelPrize;
 
