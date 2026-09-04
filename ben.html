@@ -1581,6 +1581,10 @@
         async function ensureRobinhoodNetwork() {
       if (!window.ethereum) return true;
       try {
+        const fastChain = window.ethereum.chainId || (window.ethereum.networkVersion ? "0x" + parseInt(window.ethereum.networkVersion).toString(16) : null);
+        if (fastChain && (parseInt(fastChain, 16) === 4663 || fastChain.toLowerCase() === "0x1237" || fastChain.toLowerCase() === "0x2710")) {
+          return true;
+        }
         const currentChain = await window.ethereum.request({ method: "eth_chainId" });
         const chainNum = parseInt(currentChain, 16);
         if (chainNum === 4663 || currentChain.toLowerCase() === "0x1237" || currentChain.toLowerCase() === "0x2710") {
@@ -4889,7 +4893,7 @@ async function connectWallet() {
 
       try {
         await ensureRobinhoodNetwork();
-        showToast("⏳ Checking USDG balance & approval...", "info");
+        // instant execution without delaying toasts
 
         if (!window.ethereum) throw new Error("No web3 wallet found");
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -4913,13 +4917,23 @@ async function connectWallet() {
         // Fast parallel fetch of balance and allowance
         // Direct execution: do NOT check wallet balance beforehand.
         // Let wallet & contract handle execution or revert if insufficient funds.
-        const currentAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
-        if (BigInt(currentAllowance.toString()) < wagerUnits) {
+        let isApproved = window._usdgApproved || (localStorage.getItem("usdg_app_" + userAddress.toLowerCase()) === "1");
+        if (!isApproved) {
+          const currentAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
+          if (BigInt(currentAllowance.toString()) >= wagerUnits) {
+            isApproved = true;
+            window._usdgApproved = true;
+            try { localStorage.setItem("usdg_app_" + userAddress.toLowerCase(), "1"); } catch(e){}
+          }
+        }
+        if (!isApproved) {
           showToast("⏳ Please approve USDG in MetaMask...", "info");
           const approveTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256);
           showToast("⏳ Waiting for approval confirmation...", "info");
           await approveTx.wait();
           showToast("✅ USDG Approved!", "success");
+          window._usdgApproved = true;
+          try { localStorage.setItem("usdg_app_" + userAddress.toLowerCase(), "1"); } catch(e){}
         }
 
         showToast("⏳ Confirm createDuelToken in MetaMask...", "info");
@@ -4934,7 +4948,8 @@ async function connectWallet() {
           wagerUnits.toString(),
           creatorChoiceNum,
           durationSec,
-          cleanTopic
+          cleanTopic,
+          { gasLimit: 360000 }
         );
 
         showToast("⏳ Mining transaction on Robinhood Chain...", "info");
@@ -5060,15 +5075,23 @@ async function connectWallet() {
           "function acceptDuelToken(uint256) external"
         ], signer);
         const wagerUnits = BigInt(Math.round(parseFloat(tier) * 1000000));
-        const curAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
-        if (BigInt(curAllowance.toString()) < wagerUnits) {
+        let isApprovedAccept = window._usdgApproved || (localStorage.getItem("usdg_app_" + userAddress.toLowerCase()) === "1");
+        if (!isApprovedAccept) {
+          const curAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
+          if (BigInt(curAllowance.toString()) >= wagerUnits) {
+            isApprovedAccept = true;
+            window._usdgApproved = true;
+            try { localStorage.setItem("usdg_app_" + userAddress.toLowerCase(), "1"); } catch(e){}
+          }
+        }
+        if (!isApprovedAccept) {
           showToast("⏳ Approving USDG...", "info");
           const appTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256);
           await appTx.wait();
         }
         showToast("⏳ Confirm acceptDuel in MetaMask...", "info");
         const onchainNumId = parseInt(duelData && duelData.onchainDuelId ? duelData.onchainDuelId : (duelId.replace("duel_", "") || 1));
-        const txAccept = await DUEL_CONTRACT.acceptDuelToken(onchainNumId);
+        const txAccept = await DUEL_CONTRACT.acceptDuelToken(onchainNumId, { gasLimit: 320000 });
         showToast("⏳ Mining acceptance...", "info");
         await txAccept.wait();
         txHash = txAccept.hash;
