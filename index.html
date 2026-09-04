@@ -3488,7 +3488,7 @@ async function connectWallet() {
       { 
         id: 5, 
         category: "CRYPTO 5M", 
-        title: "Will BTC Price Close GREEN? (30-Minute Test Duel)", 
+        title: "Will BTC Price Close GREEN?", 
         desc: "Predict whether Bitcoin 5-minute candle closes bullish (Green) or bearish (Red). Rapid 5-minute test duel.",
         deadlineDesc: "5-Minute Close",
         isEnded: false,
@@ -3511,7 +3511,7 @@ async function connectWallet() {
       { 
         id: 1, 
         category: "CRYPTO", 
-        title: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)", 
+        title: "Will BTC Daily Candle Close GREEN?", 
         desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green).",
         deadlineDesc: "Sep 3 UTC 00:00 Close",
         deadline: 1788393600000, // Fixed: Sep 3 00:00 UTC (Ended)
@@ -3548,7 +3548,7 @@ async function connectWallet() {
       { 
         id: 3, 
         category: "CRYPTO", 
-        title: "Will BTC Daily Candle Close GREEN? (Round #2 - Sep 4)", 
+        title: "Will BTC Daily Candle Close GREEN?", 
         desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green) for Sep 4.",
         deadlineDesc: "Sep 4 UTC 00:00 Close",
         deadline: 1788480000000, // Fixed: Sep 4 00:00 UTC (~16h remaining)
@@ -4432,7 +4432,9 @@ async function connectWallet() {
 
       const safeTier = (duelData.tier !== undefined && duelData.tier !== null) ? Number(duelData.tier) : 1;
       const safePayout = duelData.payout ? duelData.payout : (safeTier * 1.8).toFixed(2);
-      const questionText = duelData.questionText || "Will BTC Daily Candle Close GREEN?";
+      let rawQText = duelData.questionText || "Will BTC Daily Candle Close GREEN?";
+      const qIdx = rawQText.indexOf("?");
+      const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
       const creatorOption = duelData.creatorOption || "YES";
       const requiredOpponentOption = duelData.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
       const creatorColor = creatorOption === "YES" ? "text-emerald-400" : "text-rose-400";
@@ -4715,10 +4717,7 @@ async function connectWallet() {
             <div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-mono font-bold text-white">${questionText}</span>
-                                ${userRoleBadge}
-                ${category !== 'completed' ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                  ⏳ Deadline: <span class="duel-card-deadline-timer font-bold" data-qid="${resolvedQId}" data-deadline="${duelDeadline}" data-duel-id="${duelData.id}">${timeObj.text}</span>
-                </span>` : ''}
+                ${userRoleBadge}
               </div>
               ${completedDetailsHtml}
               ${(duelData.createTxHash || duelData.acceptTxHash) ? `
