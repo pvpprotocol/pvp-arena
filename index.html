@@ -389,12 +389,15 @@
       
       <!-- HORIZONTAL TICKET TIERS SELECTION (5 COLUMNS ACROSS) -->
       <div>
-        <div class="flex items-center justify-between mb-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
           <h3 class="font-black text-white font-mono text-sm uppercase tracking-wider flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
             SELECT TOURNAMENT TIER & BUY TICKETS
           </h3>
-          <span class="text-[11px] font-mono text-slate-400">Choose a tier to activate playable board</span>
+          <!-- USER INVENTORY BADGE CONTAINER -->
+          <div id="user-tickets-badge" class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[11px] font-mono text-slate-400">🎟️ Stored Tickets: <b class="text-cyan-400">0</b></span>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
@@ -606,10 +609,15 @@
               <span id="game-score" class="text-lg font-black text-white">0</span>
             </div>
             <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 font-mono text-center">
-              <span class="text-[10px] text-amber-400/80 block font-bold">BEST SCORE (ALL TIERS)</span>
+              <span class="text-[10px] text-amber-400/80 block font-bold">BEST SCORE</span>
               <span id="game-best" class="text-lg font-black text-amber-400">0</span>
             </div>
-            <button id="btn-top-game-action" onclick="startNew2048Game(true)" class="p-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all">▶ START GAME</button>
+            <!-- USER TICKETS INVENTORY BOX -->
+            <div class="px-3 py-1.5 rounded-xl bg-cyan-950/40 border border-cyan-500/40 font-mono text-center shadow-lg shadow-cyan-500/10">
+              <span class="text-[10px] text-cyan-300 block font-bold flex items-center justify-center gap-1">🎟️ YOUR TICKETS</span>
+              <span id="tickets-count" class="text-lg font-black text-cyan-300">0</span>
+            </div>
+            <button id="btn-top-game-action" onclick="startNew2048Game(true)" class="p-2 px-3 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30 font-mono text-xs font-bold transition-all">▶ START GAME</button>
           </div>
         </div>
 
@@ -2773,7 +2781,7 @@
 
     
       
-    async async function startNew2048Game(forceStart) {
+    async function startNew2048Game(forceStart) {
       if (!isConnected) {
         await connectWallet();
       }
