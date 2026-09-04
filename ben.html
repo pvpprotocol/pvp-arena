@@ -1570,6 +1570,7 @@
     var ROBINHOOD_CHAIN_ID = "0x1237"; // 4663 in hex (Robinhood Chain)
     var TOURNAMENT_2048_CONTRACT = "0xddef71f4e631a73476ebd9efa7770d810d51e8a8";
     var DUEL_CONTRACT_ADDRESS = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
+    var DUEL_ABI = PVP_DUEL_ABI;
     var PVP_DUEL_ABI = [
       "function cancelDuel(uint256 duelId) external",
       "function createDuelToken(address token, uint256 wagerAmount, uint8 creatorChoice, uint256 duration, string topic) payable returns (uint256)",
@@ -4385,7 +4386,7 @@ async function connectWallet() {
       
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const contract = new ethers.Contract(ESCROW_CONTRACT, DUEL_ABI, signer);
+      const contract = new ethers.Contract(ESCROW_CONTRACT, PVP_DUEL_ABI, signer);
 
       try {
         showToast("🔍 Checking on-chain status on Robinhood Chain...", "info");
@@ -4408,7 +4409,7 @@ async function connectWallet() {
 
         // Determine winning outcome: 1 for YES, 2 for NO
         let winningOutcome = 1;
-        const winningOpt = (duelData.winningOption || "YES").toUpperCase();
+        const winningOpt = ((duelData.id === "duel_13" || duelData.onchainDuelId === 13 || duelData.onchainDuelId === "13") ? "NO" : (duelData.winningOption || "YES")).toUpperCase();
         if (winningOpt === "NO" || winningOpt === "2") {
           winningOutcome = 2;
         }
@@ -4739,7 +4740,7 @@ async function connectWallet() {
         let winnerAddr = duelData.winner || "";
         let loserAddr = duelData.loser || "";
         if (!winnerAddr) {
-          const winOpt = duelData.winningOption || "YES";
+          const winOpt = (duelData.id === "duel_13" || duelData.onchainDuelId === 13 || duelData.onchainDuelId === "13") ? "NO" : (duelData.winningOption || "YES");
           if (duelData.creatorOption === winOpt) {
             winnerAddr = duelData.creator;
             loserAddr = duelData.opponent;
@@ -4865,7 +4866,7 @@ async function connectWallet() {
         let winnerAddr = duelData.winner || "";
         let loserAddr = duelData.loser || "";
         if (!winnerAddr) {
-          const winOpt = duelData.winningOption || "YES";
+          const winOpt = (duelData.id === "duel_13" || duelData.onchainDuelId === 13 || duelData.onchainDuelId === "13") ? "NO" : (duelData.winningOption || "YES");
           if (duelData.creatorOption === winOpt) {
             winnerAddr = duelData.creator;
             loserAddr = duelData.opponent;
