@@ -3637,8 +3637,15 @@ async function connectWallet() {
 
     function getDuelEffectiveDeadline(duelData) {
       if (!duelData) return 1788566400000;
-      // If Question #1 (BTC 15M Candle), calculate the exact 15-minute candle close boundary:
-      const is15m = duelData.questionId == 1 || (duelData.questionText && (duelData.questionText.toLowerCase().includes("15-minute") || duelData.questionText.toLowerCase().includes("15m")));
+      const qText = (duelData.questionText || "").toLowerCase();
+
+      // If Daily BTC Candle, settlement deadline is tonight UTC 00:00 close (1788566400000):
+      if (duelData.questionId == 1 || qText.includes("daily") || qText.includes("sep 4")) {
+        return 1788566400000;
+      }
+
+      // If old 15M candle duel (e.g. duel 13):
+      const is15m = duelData.id === "duel_13" || duelData.onchainDuelId === 13 || duelData.onchainDuelId === "13" || (qText.includes("15-minute") || qText.includes("15m"));
       if (is15m) {
         if (duelData.targetCandleClose && Number(duelData.targetCandleClose) > 0) return Number(duelData.targetCandleClose);
         const cAt = Number(duelData.createdAt) || (Number(duelData.createdAtSec) * 1000) || (Date.now() - 900000);
@@ -5056,7 +5063,9 @@ async function connectWallet() {
         // Generous lobby window (3600s / 1 hour) so duels never fail with 'Duel expired' while matching
         let durationSec = 3600;
         let targetCandleClose = Date.now() + 900000;
-        if (q && q.id === 1) {
+        if (q && (q.category === "CRYPTO DAILY" || (q.title && q.title.toLowerCase().includes("daily")) || q.id === 1)) {
+          targetCandleClose = q.settlementTime || 1788566400000;
+        } else if (q && q.title && (q.title.toLowerCase().includes("15-minute") || q.title.toLowerCase().includes("15m"))) {
           const candle15m = 15 * 60 * 1000;
           targetCandleClose = Math.ceil(Date.now() / candle15m) * candle15m;
           if ((targetCandleClose - Date.now()) < 120000) {
