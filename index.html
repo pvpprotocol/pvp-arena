@@ -133,6 +133,7 @@
     };
   </script>
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
 
@@ -4283,7 +4284,10 @@ async function connectWallet() {
     }
     window.claimDuelPrize = claimDuelPrize;
 
-    async function reclaimExpiredDeposit(duelId, tier) {
+    async async function reclaimExpiredDeposit(duelId, tier) {
+      await cancelDuel(duelId, tier);
+      return;
+
       if (!isConnected) {
         await connectWallet();
       }
@@ -4910,11 +4914,31 @@ async function connectWallet() {
       showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${opponentOption}]!`, "success");
     }
 
-    async function cancelDuel(duelId, tier) {
+    async async function cancelDuel(duelId, tier) {
       try {
         if (!isConnected) { await connectWallet(); }
-        showToast("Processing cancel and refund...", "info");
+        await ensureRobinhoodNetwork();
+        showToast("⏳ Confirm cancelDuel in MetaMask to refund " + tier + " USDG...", "info");
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const duelContract = new ethers.Contract(DUEL_CONTRACT_ADDRESS, PVP_DUEL_ABI, signer);
+
         const store = getLocalDuels();
+        let numericId = 1;
+        if (store[duelId] && store[duelId].onchainDuelId) {
+          numericId = parseInt(store[duelId].onchainDuelId);
+        } else {
+          try {
+            const nextId = await duelContract.nextDuelId();
+            numericId = Math.max(1, nextId.toNumber() - 1);
+          } catch(e) {}
+        }
+
+        const tx = await duelContract.cancelDuel(numericId);
+        showToast("⏳ Mining cancellation on Robinhood Chain...", "info");
+        await tx.wait();
+
         if (store[duelId]) {
           store[duelId].status = "cancelled";
           store[duelId].refundedAt = Date.now();
@@ -4925,10 +4949,10 @@ async function connectWallet() {
         if (row) row.remove();
         updateDuelCounter();
         renderAllDuels();
-        showToast("✅ Duel " + duelId + " cancelled! " + tier + " USDG refunded to creator.", "success");
+        showToast("✅ Duel Cancelled! " + tier + " USDG refunded on-chain by Smart Contract!", "success");
       } catch (err) {
         console.error("Cancel duel error:", err);
-        showToast("Cancel error: " + (err.message || err), "error");
+        showToast("Cancel error: " + (err.reason || err.message || err), "error");
       }
     }
 
