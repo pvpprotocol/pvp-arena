@@ -429,7 +429,7 @@
                 <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
               </div>
               <div class="flex flex-col gap-1.5">
-                <button onclick="buy2048Ticket(1, 'USDG')" id="buy-btn-usdc-1" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                <button onclick="select2048Tier(1); startNew2048Game(true);" id="buy-btn-usdc-1" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
                   BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="cost-usdc-1">0.0001</span> USDG)
                 </button>
                 
@@ -467,7 +467,7 @@
                 <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
               </div>
               <div class="flex flex-col gap-1.5">
-                <button onclick="buy2048Ticket(5, 'USDG')" id="buy-btn-usdc-5" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                <button onclick="select2048Tier(5); startNew2048Game(true);" id="buy-btn-usdc-5" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
                   BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="cost-usdc-5">0.0005</span> USDG)
                 </button>
                 
@@ -505,7 +505,7 @@
                 <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
               </div>
               <div class="flex flex-col gap-1.5">
-                <button onclick="buy2048Ticket(10, 'USDG')" id="buy-btn-usdc-10" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                <button onclick="select2048Tier(10); startNew2048Game(true);" id="buy-btn-usdc-10" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
                   BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="cost-usdc-10">0.001</span> USDG)
                 </button>
                 
@@ -543,7 +543,7 @@
                 <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
               </div>
               <div class="flex flex-col gap-1.5">
-                <button onclick="buy2048Ticket(100, 'USDG')" id="buy-btn-usdc-100" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                <button onclick="select2048Tier(100); startNew2048Game(true);" id="buy-btn-usdc-100" class="w-full py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
                   BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="cost-usdc-100">0.01</span> USDG)
                 </button>
                 
@@ -581,7 +581,7 @@
                 <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-14 px-1.5 py-0.5 bg-slate-950 border border-white/20 rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-cyan-400" />
               </div>
               <div class="flex flex-col gap-1.5">
-                <button onclick="buy2048Ticket(1000, 'USDG')" id="buy-btn-usdc-1000" class="w-full py-2 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
+                <button onclick="select2048Tier(1000); startNew2048Game(true);" id="buy-btn-usdc-1000" class="w-full py-2 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
                   BUY <span id="lbl-qty-usdc-1000">1</span> TICKET ($<span id="cost-usdc-1000">0.1</span>)
                 </button>
                 
@@ -626,8 +626,8 @@
               <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
               <p class="text-xs text-slate-300 max-w-xs mt-1">Purchase a tournament ticket on Robinhood Chain ($0.0001 USDG) to unlock the board and record your verified score.</p>
             </div>
-            <button onclick="buy2048Ticket(selected2048Tier, 'USDG')" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
-              🎟️ BUY TICKET ($0.0001 USDG)
+            <button onclick="startNew2048Game(true)" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+              ▶ START GAME & DEPOSIT ($0.0001 USDG)
             </button>
           </div>
 
@@ -657,7 +657,7 @@
               </div>
             </div>
             <div class="flex gap-3">
-              <button id="overlay-play-again-btn" onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400">PLAY AGAIN</button>
+              <button id="overlay-play-again-btn" onclick="startNew2048Game(true)" class="px-5 py-2.5 rounded-xl bg-cyan-500 text-black font-mono font-bold text-xs hover:bg-cyan-400">▶ PLAY AGAIN (START NEW RUN)</button>
               <button onclick="switchTab('leaderboard'); setLeaderboardCategory('2048');" class="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-mono font-bold text-xs hover:bg-slate-700">VIEW LEADERBOARD</button>
             </div>
           </div>
@@ -2731,39 +2731,31 @@
 
     
       
-    async function startNew2048Game(forceStart) {
+    async async function startNew2048Game(forceStart) {
+      if (!isConnected) {
+        await connectWallet();
+      }
       const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "");
       if (!activeWallet) {
         showToast("🔒 Please connect your wallet first", "warning");
-        if (typeof connectWallet === "function") await connectWallet();
         return;
       }
 
-      // Step 1: Check ticket balance
-      let tixInTier = get2048TierTickets(selected2048Tier);
-      if (tixInTier <= 0) {
-        showToast("⚡ Step 1/2: Purchasing Tier $" + selected2048Tier + " Entry Ticket via MetaMask on Robinhood Chain...", "info");
-        try {
-          if (typeof buy2048Ticket === "function") {
-            await buy2048Ticket(selected2048Tier, "USDG");
-          }
-        } catch(e) {
-          console.error("Ticket purchase failed:", e);
-          showToast("❌ Ticket purchase cancelled or failed.", "error");
-          is2048RunActive = false;
-          update2048TicketsUI();
-          return;
-        }
-        tixInTier = get2048TierTickets(selected2048Tier);
-        if (tixInTier <= 0) {
-          is2048RunActive = false;
-          update2048TicketsUI();
-          return;
-        }
+      // DIRECT ON-CHAIN START: Wallet must open & execute transaction to enter the active round pool
+      const unitPrice = (selected2048Tier / 10000).toFixed(4);
+      showToast("⏳ Opening wallet: Confirm $" + unitPrice + " USDG entry fee to start Tier $" + selected2048Tier + " run...", "info");
+
+      try {
+        const txHash = await executeOnchainPayment(unitPrice, "USDG", "Start 2048 Run Tier " + selected2048Tier + " (USDG)", TOURNAMENT_2048_CONTRACT);
+        showToast("✅ Entry fee deposited into Round Pool! TX: " + txHash.slice(0, 10) + "...", "success");
+      } catch (err) {
+        console.error("Start game payment failed:", err);
+        showToast("❌ Game entry cancelled or failed in wallet.", "error");
+        return;
       }
 
-      // Deduct 1 ticket and lock active session
-      set2048TierTickets(selected2048Tier, tixInTier - 1);
+      // Increment round pool locally and unlock
+      addTicketsToTier(selected2048Tier, 1, "USDG");
       is2048RunActive = true;
       init2048Game();
 
