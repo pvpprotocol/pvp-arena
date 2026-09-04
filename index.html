@@ -4817,7 +4817,7 @@ async function connectWallet() {
         }
 
         showToast("⏳ Confirm createDuelToken in MetaMask...", "info");
-        const creatorChoiceNum = selectedDuelOption === YES ? 1 : 2;
+        const creatorChoiceNum = selectedDuelOption === 'YES' ? 1 : 2;
         let durationSec = Math.max(60, Math.floor((qDeadline - Date.now()) / 1000));
         if (durationSec > 86400 * 30) durationSec = 86400 * 30;
 
@@ -4884,12 +4884,11 @@ async function connectWallet() {
 
       saveLocalDuel(newDuel);
       await broadcastDuel(newDuel);
-      switchDuelTab(open);
+      switchDuelTab('open');
       renderAllDuels();
 
       if (btn) btn.disabled = false;
       showToast(`🎉 Duel #${onchainDuelId || 1} Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
-    } USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
     }
 
     
