@@ -5015,23 +5015,31 @@ async function connectWallet() {
         // Fast parallel fetch of balance and allowance
         // Direct execution: do NOT check wallet balance beforehand.
         // Let wallet & contract handle execution or revert if insufficient funds.
-        let isApproved = window._usdgApproved || (localStorage.getItem("usdg_app_" + userAddress.toLowerCase()) === "1");
-        if (!isApproved) {
-          const currentAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
-          if (BigInt(currentAllowance.toString()) >= wagerUnits) {
-            isApproved = true;
-            window._usdgApproved = true;
-            try { localStorage.setItem("usdg_app_" + userAddress.toLowerCase(), "1"); } catch(e){}
-          }
+        // Always check on-chain balance & allowance directly
+        const [currentBal, currentAllowance, currentEthBal] = await Promise.all([
+          USDG_CONTRACT.balanceOf(userAddress),
+          USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS),
+          provider.getBalance(userAddress)
+        ]);
+
+        if (BigInt(currentEthBal.toString()) === 0n) {
+          showToast("❌ Insufficient ETH for gas on Robinhood Chain!", "error");
+          if (btn) btn.disabled = false;
+          return;
         }
-        if (!isApproved) {
-          showToast("⏳ Please approve USDG in your Wallet...", "info");
-          const approveTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256);
-          showToast("⏳ Waiting for approval confirmation...", "info");
+
+        if (BigInt(currentBal.toString()) < wagerUnits) {
+          showToast("❌ Insufficient USDG! You have " + (parseFloat(ethers.utils.formatUnits(currentBal, 6)).toFixed(2)) + " USDG but need " + selectedDuelTier + " USDG.", "error");
+          if (btn) btn.disabled = false;
+          return;
+        }
+
+        if (BigInt(currentAllowance.toString()) < wagerUnits) {
+          showToast("🦊 Step 1/2: Please approve USDG in your Wallet...", "info");
+          const approveTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 120000 });
+          showToast("⏳ Waiting for USDG approval confirmation on Robinhood Chain...", "info");
           await approveTx.wait();
-          showToast("✅ USDG Approved!", "success");
-          window._usdgApproved = true;
-          try { localStorage.setItem("usdg_app_" + userAddress.toLowerCase(), "1"); } catch(e){}
+          showToast("✅ USDG Approved! Now confirm Duel creation in Wallet...", "success");
         }
 
         showToast("⏳ Confirm createDuelToken in your Wallet...", "info");
