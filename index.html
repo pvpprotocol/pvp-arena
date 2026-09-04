@@ -1745,24 +1745,78 @@ async function connectWallet() {
       // Strict Robinhood Chain Enforcement (Chain ID 4663)
       await ensureRobinhoodNetwork();
 
-      showToast(`💳 Confirm ${totalCostUSD} USDG deposit in MetaMask...`, "info");
-
-      // STRICT ZERO NATIVE TOKEN: Duels and token entries strictly transfer USDG (ERC-20), NEVER native ETH!
       const cleanRecipient = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
       let tokenContract = USDG_TOKEN_ADDRESS;
       let cleanAmount = "";
+      let tokenDecimals = 6;
+      let tokenSymbol = "USDG";
 
       if (paymentMethod === "PVP") {
         tokenContract = PVP_TOKEN_ADDRESS;
+        tokenSymbol = "PVP";
+        tokenDecimals = 18;
         const effectivePrice = (typeof liveNativeTokenPriceUSD !== "undefined" && liveNativeTokenPriceUSD > 0) ? liveNativeTokenPriceUSD : 0.005;
         const tokensNeeded = Math.ceil(parseFloat(totalCostUSD) / effectivePrice);
         const pvpUnits = BigInt(tokensNeeded) * (10n ** 18n);
         cleanAmount = pvpUnits.toString(16).padStart(64, "0");
       } else {
         tokenContract = USDG_TOKEN_ADDRESS;
+        tokenSymbol = "USDG";
+        tokenDecimals = 6;
         const usdgUnits = BigInt(Math.round(parseFloat(totalCostUSD) * 1000000));
         cleanAmount = usdgUnits.toString(16).padStart(64, "0");
       }
+
+      const cleanUser = userAddress.replace("0x", "").toLowerCase().padStart(64, "0");
+      const allowanceCalldata = "0xdd62ed3e" + cleanUser + cleanRecipient;
+
+      // ── STEP 1: CHECK ALLOWANCE & APPROVE (Like Jumper / Aave / Uniswap) ──
+      let currentAllowance = 0n;
+      try {
+        const allowanceHex = await window.ethereum.request({
+          method: "eth_call",
+          params: [{ to: tokenContract, data: allowanceCalldata }, "latest"]
+        });
+        if (allowanceHex && allowanceHex !== "0x") {
+          currentAllowance = BigInt(allowanceHex);
+        }
+      } catch (err) {
+        console.warn("Could not read token allowance:", err);
+      }
+
+      const neededUnits = BigInt("0x" + cleanAmount);
+
+      if (currentAllowance < neededUnits) {
+        showToast(`⏳ Step 1/2: Approve ${totalCostUSD} ${tokenSymbol} in MetaMask...`, "info");
+        const approveCalldata = "0x095ea7b3" + cleanRecipient + cleanAmount;
+
+        let approveTxHash = null;
+        try {
+          approveTxHash = await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [{
+              from: userAddress,
+              to: tokenContract,
+              value: "0x0",
+              data: approveCalldata,
+              gas: "0xb71b" // 46,875 gas limit (Standard ERC20 approve)
+            }]
+          });
+        } catch (err) {
+          console.error("Token approval rejected:", err);
+          throw new Error("Step 1/2 Approval was cancelled or rejected by user.");
+        }
+
+        showToast(`✅ Step 1/2 Complete: ${tokenSymbol} Approved! Confirming Step 2/2...`, "success");
+
+        // Short wait for block inclusion
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } else {
+        console.log(`Existing allowance sufficient (${currentAllowance.toString()} >= ${neededUnits.toString()}). Skipping Step 1.`);
+      }
+
+      // ── STEP 2: TRANSFER / DEPOSIT INTO ESCROW ──
+      showToast(`💳 Step 2/2: Confirm ${totalCostUSD} ${tokenSymbol} Deposit in MetaMask...`, "info");
 
       // ERC-20 transfer(address recipient, uint256 amount) selector: 0xa9059cbb
       const transferCalldata = "0xa9059cbb" + cleanRecipient + cleanAmount;
@@ -1774,14 +1828,14 @@ async function connectWallet() {
           params: [{
             from: userAddress,
             to: tokenContract,
-            value: "0x0", // STRICT ZERO NATIVE ETH: 100% token transfer
+            value: "0x0", // STRICT ZERO NATIVE ETH
             data: transferCalldata,
-            gas: "0x186a0" // 100,000 gas limit for immediate MetaMask prompt
+            gas: "0x11170" // 70,000 gas limit (Optimized for ERC-20 transfer)
           }]
         });
       } catch (err) {
-        console.error("USDG on-chain transfer rejected:", err);
-        throw new Error("USDG transfer transaction was cancelled by user.");
+        console.error("${tokenSymbol} on-chain transfer rejected:", err);
+        throw new Error("Step 2/2 Deposit transaction was cancelled by user.");
       }
 
       // Strict Anti-Cheat Validation: Verify transaction hash returned by wallet
@@ -1789,6 +1843,7 @@ async function connectWallet() {
         throw new Error("Invalid on-chain transaction hash returned from blockchain.");
       }
 
+      showToast(`🎉 Step 2/2 Complete! ${totalCostUSD} ${tokenSymbol} Deposited.`, "success");
       return txHash;
     }
     
