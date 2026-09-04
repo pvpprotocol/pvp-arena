@@ -4498,29 +4498,6 @@ async function connectWallet() {
 
     async function reclaimExpiredDeposit(duelId, tier) {
       await cancelDuel(duelId, tier);
-      return;
-
-      if (!isConnected) {
-        await connectWallet();
-      }
-      const store = getLocalDuels();
-      let duelData = store[duelId];
-      if (!duelData) {
-        showToast("Duel not found", "error");
-        return;
-      }
-
-      // Mark cancelled / refunded
-      duelData.status = 'cancelled';
-      duelData.refundedAt = Date.now();
-      saveLocalDuel(duelData);
-      await broadcastDuel(duelData);
-
-      const row = document.getElementById(`duel-row-${duelId}`);
-      if (row) row.remove();
-      renderAllDuels();
-
-      showToast(`💰 ${tier} USDG Deposit Reclaimed & Returned to your balance!`, "success");
     }
 
     function initGlobalDuelsListener() {
@@ -5261,46 +5238,69 @@ async function connectWallet() {
       try {
         if (!isConnected) { await connectWallet(); }
         await ensureRobinhoodNetwork();
-        showToast("⏳ Confirm cancellation in wallet to refund " + tier + " USDG...", "info");
+        showToast("🦊 Confirm cancellation in wallet to refund " + tier + " USDG...", "info");
+
+        const store = getLocalDuels();
+        const duelData = store[duelId];
+        
+        let numericId = null;
+        if (duelData && duelData.onchainDuelId) {
+          numericId = parseInt(duelData.onchainDuelId, 10);
+        } else if (typeof duelId === "number") {
+          numericId = duelId;
+        } else if (typeof duelId === "string") {
+          const match = duelId.match(/\d+/);
+          if (match) numericId = parseInt(match[0], 10);
+        }
+
+        if (!numericId || isNaN(numericId)) {
+          showToast("❌ Invalid duel ID for cancellation", "error");
+          return;
+        }
 
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const cancelAbi = [
           "function cancelDuel(uint256 duelId) external",
-          "function nextDuelId() view returns (uint256)"
+          "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
         ];
-        const duelContract = new ethers.Contract(DUEL_CONTRACT_ADDRESS, cancelAbi, signer);
-
-        const store = getLocalDuels();
-        let numericId = 2;
-        if (store[duelId] && store[duelId].onchainDuelId) {
-          numericId = parseInt(store[duelId].onchainDuelId);
-        } else if (typeof duelId === "number") {
-          numericId = duelId;
-        } else if (typeof duelId === "string") {
-          const match = duelId.match(/\d+/);
-          if (match) numericId = parseInt(match[0]);
-        }
+        const duelContract = new ethers.Contract(ESCROW_CONTRACT, cancelAbi, signer);
 
         console.log("Cancelling duel on-chain with numericId:", numericId);
-        const tx = await duelContract.cancelDuel(numericId);
-        showToast("⏳ Mining cancellation on Robinhood Chain...", "info");
-        await tx.wait();
+        
+        // Execute real on-chain transaction with explicit gasLimit for instant metamask popup
+        const tx = await duelContract.cancelDuel(numericId, { gasLimit: 260000 });
+        showToast("⏳ Mining cancellation & refund on Robinhood Chain... Tx: " + tx.hash.slice(0, 10) + "...", "info");
+        const receipt = await tx.wait();
 
-        if (store[duelId]) {
-          store[duelId].status = "cancelled";
-          store[duelId].refundedAt = Date.now();
-          saveLocalDuel(store[duelId]);
-          await broadcastDuel(store[duelId]);
+        if (receipt.status === 1) {
+          if (store[duelId]) {
+            store[duelId].status = "cancelled";
+            store[duelId].refundedAt = Date.now();
+            store[duelId].cancelTx = tx.hash;
+            saveLocalDuel(store[duelId]);
+            await broadcastDuel(store[duelId]);
+          }
+          const row = document.getElementById("duel-row-" + duelId);
+          if (row) row.remove();
+          updateDuelCounter();
+          renderAllDuels();
+          showToast("💰 DEPOSIT REFUNDED! " + tier + " USDG returned to your wallet on-chain! Tx: " + tx.hash.slice(0, 10) + "...", "success");
+        } else {
+          showToast("❌ Cancellation transaction reverted on-chain.", "error");
         }
-        const row = document.getElementById("duel-row-" + duelId);
-        if (row) row.remove();
-        updateDuelCounter();
-        renderAllDuels();
-        showToast("✅ Duel Cancelled! " + tier + " USDG refunded on-chain by Smart Contract!", "success");
       } catch (err) {
         console.error("Cancel duel error:", err);
-        showToast("Cancel error: " + (err.reason || err.message || err), "error");
+        const msg = err.reason || (err.data && err.data.message) || err.message || "";
+        if (msg.includes("user rejected") || msg.includes("rejected")) {
+          showToast("Cancellation rejected in wallet.", "error");
+        } else if (msg.includes("Not creator")) {
+          showToast("❌ Only the creator can cancel this duel and reclaim deposit.", "error");
+        } else if (msg.includes("Duel not waiting")) {
+          showToast("❌ Cannot cancel: Duel has already been accepted or settled on-chain.", "error");
+        } else {
+          showToast("Cancel error: " + (msg || err), "error");
+        }
       }
     }
 
