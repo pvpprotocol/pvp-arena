@@ -5629,6 +5629,28 @@
       checkWinnerClaimBanner();
     }
 
+    
+    function getOverallBestScore2048AllTiers() {
+      try {
+        const cycle = (typeof get2048CycleInfo === "function") ? get2048CycleInfo() : null;
+        if (!cycle) return { maxScore: 0 };
+        const data = (typeof get2048CycleData === "function") ? get2048CycleData(cycle.cycleId) : null;
+        let max = 0;
+        const tiers = [1, 5, 10, 100, 1000];
+        if (data && data.scores) {
+          for (const t of tiers) {
+            const scores = data.scores[t] || [];
+            for (const s of scores) {
+              if (s && s.score && s.score > max) max = s.score;
+            }
+          }
+        }
+        return { maxScore: max };
+      } catch (err) {
+        return { maxScore: 0 };
+      }
+    }
+
     function checkWinnerClaimBanner() {
       const banner = document.getElementById("banner-claim-2048");
       if (!banner) return;
