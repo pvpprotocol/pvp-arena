@@ -3242,7 +3242,7 @@
 
       // Calculate exact native tokens needed at live price
       const effectivePrice = (liveNativeTokenPriceUSD && liveNativeTokenPriceUSD > 0) ? liveNativeTokenPriceUSD : 0.005;
-      const unitPrice = (tier / 10000);
+      // unitPrice already declared
       const tokensNeeded = Math.max(1, Math.ceil((qty * unitPrice) / effectivePrice));
       const formattedTokens = tokensNeeded.toLocaleString();
 
