@@ -1612,54 +1612,80 @@
       }
     }
 
-async function connectWallet() {
+function getInjectedProvider() {
+      if (!window.ethereum) return null;
+      if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
+        return window.ethereum.providers.find(p => p.isMetaMask) || window.ethereum.providers[0];
+      }
+      return window.ethereum;
+    }
+
+    async function connectWallet() {
       const btnText = document.getElementById("walletBtnText");
       const dot = document.getElementById("walletDot");
 
       if (isConnected) {
         isConnected = false;
         userAddress = null;
+        try { localStorage.removeItem("pvp_last_active_wallet"); } catch(e){}
         if (btnText) btnText.innerText = "Connect Wallet";
         if (dot) dot.className = "w-2 h-2 rounded-full bg-white";
         showToast("Wallet Disconnected", "info");
+        if (typeof renderAllDuels === 'function') renderAllDuels();
+        if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
+        if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
         return;
       }
 
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-          if (accounts && accounts.length > 0) {
-            userAddress = accounts[0];
-            isConnected = true;
-            try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
-            const shortAddr = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-            if (btnText) btnText.innerText = shortAddr;
-            if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
-            showToast("Connected: " + shortAddr, "success");
-            if (typeof renderAllDuels === 'function') renderAllDuels(); syncOnchainDuelsFromContract(); setInterval(syncOnchainDuelsFromContract, 15000);
-            if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
-            if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
-          if (typeof updateLeaderboardUI === 'function') updateLeaderboardUI();
-            if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
-
-            try {
-              await ensureRobinhoodNetwork();
-            } catch (netErr) {}
-          }
-        } catch (err) {
-          console.error(err);
-          isConnected = true;
-          userAddress = "0x71C...49A2";
-          if (btnText) btnText.innerText = "0x71c2...49a2";
-          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
-          showToast("Connected: 0x71c2...49a2", "success");
+      const provider = getInjectedProvider();
+      if (!provider) {
+        showToast("⚠️ No Web3 Wallet detected! If on mobile, open inside MetaMask app.", "warning");
+        const openMetaMask = confirm("No Web3 wallet detected in this browser.\n\nWould you like to open this page inside MetaMask App?");
+        if (openMetaMask) {
+          window.location.href = "https://metamask.app.link/dapp/pvpprotocol.github.io/pvp-arena/";
         }
-      } else {
-        isConnected = true;
-        userAddress = "0x71C...49A2";
-        if (btnText) btnText.innerText = "0x71c2...49a2";
-        if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
-        showToast("Connected: 0x71c2...49a2", "success");
+        return;
+      }
+
+      try {
+        if (btnText) btnText.innerText = "Connecting...";
+        const accounts = await provider.request({ method: "eth_requestAccounts" });
+        if (accounts && accounts.length > 0) {
+          userAddress = accounts[0];
+          isConnected = true;
+          try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
+          const shortAddr = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+          if (btnText) btnText.innerText = shortAddr;
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+          showToast("Connected: " + shortAddr, "success");
+
+          if (typeof renderAllDuels === 'function') renderAllDuels();
+          if (typeof syncOnchainDuelsFromContract === 'function') syncOnchainDuelsFromContract();
+          if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
+          if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
+          if (typeof updateLeaderboardUI === 'function') updateLeaderboardUI();
+          if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
+
+          try {
+            await ensureRobinhoodNetwork();
+          } catch(netErr) {
+            console.warn("Network switch notice:", netErr);
+          }
+        } else {
+          if (btnText) btnText.innerText = "Connect Wallet";
+          showToast("No account selected in wallet.", "warning");
+        }
+      } catch (err) {
+        console.error("Wallet connection error:", err);
+        isConnected = false;
+        userAddress = null;
+        if (btnText) btnText.innerText = "Connect Wallet";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-white";
+        if (err.code === 4001) {
+          showToast("Connection rejected in wallet.", "info");
+        } else {
+          showToast("Failed to connect: " + (err.message ? err.message.slice(0, 45) : "Unknown error"), "warning");
+        }
       }
     }
 
@@ -2013,7 +2039,7 @@ async function connectWallet() {
           : (tier === 1000 ? "text-[10px] font-mono text-amber-400 font-bold" : "text-[10px] font-mono text-cyan-400 font-bold");
       }
 
-      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "Not Connected";
       txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
       const shortTx = txHash.slice(0, 6) + "..." + txHash.slice(-4);
 
@@ -2131,7 +2157,7 @@ async function connectWallet() {
           : "text-[10px] font-mono text-cyan-400 font-bold";
       }
 
-      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "Not Connected";
       /* txHash already obtained from executeOnchainPayment */
 
       liveSubmissions.unshift({
@@ -2252,7 +2278,7 @@ async function connectWallet() {
           : "text-[10px] font-mono text-cyan-400 font-bold";
       }
 
-      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x71c2...49a2";
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "Not Connected";
       let txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
 
       liveSubmissions.unshift({
