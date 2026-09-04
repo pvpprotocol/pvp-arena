@@ -5044,7 +5044,8 @@ async function connectWallet() {
 
         showToast("⏳ Confirm createDuelToken in your Wallet...", "info");
         const creatorChoiceNum = selectedDuelOption === 'YES' ? 1 : 2;
-        let durationSec = Math.max(60, Math.floor((qDeadline - Date.now()) / 1000));
+        // Duels remain open for acceptance for 7 days so opponents can accept without 'Duel expired' error
+        let durationSec = 86400 * 7;
         if (durationSec > 86400 * 30) durationSec = 86400 * 30;
 
         const cleanTopic = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
@@ -5181,19 +5182,19 @@ async function connectWallet() {
           "function acceptDuelToken(uint256) external"
         ], signer);
         const wagerUnits = BigInt(Math.round(parseFloat(tier) * 1000000));
-        let isApprovedAccept = window._usdgApproved || (localStorage.getItem("usdg_app_" + userAddress.toLowerCase()) === "1");
-        if (!isApprovedAccept) {
-          const curAllowance = await USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS);
-          if (BigInt(curAllowance.toString()) >= wagerUnits) {
-            isApprovedAccept = true;
-            window._usdgApproved = true;
-            try { localStorage.setItem("usdg_app_" + userAddress.toLowerCase(), "1"); } catch(e){}
-          }
+        const signerAddress = await signer.getAddress();
+        if (duelData && duelData.creator && duelData.creator.toLowerCase() === signerAddress.toLowerCase()) {
+          showToast("⚠️ You cannot accept your own duel! Please switch to opponent wallet in MetaMask.", "error");
+          return;
         }
-        if (!isApprovedAccept) {
-          showToast("⏳ Approving USDG...", "info");
-          const appTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256);
+
+        // Always check on-chain allowance directly to prevent ERC20 insufficient allowance reverts
+        const curAllowance = await USDG_CONTRACT.allowance(signerAddress, DUEL_CONTRACT_ADDRESS);
+        if (BigInt(curAllowance.toString()) < wagerUnits) {
+          showToast("🦊 Approving USDG for duel acceptance in your Wallet...", "info");
+          const appTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 120000 });
           await appTx.wait();
+          showToast("✅ USDG Approved! Now confirm acceptance in Wallet...", "success");
         }
         showToast("⏳ Confirm acceptDuel in your Wallet...", "info");
         const onchainNumId = parseInt(duelData && duelData.onchainDuelId ? duelData.onchainDuelId : (duelId.replace("duel_", "") || 1));
