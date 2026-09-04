@@ -3430,6 +3430,29 @@ async function connectWallet() {
     // 10 ACTIVE BINARY DUEL QUESTIONS
     const DUEL_QUESTIONS = [
       { 
+        id: 5, 
+        category: "CRYPTO 5M", 
+        title: "Will BTC 5-Minute Candle Close GREEN? (5-Minute Test Duel)", 
+        desc: "Predict whether Bitcoin 5-minute candle closes bullish (Green) or bearish (Red). Rapid 5-minute test duel.",
+        deadlineDesc: "5-Minute Close",
+        isEnded: false,
+        getDeadline: function() {
+          const stored = localStorage.getItem("pvp_btc_5m_deadline");
+          if (stored && Number(stored) > Date.now()) {
+            return Number(stored);
+          }
+          const fresh = Date.now() + 5 * 60 * 1000;
+          localStorage.setItem("pvp_btc_5m_deadline", String(fresh));
+          return fresh;
+        },
+        optA: "YES",
+        optALabel: "YES",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "NO",
+        optBSub: "Red Close"
+      },
+      { 
         id: 1, 
         category: "CRYPTO", 
         title: "Will BTC Daily Candle Close GREEN? (Round #1 - Sep 3)", 
@@ -3505,7 +3528,7 @@ async function connectWallet() {
       }
     ];
 
-    let selectedDuelQuestionId = 4;
+    let selectedDuelQuestionId = 5;
     let selectedDuelTier = 5;
     let selectedDuelOption = 'YES';
     let activeQuestionTab = 'live'; // 'live' or 'ended'
