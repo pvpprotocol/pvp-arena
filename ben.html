@@ -4028,7 +4028,7 @@ async function connectWallet() {
     }
 
     
-    async function syncOnchainDuelsFromContract() {
+        async function syncOnchainDuelsFromContract() {
       try {
         const rpcUrl = "https://rpc.mainnet.chain.robinhood.com";
         const res = await fetch(rpcUrl, {
@@ -4041,8 +4041,7 @@ async function connectWallet() {
             params: [{
               address: "0x95E95BD305aD328AfEd15400903124B59bcc349b",
               fromBlock: "0x3300000",
-              toBlock: "latest",
-              topics: ["0x47fa409e45059ca4351d26c2b17c41f29d4500f90684401d0bdf7d2952bf9a32"]
+              toBlock: "latest"
             }]
           })
         });
@@ -4053,43 +4052,67 @@ async function connectWallet() {
 
           rpcData.result.forEach(log => {
             try {
-              const dId = parseInt(log.topics[1], 16);
-              const creator = "0x" + log.topics[2].slice(26).toLowerCase();
-              const token = "0x" + log.topics[3].slice(26).toLowerCase();
-              const isUsdg = (token === "0x5fc5360d0400a0fd4f2af552add042d716f1d168");
-              
-              const wagerRaw = parseInt(log.data.slice(2, 66), 16);
-              const choiceRaw = parseInt(log.data.slice(66, 130), 16);
-              const creatorChoice = choiceRaw === 1 ? "YES" : "NO";
-              const oppChoice = creatorChoice === "YES" ? "NO" : "YES";
+              const topic0 = log.topics[0];
+              // Event 1: DuelCreated(uint256,address,address,uint256,uint8,uint256,string)
+              if (topic0 === "0x47fa409e45059ca4351d26c2b17c41f29d4500f90684401d0bdf7d2952bf9a32") {
+                const dId = parseInt(log.topics[1], 16);
+                const creator = "0x" + log.topics[2].slice(26).toLowerCase();
+                const token = "0x" + log.topics[3].slice(26).toLowerCase();
+                const isUsdg = (token === "0x5fc5360d0400a0fd4f2af552add042d716f1d168");
+                
+                const wagerRaw = parseInt(log.data.slice(2, 66), 16);
+                const choiceRaw = parseInt(log.data.slice(66, 130), 16);
+                const creatorChoice = choiceRaw === 1 ? "YES" : "NO";
+                const oppChoice = creatorChoice === "YES" ? "NO" : "YES";
 
-              let tierStr = "0.01";
-              if (isUsdg) {
-                tierStr = (wagerRaw / 1000000).toString();
-              } else {
-                tierStr = "1";
+                let tierStr = "0.01";
+                if (isUsdg) {
+                  tierStr = (wagerRaw / 1000000).toString();
+                } else {
+                  tierStr = "1";
+                }
+
+                const duelKey = "duel_" + dId;
+                if (!store[duelKey]) {
+                  store[duelKey] = {
+                    id: duelKey,
+                    onchainDuelId: dId.toString(),
+                    questionId: "q1",
+                    questionText: "Will BTC Price Close GREEN?",
+                    creatorOption: creatorChoice,
+                    requiredOpponentOption: oppChoice,
+                    tier: tierStr,
+                    creator: creator,
+                    opponent: null,
+                    status: "open",
+                    createdAt: Date.now(),
+                    expiresAt: Date.now() + 86400000,
+                    tokenType: isUsdg ? "USDG" : "ETH",
+                    tokenAddress: token,
+                    onChain: true
+                  };
+                  updated = true;
+                }
               }
-
-              const duelKey = "duel_" + dId;
-              if (!store[duelKey]) {
-                store[duelKey] = {
-                  id: duelKey,
-                  onchainDuelId: dId.toString(),
-                  questionId: "q1",
-                  questionText: "Will BTC Price Close GREEN?",
-                  creatorOption: creatorChoice,
-                  requiredOpponentOption: oppChoice,
-                  tier: tierStr,
-                  creator: creator,
-                  opponent: null,
-                  status: "open",
-                  createdAt: Date.now(),
-                  expiresAt: Date.now() + 86400000,
-                  tokenType: isUsdg ? "USDG" : "ETH",
-                  tokenAddress: token,
-                  onChain: true
-                };
-                updated = true;
+              // Event 2: DuelAccepted(uint256,address,uint8)
+              else if (topic0 === "0xc12a9a753ba5697e032f6fa08aaaf85f4ff76d6ea4e6f78767af34cb9c55f842") {
+                const dId = parseInt(log.topics[1], 16);
+                const challenger = "0x" + log.topics[2].slice(26).toLowerCase();
+                const duelKey = "duel_" + dId;
+                if (store[duelKey] && store[duelKey].status !== "in_progress") {
+                  store[duelKey].status = "in_progress";
+                  store[duelKey].opponent = challenger;
+                  updated = true;
+                }
+              }
+              // Event 3: DuelCancelled(uint256,address,uint256)
+              else if (topic0 === "0x12fbd4d0ced605187ec0aec913abe6b5b06912ae3b634c6add28e9a92d1f2d0a") {
+                const dId = parseInt(log.topics[1], 16);
+                const duelKey = "duel_" + dId;
+                if (store[duelKey] && store[duelKey].status !== "cancelled") {
+                  store[duelKey].status = "cancelled";
+                  updated = true;
+                }
               }
             } catch (err) {}
           });
