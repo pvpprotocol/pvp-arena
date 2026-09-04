@@ -5044,19 +5044,15 @@ async function connectWallet() {
 
         showToast("⏳ Confirm createDuelToken in your Wallet...", "info");
         const creatorChoiceNum = selectedDuelOption === 'YES' ? 1 : 2;
-        // Synchronize duel duration with Bitcoin 15-minute candle close
-        let durationSec = 900; // 15 minutes default
+        // Generous lobby window (3600s / 1 hour) so duels never fail with 'Duel expired' while matching
+        let durationSec = 3600;
         let targetCandleClose = Date.now() + 900000;
         if (q && q.id === 1) {
           const candle15m = 15 * 60 * 1000;
           targetCandleClose = Math.ceil(Date.now() / candle15m) * candle15m;
-          // If less than 2 minutes left in current candle, target next 15m candle
           if ((targetCandleClose - Date.now()) < 120000) {
             targetCandleClose += candle15m;
           }
-          durationSec = Math.max(120, Math.floor((targetCandleClose - Date.now()) / 1000));
-        } else {
-          durationSec = 3600;
         }
         if (durationSec > 86400 * 30) durationSec = 86400 * 30;
 
@@ -5145,9 +5141,10 @@ async function connectWallet() {
       const store = getLocalDuels();
       let duelData = store[duelId];
 
-      // 1. Strict Deadline Check
-      if (duelData && duelData.deadline && Date.now() >= duelData.deadline) {
-        showToast("⚠️ This duel deadline has expired and can no longer be accepted!", "warning");
+      // 1. Lobby Expiration Check
+      const effectiveExpiry = (duelData && duelData.expiresAt) || (duelData && duelData.deadline) || (Date.now() + 3600000);
+      if (duelData && effectiveExpiry && Date.now() >= effectiveExpiry) {
+        showToast("⚠️ This duel acceptance window has expired!", "warning");
         renderDuelCard(duelData);
         return;
       }
@@ -5216,7 +5213,8 @@ async function connectWallet() {
         txHash = txAccept.hash;
       } catch (err) {
         console.error("Accept duel payment failed or rejected:", err);
-        showToast("❌ Transaction rejected or cancelled. Duel remains OPEN.", "error");
+        const errMsg = err.reason || (err.data && err.data.message) || err.message || "Rejected";
+        showToast("❌ Accept failed: " + errMsg, "error");
         // Ensure status stays open
         duelData.status = 'open';
         delete duelData.opponent;
