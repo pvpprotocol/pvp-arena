@@ -5471,30 +5471,65 @@ async function connectWallet() {
       }
     } catch(e){}
 
+    function get2048ActiveRoundConfig() {
+      try {
+        const stored = localStorage.getItem("pvp_2048_active_round_v2");
+        if (stored) return JSON.parse(stored);
+      } catch(e){}
+      const defaultRound = {
+        roundIndex: 1,
+        roundStart: Date.now(),
+        duration: 20 * 60 * 1000,
+        status: "active"
+      };
+      try { localStorage.setItem("pvp_2048_active_round_v2", JSON.stringify(defaultRound)); } catch(e){}
+      return defaultRound;
+    }
+
     function get2048CycleInfo() {
       const now = Date.now();
-      let elapsed = now - CYCLE_EPOCH_ANCHOR;
-      if (elapsed < 0) elapsed = 0;
-      const cycleIndex = Math.floor(elapsed / CYCLE_DURATION_2048);
-      const cycleStart = CYCLE_EPOCH_ANCHOR + (cycleIndex * CYCLE_DURATION_2048);
-      const cycleEnd = cycleStart + CYCLE_DURATION_2048;
+      const roundCfg = get2048ActiveRoundConfig();
+      const cycleStart = roundCfg.roundStart;
+      const cycleEnd = cycleStart + roundCfg.duration;
       const timeLeft = Math.max(0, cycleEnd - now);
+      const isEnded = timeLeft <= 0;
       
-      const h = Math.floor(timeLeft / 3600000);
-      const m = Math.floor((timeLeft % 3600000) / 60000);
+      const m = Math.floor(timeLeft / 60000);
       const s = Math.floor((timeLeft % 60000) / 1000);
-      const formatted = String(h).padStart(2, '0') + "h " + String(m).padStart(2, '0') + "m " + String(s).padStart(2, '0') + "s";
+      const formatted = String(m).padStart(2, '0') + "m " + String(s).padStart(2, '0') + "s";
       
       return {
-        cycleId: "cycle_20m_" + cycleIndex,
-        cycleIndex,
+        cycleId: "round_" + roundCfg.roundIndex,
+        cycleIndex: roundCfg.roundIndex,
         cycleStart,
         cycleEnd,
         timeLeft,
-        isEnded: timeLeft <= 0,
+        isEnded,
         formatted
       };
     }
+
+    window.startNext2048Round = function() {
+      const current = get2048CycleInfo();
+      const nextIndex = current.cycleIndex + 1;
+      const newRound = {
+        roundIndex: nextIndex,
+        roundStart: Date.now(),
+        duration: 20 * 60 * 1000,
+        status: "active"
+      };
+      try {
+        localStorage.setItem("pvp_2048_active_round_v2", JSON.stringify(newRound));
+      } catch(e){}
+      if (syncChannel2048) {
+        try { syncChannel2048.postMessage({ type: "ROUND_STARTED", round: newRound }); } catch(e){}
+      }
+      if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
+      if (typeof update2048TicketsUI === "function") update2048TicketsUI();
+      if (typeof render2048Leaderboard === "function") render2048Leaderboard();
+      if (typeof update2048CountdownTimer === "function") update2048CountdownTimer();
+      showToast("🚀 Round " + nextIndex + " started! 20-minute countdown active.", "success");
+    };
 
     function get2048CycleData(customCycleId) {
       const cycle = get2048CycleInfo();
@@ -5628,12 +5663,19 @@ async function connectWallet() {
       const el = document.getElementById("cycle-countdown-2048");
       if (!el) return;
       const cycle = get2048CycleInfo();
+      const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
+      const isOwner = currentWallet.toLowerCase() === "0xd8c09b380e1d8120aac2188653b68f1209ee883c".toLowerCase();
+
       if (cycle.isEnded) {
-        el.className = "text-xs font-mono font-bold text-rose-400 bg-rose-400/10 border border-rose-400/30 px-3 py-1 rounded-full animate-pulse";
-        el.innerText = "⏳ 10H CYCLE: ROUND ENDED • SCORES LOCKED";
+        el.className = "text-xs font-mono font-bold text-rose-400 bg-rose-400/10 border border-rose-400/30 px-3 py-1 rounded-full flex items-center gap-2";
+        let htmlContent = "<span>🔒 ROUND " + cycle.cycleIndex + " ENDED • AWAITING HOST</span>";
+        if (isOwner) {
+          htmlContent += '<button onclick="startNext2048Round()" class="ml-2 px-2 py-0.5 rounded bg-emerald-500 hover:bg-emerald-400 text-black text-[10px] font-black cursor-pointer shadow">🚀 START ROUND ' + (cycle.cycleIndex + 1) + '</button>';
+        }
+        el.innerHTML = htmlContent;
       } else {
         el.className = "text-xs font-mono font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full";
-        el.innerText = "⏳ 20M CYCLE: " + cycle.formatted;
+        el.innerText = "⏳ ROUND " + cycle.cycleIndex + ": " + cycle.formatted;
       }
     }
 
