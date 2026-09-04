@@ -1570,6 +1570,12 @@
     var ROBINHOOD_CHAIN_ID = "0x1237"; // 4663 in hex (Robinhood Chain)
     var TOURNAMENT_2048_CONTRACT = "0xddef71f4e631a73476ebd9efa7770d810d51e8a8";
     var DUEL_CONTRACT_ADDRESS = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
+    var PVP_DUEL_ABI = [
+      "function cancelDuel(uint256 duelId) external",
+      "function createDuelToken(address token, uint256 wagerAmount, uint8 creatorChoice, uint256 duration, string topic) payable returns (uint256)",
+      "function acceptDuelToken(uint256 duelId) payable",
+      "function nextDuelId() view returns (uint256)"
+    ];
     var ESCROW_CONTRACT = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
 
         async function ensureRobinhoodNetwork() {
@@ -5081,23 +5087,28 @@ async function connectWallet() {
       try {
         if (!isConnected) { await connectWallet(); }
         await ensureRobinhoodNetwork();
-        showToast("⏳ Confirm cancelDuel in MetaMask to refund " + tier + " USDG...", "info");
+        showToast("⏳ Confirm cancellation in wallet to refund " + tier + " USDG...", "info");
 
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const duelContract = new ethers.Contract(DUEL_CONTRACT_ADDRESS, PVP_DUEL_ABI, signer);
+        const cancelAbi = [
+          "function cancelDuel(uint256 duelId) external",
+          "function nextDuelId() view returns (uint256)"
+        ];
+        const duelContract = new ethers.Contract(DUEL_CONTRACT_ADDRESS, cancelAbi, signer);
 
         const store = getLocalDuels();
-        let numericId = 1;
+        let numericId = 2;
         if (store[duelId] && store[duelId].onchainDuelId) {
           numericId = parseInt(store[duelId].onchainDuelId);
-        } else {
-          try {
-            const nextId = await duelContract.nextDuelId();
-            numericId = Math.max(1, nextId.toNumber() - 1);
-          } catch(e) {}
+        } else if (typeof duelId === "number") {
+          numericId = duelId;
+        } else if (typeof duelId === "string") {
+          const match = duelId.match(/\d+/);
+          if (match) numericId = parseInt(match[0]);
         }
 
+        console.log("Cancelling duel on-chain with numericId:", numericId);
         const tx = await duelContract.cancelDuel(numericId);
         showToast("⏳ Mining cancellation on Robinhood Chain...", "info");
         await tx.wait();
