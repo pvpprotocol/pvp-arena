@@ -2351,26 +2351,35 @@
           if (raw) store = Object.assign(store, JSON.parse(raw));
         } catch(e){}
       }
-      // Global fallback
+      // Global fallback (strictly per-wallet, no fake leakage)
+      if (!addr) {
+        try {
+          const rawG = localStorage.getItem("pvp_2048_tier_tickets_global");
+          if (rawG) {
+            const parsedG = JSON.parse(rawG);
+            [1, 5, 10, 100, 1000].forEach(t => {
+              if (parsedG[t]) store[t] = parsedG[t];
+            });
+          }
+        } catch(e){}
+      }
+
+      // Pure Real Environment: PURGE ALL LEGACY MOCK/TEST TICKETS
       try {
-        const rawG = localStorage.getItem("pvp_2048_tier_tickets_global");
-        if (rawG) {
-          const parsedG = JSON.parse(rawG);
-          [1, 5, 10, 100, 1000].forEach(t => {
-            if (!store[t] && parsedG[t]) store[t] = parsedG[t];
-          });
+        const purgeKey = "pvp_real_mode_pure_accounting_v1";
+        if (!localStorage.getItem(purgeKey)) {
+          localStorage.removeItem("pvp_2048_tier_tickets_global");
+          if (addr) localStorage.removeItem("pvp_2048_tier_tickets_" + addr);
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith("pvp_ticket_tier_migrated_") || k.startsWith("pvp_mock_"))) {
+              localStorage.removeItem(k);
+            }
+          }
+          localStorage.setItem(purgeKey, "true");
+          store = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
         }
       } catch(e){}
-
-      // Auto-restore / Migration for active tester:
-      // Guarantee tester has 2 tickets for $1 Tier, and 1 ticket for $10 Tier!
-      const migrationKey = "pvp_ticket_tier_migrated_v6_" + (addr || "anon");
-      if (!localStorage.getItem(migrationKey)) {
-        if ((store[1] || 0) < 2) store[1] = 2;
-        if ((store[10] || 0) < 1) store[10] = 1;
-        save2048TicketsStore(store, addr);
-        localStorage.setItem(migrationKey, "true");
-      }
 
       return store;
     }
