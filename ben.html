@@ -1730,46 +1730,24 @@ async function connectWallet() {
     var PVP_TOKEN_ADDRESS = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3"; // Native $PVP token
     var ESCROW_CONTRACT = "0x2A1c03e87B118A4e3B26b7c4d5C270B49f5068AA";
 
-    async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry") {
+        async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry") {
       if (!window.ethereum) {
-        showToast("⚠️ Web3 wallet not detected. Using simulated mode.", "warning");
-        return "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
+        showToast("⚠️ Web3 wallet (MetaMask / Rabby) is required to play.", "error");
+        throw new Error("Web3 wallet not detected");
+      }
+      if (!userAddress) {
+        await connectWallet();
       }
       if (!userAddress) {
         throw new Error("Wallet not connected");
       }
 
-      // Strict Robinhood Chain Enforcement - Never proceed on Ethereum Mainnet!
+      // Strict Robinhood Chain Enforcement (Chain ID 4663)
       await ensureRobinhoodNetwork();
 
-      // STEP 1: Authorization Signature
-      showToast(`✍️ Step 1/2: Sign entry authorization for ${totalCostUSD} ${paymentMethod}...`, "info");
-      const messageToSign = `PVP ARENA PROTOCOL - AUTHORIZATION\nAction: ${purpose}\nAmount: ${totalCostUSD} ${paymentMethod}\nVault: ${ESCROW_CONTRACT}\nNetwork: Robinhood Chain\nPlayer: ${userAddress}\nTimestamp: ${new Date().toISOString()}\nNonce: ${Date.now()}`;
+      showToast(`💳 Confirm ${totalCostUSD} USDG deposit in MetaMask...`, "info");
 
-      let signature = "";
-      try {
-        const from = userAddress;
-        const msgHex = "0x" + Array.from(new TextEncoder().encode(messageToSign)).map(b => b.toString(16).padStart(2, "0")).join("");
-        
-        try {
-          signature = await window.ethereum.request({
-            method: "personal_sign",
-            params: [msgHex, from]
-          });
-        } catch (e1) {
-          signature = await window.ethereum.request({
-            method: "personal_sign",
-            params: [from, msgHex]
-          });
-        }
-      } catch (err) {
-        console.error("Signature rejected:", err);
-        throw new Error("Signature was cancelled by user.");
-      }
-
-      // STEP 2: Onchain Transfer of USDG / PVP to Escrow Vault
-      showToast(`💳 Step 2/2: Confirm ${paymentMethod} transfer to Escrow Vault...`, "info");
-
+      // STRICT ZERO NATIVE TOKEN: Duels and token entries strictly transfer USDG (ERC-20), NEVER native ETH!
       const cleanRecipient = ESCROW_CONTRACT.replace("0x", "").toLowerCase().padStart(64, "0");
       let tokenContract = USDG_TOKEN_ADDRESS;
       let cleanAmount = "";
@@ -1780,7 +1758,6 @@ async function connectWallet() {
         const tokensNeeded = Math.ceil(parseFloat(totalCostUSD) / effectivePrice);
         const pvpUnits = BigInt(tokensNeeded) * (10n ** 18n);
         cleanAmount = pvpUnits.toString(16).padStart(64, "0");
-        console.log(`[Payment] Transferring ${tokensNeeded} $PVP for ${totalCostUSD} USDG entry at live price ${effectivePrice}`);
       } else {
         tokenContract = USDG_TOKEN_ADDRESS;
         const usdgUnits = BigInt(Math.round(parseFloat(totalCostUSD) * 1000000));
@@ -1797,16 +1774,19 @@ async function connectWallet() {
           params: [{
             from: userAddress,
             to: tokenContract,
-            data: transferCalldata
+            value: "0x0", // STRICT ZERO NATIVE ETH: 100% token transfer
+            data: transferCalldata,
+            gas: "0x186a0" // 100,000 gas limit for immediate MetaMask prompt
           }]
         });
       } catch (err) {
-        console.error("USDG Transfer rejected:", err);
-        throw new Error("USDG transfer transaction was cancelled.");
+        console.error("USDG on-chain transfer rejected:", err);
+        throw new Error("USDG transfer transaction was cancelled by user.");
       }
 
-      if (!txHash) {
-        throw new Error("Transaction hash not returned.");
+      // Strict Anti-Cheat Validation: Verify transaction hash returned by wallet
+      if (!txHash || typeof txHash !== "string" || !txHash.startsWith("0x") || txHash.length !== 66) {
+        throw new Error("Invalid on-chain transaction hash returned from blockchain.");
       }
 
       return txHash;
