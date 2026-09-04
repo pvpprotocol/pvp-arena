@@ -2432,6 +2432,18 @@
       const countEl = document.getElementById("tickets-count");
       if (countEl) countEl.innerText = activeTickets;
       
+      const startBtn = document.getElementById("start-2048-btn");
+      if (startBtn) {
+        if (activeTickets > 0) {
+          startBtn.innerHTML = "▶ START GAME (USE 1 TICKET • " + activeTickets + " READY)";
+          startBtn.className = "w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-mono font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5";
+        } else {
+          const unitPrice = (selected2048Tier / 10000).toFixed(4);
+          startBtn.innerHTML = "▶ BUY TICKET & START ($" + unitPrice + " USDG)";
+          startBtn.className = "w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5";
+        }
+      }
+      
       const badgeEl = document.getElementById("user-tickets-badge");
       if (badgeEl) {
         if (totalTickets > 0) {
@@ -2771,23 +2783,38 @@
         return;
       }
 
-      // DIRECT ON-CHAIN START: Wallet must open & execute transaction to enter the active round pool
-      const unitPrice = (selected2048Tier / 10000).toFixed(4);
-      showToast("⏳ Opening wallet: Confirm $" + unitPrice + " USDG entry fee to start Tier $" + selected2048Tier + " run...", "info");
+      const availableTickets = get2048TierTickets(selected2048Tier);
 
-      try {
-        const txHash = await executeOnchainPayment(unitPrice, "USDG", "Start 2048 Run Tier " + selected2048Tier + " (USDG)", TOURNAMENT_2048_CONTRACT);
-        showToast("✅ Entry fee deposited into Round Pool! TX: " + txHash.slice(0, 10) + "...", "success");
-      } catch (err) {
-        console.error("Start game payment failed:", err);
-        showToast("❌ Game entry cancelled or failed in wallet.", "error");
-        return;
+      // CASE 1: Player already has hoarded tickets in inventory!
+      if (availableTickets > 0) {
+        // Burn 1 ticket from inventory
+        set2048TierTickets(selected2048Tier, availableTickets - 1);
+        // Add ticket value into the CURRENT ACTIVE ROUND'S PRIZE POOL
+        addTicketsToTier(selected2048Tier, 1, "USDG");
+        
+        const currentTicketId = getNext2048TicketId(activeWallet, selected2048Tier);
+        window.active2048TicketId = currentTicketId;
+        showToast("🎮 Ticket #" + currentTicketId + " burned! Added to active Round Pool. (" + (availableTickets - 1) + " remaining in inventory)", "info");
+      } else {
+        // CASE 2: Player has 0 tickets in inventory -> Pay 1 ticket on-chain directly to enter active pool
+        const unitPrice = (selected2048Tier / 10000).toFixed(4);
+        showToast("⏳ No tickets in inventory. Opening wallet to buy 1 entry ticket ($" + unitPrice + " USDG)...", "info");
+
+        try {
+          const txHash = await executeOnchainPayment(unitPrice, "USDG", "Direct Entry 2048 Tier " + selected2048Tier + " (USDG)", TOURNAMENT_2048_CONTRACT);
+          showToast("✅ Entry confirmed on-chain! TX: " + txHash.slice(0, 10) + "...", "success");
+        } catch (err) {
+          console.error("Start game payment failed:", err);
+          showToast("❌ Game entry cancelled or failed in wallet.", "error");
+          return;
+        }
+
+        // Add to active round prize pool
+        addTicketsToTier(selected2048Tier, 1, "USDG");
+        const currentTicketId = getNext2048TicketId(activeWallet, selected2048Tier);
+        window.active2048TicketId = currentTicketId;
       }
 
-      // Increment round pool locally and unlock
-      addTicketsToTier(selected2048Tier, 1, "USDG");
-      const currentTicketId = getNext2048TicketId(activeWallet, selected2048Tier);
-      window.active2048TicketId = currentTicketId;
       is2048RunActive = true;
       init2048Game();
 
@@ -3295,8 +3322,9 @@
 
       add2048TierTickets(tier, ticketsPurchased);
       select2048Tier(tier);
-      addTicketsToTier(tier, qty, paymentMethod);
-      showToast("✅ Purchased " + ticketsPurchased + " Ticket(s) for Tier $" + tier + "!", "success");
+      // NOTE: Tickets are safely hoarded in player's inventory.
+      // They ONLY enter the active round pool when the player clicks 'START GAME' to burn a ticket!
+      showToast("✅ Purchased & stored " + ticketsPurchased + " Ticket(s) for Tier $" + tier + " in inventory!", "success");
       update2048TicketsUI();
       showToast("🎟️ " + ticketsPurchased + " Tier $" + tier + " Ticket(s) added to wallet! Click 'START GAME' when you are ready to play.", "info");
     }
