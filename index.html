@@ -3637,38 +3637,22 @@ async function connectWallet() {
 
     function getDuelEffectiveDeadline(duelData) {
       if (!duelData) return 1788566400000;
+      const numId = parseInt(duelData.onchainDuelId || (duelData.id || "").replace("duel_", ""), 10);
       const qText = (duelData.questionText || "").toLowerCase();
 
-      // If Daily BTC Candle, settlement deadline is tonight UTC 00:00 close (1788566400000):
-      if (duelData.questionId == 1 || qText.includes("daily") || qText.includes("sep 4")) {
-        return 1788566400000;
+      // Duels 1 to 13 are past duels that already ended (Duel 13 ended at 16:15 UTC):
+      if (!isNaN(numId) && numId < 14) {
+        return 1788538500000; // Past deadline (16:15 UTC) -> Always ended / completed!
       }
 
-      // If old 15M candle duel (e.g. duel 13):
-      const is15m = duelData.id === "duel_13" || duelData.onchainDuelId === 13 || duelData.onchainDuelId === "13" || (qText.includes("15-minute") || qText.includes("15m"));
-      if (is15m) {
-        if (duelData.targetCandleClose && Number(duelData.targetCandleClose) > 0) return Number(duelData.targetCandleClose);
-        const cAt = Number(duelData.createdAt) || (Number(duelData.createdAtSec) * 1000) || (Date.now() - 900000);
-        const period = 15 * 60 * 1000;
-        return Math.ceil(cAt / period) * period;
+      // If Daily BTC Candle (Duels 14, 15, 16, or questionId 1 with daily title):
+      if (numId >= 14 || qText.includes("daily") || qText.includes("sep 4")) {
+        return 1788566400000; // Tonight UTC 00:00 close!
       }
-      // 1. If duel has an onchain/explicit deadline, use that EXACT deadline across all wallets:
+
+      // Default fallback
       if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
-      if (duelData.expiresAt && Number(duelData.expiresAt) > 0) return Number(duelData.expiresAt);
-      // 2. Otherwise fallback to question deadline:
-      if (duelData.questionId != null) {
-        const qDl = getQuestionDeadline(duelData.questionId);
-        if (qDl) return qDl;
-      }
-      if (duelData.questionText) {
-        const txt = String(duelData.questionText).toLowerCase();
-        if (txt.includes("basecat") || txt.includes("ath")) return getQuestionDeadline(4);
-        if (txt.includes("robinhood") || txt.includes("revenue")) return getQuestionDeadline(2);
-        if (txt.includes("round #2") || txt.includes("round 2")) return getQuestionDeadline(3);
-        if (txt.includes("round #1") || txt.includes("round 1")) return getQuestionDeadline(1);
-      }
-      if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
-      return 1788479999000;
+      return 1788538500000;
     }
 
     function formatRemainingTime(deadlineMs) {
@@ -3910,6 +3894,13 @@ async function connectWallet() {
           }
         });
 
+        Object.keys(cleanStore).forEach(k => {
+          const item = cleanStore[k];
+          const numId = parseInt(item.onchainDuelId || (item.id || "").replace('duel_', ''), 10);
+          if (!isNaN(numId) && numId < 14 && item.status === 'in_progress') {
+            item.status = 'completed';
+          }
+        });
         localStorage.setItem('pvp_active_duels_store_v10', JSON.stringify(cleanStore));
         return cleanStore;
       } catch(e) {
@@ -4122,7 +4113,7 @@ async function connectWallet() {
                     id: duelKey,
                     onchainDuelId: dId.toString(),
                     questionId: "q1",
-                    questionText: "Will BTC Price Close GREEN?",
+                    questionText: (dId >= 14) ? "#1: Will Today's BTC Daily Candle Close GREEN?" : "Will BTC Price Close GREEN?",
                     creatorOption: creatorChoice,
                     requiredOpponentOption: oppChoice,
                     tier: tierStr,
