@@ -387,21 +387,6 @@
     <!-- 2. 2048 SKILL TAB -->
     <div id="tab-vault2048" class="tab-content hidden space-y-6">
       
-      <!-- SPECIAL PERK BANNER -->
-      <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/40 border border-cyan-500/30 flex items-center justify-between flex-wrap gap-3">
-        <div class="flex items-center gap-3">
-          <span class="text-2xl">🔥</span>
-          <div>
-            <h4 class="font-black text-white font-mono text-sm">SPECIAL $PVP PERK: 2X TICKETS BONUS</h4>
-            <p class="text-xs text-slate-300">Buy tickets using the native $PVP token and get 2x tickets per 1 ticket fee!</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-slate-400 bg-slate-900 border border-white/10 px-3 py-1.5 rounded-xl" id="user-tickets-badge">🎟️ <span id="tickets-count">0</span> Tickets (Buy Above)</span>
-          <span class="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-400 text-black">24H CYCLE: 00:00 UTC RESET</span>
-        </div>
-      </div>
-
       <!-- HORIZONTAL TICKET TIERS SELECTION (5 COLUMNS ACROSS) -->
       <div>
         <div class="flex items-center justify-between mb-3">
@@ -685,20 +670,15 @@
           </div>
 
           <!-- BOARD LOCK OVERLAY (NO TICKETS) -->
-          <div id="board-lock-overlay" class="absolute inset-0 bg-slate-950/90 rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-4 backdrop-blur-md z-30 transition-all">
-            <span class="text-4xl animate-bounce">🎮</span>
+          <div id="board-lock-overlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-md z-20 flex flex-col items-center justify-center p-6 text-center space-y-4">
+            <span class="text-4xl">🔒</span>
             <div>
-              <h3 class="text-xl font-black text-white font-mono">READY TO PLAY 2048</h3>
-              <p class="text-xs text-slate-300 max-w-xs mt-1">Click below to start an instant test run or get free test tickets for all tiers.</p>
+              <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
+              <p class="text-xs text-slate-300 max-w-xs mt-1">Purchase a tournament ticket on Robinhood Chain ($0.0001 USDG) to unlock the board and record your verified score.</p>
             </div>
-            <div class="flex flex-col sm:flex-row gap-2 w-full max-w-xs">
-              <button onclick="startInstantTestRun()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-mono font-black text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
-                ▶ START TEST RUN (1-CLICK)
-              </button>
-              <button onclick="claimFreeTestTickets()" class="w-full py-2.5 px-4 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs active:scale-95 transition-all">
-                🎁 +10 FREE TICKETS
-              </button>
-            </div>
+            <button onclick="buy2048Ticket(selected2048Tier, 'USDG')" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
+              🎟️ BUY TICKET ($0.0001 USDG)
+            </button>
           </div>
 
           <!-- GAME OVER OVERLAY -->
@@ -1821,7 +1801,8 @@ async function connectWallet() {
               to: tokenContract,
               value: "0x0",
               data: approveCalldata,
-              gas: "0xb71b" // 46,875 gas limit (Standard ERC20 approve)
+              // dynamic gas estimation
+            gas: undefined
             }]
           });
         } catch (err) {
@@ -1852,7 +1833,8 @@ async function connectWallet() {
             to: tokenContract,
             value: "0x0", // STRICT ZERO NATIVE ETH
             data: transferCalldata,
-            gas: "0x11170" // 70,000 gas limit (Optimized for ERC-20 transfer)
+            // dynamic gas estimation
+            gas: undefined
           }]
         });
       } catch (err) {
@@ -2454,9 +2436,9 @@ async function connectWallet() {
           topStartBtn.className = "p-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs font-black shadow-lg shadow-emerald-500/30 transition-all active:scale-95 animate-pulse";
           topStartBtn.onclick = function() { startNew2048Game(true); };
         } else {
-          topStartBtn.innerText = "▶ START TEST RUN"; topStartBtn.className = "p-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs font-black shadow-lg shadow-emerald-500/30 transition-all active:scale-95 animate-pulse";
+          topStartBtn.innerText = "🎟️ BUY TICKET"; topStartBtn.className = "p-2 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono text-xs font-bold transition-all active:scale-95";
           topStartBtn.className = "p-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all";
-          topStartBtn.onclick = function() { startInstantTestRun(); };
+          topStartBtn.onclick = function() { buy2048Ticket(selected2048Tier, "USDG"); };
         }
       }
 
@@ -2481,24 +2463,15 @@ async function connectWallet() {
           });
 
           lockOverlay.innerHTML = `
-            <div class="relative flex flex-col items-center justify-center p-6 text-center space-y-4 max-w-sm">
-              <span class="text-5xl animate-bounce">🎟️</span>
+              <span class="text-4xl">🔒</span>
               <div>
-                <h3 class="text-xl font-black text-white font-mono tracking-wider">TICKETS READY: TIER $${selected2048Tier}</h3>
-                <div class="inline-block mt-2 px-3.5 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs">
-                  ${activeTickets} Ticket${activeTickets > 1 ? 's' : ''} Ready • Tier $${selected2048Tier}
-                </div>
-                <p class="text-xs text-slate-300 mt-2.5 leading-relaxed">
-                  You are set to play in the <strong>Tier $${selected2048Tier}</strong> tournament. Your run and high score will compete directly in the Tier $${selected2048Tier} prize pool!
-                </p>
-                ${otherTiersHtml ? ('<div class="mt-3 flex flex-wrap gap-1.5 justify-center">' + otherTiersHtml + '</div>') : ''}
+                <h3 class="text-xl font-black text-white font-mono">TICKET REQUIRED</h3>
+                <p class="text-xs text-slate-300 max-w-xs mt-1">You have 0 tickets for Tier $${selected2048Tier}. Purchase a ticket on Robinhood Chain ($0.0001 USDG) to unlock the board.</p>
               </div>
-              <button onclick="startNew2048Game(true)" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-mono font-black text-sm shadow-xl shadow-emerald-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
-                <span>▶ START GAME</span>
-                <span class="text-xs bg-black/20 px-2 py-0.5 rounded-lg">(Use 1 Tier $${selected2048Tier} Ticket)</span>
+              <button onclick="buy2048Ticket(${selected2048Tier}, 'USDG')" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-black text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
+                🎟️ BUY TICKET ($0.0001 USDG)
               </button>
-            </div>
-          `;
+            `
           if (statusText) {
             statusText.innerText = "⏸️ Waiting to start Tier $" + selected2048Tier + " run | " + activeTickets + " ticket(s) ready";
             statusText.className = "text-cyan-400 font-bold";
@@ -2752,28 +2725,7 @@ async function connectWallet() {
 
 
     
-    // Instant test helpers for frictionless 2048 testing
-    window.claimFreeTestTickets = function() {
-      [1, 5, 10, 100, 1000].forEach(t => {
-        add2048TierTickets(t, 5);
-      });
-      showToast("🎁 Added 5 Free Test Tickets to every Tier!", "success");
-      update2048TicketsUI();
-    };
-
-    window.startInstantTestRun = function() {
-      let tix = get2048TierTickets(selected2048Tier);
-      if (tix <= 0) {
-        add2048TierTickets(selected2048Tier, 3);
-      }
-      is2048RunActive = true;
-      init2048Game();
-      const lockOverlay = document.getElementById("board-lock-overlay");
-      if (lockOverlay) lockOverlay.classList.add("hidden");
-      update2048TicketsUI();
-      showToast("🎮 Game Activated! Use Arrow Keys or Onscreen Buttons to play.", "success");
-    };
-  
+      
     async function startNew2048Game(forceStart) {
       const activeWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "");
       if (!activeWallet) {
