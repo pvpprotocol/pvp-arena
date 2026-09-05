@@ -4282,26 +4282,42 @@
 
     
     function getDuelDisplayNumber(duelData) {
-      if (!duelData) return 1;
-      if (duelData.displayNumber) return duelData.displayNumber;
-      if (duelData.onchainDuelId) {
+      if (!duelData) return "1-1";
+      if (duelData.displayNumber) return String(duelData.displayNumber);
+
+      // Extract Question ID (default 1)
+      let qId = duelData.questionId;
+      if (!qId && duelData.questionText) {
+        const m = duelData.questionText.match(/#(\d+)/);
+        if (m) qId = parseInt(m[1], 10);
+      }
+      if (!qId) qId = 1;
+
+      // Determine sub-index
+      let subIndex = 1;
+      if (duelData.subIndex !== undefined && duelData.subIndex !== null) {
+        subIndex = parseInt(duelData.subIndex, 10) || 1;
+      } else if (duelData.onchainDuelId) {
         const onchainNum = parseInt(duelData.onchainDuelId, 10);
         if (!isNaN(onchainNum)) {
-          if (onchainNum >= 5) {
-            return (onchainNum - 4);
+          if (onchainNum >= 13) {
+            subIndex = (onchainNum - 12); // Duel 13 -> 1, 14 -> 2, 15 -> 3, 16 -> 4
+          } else if (onchainNum >= 5) {
+            subIndex = (onchainNum - 4);
           } else {
-            return onchainNum;
+            subIndex = onchainNum;
           }
         }
-      }
-      if (duelData.id && typeof duelData.id === "string" && duelData.id.startsWith("duel_")) {
+      } else if (duelData.id && typeof duelData.id === "string" && duelData.id.startsWith("duel_")) {
         const rawId = parseInt(duelData.id.replace("duel_", ""), 10);
         if (!isNaN(rawId)) {
-          if (rawId >= 5) return (rawId - 4);
-          return rawId;
+          if (rawId >= 13) subIndex = (rawId - 12);
+          else if (rawId >= 5) subIndex = (rawId - 4);
+          else subIndex = rawId;
         }
       }
-      return 1;
+
+      return `${qId}-${subIndex}`;
     }
     window.getDuelDisplayNumber = getDuelDisplayNumber;
 
@@ -4796,10 +4812,35 @@
 
       const duelId = "duel_" + (onchainDuelId || Date.now().toString(36));
       const cleanTitle = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
+      // Calculate monotonic non-reusable sub-index for this question
+      let nextSubIndex = 1;
+      try {
+        const qIdKey = q.id || 1;
+        const seqKey = "duel_seq_counter_q_" + qIdKey;
+        let highest = parseInt(localStorage.getItem(seqKey) || "0", 10);
+        const store = getLocalDuels();
+        Object.values(store).forEach(d => {
+          if (d && (d.questionId === qIdKey || (d.questionText && d.questionText.includes("#" + qIdKey)))) {
+            const dNum = getDuelDisplayNumber(d);
+            if (dNum && dNum.includes("-")) {
+              const part = parseInt(dNum.split("-")[1], 10);
+              if (!isNaN(part) && part > highest) highest = part;
+            }
+          }
+        });
+        nextSubIndex = highest + 1;
+        localStorage.setItem(seqKey, nextSubIndex.toString());
+      } catch(e) {
+        nextSubIndex = 1;
+      }
+      const finalDisplayNumber = `${q.id || 1}-${nextSubIndex}`;
+
       const newDuel = {
         id: duelId,
         onchainDuelId: onchainDuelId || "1",
         questionId: q.id,
+        subIndex: nextSubIndex,
+        displayNumber: finalDisplayNumber,
         questionText: cleanTitle,
         creatorOption: selectedDuelOption,
         requiredOpponentOption: oppositeOption,
@@ -4827,7 +4868,7 @@
       renderAllDuels();
 
       if (btn) btn.disabled = false;
-      showToast(`🎉 Duel #${onchainDuelId || 1} Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
+      showToast(`🎉 Duel #${finalDisplayNumber} Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
     }
 
     
