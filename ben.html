@@ -3294,11 +3294,7 @@
           <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
             ${numBadge}
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.category}</span>
-                <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
-                ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide">Selected</span>' : '' }
-              </div>
+              ${isSelected ? '<div class="mb-1.5"><span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">Selected</span></div>' : ''}
               <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
               
               <div class="mt-2.5 space-y-1.5">
