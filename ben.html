@@ -93,7 +93,7 @@
   <script>
     window.switchTab = function(tabId) {
       try {
-        const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs"];
+        const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"];
         tabs.forEach(function(t) {
           const el = document.getElementById("tab-" + t);
           if (el) {
@@ -1667,6 +1667,7 @@
         activeBtns.forEach(b => b.classList.add("active"));
 
         try {
+          if (tabId === "admin") { if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable(); if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats(); }
           if (tabId === "vault2048" && typeof render2048 === "function") render2048();
           if (tabId === "jackpot") {
             if (typeof renderJackpotSubmissions === "function") renderJackpotSubmissions();
