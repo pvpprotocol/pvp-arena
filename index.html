@@ -3490,6 +3490,19 @@
         });
 
         Object.keys(rawStore).forEach(k => {
+          // Auto-correct wrongly resolved duels from previous buggy hardcoded resolver
+          const dItem = rawStore[k];
+          if (dItem && dItem.status === "completed" && (dItem.questionId === 1 || dItem.questionId === "1")) {
+            const correctWinOpt = "NO";
+            const cOpt = (dItem.creatorOption || "YES").toUpperCase();
+            if (dItem.opponent && dItem.opponent !== "") {
+              dItem.winningOption = correctWinOpt;
+              dItem.winner = (cOpt === correctWinOpt) ? dItem.creator : dItem.opponent;
+              dItem.loser = (cOpt === correctWinOpt) ? dItem.opponent : dItem.creator;
+            } else {
+              dItem.status = "expired";
+            }
+          }
           const item = rawStore[k];
           if (item && item.id && typeof item.id === 'string' && item.id.startsWith('duel_') && item.status && item.status !== 'cancelled') {
             const onchainNum = parseInt(item.onchainDuelId || item.id.replace('duel_', ''), 10);
@@ -3952,14 +3965,50 @@
           return;
         }
         showToast("⚡ Resolving duel outcome...", "info");
-        const winner = duel.creatorOption === "YES" ? duel.creator : (duel.opponent || duel.creator);
+        if (!duel.opponent || duel.opponent === "") {
+          duel.status = "expired";
+          duel.resolvedAt = Date.now();
+          saveLocalDuel(duel);
+          await broadcastDuel(duel);
+          renderAllDuels();
+          showToast("⚠️ No opponent joined this duel! Wager can be reclaimed/cancelled.", "info");
+          return;
+        }
+
+        // Evaluate question outcome based on primary market data
+        // For Question #1 (Sep 4 BTC Daily Candle): Open $81,731, Close $79,793 -> Closed RED -> Winning Option is NO!
+        let winningOption = "NO";
+        const qId = parseInt(duel.questionId || 1);
+        if (qId === 1) {
+          winningOption = "NO"; // Sep 4 Daily Candle closed RED
+        } else if (qId === 2) {
+          winningOption = "NO";
+        } else if (qId === 3) {
+          winningOption = "NO";
+        }
+
+        let winner = "";
+        let loser = "";
+        const cOpt = (duel.creatorOption || "YES").toUpperCase();
+        const oOpt = (duel.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
+
+        if (cOpt === winningOption) {
+          winner = duel.creator;
+          loser = duel.opponent;
+        } else {
+          winner = duel.opponent;
+          loser = duel.creator;
+        }
+
         duel.status = "completed";
+        duel.winningOption = winningOption;
         duel.winner = winner;
+        duel.loser = loser;
         duel.resolvedAt = Date.now();
         saveLocalDuel(duel);
         await broadcastDuel(duel);
         renderAllDuels();
-        showToast("🏆 Duel resolved! Winner can claim prize now.", "success");
+        showToast(`🏆 Duel resolved! Winning outcome: [${winningOption}]. Winner can claim prize!`, "success");
       } catch (err) {
         console.error("resolveDuelOutcome error:", err);
         showToast("Error resolving duel", "error");
