@@ -3657,61 +3657,50 @@
       if (!duelData) return 'open';
       if (duelData.status === 'cancelled') return 'expired';
 
-      const duelDeadline = getDuelEffectiveDeadline(duelData);
-      const isPast = Date.now() >= duelDeadline;
+      const qId = getDuelQuestionId(duelData);
+      const entryDeadline = getQuestionEntryDeadline(qId);
+      const candleCloseTime = get12HCandleCloseTimestamp(); // 12:00:00 UTC (1788609600000)
+      const now = Date.now();
 
-      // If duel question deadline has NOT passed yet (LIVE):
-      if (!isPast) {
-        // If mistakenly marked as completed, restore to in_progress!
-        if (duelData.status === 'completed') {
-          duelData.status = 'in_progress';
-          delete duelData.winner;
-          delete duelData.loser;
-          saveLocalDuel(duelData);
-        }
+      const hasOpponent = !!(duelData.opponent && duelData.opponent !== "0x0000000000000000000000000000000000000000");
+      const isMatched = hasOpponent || duelData.status === 'in_progress';
 
-        // Matched: has opponent or in_progress
-        if (duelData.opponent || duelData.status === 'in_progress') {
-          return 'matched';
+      // ==========================================
+      // LAW 1: UNMATCHED DUEL (NO OPPONENT)
+      // The moment the entry window of its question ends,
+      // the duel MUST IMMEDIATELY move to EXPIRED tab!
+      // ==========================================
+      if (!isMatched) {
+        if (now >= entryDeadline) {
+          return 'expired';
         }
         return 'open';
       }
 
-      // If deadline HAS passed (ENDED):
-      if (duelData.opponent || duelData.status === 'in_progress' || duelData.status === 'completed' || duelData.winner) {
-        // Evaluate accurate winner based on real market outcome (Sep 4 BTC Daily candle closed RED -> NO wins)
-        const qId = parseInt(duelData.questionId || 1);
-        const correctWinOpt = "NO";
-        const cOpt = (duelData.creatorOption || "YES").toUpperCase();
-        const oOpt = (duelData.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
-
-        duelData.winningOption = correctWinOpt;
-        if (cOpt === correctWinOpt) {
-          duelData.winner = duelData.creator;
-          duelData.loser = duelData.opponent || "0xOpponent";
-        } else if (oOpt === correctWinOpt && duelData.opponent) {
-          duelData.winner = duelData.opponent;
-          duelData.loser = duelData.creator;
-        } else {
-          duelData.winner = duelData.opponent || duelData.creator;
-          duelData.loser = (duelData.winner === duelData.creator) ? (duelData.opponent || "0xOpponent") : duelData.creator;
+      // ==========================================
+      // LAW 2: MATCHED DUEL (WITH OPPONENT)
+      // As long as the 12-Hour candle has NOT closed yet (< 12:00 UTC),
+      // it MUST STRICTLY STAY IN MATCHED TAB!
+      // It can NEVER go to Completed before 12:00 UTC!
+      // ==========================================
+      if (now < candleCloseTime) {
+        if (duelData.status === 'completed') {
+          duelData.status = 'in_progress';
+          delete duelData.winner;
+          delete duelData.loser;
+          if (typeof saveLocalDuel === "function") saveLocalDuel(duelData);
         }
-
-        duelData.status = 'completed';
-        duelData.resolvedAt = duelData.resolvedAt || Date.now();
-        saveLocalDuel(duelData);
-        return 'completed';
+        return 'matched';
       }
 
-      // Open request that expired without match
-      if (duelData.status === 'open') {
-        return 'expired';
-      }
-      return 'expired';
+      // ==========================================
+      // ONLY AFTER 12:00 UTC (CANDLE OFFICIALLY CLOSED):
+      // Now the duel outcome is finalized and it moves to Completed
+      // ==========================================
+      return 'completed';
     }
 
-    
-        async function syncOnchainDuelsFromContract() {
+    async function syncOnchainDuelsFromContract() {
       try {
         const rpcUrl = "https://rpc.mainnet.chain.robinhood.com";
         const res = await fetch(rpcUrl, {
