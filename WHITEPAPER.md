@@ -9,6 +9,7 @@ Two participants lock equal collateral into the canonical escrow smart contract.
 • 3% rebate cashback returned to the runner up wallet
 • 7% protocol treasury fee for buybacks and rewards
 
+### Core Rules / قوانین رسمی دوئل‌ها
 1. Once an opponent joins and the duel is matched, the contest remains active until the official resolution is finalized, and immediately upon outcome confirmation, it transitions to the completed state for prize settlement.
 
 2. Once an opponent enters and the competition officially begins, unilateral cancellation or withdrawal is strictly prohibited, and locked assets remain secured within the smart contract until the official result is recorded.
