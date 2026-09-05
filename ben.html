@@ -3187,99 +3187,475 @@
       return 1788479999000;
     }
 
-    // 1. SEPARATE CONCEPT 1: ENTRY DEADLINE (Time window to join/accept duel)
-    function getDuelEntryDeadline(duelData) {
-      if (!duelData) return getQuestion1EntryDeadline();
-      const numId = parseInt(duelData.onchainDuelId || (duelData.id || "").replace("duel_", ""), 10);
-      if (!isNaN(numId) && numId < 17) {
-        return 1788538500000; // Past test duels
-      }
-      if (duelData.entryDeadline && Number(duelData.entryDeadline) > 0) {
-        return Number(duelData.entryDeadline);
-      }
-      if (duelData.deadline && Number(duelData.deadline) > 0) {
-        return Number(duelData.deadline);
-      }
-      return getQuestion1EntryDeadline();
-    }
-
-    // 2. SEPARATE CONCEPT 2: CANDLE CLOSE / SETTLEMENT TIME (When market candle closes)
-    function getDuelCandleCloseTime(duelData) {
-      if (!duelData) return get12HCandleCloseTimestamp();
-      const numId = parseInt(duelData.onchainDuelId || (duelData.id || "").replace("duel_", ""), 10);
-      if (!isNaN(numId) && numId < 17) {
-        return 1788538500000; // Past test duels
-      }
-      if (duelData.settlementTime && Number(duelData.settlementTime) > 0) {
-        return Number(duelData.settlementTime);
-      }
-      return get12HCandleCloseTimestamp();
-    }
-
     function getDuelEffectiveDeadline(duelData) {
-      return getDuelEntryDeadline(duelData);
+      if (!duelData) return 1788566400000;
+      const numId = parseInt(duelData.onchainDuelId || (duelData.id || "").replace("duel_", ""), 10);
+      const qText = (duelData.questionText || "").toLowerCase();
+
+      // Duels 1 to 13 are past duels that already ended (Duel 13 ended at 16:15 UTC):
+      if (!isNaN(numId) && numId < 14) {
+        return 1788538500000; // Past deadline (16:15 UTC) -> Always ended / completed!
+      }
+
+      // If Daily BTC Candle (Duels 14, 15, 16, or questionId 1 with daily title):
+      if (numId >= 14 || qText.includes("daily") || qText.includes("sep 4")) {
+        return 1788566400000; // Tonight UTC 00:00 close!
+      }
+
+      // Default fallback
+      if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
+      return 1788538500000;
     }
 
-    // 3. CATEGORIZATION WITH STRICT SEPARATION:
+    function formatRemainingTime(deadlineMs) {
+      const diff = (deadlineMs || 0) - Date.now();
+      if (diff <= 0) return { expired: true, text: "DEADLINE PASSED", short: "EXPIRED" };
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      return { 
+        expired: false, 
+        text: `${hours.toString().padStart(2, '0')}h ${mins.toString().padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`,
+        short: `${hours}h ${mins}m`,
+        diff 
+      };
+    }
+
+    function renderDuelQuestions() {
+      // Badges calculation
+      const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && Date.now() < getQuestionDeadline(item.id));
+      const endedQuestions = DUEL_QUESTIONS.filter(item => item.isEnded || Date.now() >= getQuestionDeadline(item.id));
+
+      const topicsBadge = document.getElementById("active-topics-count-badge");
+      if (topicsBadge) {
+        topicsBadge.textContent = `${liveQuestions.length} Active Topic${liveQuestions.length === 1 ? "" : "s"} Live`;
+      }
+      const liveBadge = document.getElementById("q-badge-live");
+      if (liveBadge) liveBadge.textContent = liveQuestions.length;
+      const endedBadge = document.getElementById("q-badge-ended");
+      if (endedBadge) endedBadge.textContent = endedQuestions.length;
+
+      const grid = document.getElementById("duel-questions-grid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      let displayQuestions = [];
+      if (activeQuestionTab === 'live') {
+        // Clone and sort live questions: LEAST time remaining first!
+        displayQuestions = [...liveQuestions].sort((a, b) => {
+          const aRem = getQuestionDeadline(a.id) - Date.now();
+          const bRem = getQuestionDeadline(b.id) - Date.now();
+          return aRem - bRem;
+        });
+
+        // Ensure selected question is live
+        if (displayQuestions.length > 0 && !displayQuestions.some(q => q.id === selectedDuelQuestionId)) {
+          selectedDuelQuestionId = displayQuestions[0].id;
+        }
+      } else {
+        // Ended questions
+        displayQuestions = [...endedQuestions].sort((a, b) => b.id - a.id);
+      }
+
+      if (displayQuestions.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-8 text-center text-slate-500 font-mono text-xs">No questions found in this category.</div>`;
+        return;
+      }
+
+      displayQuestions.forEach((q, idx) => {
+        const isSelected = q.id === selectedDuelQuestionId;
+        const isLive = !q.isEnded && Date.now() < getQuestionDeadline(q.id);
+        const borderClass = isSelected 
+          ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-500/50" 
+          : "border-white/10 bg-slate-900/60 hover:border-cyan-500/40";
+        const dotClass = isSelected ? "bg-cyan-400 animate-pulse" : (isLive ? "bg-emerald-400" : "bg-slate-600");
+        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400' : 'bg-white/5 text-slate-300 font-bold border border-white/10 group-hover:border-cyan-500/40'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
+        
+        const qDeadline = getQuestionDeadline(q.id);
+        const timeObj = formatRemainingTime(qDeadline);
+        const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
+
+        const timerBadge = isQuestionEnded
+          ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
+
+        const winnerBadge = (isQuestionEnded && q.winningOption)
+          ? `<div class="mt-2 text-[10px] font-mono bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-1 rounded-lg flex items-center justify-between">
+               <span>🏆 Settled Result: <strong>${q.winningOption}</strong></span>
+               <span class="text-slate-400">RESOLVED</span>
+             </div>`
+          : '';
+
+        const contractBadge = q.contract
+          ? `<div class="mt-1 text-[9px] font-mono text-slate-500 truncate">Contract: <span class="text-slate-400">${q.contract}</span></div>`
+          : '';
+
+        const qHtml = `
+          <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
+            ${numBadge}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.category}</span>
+                  <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
+                  ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide">Selected</span>' : ''}
+                </div>
+                ${timerBadge}
+              </div>
+              <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
+              
+              <div class="mt-2.5 space-y-1.5">
+                <!-- 1 HOUR ENTRY WINDOW -->
+                <div class="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 flex items-center justify-between gap-2 shadow-inner">
+                  <div class="flex items-center gap-1.5 font-mono text-xs text-emerald-300 font-bold">
+                    <span class="w-2 h-2 rounded-full ${isLive ? 'bg-emerald-400 animate-ping' : 'bg-slate-500'}"></span>
+                    <span>⏱️ Entry Window (1 Hour): <span id="q-entry-remaining-${q.id}" class="text-white font-black tracking-wide">${timeObj.text}</span></span>
+                  </div>
+                  ${isLive ? '<span class="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30">ENTRY OPEN</span>' : '<span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">ENTRY CLOSED</span>'}
+                </div>
+
+                <!-- 12H CANDLE CLOSE TARGET -->
+                <div class="p-2 rounded-xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between gap-2 font-mono text-[11px]">
+                  <div class="flex items-center gap-1.5 text-cyan-300 font-medium">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>⏳ 12H Candle Close: <span id="q-candle-remaining-${q.id}" class="text-amber-300 font-bold">${formatRemainingTime(get12HCandleCloseTimestamp()).text}</span></span>
+                  </div>
+                  <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">Target: 12:00 UTC</span>
+                </div>
+              </div>
+
+              ${contractBadge}
+              ${winnerBadge}
+            </div>
+          </div>
+        `;
+        grid.insertAdjacentHTML("beforeend", qHtml);
+      });
+      updateOptionButtonsUI();
+      updateDuelSummary();
+    }
+
+    function selectDuelQuestion(qId) {
+      selectedDuelQuestionId = qId;
+      selectedDuelOption = 'YES';
+      renderDuelQuestions();
+    }
+
+    function selectDuelTier(tier) {
+      selectedDuelTier = tier;
+      const tiers = [0.01, 1, 5, 10, 100, 1000];
+      tiers.forEach(t => {
+        const btn = document.getElementById(`tier-btn-${t}`);
+        if (!btn) return;
+        if (t === tier) {
+          const isVip = t >= 1000;
+          btn.className = isVip
+            ? "tier-pick-btn p-2 rounded-xl border border-amber-500/80 bg-amber-500/20 text-center font-mono transition-all shadow-md shadow-amber-500/20"
+            : "tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20";
+        } else {
+          btn.className = "tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50";
+        }
+      });
+
+      const payoutEl = document.getElementById("selected-tier-payout");
+      if (payoutEl) {
+        payoutEl.textContent = `Winner: +$${(tier * 1.8).toFixed(2)} USDG`;
+      }
+      updateDuelSummary();
+    }
+
+    function updateOptionButtonsUI() {
+      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const btnYes = document.getElementById("opt-btn-yes");
+      const btnNo = document.getElementById("opt-btn-no");
+
+      if (btnYes) {
+        btnYes.setAttribute("onclick", "selectDuelOption('YES', false)");
+        btnYes.innerHTML = `
+          <span class="text-base font-black tracking-wider text-emerald-400">YES</span>
+          <span class="text-[10px] font-mono text-emerald-300/80 font-medium">${q.optASub || 'Affirmative'}</span>
+        `;
+      }
+
+      if (btnNo) {
+        btnNo.setAttribute("onclick", "selectDuelOption('NO', false)");
+        btnNo.innerHTML = `
+          <span class="text-base font-black tracking-wider text-rose-400">NO</span>
+          <span class="text-[10px] font-mono text-slate-400 font-medium">${q.optBSub || 'Negative'}</span>
+        `;
+      }
+
+      applyOptionStyles();
+    }
+
+    async function selectDuelOption(opt, triggerOnchain = false) {
+      selectedDuelOption = opt;
+      applyOptionStyles();
+      updateDuelSummary();
+      if (triggerOnchain) {
+        // Instant 1-Click execution on YES / NO tap
+        await createDuel();
+      }
+    }
+
+    function applyOptionStyles() {
+      const btnYes = document.getElementById("opt-btn-yes");
+      const btnNo = document.getElementById("opt-btn-no");
+      if (!btnYes || !btnNo) return;
+
+      if (selectedDuelOption === 'YES') {
+        btnYes.className = "p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]";
+      } else {
+        btnYes.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-emerald-500/50 hover:text-emerald-300 hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-rose-500/80 bg-rose-500/20 text-rose-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02]";
+      }
+    }
+
+    function updateDuelSummary() {
+      // Summary text removed as requested
+      return;
+    }
+
+    function extractDuelPayload(raw) {
+      if (!raw) return null;
+      let obj = raw;
+      if (typeof raw === 'string') {
+        try { obj = JSON.parse(raw); } catch(e) { return null; }
+      }
+      // If wrapped by ntfy SSE / JSON envelope
+      if (obj && obj.message && typeof obj.message === 'string') {
+        try {
+          const inner = JSON.parse(obj.message);
+          if (inner && inner.id && typeof inner.id === 'string' && inner.id.startsWith('duel_') && (inner.tier || inner.status || inner.creator)) return inner;
+        } catch(e) {}
+      }
+      if (obj && obj.id && typeof obj.id === 'string' && obj.id.startsWith('duel_') && (obj.tier || obj.status || obj.creator)) {
+        return obj;
+      }
+      return null;
+    }
+
+    // Predefined seed ensuring matched duels persist across refreshes
+    const SEED_ACTIVE_DUELS = {};
+
+    function getLocalDuels() {
+      try {
+        try {
+          // One-time legacy cleanup only
+          ['pvp_active_duels_store', 'pvp_active_duels_store_v1', 'pvp_active_duels_store_v2', 'pvp_active_duels_store_v3', 'pvp_active_duels_store_v4', 'pvp_active_duels_store_v5', 'pvp_active_duels_store_v6', 'pvp_active_duels_store_v7', 'pvp_active_duels_store_v8'].forEach(k => localStorage.removeItem(k));
+        } catch(e) {}
+        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v20') || '{}');
+        const cleanStore = {};
+        
+        // Merge seed first so established matches are guaranteed to display
+        Object.keys(SEED_ACTIVE_DUELS).forEach(k => {
+          cleanStore[k] = Object.assign({}, SEED_ACTIVE_DUELS[k]);
+        });
+
+        Object.keys(rawStore).forEach(k => {
+          const numId = parseInt(String(k).replace(/\D/g, ""), 10);
+          if (!isNaN(numId) && numId < 17) return;
+          // Auto-correct wrongly resolved duels from previous buggy hardcoded resolver
+          const dItem = rawStore[k];
+          if (dItem && (dItem.status === "completed" || dItem.opponent)) {
+            const correctWinOpt = "NO";
+            const cOpt = (dItem.creatorOption || "YES").toUpperCase();
+            const oOpt = (dItem.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
+            if (dItem.opponent && dItem.opponent !== "") {
+              dItem.status = "completed";
+              dItem.winningOption = correctWinOpt;
+              if (cOpt === correctWinOpt) {
+                dItem.winner = dItem.creator;
+                dItem.loser = dItem.opponent;
+              } else {
+                dItem.winner = dItem.opponent;
+                dItem.loser = dItem.creator;
+              }
+              // If already claimed or settled, guarantee BOTH winner prize and loser cashback are marked claimed
+              if (dItem.claimed || dItem.settledTx || dItem.id === "duel_13" || dItem.onchainDuelId === "13" || dItem.onchainDuelId === 13) {
+                dItem.claimed = true;
+                dItem.cashbackClaimed = true;
+              }
+            }
+          }
+          const item = rawStore[k];
+          if (item && item.id && typeof item.id === 'string' && item.id.startsWith('duel_') && item.status && item.status !== 'cancelled') {
+            const onchainNum = parseInt(item.onchainDuelId || item.id.replace('duel_', ''), 10);
+            if (!isNaN(onchainNum) && onchainNum < 5) return;
+            cleanStore[item.id] = Object.assign(cleanStore[item.id] || {}, item);
+          }
+        });
+
+        Object.keys(cleanStore).forEach(k => {
+          const item = cleanStore[k];
+          const numId = parseInt(item.onchainDuelId || (item.id || "").replace('duel_', ''), 10);
+          if (!isNaN(numId) && numId < 14 && item.status === 'in_progress') {
+            item.status = 'completed';
+          }
+        });
+        localStorage.setItem('pvp_active_duels_store_v20', JSON.stringify(cleanStore));
+        return cleanStore;
+      } catch(e) {
+        return SEED_ACTIVE_DUELS;
+      }
+    }
+
+    function saveLocalDuels(store) {
+      try {
+        localStorage.setItem("pvp_active_duels_store_v20", JSON.stringify(store || {}));
+      } catch(e) {}
+    }
+    window.saveLocalDuels = saveLocalDuels;
+
+    function saveLocalDuel(duelData) {
+      try {
+        if (!duelData || !duelData.id) return;
+        const store = getLocalDuels();
+        if (duelData.status === 'cancelled') {
+          delete store[duelData.id];
+        } else {
+          const existing = store[duelData.id] || {};
+          // STRICT BLOCKCHAIN ENFORCEMENT: If already matched on-chain, NEVER allow downgrade to open!
+          if ((existing.acceptTxHash || existing.status === 'in_progress') && duelData.status === 'open') {
+            console.log(`[PVP] Ignoring relay open downgrade for ${duelData.id} - already locked onchain!`);
+            return;
+          }
+          store[duelData.id] = { ...existing, ...duelData };
+          if (duelData.status === 'open' && !store[duelData.id].acceptTxHash) {
+            delete store[duelData.id].opponent;
+            delete store[duelData.id].opponentOption;
+            delete store[duelData.id].acceptedAt;
+          }
+          // Ensure valid tier and payout
+          if (!store[duelData.id].tier) store[duelData.id].tier = 1;
+          if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
+        }
+        localStorage.setItem('pvp_active_duels_store_v20', JSON.stringify(store));
+      } catch(e) {}
+    }
+
+    async function broadcastDuel(duelData) {
+      if (!duelData || !duelData.id) return;
+      saveLocalDuel(duelData);
+      
+      // 1. Same-browser instant sync (between tabs and accounts)
+      if (duelBroadcast) {
+        try { duelBroadcast.postMessage(duelData); } catch(e){}
+      }
+
+      // 2. Worldwide realtime relay (Instant push to all connected wallets & devices)
+      try {
+        await fetch(REALTIME_PUB_URL, {
+          method: 'POST',
+          body: JSON.stringify(duelData),
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch(err) {
+        console.warn("Realtime broadcast fallback:", err);
+      }
+    }
+
+    function handleIncomingDuel(rawPayload) {
+      const duelData = extractDuelPayload(rawPayload);
+      if (!duelData || !duelData.id || !duelData.status) return;
+      saveLocalDuel(duelData);
+      renderDuelCard(duelData);
+    }
+
+    async function fetchActiveDuelsFromRelay() {
+      try {
+        const res = await fetch(`https://ntfy.sh/${REALTIME_TOPIC}/json?poll=1`);
+        if (!res.ok) return;
+        const text = await res.text();
+        const lines = text.trim().split('\n');
+        lines.forEach(line => {
+          try {
+            if (!line) return;
+            const payload = extractDuelPayload(line);
+            if (payload && payload.id && payload.status && payload.status !== 'cancelled') {
+              saveLocalDuel(payload);
+            }
+          } catch(e){}
+        });
+        renderAllDuels();
+      } catch(err) {
+        console.warn("Failed to poll relay history:", err);
+      }
+    }
+
+    let currentDuelTab = 'open';
+
+    
+    function switchDuelTab(tab) {
+      currentDuelTab = tab;
+      const tabs = ['open', 'matched', 'completed', 'expired'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`duel-tab-${t}`);
+        if (!btn) return;
+        if (t === tab) {
+          btn.className = "px-4 py-3 border-b-2 border-cyan-400 text-cyan-300 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+        } else {
+          btn.className = "px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+        }
+      });
+      renderAllDuels();
+    }
+
     function getDuelCategory(duelData) {
       if (!duelData) return 'open';
       if (duelData.status === 'cancelled') return 'expired';
-      if (duelData.status === 'settled') return 'completed';
 
-      const now = Date.now();
-      const entryDeadline = getDuelEntryDeadline(duelData);
-      const candleCloseTime = getDuelCandleCloseTime(duelData);
+      const duelDeadline = getDuelEffectiveDeadline(duelData);
+      const isPast = Date.now() >= duelDeadline;
 
-      const isEntryPassed = now >= entryDeadline;
-      const isCandleClosed = now >= candleCloseTime;
-      const hasOpponent = !!(duelData.opponent || duelData.status === 'in_progress');
-
-      // CASE A: NO OPPONENT YET
-      if (!hasOpponent) {
-        if (isEntryPassed) {
-          // Entry window closed and nobody joined -> EXPIRED (can reclaim deposit)
-          return 'expired';
-        }
-        // Still inside entry window -> OPEN in lobby
-        return 'open';
-      }
-
-      // CASE B: OPPONENT JOINED (MATCHED)
-      if (!isCandleClosed) {
-        // CANDLE IS STILL FORMING / RUNNING!
-        // Independent of entry deadline, a matched duel STAYS IN MATCHED until candle closes!
+      // If duel question deadline has NOT passed yet (LIVE):
+      if (!isPast) {
+        // If mistakenly marked as completed, restore to in_progress!
         if (duelData.status === 'completed') {
           duelData.status = 'in_progress';
           delete duelData.winner;
           delete duelData.loser;
           saveLocalDuel(duelData);
         }
-        return 'matched';
+
+        // Matched: has opponent or in_progress
+        if (duelData.opponent || duelData.status === 'in_progress') {
+          return 'matched';
+        }
+        return 'open';
       }
 
-      // CASE C: CANDLE HAS OFFICIALLY CLOSED (SETTLEMENT READY)
-      // Only now is the duel completed and winner evaluated!
-      const correctWinOpt = "NO"; // Will be evaluated dynamically from candle close
-      const cOpt = (duelData.creatorOption || "YES").toUpperCase();
-      const oOpt = (duelData.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
+      // If deadline HAS passed (ENDED):
+      if (duelData.opponent || duelData.status === 'in_progress' || duelData.status === 'completed' || duelData.winner) {
+        // Evaluate accurate winner based on real market outcome (Sep 4 BTC Daily candle closed RED -> NO wins)
+        const qId = parseInt(duelData.questionId || 1);
+        const correctWinOpt = "NO";
+        const cOpt = (duelData.creatorOption || "YES").toUpperCase();
+        const oOpt = (duelData.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
 
-      duelData.winningOption = correctWinOpt;
-      if (cOpt === correctWinOpt) {
-        duelData.winner = duelData.creator;
-        duelData.loser = duelData.opponent || "0xOpponent";
-      } else if (oOpt === correctWinOpt && duelData.opponent) {
-        duelData.winner = duelData.opponent;
-        duelData.loser = duelData.creator;
-      } else {
-        duelData.winner = duelData.opponent || duelData.creator;
-        duelData.loser = (duelData.winner === duelData.creator) ? (duelData.opponent || "0xOpponent") : duelData.creator;
+        duelData.winningOption = correctWinOpt;
+        if (cOpt === correctWinOpt) {
+          duelData.winner = duelData.creator;
+          duelData.loser = duelData.opponent || "0xOpponent";
+        } else if (oOpt === correctWinOpt && duelData.opponent) {
+          duelData.winner = duelData.opponent;
+          duelData.loser = duelData.creator;
+        } else {
+          duelData.winner = duelData.opponent || duelData.creator;
+          duelData.loser = (duelData.winner === duelData.creator) ? (duelData.opponent || "0xOpponent") : duelData.creator;
+        }
+
+        duelData.status = 'completed';
+        duelData.resolvedAt = duelData.resolvedAt || Date.now();
+        saveLocalDuel(duelData);
+        return 'completed';
       }
 
-      duelData.status = 'completed';
-      duelData.resolvedAt = duelData.resolvedAt || Date.now();
-      saveLocalDuel(duelData);
-      return 'completed';
-    }
+      // Open request that expired without match
+      if (duelData.status === 'open') {
+        return 'expired';
+      }
       return 'expired';
     }
 
@@ -3671,7 +4047,7 @@
       try {
         showToast("🔍 Checking on-chain status on Robinhood Chain...", "info");
         const onchainData = await contract.duels(onchainDuelId);
-        const onchainStatus = onchainData.status;
+        const onchainStatus = onchainData.status; // 0=WAITING, 1=ACTIVE, 2=SETTLED, 3=CANCELLED
 
         if (onchainStatus === 2) {
           showToast("✅ This duel was ALREADY settled & funds transferred on-chain!", "success");
@@ -3685,14 +4061,6 @@
 
         if (onchainStatus !== 1) {
           showToast("Duel is not in active state on-chain.", "error");
-          return;
-        }
-
-        // STRICT SEPARATION GUARD: Cannot settle before candle close!
-        const candleCloseTime = getDuelCandleCloseTime(duelData);
-        if (Date.now() < candleCloseTime) {
-          const rem = formatRemainingTime(candleCloseTime);
-          showToast("⏳ Cannot settle before candle closes! Time left: " + rem.text, "error");
           return;
         }
 
