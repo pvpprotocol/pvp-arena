@@ -3107,92 +3107,14 @@
         id: 1, 
         qNum: 1,
         category: "CRYPTO DAILY", 
-        title: "#1: Will Today's BTC Daily Candle Close GREEN? (Sep 4)", 
-        desc: "Predict whether today's Bitcoin daily candle (Sep 4, closes at UTC 00:00) closes Bullish (Green) or Bearish (Red). Strictly 2-Hour Entry Window!",
-        deadlineDesc: "Entry Closes in 2 Hours (18:30 UTC)",
-        deadline: 1788546600000,
-        settlementTime: 1788566400000,
-        isEnded: false,
-        getDeadline: function() {
-          return 1788546600000;
-        },
-        optA: "YES",
-        optALabel: "YES",
-        optASub: "Green Close",
-        optB: "NO",
-        optBLabel: "NO",
-        optBSub: "Red Close"
-      },
-      { 
-        id: 2, 
-        qNum: 2,
-        category: "ROBINHOOD", 
-        title: "#2: Will Robinhood Chain Daily Revenue Exceed $1,000,000 on Sep 5?", 
-        desc: "Robinhood Chain cumulative on-chain fee revenue surpasses $1,000,000 USD on Sep 5.",
+        title: "#1: Will Today's BTC Daily Candle Close GREEN? (Sep 5)", 
+        desc: "Predict whether today's Bitcoin daily candle (Sep 5, closes at UTC 00:00) closes Bullish (Green) or Bearish (Red). Live for testing!",
         deadlineDesc: "Sep 5 UTC 23:59:59",
-        deadline: 1788652799000,
+        deadline: 1788652800000,
+        settlementTime: 1788652800000,
         isEnded: false,
         getDeadline: function() {
-          return 1788652799000;
-        },
-        optA: "YES",
-        optALabel: "YES",
-        optASub: "> $1M Revenue",
-        optB: "NO",
-        optBLabel: "NO",
-        optBSub: "< $1M Revenue"
-      },
-      { 
-        id: 3, 
-        qNum: 3,
-        category: "CRYPTO", 
-        title: "#3: Will BTC Daily Candle Close GREEN?", 
-        desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green) for Sep 4.",
-        deadlineDesc: "Sep 4 UTC 00:00 Close",
-        deadline: 1788566400000,
-        isEnded: false,
-        getDeadline: function() {
-          return 1788566400000;
-        },
-        optA: "YES",
-        optALabel: "YES",
-        optASub: "Green Close",
-        optB: "NO",
-        optBLabel: "NO",
-        optBSub: "Red Close"
-      },
-      { 
-        id: 4, 
-        qNum: 4,
-        category: "BASE MEME", 
-        title: "#4: Will BASECAT Hit a New ATH Today?", 
-        contract: "0xB2000000000000000000004c27f6523082f41D01",
-        desc: "Predict whether BaseCat ($BASECAT) reaches a new all-time high price before the end of today (Sep 3 UTC 23:59:59).",
-        deadlineDesc: "Sep 3 UTC 23:59:59",
-        deadline: 1788566399000,
-        isEnded: false,
-        getDeadline: function() {
-          return 1788566399000;
-        },
-        optA: "YES",
-        optALabel: "YES",
-        optASub: "New ATH",
-        optB: "NO",
-        optBLabel: "NO",
-        optBSub: "No ATH"
-      },
-      { 
-        id: 5, 
-        qNum: 5,
-        category: "CRYPTO", 
-        title: "#5: Will BTC Daily Candle Close GREEN? (Sep 3)", 
-        desc: "Predict whether Bitcoin daily candle (UTC 00:00) closes bullish (Green) on Sep 3.",
-        deadlineDesc: "Sep 3 UTC 00:00 Close",
-        deadline: 1788393600000,
-        winningOption: "YES",
-        isEnded: true,
-        getDeadline: function() {
-          return 1788393600000;
+          return 1788652800000;
         },
         optA: "YES",
         optALabel: "YES",
@@ -3481,7 +3403,7 @@
           // One-time legacy cleanup only
           ['pvp_active_duels_store', 'pvp_active_duels_store_v1', 'pvp_active_duels_store_v2', 'pvp_active_duels_store_v3', 'pvp_active_duels_store_v4', 'pvp_active_duels_store_v5', 'pvp_active_duels_store_v6', 'pvp_active_duels_store_v7', 'pvp_active_duels_store_v8'].forEach(k => localStorage.removeItem(k));
         } catch(e) {}
-        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v10') || '{}');
+        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v12') || '{}');
         const cleanStore = {};
         
         // Merge seed first so established matches are guaranteed to display
@@ -3528,7 +3450,7 @@
             item.status = 'completed';
           }
         });
-        localStorage.setItem('pvp_active_duels_store_v10', JSON.stringify(cleanStore));
+        localStorage.setItem('pvp_active_duels_store_v12', JSON.stringify(cleanStore));
         return cleanStore;
       } catch(e) {
         return SEED_ACTIVE_DUELS;
@@ -3537,7 +3459,7 @@
 
     function saveLocalDuels(store) {
       try {
-        localStorage.setItem("pvp_active_duels_store_v10", JSON.stringify(store || {}));
+        localStorage.setItem("pvp_active_duels_store_v12", JSON.stringify(store || {}));
       } catch(e) {}
     }
     window.saveLocalDuels = saveLocalDuels;
@@ -3565,7 +3487,7 @@
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
           if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
         }
-        localStorage.setItem('pvp_active_duels_store_v10', JSON.stringify(store));
+        localStorage.setItem('pvp_active_duels_store_v12', JSON.stringify(store));
       } catch(e) {}
     }
 
@@ -3722,7 +3644,7 @@
               // Event 1: DuelCreated(uint256,address,address,uint256,uint8,uint256,string)
               if (topic0 === "0x47fa409e45059ca4351d26c2b17c41f29d4500f90684401d0bdf7d2952bf9a32") {
                 const dId = parseInt(log.topics[1], 16);
-                if (dId < 5) return;
+                if (dId < 17) return; // Clean reset: ignore test duels 1..16
                 const creator = "0x" + log.topics[2].slice(26).toLowerCase();
                 const token = "0x" + log.topics[3].slice(26).toLowerCase();
                 const isUsdg = (token === "0x5fc5360d0400a0fd4f2af552add042d716f1d168");
@@ -4231,7 +4153,7 @@
       }
 
       window.addEventListener('storage', (e) => {
-        if (e.key === 'pvp_active_duels_store_v10') {
+        if (e.key === 'pvp_active_duels_store_v12') {
           renderAllDuels();
         }
       });
