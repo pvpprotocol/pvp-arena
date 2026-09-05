@@ -3120,14 +3120,19 @@
       return target.getTime();
     }
 
-    function getQuestion1EntryDeadline() {
-      const key = "pvp_q1_1h_entry_deadline_v3";
+    function getQuestionEntryDeadline(qId) {
+      const id = qId || 1;
+      const key = "pvp_q" + id + "_1h_entry_deadline_v3";
       let val = localStorage.getItem(key);
       if (!val || isNaN(Number(val))) {
         val = String(Date.now() + 3600 * 1000);
         localStorage.setItem(key, val);
       }
       return Number(val);
+    }
+
+    function getQuestion1EntryDeadline() {
+      return getQuestionEntryDeadline(1);
     }
 
     const DUEL_QUESTIONS = [
@@ -3138,10 +3143,46 @@
         title: "#1: Will the 12-Hour BTC Candle Close GREEN or RED?", 
         desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
-        deadline: getQuestion1EntryDeadline(),
+        deadline: getQuestionEntryDeadline(1),
         settlementTime: get12HCandleCloseTimestamp(),
         isEnded: false,
-        getDeadline: function() { return getQuestion1EntryDeadline(); },
+        getDeadline: function() { return getQuestionEntryDeadline(1); },
+        optA: "YES",
+        optALabel: "GREEN",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "RED",
+        optBSub: "Red Close"
+      },
+      { 
+        id: 2, 
+        qNum: 2,
+        category: "CRYPTO 12H (1H ENTRY)", 
+        title: "#2: Will the 12-Hour ETH Candle Close GREEN or RED?", 
+        desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
+        deadlineDesc: "1-Hour Entry Window",
+        deadline: getQuestionEntryDeadline(2),
+        settlementTime: get12HCandleCloseTimestamp(),
+        isEnded: false,
+        getDeadline: function() { return getQuestionEntryDeadline(2); },
+        optA: "YES",
+        optALabel: "GREEN",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "RED",
+        optBSub: "Red Close"
+      },
+      { 
+        id: 3, 
+        qNum: 3,
+        category: "CRYPTO 12H (1H ENTRY)", 
+        title: "#3: Will the 12-Hour SOL Candle Close GREEN or RED?", 
+        desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
+        deadlineDesc: "1-Hour Entry Window",
+        deadline: getQuestionEntryDeadline(3),
+        settlementTime: get12HCandleCloseTimestamp(),
+        isEnded: false,
+        getDeadline: function() { return getQuestionEntryDeadline(3); },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3173,18 +3214,15 @@
     };
 
     function getQuestionDeadline(qId) {
-      if (!qId) return 1788479999000;
+      if (!qId) return getQuestionEntryDeadline(1);
       const q = DUEL_QUESTIONS.find(item => item.id == qId);
       if (q) {
         if (typeof q.getDeadline === "function") return q.getDeadline();
         if (q.deadline) return Number(q.deadline);
       }
-      const qStr = String(qId).toLowerCase();
-      if (qStr.includes("basecat") || qStr === "4") return 1788479999000;
-      if (qStr.includes("robinhood") || qStr === "2") return 1788652799000;
-      if (qStr.includes("round #2") || qStr.includes("round 2") || qStr === "3") return 1788480000000;
-      if (qStr.includes("round #1") || qStr.includes("round 1") || qStr === "1") return getQuestion1EntryDeadline();
-      return 1788479999000;
+      const num = parseInt(qId, 10);
+      if (!isNaN(num) && num >= 1 && num <= 3) return getQuestionEntryDeadline(num);
+      return getQuestionEntryDeadline(1);
     }
 
     function getDuelEffectiveDeadline(duelData) {
@@ -3720,7 +3758,7 @@
                     opponent: null,
                     status: "open",
                     createdAt: Date.now(),
-                    deadline: getQuestion1EntryDeadline(),
+                    deadline: getQuestionDeadline(q.id),
                     expiresAt: exactOnchainDeadlineMs,
                     tokenType: isUsdg ? "USDG" : "ETH",
                     tokenAddress: token,
@@ -4089,7 +4127,7 @@
         const value = {
           duelId: onchainDuelId,
           winningOutcome: winningOutcome,
-          deadline: getQuestion1EntryDeadline(),
+          deadline: getQuestionDeadline(q.id),
           nonce: nonce
         };
 
@@ -4802,7 +4840,7 @@
         tier: selectedDuelTier,
         creator: userAddress,
         status: "open",
-        deadline: getQuestion1EntryDeadline(),
+        deadline: getQuestionDeadline(q.id),
         createTxHash: txHash || "",
         payout: (selectedDuelTier * 1.8).toFixed(2),
         cashback: (selectedDuelTier * 0.03).toFixed(2),
@@ -4864,10 +4902,10 @@
         duelData = { 
           id: duelId, 
           tier: tier, 
-          deadline: getQuestion1EntryDeadline(),
+          deadline: getQuestionDeadline(q.id),
           payout: (tier * 1.8).toFixed(2), 
           cashback: (tier * 0.03).toFixed(2), 
-          deadline: getQuestion1EntryDeadline(),
+          deadline: getQuestionDeadline(q.id),
         createdAt: Date.now() 
         };
       }
