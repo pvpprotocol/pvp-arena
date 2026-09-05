@@ -2469,7 +2469,7 @@
       showToast(`⚡ Sign verification for ${tier}.00 Jackpot Ticket (Target ${val})...`, "info");
 
       try {
-        const sig = await requestSafeSignature(`PVP Protocol: Jackpot Ticket ${tier}.00 USDG\nTarget: ${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
+        const sig = await requestSafeSignature(`pvphub.fun: Jackpot Ticket ${tier}.00 USDG\nTarget: ${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
         showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
       } catch (err) {
         showToast("❌ Signature cancelled.", "error");
