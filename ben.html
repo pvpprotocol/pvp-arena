@@ -3121,12 +3121,12 @@
     }
 
     function getQuestionEntryDeadline(qId) {
-      const id = qId || 1;
-      const key = "pvp_q" + id + "_1h_entry_deadline_v3";
-      let val = localStorage.getItem(key);
+      // Restore original established 1-Hour entry deadline key so it never drifts or resets
+      const masterKey = "pvp_q1_1h_entry_deadline_v3";
+      let val = localStorage.getItem(masterKey);
       if (!val || isNaN(Number(val))) {
         val = String(Date.now() + 3600 * 1000);
-        localStorage.setItem(key, val);
+        localStorage.setItem(masterKey, val);
       }
       return Number(val);
     }
@@ -3226,34 +3226,22 @@
     }
 
     function getDuelEffectiveDeadline(duelData) {
-      if (!duelData) return 1788566400000;
+      if (!duelData) return getQuestionEntryDeadline(1);
       const numId = parseInt(duelData.onchainDuelId || (duelData.id || "").replace("duel_", ""), 10);
       const qText = (duelData.questionText || "").toLowerCase();
 
-      // Duels 1 to 13 are past duels that already ended (Duel 13 ended at 16:15 UTC):
+      // Duels 1 to 13 are past duels that already ended:
       if (!isNaN(numId) && numId < 14) {
-        return 1788538500000; // Past deadline (16:15 UTC) -> Always ended / completed!
+        return 1788538500000;
       }
 
       // Duels 14, 15, 16 were past test duels:
       if ((!isNaN(numId) && numId >= 14 && numId <= 16) || qText.includes("daily") || qText.includes("sep 4")) {
-        return 1788566400000; // Past Daily close!
+        return 1788566400000;
       }
 
-      // For new duels (>= 17) and general duels:
-      if (duelData.expiresAt && Number(duelData.expiresAt) > 0) {
-        const expMs = Number(duelData.expiresAt) < 1e12 ? Number(duelData.expiresAt) * 1000 : Number(duelData.expiresAt);
-        return expMs;
-      }
-      if (duelData.deadline && Number(duelData.deadline) > 0) {
-        return Number(duelData.deadline);
-      }
-      const qNum = parseInt(duelData.questionId || (duelData.questionText && duelData.questionText.includes("#2") ? 2 : (duelData.questionText && duelData.questionText.includes("#3") ? 3 : 1)), 10);
-      return getQuestionEntryDeadline(qNum);
-
-      // Default fallback
-      if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
-      return 1788538500000;
+      // For all active duels (>= 17): strictly synchronize with the 1-Hour Entry Window
+      return getQuestionEntryDeadline(1);
     }
 
     function formatRemainingTime(deadlineMs) {
@@ -3754,10 +3742,9 @@
 
                 const duelKey = "duel_" + dId;
                 if (store[duelKey]) {
-                  if (exactOnchainDeadlineMs > 0) {
-                    store[duelKey].deadline = exactOnchainDeadlineMs;
-                    store[duelKey].expiresAt = exactOnchainDeadlineMs;
-                  }
+                  const entryDeadline = getQuestionEntryDeadline(1);
+                  store[duelKey].deadline = entryDeadline;
+                  store[duelKey].expiresAt = entryDeadline;
                 }
                 let decodedTopic = "";
                 try {
@@ -3824,10 +3811,9 @@
                   store[duelKey].questionId = qIdAssigned;
                   store[duelKey].questionText = qTitleAssigned;
                   store[duelKey].onchainDuelId = dId.toString();
-                  if (exactOnchainDeadlineMs > 0) {
-                    store[duelKey].deadline = exactOnchainDeadlineMs;
-                    store[duelKey].expiresAt = exactOnchainDeadlineMs;
-                  }
+                  const entryDeadline = getQuestionEntryDeadline(1);
+                  store[duelKey].deadline = entryDeadline;
+                  store[duelKey].expiresAt = entryDeadline;
                   updated = true;
                 }
               }
