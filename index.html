@@ -3131,16 +3131,21 @@
       let val = localStorage.getItem(key);
       const now = Date.now();
       if (!val || isNaN(Number(val))) {
-        // ETH (#16) and SOL (#17) started later (08:52 UTC), so they have ~25 mins remaining
-        // BTC (#15) started earlier (08:30 UTC), so it has ~6 mins remaining
         if (actualQId === 16 || actualQId === 17) {
-          val = String(now + 25 * 60 * 1000);
+          val = String(now + 20 * 60 * 1000);
         } else if (actualQId === 15) {
-          val = String(now + 6 * 60 * 1000);
+          val = String(now - 10000);
         } else {
           val = String(now + 3600 * 1000);
         }
         localStorage.setItem(key, val);
+      }
+      if (actualQId === 15) {
+        // BTC (#15) entry window has officially closed (1-hour window ended)
+        if (Number(val) > now) {
+          val = String(now - 10000);
+          localStorage.setItem(key, val);
+        }
       }
       return Number(val);
     }
@@ -3253,16 +3258,19 @@
         return 1788566400000;
       }
 
-      // If duel has valid on-chain expiresAt
+      const qId = getDuelQuestionId(duelData);
+      const qDeadline = getQuestionDeadline(qId);
+
+      // A duel is strictly bound to its question entry deadline!
+      // When the question entry window closes, unmatched open duels MUST expire.
       if (duelData.expiresAt && Number(duelData.expiresAt) > 0) {
         const expMs = Number(duelData.expiresAt);
         if (expMs > Date.now() - 3600000 && expMs < Date.now() + 86400000) {
-          return expMs;
+          return Math.min(expMs, qDeadline);
         }
       }
 
-      const qId = getDuelQuestionId(duelData);
-      return getQuestionEntryDeadline(qId);
+      return qDeadline;
     }
 
     function formatRemainingTime(deadlineMs) {
@@ -4358,11 +4366,36 @@
           if (timeObj.expired && cardId) {
             const store = getLocalDuels();
             if (store[cardId] && store[cardId].status === "open") {
-              renderDuelCard(store[cardId]);
+              renderAllDuels();
             }
           }
         }
       });
+
+      // Auto-transition questions and duels when timer expires
+      const nowTs = Date.now();
+      const currentLive = DUEL_QUESTIONS.filter(item => !item.isEnded && nowTs < getQuestionDeadline(item.id)).length;
+      if (window._lastLiveQuestionsCount === undefined) {
+        window._lastLiveQuestionsCount = currentLive;
+      } else if (window._lastLiveQuestionsCount !== currentLive) {
+        window._lastLiveQuestionsCount = currentLive;
+        renderDuelQuestions();
+        renderAllDuels();
+      }
+
+      const currentStore = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
+      let openExpiredCount = 0;
+      Object.values(currentStore).forEach(d => {
+        if (d && d.status === "open" && nowTs >= getDuelEffectiveDeadline(d)) {
+          openExpiredCount++;
+        }
+      });
+      if (window._lastOpenExpiredCount === undefined) {
+        window._lastOpenExpiredCount = openExpiredCount;
+      } else if (window._lastOpenExpiredCount !== openExpiredCount) {
+        window._lastOpenExpiredCount = openExpiredCount;
+        renderAllDuels();
+      }
     }, 1000);
 
     
