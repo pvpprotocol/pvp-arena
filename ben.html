@@ -3121,12 +3121,29 @@
     }
 
     function getQuestionEntryDeadline(qId) {
-      // Restore original established 1-Hour entry deadline key so it never drifts or resets
-      const masterKey = "pvp_q1_1h_entry_deadline_v3";
-      let val = localStorage.getItem(masterKey);
+      const num = parseInt(qId, 10) || 15;
+      // Map legacy IDs:
+      let actualQId = num;
+      if (num === 1) actualQId = 15;
+      if (num === 2) actualQId = 16;
+      if (num === 3) actualQId = 17;
+
+      const key = "pvp_q" + actualQId + "_1h_entry_deadline_v4";
+      let val = localStorage.getItem(key);
       if (!val || isNaN(Number(val))) {
-        val = String(Date.now() + 3600 * 1000);
-        localStorage.setItem(masterKey, val);
+        // ETH (#16) and SOL (#17) were started around 08:52 UTC, so deadline should be ~09:52 UTC (plenty of time left!)
+        // BTC (#15) was started around 08:30 UTC
+        const now = Date.now();
+        if (actualQId === 16 || actualQId === 17) {
+          // ~25 minutes remaining from 09:35 UTC = 1500 seconds
+          val = String(now + 25 * 60 * 1000);
+        } else if (actualQId === 15) {
+          // BTC: ~5 minutes remaining
+          val = String(now + 5 * 60 * 1000);
+        } else {
+          val = String(now + 3600 * 1000);
+        }
+        localStorage.setItem(key, val);
       }
       return Number(val);
     }
@@ -3226,22 +3243,29 @@
     }
 
     function getDuelEffectiveDeadline(duelData) {
-      if (!duelData) return getQuestionEntryDeadline(1);
+      if (!duelData) return getQuestionEntryDeadline(17);
       const numId = parseInt(duelData.onchainDuelId || (duelData.id || "").replace("duel_", ""), 10);
-      const qText = (duelData.questionText || "").toLowerCase();
+      const qText = (duelData.questionText || duelData.topic || "").toLowerCase();
 
-      // Duels 1 to 13 are past duels that already ended:
+      // Duels 1 to 13 are past duels that already ended
       if (!isNaN(numId) && numId < 14) {
         return 1788538500000;
       }
-
-      // Duels 14, 15, 16 were past test duels:
+      // Duels 14 to 16 were past test duels
       if ((!isNaN(numId) && numId >= 14 && numId <= 16) || qText.includes("daily") || qText.includes("sep 4")) {
         return 1788566400000;
       }
 
-      // For all active duels (>= 17): strictly synchronize with the 1-Hour Entry Window
-      return getQuestionEntryDeadline(1);
+      // If duel has valid on-chain expiresAt
+      if (duelData.expiresAt && Number(duelData.expiresAt) > 0) {
+        const expMs = Number(duelData.expiresAt);
+        if (expMs > Date.now() - 3600000 && expMs < Date.now() + 86400000) {
+          return expMs;
+        }
+      }
+
+      const qId = getDuelQuestionId(duelData);
+      return getQuestionEntryDeadline(qId);
     }
 
     function formatRemainingTime(deadlineMs) {
@@ -3742,7 +3766,7 @@
 
                 const duelKey = "duel_" + dId;
                 if (store[duelKey]) {
-                  const entryDeadline = getQuestionEntryDeadline(1);
+                  const entryDeadline = getQuestionEntryDeadline(qIdAssigned);
                   store[duelKey].deadline = entryDeadline;
                   store[duelKey].expiresAt = entryDeadline;
                 }
@@ -4344,6 +4368,35 @@
     }, 1000);
 
     
+    
+    function getDuelQuestionId(duelData) {
+      if (!duelData) return 17;
+      if (duelData.questionId) {
+        const parsed = parseInt(duelData.questionId, 10);
+        if (!isNaN(parsed) && parsed >= 1) {
+          if (parsed === 3) return 17;
+          if (parsed === 2) return 16;
+          if (parsed === 1) return 15;
+          return parsed;
+        }
+      }
+      const qText = (duelData.questionText || duelData.topic || "").toUpperCase();
+      if (qText.includes("SOL") || qText.includes("#17") || qText.includes("#3")) return 17;
+      if (qText.includes("ETH") || qText.includes("#16") || qText.includes("#2")) return 16;
+      if (qText.includes("BTC") || qText.includes("#15") || qText.includes("#1")) return 15;
+      const m = qText.match(/#(\d+)/);
+      if (m) {
+        const parsed = parseInt(m[1], 10);
+        if (!isNaN(parsed) && parsed >= 1) {
+          if (parsed === 3) return 17;
+          if (parsed === 2) return 16;
+          if (parsed === 1) return 15;
+          return parsed;
+        }
+      }
+      return 17;
+    }
+
     function getDuelDisplayNumber(duelData) {
       if (!duelData) return "17-1";
       const qId = getDuelQuestionId(duelData);
