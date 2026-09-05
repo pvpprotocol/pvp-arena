@@ -175,6 +175,9 @@
         <button onclick="switchTab('docs')" id="btn-tab-docs" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
           <span>📖</span> Protocol Docs
         </button>
+        <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-amber-400 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 items-center gap-2 shadow-sm shadow-amber-500/20">
+          <span>👑</span> Admin Panel
+        </button>
       </nav>
 
       <!-- WALLET & QUICK METRICS -->
@@ -1416,6 +1419,194 @@
         </div>
       </div>
     </div>
+  
+    <!-- 7. ADMIN PANEL TAB -->
+    <div id="tab-admin" class="tab-content hidden space-y-8">
+      <!-- ADMIN HEADER BANNER -->
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-amber-500/40 bg-gradient-to-r from-amber-950/40 via-slate-900/80 to-purple-950/40 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-3xl shrink-0 shadow-lg shadow-amber-500/20">
+            👑
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-lg sm:text-xl font-black text-white font-mono uppercase tracking-wider">Protocol Admin & Operator Console</h2>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">Verified Admin</span>
+            </div>
+            <p class="text-xs text-slate-300 font-mono mt-1">
+              Authorized MetaMask Wallet: <span id="adminConnectedBadge" class="font-bold text-amber-300 font-mono">0x0ce6...0f67</span> | Full Control
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <a href="https://explorer.mainnet.chain.robinhood.com/address/0x95E95BD305aD328AfEd15400903124B59bcc349b" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-black/40 border border-cyan-500/30 text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-all flex items-center gap-1.5">
+            <span>📜</span> Escrow Contract ↗
+          </a>
+          <button onclick="refreshAdminDuelsStats()" class="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-xs font-mono text-amber-300 hover:bg-amber-500/30 font-bold transition-all flex items-center gap-1.5">
+            <span>🔄</span> Refresh Onchain Stats
+          </button>
+        </div>
+      </div>
+
+      <!-- KEY METRICS ROW -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-panel p-4 rounded-2xl border border-white/10 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] font-mono text-slate-400">Total Duels Created</p>
+            <h4 id="admin-total-duels" class="text-xl font-black font-mono text-white mt-1">Loading...</h4>
+          </div>
+          <span class="text-2xl">⚔️</span>
+        </div>
+        <div class="glass-panel p-4 rounded-2xl border border-white/10 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] font-mono text-slate-400">Active Topics / Questions</p>
+            <h4 id="admin-total-questions" class="text-xl font-black font-mono text-cyan-400 mt-1">0</h4>
+          </div>
+          <span class="text-2xl">⚡</span>
+        </div>
+        <div class="glass-panel p-4 rounded-2xl border border-white/10 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] font-mono text-slate-400">Treasury Fee Share</p>
+            <h4 class="text-xl font-black font-mono text-emerald-400 mt-1">7%</h4>
+          </div>
+          <span class="text-2xl">🏦</span>
+        </div>
+        <div class="glass-panel p-4 rounded-2xl border border-white/10 flex items-center justify-between">
+          <div>
+            <p class="text-[11px] font-mono text-slate-400">Oracle Settlement</p>
+            <h4 class="text-xl font-black font-mono text-purple-400 mt-1">EIP-712</h4>
+          </div>
+          <span class="text-2xl">🔐</span>
+        </div>
+      </div>
+
+      <!-- SECTION 1: CREATE NEW DUEL QUESTION -->
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10 space-y-5">
+        <div class="border-b border-white/10 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-lg bg-amber-500/20 text-amber-400 font-mono text-xs font-bold border border-amber-500/30">STEP 1</span>
+              <h3 class="text-base font-black text-white font-mono uppercase tracking-wide">Publish New Duel Question</h3>
+            </div>
+            <p class="text-xs text-slate-400 font-mono mt-1">Add a new prediction question to the live Step 1 question list across all 5 tiers.</p>
+          </div>
+          <span class="text-xs font-mono text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">Instant Live Feed</span>
+        </div>
+
+        <form id="createQuestionForm" onsubmit="handleCreateQuestion(event)" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Question Title / Prompt</label>
+              <input type="text" id="newQTitle" required placeholder="e.g. #18: Will BTC Break $95,000 Before Friday?" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white font-mono text-xs focus:border-amber-400 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Category Badge</label>
+              <input type="text" id="newQCategory" required placeholder="e.g. CRYPTO 12H, ROBINHOOD ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white font-mono text-xs focus:border-amber-400 outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Entry Window Duration</label>
+              <select id="newQDuration" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white font-mono text-xs focus:border-amber-400 outline-none">
+                <option value="1800">30 Minutes</option>
+                <option value="3600" selected>1 Hour</option>
+                <option value="7200">2 Hours</option>
+                <option value="21600">6 Hours</option>
+                <option value="43200">12 Hours</option>
+                <option value="86400">24 Hours</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Option A (Label / Subtext)</label>
+              <div class="flex gap-2">
+                <input type="text" id="newQOptA" value="GREEN" placeholder="GREEN / YES" class="w-1/2 px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-emerald-400 font-mono text-xs focus:border-amber-400 outline-none">
+                <input type="text" id="newQOptASub" value="Green Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 font-mono text-xs focus:border-amber-400 outline-none">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Option B (Label / Subtext)</label>
+              <div class="flex gap-2">
+                <input type="text" id="newQOptB" value="RED" placeholder="RED / NO" class="w-1/2 px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-rose-400 font-mono text-xs focus:border-amber-400 outline-none">
+                <input type="text" id="newQOptBSub" value="Red Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 font-mono text-xs focus:border-amber-400 outline-none">
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Description / Settlement Note</label>
+            <input type="text" id="newQDesc" placeholder="e.g. 1-Hour Entry Window | Resolves upon 12H Candle Close" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white font-mono text-xs focus:border-amber-400 outline-none">
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <span id="createQStatus" class="text-xs font-mono text-emerald-400 font-bold"></span>
+            <button type="submit" class="px-6 py-2.5 rounded-xl font-mono text-xs font-bold bg-gradient-to-r from-amber-500 to-yellow-600 text-black hover:from-amber-400 hover:to-yellow-500 transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2">
+              <span>🚀</span> Publish Question Live
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- SECTION 2: QUESTIONS REGISTRY MANAGER TABLE -->
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+          <div>
+            <h3 class="text-base font-black text-white font-mono uppercase tracking-wide flex items-center gap-2">
+              <span>📋</span> Current Questions Registry
+            </h3>
+            <p class="text-xs text-slate-400 font-mono mt-1">Manage all live and ended questions. Changes apply immediately.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportQuestionsJSON()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-white/10 text-xs font-mono text-slate-300 hover:text-white transition-all flex items-center gap-1.5">
+              <span>📋</span> Copy Questions JSON
+            </button>
+            <button onclick="resetQuestionsToDefault()" class="px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs font-mono text-rose-400 hover:bg-rose-500/20 transition-all">
+              <span>↺</span> Reset to Default
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left font-mono text-xs">
+            <thead>
+              <tr class="text-slate-400 border-b border-white/10 pb-2">
+                <th class="py-2.5 px-3">ID</th>
+                <th class="py-2.5 px-3">Title</th>
+                <th class="py-2.5 px-3">Category</th>
+                <th class="py-2.5 px-3">Status</th>
+                <th class="py-2.5 px-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-questions-tbody" class="divide-y divide-white/5">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION 3: ONCHAIN DUEL INSPECTOR -->
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10 space-y-4">
+        <div class="border-b border-white/10 pb-4">
+          <h3 class="text-base font-black text-white font-mono uppercase tracking-wide flex items-center gap-2">
+            <span>🔍</span> Onchain Duel Inspector (Robinhood Chain)
+          </h3>
+          <p class="text-xs text-slate-400 font-mono mt-1">Directly query any Duel ID from the canonical smart contract.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <input type="number" id="inspectDuelIdInput" placeholder="Enter Duel ID (e.g. 1, 2, 3...)" min="1" class="w-full sm:w-64 px-4 py-2 rounded-xl bg-slate-900 border border-white/10 text-white font-mono text-xs focus:border-cyan-400 outline-none">
+          <button onclick="inspectOnchainDuel()" class="w-full sm:w-auto px-5 py-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-bold hover:bg-cyan-500/30 transition-all flex items-center justify-center gap-2">
+            <span>🔎</span> Query Contract
+          </button>
+        </div>
+
+        <div id="duelInspectResult" class="hidden p-4 rounded-2xl bg-slate-950/80 border border-white/10 font-mono text-xs space-y-2">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  
   </main>
 
   <!-- FOOTER -->
@@ -1658,6 +1849,10 @@
         const accounts = await provider.request({ method: "eth_requestAccounts" });
         if (accounts && accounts.length > 0) {
           userAddress = accounts[0];
+    checkAdminAccess(userAddress);
+    loadStoredQuestions();
+    renderAdminQuestionsTable();
+    refreshAdminDuelsStats();
           isConnected = true;
           try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
           const shortAddr = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
@@ -1707,6 +1902,9 @@
           if (typeof renderAllDuels === 'function') renderAllDuels();
         } else {
           userAddress = accs[0];
+        checkAdminAccess(userAddress);
+        loadStoredQuestions();
+        renderAdminQuestionsTable();
           isConnected = true;
           try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
           const btnText = document.getElementById("walletBtnText");
@@ -5266,6 +5464,229 @@
     window.reclaimExpiredDeposit = reclaimExpiredDeposit;
     window.resolveDuelOutcome = resolveDuelOutcome;
     window.renderDuelQuestions = renderDuelQuestions;
+
+  // ── ADMIN PANEL LOGIC & ACCESS CONTROL ──
+  const AUTHORIZED_ADMINS = [
+    "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase(),
+    "0xd8c09b380e1d8120aac2188653b68f1209ee883c".toLowerCase()
+  ];
+
+  function checkAdminAccess(account) {
+    if (!account) return false;
+    const isAdm = AUTHORIZED_ADMINS.includes(account.toLowerCase());
+    const btn = document.getElementById("btn-tab-admin");
+    const badge = document.getElementById("adminConnectedBadge");
+    if (btn) {
+      if (isAdm) {
+        btn.classList.remove("hidden");
+        btn.style.display = "flex";
+      } else {
+        btn.classList.add("hidden");
+        btn.style.display = "none";
+      }
+    }
+    if (badge && isAdm) {
+      badge.innerText = account.slice(0, 6) + "..." + account.slice(-4);
+    }
+    return isAdm;
+  }
+
+  // Load custom questions from localStorage if exists
+  function loadStoredQuestions() {
+    try {
+      const stored = localStorage.getItem("PVP_CUSTOM_QUESTIONS");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          DUEL_QUESTIONS.length = 0;
+          parsed.forEach(q => DUEL_QUESTIONS.push(q));
+        }
+      }
+    } catch(e) {
+      console.warn("loadStoredQuestions error:", e);
+    }
+  }
+
+  function saveStoredQuestions() {
+    try {
+      localStorage.setItem("PVP_CUSTOM_QUESTIONS", JSON.stringify(DUEL_QUESTIONS));
+    } catch(e) {
+      console.warn("saveStoredQuestions error:", e);
+    }
+  }
+
+  function renderAdminQuestionsTable() {
+    const tbody = document.getElementById("admin-questions-tbody");
+    const countBadge = document.getElementById("admin-total-questions");
+    if (countBadge) countBadge.innerText = DUEL_QUESTIONS.length;
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    DUEL_QUESTIONS.forEach((q, idx) => {
+      const tr = document.createElement("tr");
+      tr.className = "hover:bg-white/5 transition-colors";
+      const isEnded = q.isEnded || (q.deadline && Date.now() > q.deadline);
+      tr.innerHTML = `
+        <td class="py-3 px-3 font-bold text-slate-300">#${q.id || q.qNum || idx + 1}</td>
+        <td class="py-3 px-3 text-white font-medium max-w-xs truncate">${q.title}</td>
+        <td class="py-3 px-3 text-cyan-400">${q.category || 'GENERAL'}</td>
+        <td class="py-3 px-3">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isEnded ? 'bg-slate-700/50 text-slate-400 border border-slate-600/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
+            ${isEnded ? 'ENDED' : 'LIVE'}
+          </span>
+        </td>
+        <td class="py-3 px-3 text-right space-x-2">
+          <button onclick="toggleQuestionStatus(${idx})" class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold ${isEnded ? 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30' : 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30'}">
+            ${isEnded ? 'Re-open' : 'Close Entry'}
+          </button>
+          <button onclick="deleteQuestion(${idx})" class="px-2 py-1 rounded-lg text-[10px] font-mono font-bold bg-rose-500/20 text-rose-400 hover:bg-rose-500/30">
+            Delete
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  window.handleCreateQuestion = function(e) {
+    e.preventDefault();
+    const title = document.getElementById("newQTitle").value.trim();
+    const category = document.getElementById("newQCategory").value.trim() || "GENERAL";
+    const duration = parseInt(document.getElementById("newQDuration").value) || 3600;
+    const optA = document.getElementById("newQOptA").value.trim() || "GREEN";
+    const optASub = document.getElementById("newQOptASub").value.trim() || "Green Close";
+    const optB = document.getElementById("newQOptB").value.trim() || "RED";
+    const optBSub = document.getElementById("newQOptBSub").value.trim() || "Red Close";
+    const desc = document.getElementById("newQDesc").value.trim() || (Math.round(duration/3600) + "-Hour Entry Window");
+
+    const newId = DUEL_QUESTIONS.length > 0 ? Math.max(...DUEL_QUESTIONS.map(q => q.id || 0)) + 1 : 1;
+    const now = Date.now();
+    const deadline = now + (duration * 1000);
+    const settlementTime = deadline + (duration * 1000);
+
+    const newQ = {
+      id: newId,
+      qNum: newId,
+      category: category.toUpperCase(),
+      title: title,
+      desc: desc,
+      deadlineDesc: Math.round(duration/3600) + "-Hour Entry Window",
+      deadline: deadline,
+      settlementTime: settlementTime,
+      isEnded: false,
+      getDeadline: function() { return deadline; },
+      optA: "YES",
+      optALabel: optA,
+      optASub: optASub,
+      optB: "NO",
+      optBLabel: optB,
+      optBSub: optBSub
+    };
+
+    DUEL_QUESTIONS.unshift(newQ);
+    saveStoredQuestions();
+    renderAdminQuestionsTable();
+    if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+
+    const statusEl = document.getElementById("createQStatus");
+    if (statusEl) {
+      statusEl.innerText = "✅ Question #" + newId + " published live!";
+      setTimeout(() => { statusEl.innerText = ""; }, 4000);
+    }
+    document.getElementById("createQuestionForm").reset();
+  };
+
+  window.toggleQuestionStatus = function(idx) {
+    if (DUEL_QUESTIONS[idx]) {
+      DUEL_QUESTIONS[idx].isEnded = !DUEL_QUESTIONS[idx].isEnded;
+      saveStoredQuestions();
+      renderAdminQuestionsTable();
+      if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+    }
+  };
+
+  window.deleteQuestion = function(idx) {
+    if (confirm("Are you sure you want to delete this question?")) {
+      DUEL_QUESTIONS.splice(idx, 1);
+      saveStoredQuestions();
+      renderAdminQuestionsTable();
+      if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+    }
+  };
+
+  window.exportQuestionsJSON = function() {
+    const jsonStr = JSON.stringify(DUEL_QUESTIONS, null, 2);
+    navigator.clipboard.writeText(jsonStr).then(() => {
+      alert("✅ All questions copied to clipboard as JSON!");
+    }).catch(() => {
+      prompt("Copy Questions JSON:", jsonStr);
+    });
+  };
+
+  window.resetQuestionsToDefault = function() {
+    if (confirm("Reset questions to original default list?")) {
+      localStorage.removeItem("PVP_CUSTOM_QUESTIONS");
+      location.reload();
+    }
+  };
+
+  window.refreshAdminDuelsStats = async function() {
+    const totalDuelsEl = document.getElementById("admin-total-duels");
+    try {
+      const provider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.robinhood.com");
+      const contract = new ethers.Contract(ESCROW_CONTRACT, ["function nextDuelId() view returns (uint256)"], provider);
+      const nextId = await contract.nextDuelId();
+      const total = nextId.toNumber() - 1;
+      if (totalDuelsEl) totalDuelsEl.innerText = total >= 0 ? total : 0;
+    } catch(e) {
+      console.warn("refreshAdminDuelsStats err:", e);
+      if (totalDuelsEl) totalDuelsEl.innerText = "Error reading RPC";
+    }
+  };
+
+  window.inspectOnchainDuel = async function() {
+    const idInput = document.getElementById("inspectDuelIdInput");
+    const resBox = document.getElementById("duelInspectResult");
+    if (!idInput || !resBox) return;
+    const duelId = parseInt(idInput.value);
+    if (!duelId || duelId <= 0) {
+      alert("Please enter a valid Duel ID");
+      return;
+    }
+
+    resBox.classList.remove("hidden");
+    resBox.innerHTML = '<span class="text-cyan-400 animate-pulse">Querying Robinhood Chain RPC for Duel #' + duelId + '...</span>';
+
+    try {
+      const provider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.robinhood.com");
+      const contract = new ethers.Contract(ESCROW_CONTRACT, [
+        "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
+      ], provider);
+
+      const d = await contract.duels(duelId);
+      const statusMap = ["WAITING_FOR_CHALLENGER (Open)", "ACTIVE (Matched & Locked)", "SETTLED (Paid Out)", "CANCELLED (Refunded)"];
+      const statusText = statusMap[d.status] || ("Unknown (" + d.status + ")");
+
+      resBox.innerHTML = `
+        <div class="border-b border-white/10 pb-2 flex items-center justify-between">
+          <span class="font-bold text-white text-sm">⚔️ Duel #${d.duelId.toString()}</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300">${statusText}</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300 pt-1">
+          <div><span class="text-slate-400">Topic:</span> <span class="text-white">${d.topic || 'N/A'}</span></div>
+          <div><span class="text-slate-400">Wager:</span> <span class="text-emerald-400 font-bold">${ethers.utils.formatEther(d.wagerAmount)} ETH</span></div>
+          <div><span class="text-slate-400">Creator (P1):</span> <span class="font-mono text-cyan-300 text-[11px]">${d.creator}</span></div>
+          <div><span class="text-slate-400">Challenger (P2):</span> <span class="font-mono text-cyan-300 text-[11px]">${d.challenger !== '0x0000000000000000000000000000000000000000' ? d.challenger : 'None (Waiting)'}</span></div>
+          <div><span class="text-slate-400">P1 Choice:</span> <span class="font-bold text-amber-300">${d.creatorChoice === 1 ? 'YES / GREEN' : 'NO / RED'}</span></div>
+          <div><span class="text-slate-400">Token:</span> ${d.token === '0x0000000000000000000000000000000000000000' ? 'Native Robinhood ETH' : d.token}</div>
+        </div>
+      `;
+    } catch(err) {
+      console.error(err);
+      resBox.innerHTML = '<span class="text-rose-400">Failed to query duel #' + duelId + ': ' + (err.reason || err.message) + '</span>';
+    }
+  };
+  
     
 
         // ==========================================
