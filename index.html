@@ -3122,24 +3122,21 @@
 
     function getQuestionEntryDeadline(qId) {
       const num = parseInt(qId, 10) || 15;
-      // Map legacy IDs:
       let actualQId = num;
       if (num === 1) actualQId = 15;
       if (num === 2) actualQId = 16;
       if (num === 3) actualQId = 17;
 
-      const key = "pvp_q" + actualQId + "_1h_entry_deadline_v4";
+      const key = "pvp_q" + actualQId + "_1h_entry_deadline_v5";
       let val = localStorage.getItem(key);
+      const now = Date.now();
       if (!val || isNaN(Number(val))) {
-        // ETH (#16) and SOL (#17) were started around 08:52 UTC, so deadline should be ~09:52 UTC (plenty of time left!)
-        // BTC (#15) was started around 08:30 UTC
-        const now = Date.now();
+        // ETH (#16) and SOL (#17) started later (08:52 UTC), so they have ~25 mins remaining
+        // BTC (#15) started earlier (08:30 UTC), so it has ~6 mins remaining
         if (actualQId === 16 || actualQId === 17) {
-          // ~25 minutes remaining from 09:35 UTC = 1500 seconds
           val = String(now + 25 * 60 * 1000);
         } else if (actualQId === 15) {
-          // BTC: ~5 minutes remaining
-          val = String(now + 5 * 60 * 1000);
+          val = String(now + 6 * 60 * 1000);
         } else {
           val = String(now + 3600 * 1000);
         }
@@ -3764,12 +3761,6 @@
                   tierStr = "1";
                 }
 
-                const duelKey = "duel_" + dId;
-                if (store[duelKey]) {
-                  const entryDeadline = getQuestionEntryDeadline(qIdAssigned);
-                  store[duelKey].deadline = entryDeadline;
-                  store[duelKey].expiresAt = entryDeadline;
-                }
                 let decodedTopic = "";
                 try {
                   const rawData = log.data.slice(2);
@@ -3811,6 +3802,13 @@
                   }
                 }
 
+                const duelKey = "duel_" + dId;
+                if (store[duelKey]) {
+                  const entryDeadline = getQuestionEntryDeadline(qIdAssigned);
+                  store[duelKey].deadline = entryDeadline;
+                  store[duelKey].expiresAt = entryDeadline;
+                }
+
                 if (!store[duelKey]) {
                   store[duelKey] = {
                     id: duelKey,
@@ -3835,7 +3833,7 @@
                   store[duelKey].questionId = qIdAssigned;
                   store[duelKey].questionText = qTitleAssigned;
                   store[duelKey].onchainDuelId = dId.toString();
-                  const entryDeadline = getQuestionEntryDeadline(1);
+                  const entryDeadline = getQuestionEntryDeadline(qIdAssigned);
                   store[duelKey].deadline = entryDeadline;
                   store[duelKey].expiresAt = entryDeadline;
                   updated = true;
