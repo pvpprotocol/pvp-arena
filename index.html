@@ -3235,10 +3235,21 @@
         return 1788538500000; // Past deadline (16:15 UTC) -> Always ended / completed!
       }
 
-      // If Daily BTC Candle (Duels 14, 15, 16, or questionId 1 with daily title):
-      if (numId >= 14 || qText.includes("daily") || qText.includes("sep 4")) {
-        return 1788566400000; // Tonight UTC 00:00 close!
+      // Duels 14, 15, 16 were past test duels:
+      if ((!isNaN(numId) && numId >= 14 && numId <= 16) || qText.includes("daily") || qText.includes("sep 4")) {
+        return 1788566400000; // Past Daily close!
       }
+
+      // For new duels (>= 17) and general duels:
+      if (duelData.expiresAt && Number(duelData.expiresAt) > 0) {
+        const expMs = Number(duelData.expiresAt) < 1e12 ? Number(duelData.expiresAt) * 1000 : Number(duelData.expiresAt);
+        return expMs;
+      }
+      if (duelData.deadline && Number(duelData.deadline) > 0) {
+        return Number(duelData.deadline);
+      }
+      const qNum = parseInt(duelData.questionId || (duelData.questionText && duelData.questionText.includes("#2") ? 2 : (duelData.questionText && duelData.questionText.includes("#3") ? 3 : 1)), 10);
+      return getQuestionEntryDeadline(qNum);
 
       // Default fallback
       if (duelData.deadline && Number(duelData.deadline) > 0) return Number(duelData.deadline);
