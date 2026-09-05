@@ -3136,14 +3136,12 @@
         qNum: 1,
         category: "CRYPTO 12H (1H ENTRY)", 
         title: "#1: Will the 12-Hour BTC Candle Close GREEN or RED? (Sep 5)", 
-        desc: "Entry Window: 1 Hour | 12H Candle Closes at 12:00 UTC",
+        desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
         deadline: getQuestion1EntryDeadline(),
         settlementTime: get12HCandleCloseTimestamp(),
         isEnded: false,
-        getDeadline: function() {
-          return get12HCandleCloseTimestamp();
-        },
+        getDeadline: function() { return getQuestion1EntryDeadline(); },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3305,18 +3303,28 @@
                 ${timerBadge}
               </div>
               <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
-              <div class="mt-2 p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-between gap-2 shadow-inner">
-                <div class="flex items-center gap-1.5 font-mono text-xs text-cyan-300 font-bold">
-                  <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                  <span>⏳ Time Left: <span id="q-12h-remaining-${q.id}" class="text-amber-300 font-black text-xs">${timeObj.text}</span></span>
+              
+              <div class="mt-2.5 space-y-1.5">
+                <!-- 1 HOUR ENTRY WINDOW -->
+                <div class="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 flex items-center justify-between gap-2 shadow-inner">
+                  <div class="flex items-center gap-1.5 font-mono text-xs text-emerald-300 font-bold">
+                    <span class="w-2 h-2 rounded-full ${isLive ? 'bg-emerald-400 animate-ping' : 'bg-slate-500'}"></span>
+                    <span>⏱️ Entry Window (1 Hour): <span id="q-entry-remaining-${q.id}" class="text-white font-black tracking-wide">${timeObj.text}</span></span>
+                  </div>
+                  ${isLive ? '<span class="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30">ENTRY OPEN</span>' : '<span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">ENTRY CLOSED</span>'}
                 </div>
-                <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/30">Closes at 12:00 UTC</span>
+
+                <!-- 12H CANDLE CLOSE TARGET -->
+                <div class="p-2 rounded-xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between gap-2 font-mono text-[11px]">
+                  <div class="flex items-center gap-1.5 text-cyan-300 font-medium">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>⏳ 12H Candle Close: <span id="q-candle-remaining-${q.id}" class="text-amber-300 font-bold">${formatRemainingTime(get12HCandleCloseTimestamp()).text}</span></span>
+                  </div>
+                  <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">Target: 12:00 UTC</span>
+                </div>
               </div>
+
               ${contractBadge}
-              <div class="mt-2 text-[10px] font-mono text-slate-400 flex items-center justify-between">
-                <span>Cutoff: <span class="text-amber-400 font-bold">12:00 UTC</span> <span class="text-slate-500 font-semibold">(Exact 12H Candle Close)</span></span>
-                ${isLive ? '<span class="text-emerald-400 font-bold flex items-center gap-1">● LIVE</span>' : '<span class="text-slate-500">CLOSED</span>'}
-              </div>
               ${winnerBadge}
             </div>
           </div>
