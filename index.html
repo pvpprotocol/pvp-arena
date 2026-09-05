@@ -3785,6 +3785,22 @@
                   updated = true;
                 }
               }
+              // Event 4: DuelSettled(uint256,address,address,uint256,uint256)
+              else if (topic0 === "0x69efb388ae84cd83c69503f1b6fcbf7671a8618573434d68a70a198c166492eb") {
+                const dId = parseInt(log.topics[1], 16);
+                const duelKey = "duel_" + dId;
+                const winAddr = "0x" + log.topics[2].slice(26).toLowerCase();
+                const loseAddr = "0x" + log.topics[3].slice(26).toLowerCase();
+                if (store[duelKey]) {
+                  store[duelKey].status = "completed";
+                  store[duelKey].winner = winAddr;
+                  store[duelKey].loser = loseAddr;
+                  store[duelKey].claimed = true;
+                  store[duelKey].cashbackClaimed = true;
+                  store[duelKey].settledTx = log.transactionHash;
+                  updated = true;
+                }
+              }
             } catch (err) {}
           });
 
@@ -4064,8 +4080,9 @@
 
         if (onchainStatus === 2) {
           showToast("✅ This duel was ALREADY settled & funds transferred on-chain!", "success");
-          if (isPrize) duelData.claimed = true;
-          else duelData.cashbackClaimed = true;
+          duelData.claimed = true;
+          duelData.cashbackClaimed = true;
+          duelData.status = "completed";
           saveLocalDuel(duelData);
           renderAllDuels();
           return;
@@ -4129,14 +4146,15 @@
         const receipt = await tx.wait();
 
         if (receipt.status === 1) {
+          // On-chain settleDuelWithProof atomically sends BOTH the winner prize AND the runner-up cashback in the SAME transaction!
+          duelData.claimed = true;
+          duelData.claimedAt = duelData.claimedAt || Date.now();
+          duelData.cashbackClaimed = true;
+          duelData.cashbackClaimedAt = duelData.cashbackClaimedAt || Date.now();
           if (isPrize) {
-            duelData.claimed = true;
-            duelData.claimedAt = Date.now();
-            showToast(`🎉 WINNER PRIZE CLAIMED! +${payoutOrAmount} USDG sent on-chain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+            showToast(`🎉 WINNER PRIZE & CASHBACK SETTLED! +${payoutOrAmount} USDG sent on-chain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
           } else {
-            duelData.cashbackClaimed = true;
-            duelData.cashbackClaimedAt = Date.now();
-            showToast(`💸 CASHBACK CLAIMED! +${payoutOrAmount} USDG sent on-chain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+            showToast(`💸 CASHBACK & PRIZE SETTLED! +${payoutOrAmount} USDG sent on-chain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
           }
           duelData.status = "completed";
           duelData.settledTx = tx.hash;
