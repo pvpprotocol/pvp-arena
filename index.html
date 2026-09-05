@@ -3759,25 +3759,75 @@
                     store[duelKey].expiresAt = exactOnchainDeadlineMs;
                   }
                 }
+                let decodedTopic = "";
+                try {
+                  const rawData = log.data.slice(2);
+                  if (rawData.length >= 320) {
+                    const topicByteLen = parseInt(rawData.slice(256, 320), 16);
+                    const hexBytes = rawData.slice(320, 320 + topicByteLen * 2);
+                    let str = "";
+                    for (let b = 0; b < hexBytes.length; b += 2) {
+                      str += String.fromCharCode(parseInt(hexBytes.substr(b, 2), 16));
+                    }
+                    decodedTopic = decodeURIComponent(escape(str));
+                  }
+                } catch(e) {}
+
+                let qIdAssigned = 17;
+                let qTitleAssigned = "#17: Will the 12-Hour SOL Candle Close GREEN or RED?";
+                if (decodedTopic) {
+                  const dtUpper = decodedTopic.toUpperCase();
+                  if (dtUpper.includes("SOL") || dtUpper.includes("#3") || dtUpper.includes("#17")) {
+                    qIdAssigned = 17;
+                    qTitleAssigned = "#17: Will the 12-Hour SOL Candle Close GREEN or RED?";
+                  } else if (dtUpper.includes("ETH") || dtUpper.includes("#2") || dtUpper.includes("#16")) {
+                    qIdAssigned = 16;
+                    qTitleAssigned = "#16: Will the 12-Hour ETH Candle Close GREEN or RED?";
+                  } else if (dtUpper.includes("BTC") || dtUpper.includes("#1") || dtUpper.includes("#15")) {
+                    qIdAssigned = 15;
+                    qTitleAssigned = "#15: Will the 12-Hour BTC Candle Close GREEN or RED?";
+                  }
+                } else {
+                  if (dId === 17 || dId === 20) {
+                    qIdAssigned = 17;
+                    qTitleAssigned = "#17: Will the 12-Hour SOL Candle Close GREEN or RED?";
+                  } else if (dId === 18) {
+                    qIdAssigned = 16;
+                    qTitleAssigned = "#16: Will the 12-Hour ETH Candle Close GREEN or RED?";
+                  } else if (dId === 19) {
+                    qIdAssigned = 15;
+                    qTitleAssigned = "#15: Will the 12-Hour BTC Candle Close GREEN or RED?";
+                  }
+                }
+
                 if (!store[duelKey]) {
                   store[duelKey] = {
                     id: duelKey,
                     onchainDuelId: dId.toString(),
-                    questionId: "q1",
-                    questionText: (dId >= 14) ? "#1: Will Today's BTC Daily Candle Close GREEN?" : "Will BTC Price Close GREEN?",
+                    questionId: qIdAssigned,
+                    questionText: qTitleAssigned,
                     creatorOption: creatorChoice,
                     requiredOpponentOption: oppChoice,
                     tier: tierStr,
                     creator: creator,
                     opponent: null,
                     status: "open",
-                    createdAt: Date.now(),
-                    deadline: getQuestionDeadline(q.id),
+                    createdAt: Date.now() - (55002000 - parseInt(log.blockNumber, 16)) * 2000,
+                    deadline: getQuestionDeadline(qIdAssigned),
                     expiresAt: exactOnchainDeadlineMs,
                     tokenType: isUsdg ? "USDG" : "ETH",
                     tokenAddress: token,
                     onChain: true
                   };
+                  updated = true;
+                } else {
+                  store[duelKey].questionId = qIdAssigned;
+                  store[duelKey].questionText = qTitleAssigned;
+                  store[duelKey].onchainDuelId = dId.toString();
+                  if (exactOnchainDeadlineMs > 0) {
+                    store[duelKey].deadline = exactOnchainDeadlineMs;
+                    store[duelKey].expiresAt = exactOnchainDeadlineMs;
+                  }
                   updated = true;
                 }
               }
@@ -4310,13 +4360,33 @@
     
     function getDuelDisplayNumber(duelData) {
       if (!duelData) return "17-1";
-      if (duelData.displayNumber && typeof duelData.displayNumber === "string" && duelData.displayNumber.includes("-")) {
-        if (duelData.displayNumber.startsWith("3-")) return duelData.displayNumber.replace("3-", "17-");
-        if (duelData.displayNumber.startsWith("2-")) return duelData.displayNumber.replace("2-", "16-");
-        if (duelData.displayNumber.startsWith("1-")) return duelData.displayNumber.replace("1-", "15-");
-        return duelData.displayNumber;
-      }
       const qId = getDuelQuestionId(duelData);
+
+      // 1. On-Chain chronological ordering by blockchain transaction/block
+      if (duelData.onchainDuelId) {
+        const curId = parseInt(duelData.onchainDuelId, 10);
+        const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
+        const onchainIds = [];
+        Object.values(store).forEach(d => {
+          if (d && d.onchainDuelId && getDuelQuestionId(d) === qId) {
+            onchainIds.push(parseInt(d.onchainDuelId, 10));
+          }
+        });
+        if (!onchainIds.includes(curId)) {
+          onchainIds.push(curId);
+        }
+        // Ascending chronological order on blockchain: earlier duelId was mined earlier
+        const sorted = [...new Set(onchainIds)].sort((a, b) => a - b);
+        const rank = sorted.indexOf(curId) + 1;
+        return `${qId}-${rank}`;
+      }
+
+      // 2. Existing displayNumber
+      if (duelData.displayNumber && typeof duelData.displayNumber === "string" && duelData.displayNumber.includes("-")) {
+        const parts = duelData.displayNumber.split("-");
+        return `${qId}-${parts[1]}`;
+      }
+
       const subIdx = duelData.subIndex || 1;
       return `${qId}-${subIdx}`;
     }
