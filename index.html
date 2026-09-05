@@ -3102,19 +3102,28 @@
     } catch(e) {}
 
     // 10 ACTIVE BINARY DUEL QUESTIONS
+    function get12HCandleCloseTimestamp() {
+      const now = new Date();
+      let target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0));
+      if (now.getTime() >= target.getTime()) {
+        target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+      }
+      return target.getTime();
+    }
+
     const DUEL_QUESTIONS = [
       { 
         id: 1, 
         qNum: 1,
         category: "CRYPTO 12H", 
         title: "#1: Will the 12-Hour BTC Candle Close GREEN or RED? (Sep 5)", 
-        desc: "Predict whether the 12-Hour Bitcoin candle (Sep 5) closes GREEN (Bullish) or RED (Bearish).",
-        deadlineDesc: "12-Hour Candle Window",
-        deadline: Date.now() + 12 * 3600 * 1000,
-        settlementTime: Date.now() + 12 * 3600 * 1000,
+        desc: "⏳ Time Remaining: Live Countdown to 12:00 UTC",
+        deadlineDesc: "12:00 UTC Close",
+        deadline: get12HCandleCloseTimestamp(),
+        settlementTime: get12HCandleCloseTimestamp(),
         isEnded: false,
         getDeadline: function() {
-          return Date.now() + 12 * 3600 * 1000;
+          return get12HCandleCloseTimestamp();
         },
         optA: "YES",
         optALabel: "GREEN",
@@ -3277,11 +3286,17 @@
                 ${timerBadge}
               </div>
               <h5 class="text-xs font-bold text-white font-mono mt-1.5 leading-snug">${q.title}</h5>
-              <p class="text-[10px] text-slate-400 font-mono mt-1 line-clamp-1">${q.desc}</p>
+              <div class="mt-2 p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-between gap-2 shadow-inner">
+                <div class="flex items-center gap-1.5 font-mono text-xs text-cyan-300 font-bold">
+                  <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                  <span>⏳ Time Left: <span id="q-12h-remaining-${q.id}" class="text-amber-300 font-black text-xs">${timeObj.text}</span></span>
+                </div>
+                <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/30">Closes at 12:00 UTC</span>
+              </div>
               ${contractBadge}
-              <div class="mt-2 text-[10px] font-mono text-slate-500 flex items-center justify-between">
-                <span>Cutoff: <span class="text-slate-300 font-semibold">${q.deadlineDesc || '24h Cycle'}</span></span>
-                ${isLive ? '<span class="text-cyan-400 font-bold">● LIVE</span>' : '<span class="text-slate-500">CLOSED</span>'}
+              <div class="mt-2 text-[10px] font-mono text-slate-400 flex items-center justify-between">
+                <span>Cutoff: <span class="text-amber-400 font-bold">12:00 UTC</span> <span class="text-slate-500 font-semibold">(Exact 12H Candle Close)</span></span>
+                ${isLive ? '<span class="text-emerald-400 font-bold flex items-center gap-1">● LIVE</span>' : '<span class="text-slate-500">CLOSED</span>'}
               </div>
               ${winnerBadge}
             </div>
@@ -4166,6 +4181,12 @@
       // 1. Update questions grid timers
       DUEL_QUESTIONS.forEach(q => {
         const el = document.querySelector(`.q-timer-display[data-qid="${q.id}"]`);
+        const remEl = document.getElementById(`q-12h-remaining-${q.id}`);
+        if (remEl) {
+          const qDeadline = getQuestionDeadline(q.id);
+          const timeObj = formatRemainingTime(qDeadline);
+          remEl.textContent = timeObj.text;
+        }
         if (el) {
           const qDeadline = getQuestionDeadline(q.id);
           const timeObj = formatRemainingTime(qDeadline);
