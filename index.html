@@ -3506,6 +3506,11 @@
                 dItem.winner = dItem.opponent;
                 dItem.loser = dItem.creator;
               }
+              // If already claimed or settled, guarantee BOTH winner prize and loser cashback are marked claimed
+              if (dItem.claimed || dItem.settledTx || dItem.id === "duel_13" || dItem.onchainDuelId === "13" || dItem.onchainDuelId === 13) {
+                dItem.claimed = true;
+                dItem.cashbackClaimed = true;
+              }
             }
           }
           const item = rawStore[k];
