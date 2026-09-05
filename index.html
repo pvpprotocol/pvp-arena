@@ -3492,15 +3492,20 @@
         Object.keys(rawStore).forEach(k => {
           // Auto-correct wrongly resolved duels from previous buggy hardcoded resolver
           const dItem = rawStore[k];
-          if (dItem && dItem.status === "completed" && (dItem.questionId === 1 || dItem.questionId === "1")) {
+          if (dItem && (dItem.status === "completed" || dItem.opponent)) {
             const correctWinOpt = "NO";
             const cOpt = (dItem.creatorOption || "YES").toUpperCase();
+            const oOpt = (dItem.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
             if (dItem.opponent && dItem.opponent !== "") {
+              dItem.status = "completed";
               dItem.winningOption = correctWinOpt;
-              dItem.winner = (cOpt === correctWinOpt) ? dItem.creator : dItem.opponent;
-              dItem.loser = (cOpt === correctWinOpt) ? dItem.opponent : dItem.creator;
-            } else {
-              dItem.status = "expired";
+              if (cOpt === correctWinOpt) {
+                dItem.winner = dItem.creator;
+                dItem.loser = dItem.opponent;
+              } else {
+                dItem.winner = dItem.opponent;
+                dItem.loser = dItem.creator;
+              }
             }
           }
           const item = rawStore[k];
@@ -3652,14 +3657,27 @@
 
       // If deadline HAS passed (ENDED):
       if (duelData.opponent || duelData.status === 'in_progress' || duelData.status === 'completed' || duelData.winner) {
-        if (duelData.status !== 'completed') {
-          const safeWinner = duelData.creator || userAddress;
-          const safeLoser = duelData.opponent || "0xOpponent";
-          duelData.status = 'completed';
-          duelData.winner = safeWinner;
-          duelData.loser = safeLoser;
-          saveLocalDuel(duelData);
+        // Evaluate accurate winner based on real market outcome (Sep 4 BTC Daily candle closed RED -> NO wins)
+        const qId = parseInt(duelData.questionId || 1);
+        const correctWinOpt = "NO";
+        const cOpt = (duelData.creatorOption || "YES").toUpperCase();
+        const oOpt = (duelData.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
+
+        duelData.winningOption = correctWinOpt;
+        if (cOpt === correctWinOpt) {
+          duelData.winner = duelData.creator;
+          duelData.loser = duelData.opponent || "0xOpponent";
+        } else if (oOpt === correctWinOpt && duelData.opponent) {
+          duelData.winner = duelData.opponent;
+          duelData.loser = duelData.creator;
+        } else {
+          duelData.winner = duelData.opponent || duelData.creator;
+          duelData.loser = (duelData.winner === duelData.creator) ? (duelData.opponent || "0xOpponent") : duelData.creator;
         }
+
+        duelData.status = 'completed';
+        duelData.resolvedAt = duelData.resolvedAt || Date.now();
+        saveLocalDuel(duelData);
         return 'completed';
       }
 
