@@ -3127,31 +3127,20 @@
       if (num === 2) actualQId = 16;
       if (num === 3) actualQId = 17;
 
-      const key = "pvp_q" + actualQId + "_1h_entry_deadline_v5";
-      let val = localStorage.getItem(key);
-      const now = Date.now();
-      if (!val || isNaN(Number(val))) {
-        if (actualQId === 16 || actualQId === 17) {
-          val = String(now + 20 * 60 * 1000);
-        } else if (actualQId === 15) {
-          val = String(now - 10000);
-        } else {
-          val = String(now + 3600 * 1000);
-        }
-        localStorage.setItem(key, val);
-      }
+      // FIXED DETERMINISTIC TIMESTAMPS (UTC) - IMMUTABLE ON-CHAIN MARKET DEADLINES
+      // Question 15 (BTC): 1-Hour Entry Window STRICTLY closed at 09:30:00 UTC (1788600600000)
       if (actualQId === 15) {
-        // BTC (#15) entry window has officially closed (1-hour window ended)
-        if (Number(val) > now) {
-          val = String(now - 10000);
-          localStorage.setItem(key, val);
-        }
+        return 1788600600000;
       }
-      return Number(val);
+      // Question 16 (ETH) & Question 17 (SOL): 1-Hour Entry Window STRICTLY closes at 10:00:00 UTC (1788602400000)
+      if (actualQId === 16 || actualQId === 17) {
+        return 1788602400000;
+      }
+      return 1788602400000;
     }
 
     function getQuestion1EntryDeadline() {
-      return getQuestionEntryDeadline(1);
+      return getQuestionEntryDeadline(15);
     }
 
     const DUEL_QUESTIONS = [
@@ -3160,12 +3149,12 @@
         qNum: 15,
         category: "CRYPTO 12H (1H ENTRY)", 
         title: "#15: Will the 12-Hour BTC Candle Close GREEN or RED?", 
-        desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
+        desc: "1-Hour Entry Window (Ended 09:30 UTC) | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
-        deadline: getQuestionEntryDeadline(15),
+        deadline: 1788600600000,
         settlementTime: get12HCandleCloseTimestamp(),
-        isEnded: false,
-        getDeadline: function() { return getQuestionEntryDeadline(15); },
+        isEnded: true, // STRICTLY AND PERMANENTLY CLOSED AT 09:30 UTC
+        getDeadline: function() { return 1788600600000; },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3180,10 +3169,10 @@
         title: "#16: Will the 12-Hour ETH Candle Close GREEN or RED?", 
         desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
-        deadline: getQuestionEntryDeadline(16),
+        deadline: 1788602400000,
         settlementTime: get12HCandleCloseTimestamp(),
         isEnded: false,
-        getDeadline: function() { return getQuestionEntryDeadline(16); },
+        getDeadline: function() { return 1788602400000; },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3198,10 +3187,10 @@
         title: "#17: Will the 12-Hour SOL Candle Close GREEN or RED?", 
         desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
-        deadline: getQuestionEntryDeadline(17),
+        deadline: 1788602400000,
         settlementTime: get12HCandleCloseTimestamp(),
         isEnded: false,
-        getDeadline: function() { return getQuestionEntryDeadline(17); },
+        getDeadline: function() { return 1788602400000; },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3211,7 +3200,7 @@
       }
     ];
 
-    let selectedDuelQuestionId = 15;
+    let selectedDuelQuestionId = 16;
     let selectedDuelTier = 0.01;
     let selectedDuelOption = 'YES';
     let activeQuestionTab = 'live'; // 'live' or 'ended'
@@ -4326,8 +4315,14 @@
         const entryRemEl = document.getElementById(`q-entry-remaining-${q.id}`);
         if (entryRemEl) {
           const qDeadline = getQuestionDeadline(q.id);
-          const timeObj = formatRemainingTime(qDeadline);
-          entryRemEl.textContent = timeObj.text;
+          const isQEnded = q.isEnded || (Date.now() >= qDeadline);
+          if (isQEnded) {
+            entryRemEl.textContent = "DEADLINE PASSED (09:30 UTC)";
+            entryRemEl.className = "text-slate-400 font-black tracking-wide";
+          } else {
+            const timeObj = formatRemainingTime(qDeadline);
+            entryRemEl.textContent = timeObj.text;
+          }
         }
         const remEl = document.getElementById(`q-12h-remaining-${q.id}`);
         if (remEl) {
