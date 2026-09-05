@@ -3120,22 +3120,27 @@
       return target.getTime();
     }
 
-    function getQuestionEntryDeadline(qId) {
-      const num = parseInt(qId, 10) || 15;
-      let actualQId = num;
-      if (num === 1) actualQId = 15;
-      if (num === 2) actualQId = 16;
-      if (num === 3) actualQId = 17;
+    function getQuestionById(qId) {
+      const num = parseInt(qId, 10);
+      if (isNaN(num)) return (typeof DUEL_QUESTIONS !== "undefined" && DUEL_QUESTIONS[0]) ? DUEL_QUESTIONS[0] : null;
+      if (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS)) {
+        let q = DUEL_QUESTIONS.find(item => item.id === num || item.qNum === num);
+        if (!q && (num === 1 || num === 15)) q = DUEL_QUESTIONS.find(item => item.id === 15 || item.id === 1);
+        if (!q && (num === 2 || num === 16)) q = DUEL_QUESTIONS.find(item => item.id === 16 || item.id === 2);
+        if (!q && (num === 3 || num === 17)) q = DUEL_QUESTIONS.find(item => item.id === 17 || item.id === 3);
+        if (q) return q;
+      }
+      return null;
+    }
 
-      // FIXED DETERMINISTIC TIMESTAMPS (UTC) - IMMUTABLE ON-CHAIN MARKET DEADLINES
-      // Question 15 (BTC): 1-Hour Entry Window STRICTLY closed at 09:30:00 UTC (1788600600000)
-      if (actualQId === 15) {
-        return 1788600600000;
+    function getQuestionEntryDeadline(qId) {
+      const q = getQuestionById(qId);
+      if (q) {
+        if (typeof q.getDeadline === "function") return q.getDeadline();
+        if (q.deadline) return Number(q.deadline);
       }
-      // Question 16 (ETH) & Question 17 (SOL): 1-Hour Entry Window STRICTLY closes at 10:00:00 UTC (1788602400000)
-      if (actualQId === 16 || actualQId === 17) {
-        return 1788602400000;
-      }
+      const num = parseInt(qId, 10) || 15;
+      if (num === 15 || num === 1) return 1788600600000;
       return 1788602400000;
     }
 
@@ -3657,19 +3662,22 @@
       if (!duelData) return 'open';
       if (duelData.status === 'cancelled') return 'expired';
 
+      // Identify question and its exact entry deadline
       const qId = getDuelQuestionId(duelData);
-      const entryDeadline = getQuestionEntryDeadline(qId);
-      const candleCloseTime = get12HCandleCloseTimestamp(); // 12:00:00 UTC (1788609600000)
+      const q = getQuestionById(qId);
+      const entryDeadline = q ? (typeof q.getDeadline === "function" ? q.getDeadline() : Number(q.deadline)) : getQuestionEntryDeadline(qId);
+      const resolutionTime = q ? (Number(q.settlementTime) || Number(q.resolutionTime) || get12HCandleCloseTimestamp()) : get12HCandleCloseTimestamp();
       const now = Date.now();
 
       const hasOpponent = !!(duelData.opponent && duelData.opponent !== "0x0000000000000000000000000000000000000000");
       const isMatched = hasOpponent || duelData.status === 'in_progress';
 
-      // ==========================================
-      // LAW 1: UNMATCHED DUEL (NO OPPONENT)
-      // The moment the entry window of its question ends,
-      // the duel MUST IMMEDIATELY move to EXPIRED tab!
-      // ==========================================
+      // =========================================================================
+      // LAW 1 (PERMANENT SYSTEM RULE):
+      // Upon the expiration of the question's entry deadline (مهلت شرکت در مسابقه):
+      // If no opponent was found for a duel request matching that question ID,
+      // that request MUST IMMEDIATELY move to the EXPIRED tab!
+      // =========================================================================
       if (!isMatched) {
         if (now >= entryDeadline) {
           return 'expired';
@@ -3677,13 +3685,12 @@
         return 'open';
       }
 
-      // ==========================================
-      // LAW 2: MATCHED DUEL (WITH OPPONENT)
-      // As long as the 12-Hour candle has NOT closed yet (< 12:00 UTC),
-      // it MUST STRICTLY STAY IN MATCHED TAB!
-      // It can NEVER go to Completed before 12:00 UTC!
-      // ==========================================
-      if (now < candleCloseTime) {
+      // =========================================================================
+      // LAW 2 (MATCHED DUEL RULE):
+      // A matched duel (with opponent) strictly remains in the MATCHED tab
+      // until the official resolution time of that question is reached.
+      // =========================================================================
+      if (now < resolutionTime) {
         if (duelData.status === 'completed') {
           duelData.status = 'in_progress';
           delete duelData.winner;
@@ -3693,10 +3700,6 @@
         return 'matched';
       }
 
-      // ==========================================
-      // ONLY AFTER 12:00 UTC (CANDLE OFFICIALLY CLOSED):
-      // Now the duel outcome is finalized and it moves to Completed
-      // ==========================================
       return 'completed';
     }
 
