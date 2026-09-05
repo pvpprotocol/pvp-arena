@@ -4391,7 +4391,7 @@
         let winnerAddr = duelData.winner || "";
         let loserAddr = duelData.loser || "";
         if (!winnerAddr) {
-          const winOpt = (duelData.id === "duel_13" || duelData.onchainDuelId === 13 || duelData.onchainDuelId === "13") ? "NO" : (duelData.winningOption || "YES");
+          const winOpt = duelData.winningOption || ((duelData.questionId === 1 || duelData.questionId === "1" || duelData.id === "duel_13") ? "NO" : "NO");
           if (duelData.creatorOption === winOpt) {
             winnerAddr = duelData.creator;
             loserAddr = duelData.opponent;
