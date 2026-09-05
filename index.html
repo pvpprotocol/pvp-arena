@@ -3137,16 +3137,16 @@
 
     const DUEL_QUESTIONS = [
       { 
-        id: 1, 
-        qNum: 1,
+        id: 15, 
+        qNum: 15,
         category: "CRYPTO 12H (1H ENTRY)", 
-        title: "#1: Will the 12-Hour BTC Candle Close GREEN or RED?", 
+        title: "#15: Will the 12-Hour BTC Candle Close GREEN or RED?", 
         desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
-        deadline: getQuestionEntryDeadline(1),
+        deadline: getQuestionEntryDeadline(15),
         settlementTime: get12HCandleCloseTimestamp(),
         isEnded: false,
-        getDeadline: function() { return getQuestionEntryDeadline(1); },
+        getDeadline: function() { return getQuestionEntryDeadline(15); },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3155,16 +3155,16 @@
         optBSub: "Red Close"
       },
       { 
-        id: 2, 
-        qNum: 2,
+        id: 16, 
+        qNum: 16,
         category: "CRYPTO 12H (1H ENTRY)", 
-        title: "#2: Will the 12-Hour ETH Candle Close GREEN or RED?", 
+        title: "#16: Will the 12-Hour ETH Candle Close GREEN or RED?", 
         desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
-        deadline: getQuestionEntryDeadline(2),
+        deadline: getQuestionEntryDeadline(16),
         settlementTime: get12HCandleCloseTimestamp(),
         isEnded: false,
-        getDeadline: function() { return getQuestionEntryDeadline(2); },
+        getDeadline: function() { return getQuestionEntryDeadline(16); },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3173,16 +3173,16 @@
         optBSub: "Red Close"
       },
       { 
-        id: 3, 
-        qNum: 3,
+        id: 17, 
+        qNum: 17,
         category: "CRYPTO 12H (1H ENTRY)", 
-        title: "#3: Will the 12-Hour SOL Candle Close GREEN or RED?", 
+        title: "#17: Will the 12-Hour SOL Candle Close GREEN or RED?", 
         desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
-        deadline: getQuestionEntryDeadline(3),
+        deadline: getQuestionEntryDeadline(17),
         settlementTime: get12HCandleCloseTimestamp(),
         isEnded: false,
-        getDeadline: function() { return getQuestionEntryDeadline(3); },
+        getDeadline: function() { return getQuestionEntryDeadline(17); },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3192,7 +3192,7 @@
       }
     ];
 
-    let selectedDuelQuestionId = 1;
+    let selectedDuelQuestionId = 15;
     let selectedDuelTier = 0.01;
     let selectedDuelOption = 'YES';
     let activeQuestionTab = 'live'; // 'live' or 'ended'
@@ -3226,19 +3226,36 @@
     }
 
     function getDuelQuestionId(duelData) {
-      if (!duelData) return 1;
+      if (!duelData) return 17;
       if (duelData.questionId) {
         const parsed = parseInt(duelData.questionId, 10);
-        if (!isNaN(parsed) && parsed >= 1) return parsed;
+        if (!isNaN(parsed) && parsed >= 1) {
+          if (parsed === 3) return 17;
+          if (parsed === 2) return 16;
+          if (parsed === 1) return 15;
+          return parsed;
+        }
       }
       if (duelData.questionText) {
         const m = duelData.questionText.match(/#(\d+)/);
         if (m) {
           const parsed = parseInt(m[1], 10);
-          if (!isNaN(parsed) && parsed >= 1) return parsed;
+          if (!isNaN(parsed) && parsed >= 1) {
+            if (parsed === 3) return 17;
+            if (parsed === 2) return 16;
+            if (parsed === 1) return 15;
+            return parsed;
+          }
         }
+        const ut = duelData.questionText.toUpperCase();
+        if (ut.includes("SOL")) return 17;
+        if (ut.includes("ETH")) return 16;
+        if (ut.includes("BTC")) return 15;
       }
-      return 1;
+      if (duelData.onchainDuelId === "17" || duelData.id === "duel_17") {
+        return 17;
+      }
+      return 15;
     }
 
     function getDuelEffectiveDeadline(duelData) {
@@ -3783,22 +3800,23 @@
 
     
     function getDuelDisplayNumber(duelData) {
-      if (!duelData) return 1;
-      // 1. Direct On-Chain Duel ID (100% 1:1 match with Robinhood Chain Contract)
-      if (duelData.onchainDuelId) {
-        const onchainNum = parseInt(duelData.onchainDuelId, 10);
-        if (!isNaN(onchainNum)) return onchainNum;
+      if (!duelData) return "17-1";
+      if (duelData.displayNumber && typeof duelData.displayNumber === "string" && duelData.displayNumber.includes("-")) {
+        // If it starts with 3- (old id 3 for SOL), migrate to 17-
+        if (duelData.displayNumber.startsWith("3-")) {
+          return duelData.displayNumber.replace("3-", "17-");
+        }
+        if (duelData.displayNumber.startsWith("1-")) {
+          return duelData.displayNumber.replace("1-", "15-");
+        }
+        if (duelData.displayNumber.startsWith("2-")) {
+          return duelData.displayNumber.replace("2-", "16-");
+        }
+        return duelData.displayNumber;
       }
-      // 2. Fallback to numeric id parsed from duel_XX
-      if (duelData.id && typeof duelData.id === "string" && duelData.id.startsWith("duel_")) {
-        const rawId = parseInt(duelData.id.replace("duel_", ""), 10);
-        if (!isNaN(rawId)) return rawId;
-      }
-      if (duelData.displayNumber) {
-        const parsed = parseInt(duelData.displayNumber, 10);
-        if (!isNaN(parsed)) return parsed;
-      }
-      return 1;
+      const qId = getDuelQuestionId(duelData);
+      const subIdx = duelData.subIndex || 1;
+      return `${qId}-${subIdx}`;
     }
     window.getDuelDisplayNumber = getDuelDisplayNumber;
 
