@@ -4282,42 +4282,22 @@
 
     
     function getDuelDisplayNumber(duelData) {
-      if (!duelData) return "1-1";
-      if (duelData.displayNumber) return String(duelData.displayNumber);
-
-      // Extract Question ID (default 1)
-      let qId = duelData.questionId;
-      if (!qId && duelData.questionText) {
-        const m = duelData.questionText.match(/#(\d+)/);
-        if (m) qId = parseInt(m[1], 10);
-      }
-      if (!qId) qId = 1;
-
-      // Determine sub-index
-      let subIndex = 1;
-      if (duelData.subIndex !== undefined && duelData.subIndex !== null) {
-        subIndex = parseInt(duelData.subIndex, 10) || 1;
-      } else if (duelData.onchainDuelId) {
+      if (!duelData) return 1;
+      // 1. Direct On-Chain Duel ID (100% 1:1 match with Robinhood Chain Contract)
+      if (duelData.onchainDuelId) {
         const onchainNum = parseInt(duelData.onchainDuelId, 10);
-        if (!isNaN(onchainNum)) {
-          if (onchainNum >= 13) {
-            subIndex = (onchainNum - 12); // Duel 13 -> 1, 14 -> 2, 15 -> 3, 16 -> 4
-          } else if (onchainNum >= 5) {
-            subIndex = (onchainNum - 4);
-          } else {
-            subIndex = onchainNum;
-          }
-        }
-      } else if (duelData.id && typeof duelData.id === "string" && duelData.id.startsWith("duel_")) {
-        const rawId = parseInt(duelData.id.replace("duel_", ""), 10);
-        if (!isNaN(rawId)) {
-          if (rawId >= 13) subIndex = (rawId - 12);
-          else if (rawId >= 5) subIndex = (rawId - 4);
-          else subIndex = rawId;
-        }
+        if (!isNaN(onchainNum)) return onchainNum;
       }
-
-      return `${qId}-${subIndex}`;
+      // 2. Fallback to numeric id parsed from duel_XX
+      if (duelData.id && typeof duelData.id === "string" && duelData.id.startsWith("duel_")) {
+        const rawId = parseInt(duelData.id.replace("duel_", ""), 10);
+        if (!isNaN(rawId)) return rawId;
+      }
+      if (duelData.displayNumber) {
+        const parsed = parseInt(duelData.displayNumber, 10);
+        if (!isNaN(parsed)) return parsed;
+      }
+      return 1;
     }
     window.getDuelDisplayNumber = getDuelDisplayNumber;
 
@@ -4868,7 +4848,7 @@
       renderAllDuels();
 
       if (btn) btn.disabled = false;
-      showToast(`🎉 Duel #${finalDisplayNumber} Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
+      showToast(`🎉 Duel #${onchainDuelId || 1} Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
     }
 
     
