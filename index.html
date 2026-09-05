@@ -4706,14 +4706,7 @@
                 ${userRoleBadge}
               </div>
               ${completedDetailsHtml}
-              ${(duelData.createTxHash || duelData.acceptTxHash) ? `
-                <div class="flex items-center gap-2 text-[10px] font-mono text-slate-400 mt-1.5 flex-wrap">
-                  <span class="text-cyan-400 font-bold flex items-center gap-1">🔒 On-Chain Escrow:</span>
-                  ${duelData.createTxHash ? `
-                    <a href="https://explorer.mainnet.chain.robinhood.com/tx/${duelData.createTxHash}" target="_blank" class="px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 hover:text-cyan-200 hover:underline flex items-center gap-1 font-mono transition-all">
-                      P1 Deposit: ${duelData.createTxHash.slice(0, 6)}...${duelData.createTxHash.slice(-4)} ↗
-                    </a>
-                  ` : ""}
+              
                   ${duelData.acceptTxHash ? `
                     <a href="https://explorer.mainnet.chain.robinhood.com/tx/${duelData.acceptTxHash}" target="_blank" class="px-2 py-0.5 rounded bg-indigo-950/60 border border-indigo-500/30 text-indigo-300 hover:text-indigo-200 hover:underline flex items-center gap-1 font-mono transition-all">
                       P2 Deposit: ${duelData.acceptTxHash.slice(0, 6)}...${duelData.acceptTxHash.slice(-4)} ↗
