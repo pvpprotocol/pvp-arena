@@ -3403,7 +3403,7 @@
           // One-time legacy cleanup only
           ['pvp_active_duels_store', 'pvp_active_duels_store_v1', 'pvp_active_duels_store_v2', 'pvp_active_duels_store_v3', 'pvp_active_duels_store_v4', 'pvp_active_duels_store_v5', 'pvp_active_duels_store_v6', 'pvp_active_duels_store_v7', 'pvp_active_duels_store_v8'].forEach(k => localStorage.removeItem(k));
         } catch(e) {}
-        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v12') || '{}');
+        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v20') || '{}');
         const cleanStore = {};
         
         // Merge seed first so established matches are guaranteed to display
@@ -3412,6 +3412,8 @@
         });
 
         Object.keys(rawStore).forEach(k => {
+          const numId = parseInt(String(k).replace(/\D/g, ""), 10);
+          if (!isNaN(numId) && numId < 17) return;
           // Auto-correct wrongly resolved duels from previous buggy hardcoded resolver
           const dItem = rawStore[k];
           if (dItem && (dItem.status === "completed" || dItem.opponent)) {
@@ -3450,7 +3452,7 @@
             item.status = 'completed';
           }
         });
-        localStorage.setItem('pvp_active_duels_store_v12', JSON.stringify(cleanStore));
+        localStorage.setItem('pvp_active_duels_store_v20', JSON.stringify(cleanStore));
         return cleanStore;
       } catch(e) {
         return SEED_ACTIVE_DUELS;
@@ -3459,7 +3461,7 @@
 
     function saveLocalDuels(store) {
       try {
-        localStorage.setItem("pvp_active_duels_store_v12", JSON.stringify(store || {}));
+        localStorage.setItem("pvp_active_duels_store_v20", JSON.stringify(store || {}));
       } catch(e) {}
     }
     window.saveLocalDuels = saveLocalDuels;
@@ -3487,7 +3489,7 @@
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
           if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
         }
-        localStorage.setItem('pvp_active_duels_store_v12', JSON.stringify(store));
+        localStorage.setItem('pvp_active_duels_store_v20', JSON.stringify(store));
       } catch(e) {}
     }
 
@@ -4153,7 +4155,7 @@
       }
 
       window.addEventListener('storage', (e) => {
-        if (e.key === 'pvp_active_duels_store_v12') {
+        if (e.key === 'pvp_active_duels_store_v20') {
           renderAllDuels();
         }
       });
