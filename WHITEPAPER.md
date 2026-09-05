@@ -1,6 +1,13 @@
 # PvP Arena Whitepaper
 
-## Section: Binary Duels Core Architecture & Rules
+## P2P Prediction
+Risk to Reward Analysis: In traditional betting models, participants face an unfavorable risk to reward ratio (for example at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In PVP Arena, the winner earns 90% net profit directly, and the runner up receives 3% rebate cashback to preserve liquidity and enable immediate re-entry.
+
+Two participants lock equal collateral into the canonical escrow smart contract. Upon verified outcome resolution, funds are automatically distributed as follows:
+
+• 90% allocated directly to the verified winner
+• 3% rebate cashback returned to the runner up wallet
+• 7% protocol treasury fee for buybacks and rewards
 
 1. Once an opponent joins and the duel is matched, the contest remains active until the official resolution is finalized, and immediately upon outcome confirmation, it transitions to the completed state for prize settlement.
 
