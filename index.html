@@ -1734,7 +1734,7 @@
             </div>
             <div>
               <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Category Badge</label>
-              <input type="text" id="newQCategory" required placeholder="e.g. CRYPTO 12H, ROBINHOOD ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white font-mono text-xs focus:border-amber-400 outline-none">
+              <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, ROBINHOOD ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white font-mono text-xs focus:border-amber-400 outline-none">
             </div>
           </div>
 
@@ -6985,6 +6985,12 @@ window.handleCreateQuestion = async function(e) {
           <input id="newQTitle" type="text" placeholder="e.g. Ethereum Daily Candle Close: GREEN or RED?" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400">
         </div>
 
+        
+        <!-- Sports DNB Rule Box (Visible when SPORTS is chosen) -->
+        <div id="sportsDnbNotice" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300">
+          <p class="font-bold flex items-center gap-1.5 text-[11px]"><span>⚽</span> Draw No Bet (قانون بازگشت وجه در تساوی):</p>
+          <p class="text-[10px] text-amber-200/80 mt-0.5 leading-relaxed">در مسابقات فوتبال/ورزشی: گزینه ۱ تیم الف و گزینه ۲ تیم ب است. در صورت تساوی (Draw) در پایان ۹۰ دقیقه، مسابقه لغو و ۱۰۰٪ پول هر دو بازیکن بدون کسر کارمزد برگردانده می‌شود.</p>
+        </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-slate-400 text-[11px] block mb-1">Category</label>
@@ -7036,6 +7042,22 @@ window.handleCreateQuestion = async function(e) {
   </div>
 
   <script>
+    
+    function handleCategoryChange(val) {
+      const notice = document.getElementById("sportsDnbNotice");
+      const titleInput = document.getElementById("newQTitle");
+      const resInput = document.getElementById("newQResolution");
+      if (val === "SPORTS") {
+        if (notice) notice.classList.remove("hidden");
+        if (titleInput && !titleInput.value) titleInput.placeholder = "e.g. Real Madrid vs Arsenal (Draw = 100% Refund)";
+        if (resInput) resInput.value = "Official Match Result (Full-Time 90min)";
+      } else {
+        if (notice) notice.classList.add("hidden");
+        if (titleInput && !titleInput.value) titleInput.placeholder = "e.g. Ethereum Daily Candle Close: GREEN or RED?";
+        if (resInput) resInput.value = "Coinbase Daily Candle Close";
+      }
+    }
+    
     function openCreateQuestionModal() {
       const modal = document.getElementById("createQuestionModal");
       if (modal) modal.classList.remove("hidden");
