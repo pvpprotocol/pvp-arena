@@ -4,7 +4,7 @@
 const ethers = require("ethers");
 
 const RPC_URL = process.env.ROBINHOOD_RPC || "https://rpc.mainnet.chain.robinhood.com";
-const REGISTRY_ADDRESS = process.env.QUESTION_REGISTRY_ADDRESS || "0x5544caed6f15e8bb9b795a59ed0d7da4f7a9a806";
+const REGISTRY_ADDRESS = process.env.QUESTION_REGISTRY_ADDRESS || "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5";
 const PRIVATE_KEY = process.env.ORACLE_PRIVATE_KEY || process.env.DEPLOYER_PRIVATE_KEY;
 const NTFY_TOPIC = process.env.NTFY_TOPIC || "pvp-arena-rh-duels-v3";
 
