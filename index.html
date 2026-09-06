@@ -3524,7 +3524,7 @@
       if (isNaN(num)) return (typeof DUEL_QUESTIONS !== "undefined" && DUEL_QUESTIONS[0]) ? DUEL_QUESTIONS[0] : null;
       if (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS)) {
         let q = DUEL_QUESTIONS.find(item => item.id === num || item.qNum === num);
-        if (!q && (num === 1 || num === 15)) q = DUEL_QUESTIONS.find(item => item.id === 15 || item.id === 1);
+        if (!q && num === 15) q = DUEL_QUESTIONS.find(item => item.id === 15);
         if (!q && (num === 2 || num === 16)) q = DUEL_QUESTIONS.find(item => item.id === 16 || item.id === 2);
         if (!q && (num === 3 || num === 17)) q = DUEL_QUESTIONS.find(item => item.id === 17 || item.id === 3);
         if (q) return q;
@@ -3539,7 +3539,8 @@
         if (q.deadline) return Number(q.deadline);
       }
       const num = parseInt(qId, 10) || 15;
-      if (num === 15 || num === 1) return 1788600600000;
+      if (num === 1) return 1788707557000;
+      if (num === 15) return 1788600600000;
       return 1788602400000;
     }
 
@@ -3548,6 +3549,27 @@
     }
 
     const DUEL_QUESTIONS = [
+      {
+        id: 1,
+        qNum: 1,
+        isOnchain: true,
+        category: "CRYPTO",
+        title: "Bitcoin Daily Candle (Sep 6, 2026) Close: GREEN or RED?",
+        desc: "2-Hour Entry Window | Closes at 00:00 UTC (Coinbase Daily Candle)",
+        deadlineDesc: "2-Hour Entry Window",
+        targetDesc: "Settlement: 00:00 UTC",
+        deadline: 1788707557000,
+        settlementTime: 1788739200000,
+        winningOption: null,
+        isEnded: false,
+        getDeadline: function() { return 1788707557000; },
+        optA: "YES",
+        optALabel: "GREEN",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "RED",
+        optBSub: "Red Close"
+      },
       { 
         id: 18, 
         qNum: 18,
@@ -3667,7 +3689,7 @@
         return 1788538500000;
       }
       // Duels 14 to 16 were past test duels
-      if ((!isNaN(numId) && numId >= 14 && numId <= 16) || qText.includes("daily") || qText.includes("sep 4")) {
+      if ((!isNaN(numId) && numId >= 14 && numId <= 16) || qText.includes("sep 4")) {
         return 1788566400000;
       }
 
@@ -4187,7 +4209,10 @@
                 let qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
                 if (decodedTopic) {
                   const dtUpper = decodedTopic.toUpperCase();
-                  if (dtUpper.includes("#18") || dtUpper.includes("1-HOUR") || dtUpper.includes("1H")) {
+                  if (dtUpper.includes("SEP 6") || dtUpper.includes("DAILY CANDLE") || dtUpper.includes("#1")) {
+                    qIdAssigned = 1;
+                    qTitleAssigned = "Bitcoin Daily Candle (Sep 6, 2026) Close: GREEN or RED?";
+                  } else if (dtUpper.includes("#18") || dtUpper.includes("1-HOUR") || dtUpper.includes("1H")) {
                     qIdAssigned = 18;
                     qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
                   } else if (dtUpper.includes("SOL") || dtUpper.includes("#3") || dtUpper.includes("#17")) {
@@ -4204,7 +4229,10 @@
                     qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
                   }
                 } else {
-                  if (dId >= 21) {
+                  if (dId >= 24) {
+                    qIdAssigned = 1;
+                    qTitleAssigned = "Bitcoin Daily Candle (Sep 6, 2026) Close: GREEN or RED?";
+                  } else if (dId >= 21) {
                     qIdAssigned = 18;
                     qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
                   } else if (dId === 17 || dId === 20) {
@@ -4831,11 +4859,12 @@
           if (parsed === 18) return 18;
           if (parsed === 3) return 17;
           if (parsed === 2) return 16;
-          if (parsed === 1) return 15;
+          if (parsed === 1) return 1;
           return parsed;
         }
       }
       const qText = (duelData.questionText || duelData.topic || "").toUpperCase();
+      if (qText.includes("SEP 6") || qText.includes("DAILY CANDLE") || qText.includes("#1")) return 1;
       if (qText.includes("#18") || qText.includes("1-HOUR") || qText.includes("1H")) return 18;
       if (qText.includes("SOL") || qText.includes("#17") || qText.includes("#3")) return 17;
       if (qText.includes("ETH") || qText.includes("#16") || qText.includes("#2")) return 16;
