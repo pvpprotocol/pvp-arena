@@ -3488,6 +3488,15 @@
 
     // 10 ACTIVE BINARY DUEL QUESTIONS
     // FIXED IMMUTABLE CANDLE CLOSE SETTLEMENT TIME
+        function formatTargetTime(sTime) {
+      if (!sTime) return "Official Outcome";
+      const d = new Date(Number(sTime));
+      if (isNaN(d.getTime())) return "Official Outcome";
+      const hh = String(d.getUTCHours()).padStart(2, "0");
+      const mm = String(d.getUTCMinutes()).padStart(2, "0");
+      return `Target: ${hh}:${mm} UTC`;
+    }
+
     function getQuestionSettlementTime(qId) {
       const q = getQuestionById(qId);
       if (q && q.settlementTime) return Number(q.settlementTime);
@@ -3534,6 +3543,7 @@
         title: "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?", 
         desc: "15-Min Entry Window (08:00 to 08:15 UTC) | 1H Candle Closes at 09:00 UTC",
         deadlineDesc: "15-Min Entry Window",
+        targetDesc: "Target: 09:00 UTC",
         deadline: 1788682500000,
         settlementTime: 1788685200000,
         isEnded: false,
@@ -3772,7 +3782,7 @@
                     <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
                     <span>⏳ ${q.settlementLabel || (q.title && q.title.toLowerCase().includes("candle") ? "Candle Close" : (q.category === "sports" ? "Match End" : (q.category === "economy" ? "Report Release" : "Event Settlement")))}: <span id="q-candle-remaining-${q.id}" class="text-amber-300 font-bold">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
                   </div>
-                  <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.targetDesc || (q.title && q.title.toLowerCase().includes("candle") ? "Target: 12:00 UTC" : "Official Outcome")}</span>
+                  <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.targetDesc || formatTargetTime(q.settlementTime || getQuestionSettlementTime(q.id))}</span>
                 </div>
               </div>
 
@@ -4713,7 +4723,7 @@
           const qDeadline = getQuestionDeadline(q.id);
           const isQEnded = q.isEnded || (Date.now() >= qDeadline);
           if (isQEnded) {
-            entryRemEl.textContent = "DEADLINE PASSED (09:30 UTC)";
+            entryRemEl.textContent = "ENTRY CLOSED";
             entryRemEl.className = "text-slate-400 font-black tracking-wide";
           } else {
             const timeObj = formatRemainingTime(qDeadline);
