@@ -3539,15 +3539,15 @@
       { 
         id: 18, 
         qNum: 18,
-        category: "CRYPTO 1H (20M ENTRY)", 
+        category: "CRYPTO 1H (30M ENTRY)", 
         title: "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?", 
-        desc: "20-Min Entry Window (08:00 to 08:20 UTC) | 1H Candle Closes at 09:00 UTC",
-        deadlineDesc: "20-Min Entry Window",
+        desc: "30-Min Entry Window (08:00 to 08:30 UTC) | 1H Candle Closes at 09:00 UTC",
+        deadlineDesc: "30-Min Entry Window",
         targetDesc: "Target: 09:00 UTC",
-        deadline: 1788682800000,
+        deadline: 1788683400000,
         settlementTime: 1788685200000,
         isEnded: false,
-        getDeadline: function() { return 1788682800000; },
+        getDeadline: function() { return 1788683400000; },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3666,7 +3666,7 @@
       if (duelData.expiresAt && Number(duelData.expiresAt) > 0) {
         const expMs = Number(duelData.expiresAt);
         if (expMs > Date.now() - 3600000 && expMs < Date.now() + 86400000) {
-          return Math.min(expMs, qDeadline);
+          return Math.max(expMs, qDeadline);
         }
       }
 
