@@ -3562,81 +3562,11 @@
         settlementTime: 1788739200000,
         winningOption: null,
         isEnded: false,
+        resolutionSource: "Coinbase BTC-USD Daily Candle",
+        contract: "0x5544caed6f15e8bb9b795a59ed0d7da4f7a9a806",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/tx/0x5404aa81fef5ebc9546862baa42f6e2744c4557d851c176d36d5f904e091b574",
+        allowedTiers: [1, 5, 10, 100, 1000],
         getDeadline: function() { return 1788707557000; },
-        optA: "YES",
-        optALabel: "GREEN",
-        optASub: "Green Close",
-        optB: "NO",
-        optBLabel: "RED",
-        optBSub: "Red Close"
-      },
-      { 
-        id: 18, 
-        qNum: 18,
-        category: "CRYPTO 1H (30M ENTRY)", 
-        title: "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?", 
-        desc: "30-Min Entry Window (Ended 08:30 UTC) | 1H Candle Closed at 09:00 UTC",
-        deadlineDesc: "30-Min Entry Window",
-        targetDesc: "Target: 09:00 UTC",
-        deadline: 1788683400000,
-        settlementTime: 1788685200000,
-        winningOption: "GREEN",
-        isEnded: true,
-        getDeadline: function() { return 1788683400000; },
-        optA: "YES",
-        optALabel: "GREEN",
-        optASub: "Green Close",
-        optB: "NO",
-        optBLabel: "RED",
-        optBSub: "Red Close"
-      },
-      { 
-        id: 15, 
-        qNum: 15,
-        category: "CRYPTO 12H (1H ENTRY)", 
-        title: "#15: Will the 12-Hour BTC Candle Close GREEN or RED?", 
-        desc: "1-Hour Entry Window (Ended 09:30 UTC) | 12H Candle Closes at 12:00 UTC",
-        deadlineDesc: "1-Hour Entry Window",
-        deadline: 1788600600000,
-        settlementTime: 1788609600000, winningOption: "NO",
-        isEnded: true, // STRICTLY AND PERMANENTLY CLOSED AT 09:30 UTC
-        getDeadline: function() { return 1788600600000; },
-        optA: "YES",
-        optALabel: "GREEN",
-        optASub: "Green Close",
-        optB: "NO",
-        optBLabel: "RED",
-        optBSub: "Red Close"
-      },
-      { 
-        id: 16, 
-        qNum: 16,
-        category: "CRYPTO 12H (1H ENTRY)", 
-        title: "#16: Will the 12-Hour ETH Candle Close GREEN or RED?", 
-        desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
-        deadlineDesc: "1-Hour Entry Window",
-        deadline: 1788602400000,
-        settlementTime: 1788609600000, winningOption: "NO",
-        isEnded: false,
-        getDeadline: function() { return 1788602400000; },
-        optA: "YES",
-        optALabel: "GREEN",
-        optASub: "Green Close",
-        optB: "NO",
-        optBLabel: "RED",
-        optBSub: "Red Close"
-      },
-      { 
-        id: 17, 
-        qNum: 17,
-        category: "CRYPTO 12H (1H ENTRY)", 
-        title: "#17: Will the 12-Hour SOL Candle Close GREEN or RED?", 
-        desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
-        deadlineDesc: "1-Hour Entry Window",
-        deadline: 1788602400000,
-        settlementTime: 1788609600000, winningOption: "NO",
-        isEnded: false,
-        getDeadline: function() { return 1788602400000; },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -3796,7 +3726,7 @@
             ${numBadge}
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-[11px] font-mono font-bold text-slate-400 tracking-wide">(Sep 5)</span>
+                <span class="text-[11px] font-mono font-bold text-slate-400 tracking-wide">(Sep 6, 2026)</span>
                 ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">Selected</span>' : ''}
               </div>
               <h5 class="text-xs font-bold text-white font-mono leading-snug">${q.title}</h5>
@@ -5906,53 +5836,56 @@
       try {
         const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.robinhood.com");
         const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, rpcProvider);
-        const onchainList = await regContract.getAllQuestions();
-        if (onchainList && onchainList.length > 0) {
-          onchainList.forEach(q => {
-            const qId = q.id.toNumber();
-            const entryDeadline = q.entryDeadline.toNumber() * 1000;
-            const settlementTime = q.settlementTime.toNumber() * 1000;
-            const isSettled = q.isSettled;
-            const outcomeNum = q.winningOutcome;
-            let winningOption = null;
-            if (outcomeNum === 1) winningOption = "GREEN";
-            else if (outcomeNum === 2) winningOption = "RED";
-            else if (outcomeNum === 3) winningOption = "REFUND";
+        const nextId = await regContract.nextQuestionId();
+        const total = nextId.toNumber();
+        
+        for (let i = 1; i < total; i++) {
+          const q = await regContract.questions(i);
+          const qId = q.id.toNumber();
+          const entryDeadline = q.entryDeadline.toNumber() * 1000;
+          const settlementTime = q.settlementTime.toNumber() * 1000;
+          const isSettled = q.isSettled;
+          const outcomeNum = q.winningOutcome;
+          let winningOption = null;
+          if (outcomeNum === 1) winningOption = "GREEN";
+          else if (outcomeNum === 2) winningOption = "RED";
+          else if (outcomeNum === 3) winningOption = "REFUND";
 
-            const isEnded = q.isClosed || isSettled || (entryDeadline && Date.now() >= entryDeadline);
+          const isEnded = q.isClosed || isSettled || (entryDeadline && Date.now() >= entryDeadline);
 
-            const qObj = {
-              id: qId,
-              qNum: qId,
-              isOnchain: true,
-              category: q.category || "ONCHAIN",
-              title: q.title,
-              desc: q.resolutionSource ? ("Source: " + q.resolutionSource) : "On-Chain Registered Question",
-              deadlineDesc: "On-Chain Entry Window",
-              deadline: entryDeadline,
-              settlementTime: settlementTime,
-              winningOption: winningOption,
-              isEnded: isEnded,
-              getDeadline: function() { return entryDeadline; },
-              optA: "YES",
-              optALabel: "GREEN",
-              optASub: "Green Close",
-              optB: "NO",
-              optBLabel: "RED",
-              optBSub: "Red Close"
-            };
+          const qObj = {
+            id: qId,
+            qNum: qId,
+            isOnchain: true,
+            category: q.category || "CRYPTO",
+            title: q.title,
+            desc: q.resolutionSource ? ("Source: " + q.resolutionSource) : "On-Chain Registered Question",
+            resolutionSource: q.resolutionSource,
+            deadlineDesc: "On-Chain Entry Window",
+            deadline: entryDeadline,
+            settlementTime: settlementTime,
+            winningOption: winningOption,
+            isEnded: isEnded,
+            contract: QUESTION_REGISTRY_ADDRESS,
+            getDeadline: function() { return entryDeadline; },
+            optA: "YES",
+            optALabel: "GREEN",
+            optASub: "Green Close",
+            optB: "NO",
+            optBLabel: "RED",
+            optBSub: "Red Close"
+          };
 
-            const existIdx = DUEL_QUESTIONS.findIndex(item => item.id === qId);
-            if (existIdx !== -1) {
-              DUEL_QUESTIONS[existIdx] = { ...DUEL_QUESTIONS[existIdx], ...qObj };
-            } else {
-              DUEL_QUESTIONS.unshift(qObj);
-            }
-          });
-
-          if (typeof renderDuelQuestions === "function") renderDuelQuestions();
-          if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
+          const existIdx = DUEL_QUESTIONS.findIndex(item => item.id === qId);
+          if (existIdx !== -1) {
+            DUEL_QUESTIONS[existIdx] = { ...DUEL_QUESTIONS[existIdx], ...qObj };
+          } else {
+            DUEL_QUESTIONS.push(qObj);
+          }
         }
+
+        if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+        if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
       } catch (err) {
         console.warn("loadOnchainQuestions notice:", err);
       }
