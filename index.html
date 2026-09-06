@@ -4170,27 +4170,36 @@
                   }
                 } catch(e) {}
 
-                let qIdAssigned = 17;
-                let qTitleAssigned = "#17: Will the 12-Hour SOL Candle Close GREEN or RED?";
+                let qIdAssigned = 18;
+                let qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
                 if (decodedTopic) {
                   const dtUpper = decodedTopic.toUpperCase();
-                  if (dtUpper.includes("SOL") || dtUpper.includes("#3") || dtUpper.includes("#17")) {
+                  if (dtUpper.includes("#18") || dtUpper.includes("1-HOUR") || dtUpper.includes("1H")) {
+                    qIdAssigned = 18;
+                    qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
+                  } else if (dtUpper.includes("SOL") || dtUpper.includes("#3") || dtUpper.includes("#17")) {
                     qIdAssigned = 17;
                     qTitleAssigned = "#17: Will the 12-Hour SOL Candle Close GREEN or RED?";
                   } else if (dtUpper.includes("ETH") || dtUpper.includes("#2") || dtUpper.includes("#16")) {
                     qIdAssigned = 16;
                     qTitleAssigned = "#16: Will the 12-Hour ETH Candle Close GREEN or RED?";
-                  } else if (dtUpper.includes("BTC") || dtUpper.includes("#1") || dtUpper.includes("#15")) {
+                  } else if (dtUpper.includes("#15") || (dtUpper.includes("BTC") && dtUpper.includes("12"))) {
                     qIdAssigned = 15;
                     qTitleAssigned = "#15: Will the 12-Hour BTC Candle Close GREEN or RED?";
+                  } else if (dtUpper.includes("BTC")) {
+                    qIdAssigned = 18;
+                    qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
                   }
                 } else {
-                  if (dId === 17 || dId === 20) {
+                  if (dId >= 21) {
+                    qIdAssigned = 18;
+                    qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
+                  } else if (dId === 17 || dId === 20) {
                     qIdAssigned = 17;
                     qTitleAssigned = "#17: Will the 12-Hour SOL Candle Close GREEN or RED?";
                   } else if (dId === 18) {
-                    qIdAssigned = 16;
-                    qTitleAssigned = "#16: Will the 12-Hour ETH Candle Close GREEN or RED?";
+                    qIdAssigned = 18;
+                    qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
                   } else if (dId === 19) {
                     qIdAssigned = 15;
                     qTitleAssigned = "#15: Will the 12-Hour BTC Candle Close GREEN or RED?";
@@ -4802,10 +4811,11 @@
     
     
     function getDuelQuestionId(duelData) {
-      if (!duelData) return 17;
+      if (!duelData) return 18;
       if (duelData.questionId) {
         const parsed = parseInt(duelData.questionId, 10);
         if (!isNaN(parsed) && parsed >= 1) {
+          if (parsed === 18) return 18;
           if (parsed === 3) return 17;
           if (parsed === 2) return 16;
           if (parsed === 1) return 15;
@@ -4813,20 +4823,23 @@
         }
       }
       const qText = (duelData.questionText || duelData.topic || "").toUpperCase();
+      if (qText.includes("#18") || qText.includes("1-HOUR") || qText.includes("1H")) return 18;
       if (qText.includes("SOL") || qText.includes("#17") || qText.includes("#3")) return 17;
       if (qText.includes("ETH") || qText.includes("#16") || qText.includes("#2")) return 16;
-      if (qText.includes("BTC") || qText.includes("#15") || qText.includes("#1")) return 15;
+      if (qText.includes("#15") || (qText.includes("BTC") && qText.includes("12-HOUR"))) return 15;
+      if (qText.includes("BTC")) return 18;
       const m = qText.match(/#(\d+)/);
       if (m) {
         const parsed = parseInt(m[1], 10);
         if (!isNaN(parsed) && parsed >= 1) {
+          if (parsed === 18) return 18;
           if (parsed === 3) return 17;
           if (parsed === 2) return 16;
           if (parsed === 1) return 15;
           return parsed;
         }
       }
-      return 17;
+      return 18;
     }
 
     function getDuelDisplayNumber(duelData) {
