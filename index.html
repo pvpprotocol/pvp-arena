@@ -3487,22 +3487,15 @@
     } catch(e) {}
 
     // 10 ACTIVE BINARY DUEL QUESTIONS
-    function get12HCandleCloseTimestamp() {
-      const now = new Date();
-      let target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0));
-      if (now.getTime() >= target.getTime()) {
-        target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
-      }
-      return target.getTime();
+    // FIXED IMMUTABLE CANDLE CLOSE SETTLEMENT TIME
+    function getQuestionSettlementTime(qId) {
+      const q = getQuestionById(qId);
+      if (q && q.settlementTime) return Number(q.settlementTime);
+      return 1788609600000; // 12:00 UTC Sep 5, 2026
     }
 
     function get12HCandleCloseTimestamp() {
-      const now = new Date();
-      let target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0));
-      if (now.getTime() >= target.getTime()) {
-        target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
-      }
-      return target.getTime();
+      return 1788609600000; // Fixed: 12:00 UTC Sep 5, 2026
     }
 
     function getQuestionById(qId) {
@@ -3542,7 +3535,7 @@
         desc: "1-Hour Entry Window (Ended 09:30 UTC) | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
         deadline: 1788600600000,
-        settlementTime: get12HCandleCloseTimestamp(),
+        settlementTime: 1788609600000, winningOption: "NO",
         isEnded: true, // STRICTLY AND PERMANENTLY CLOSED AT 09:30 UTC
         getDeadline: function() { return 1788600600000; },
         optA: "YES",
@@ -3560,7 +3553,7 @@
         desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
         deadline: 1788602400000,
-        settlementTime: get12HCandleCloseTimestamp(),
+        settlementTime: 1788609600000, winningOption: "NO",
         isEnded: false,
         getDeadline: function() { return 1788602400000; },
         optA: "YES",
@@ -3578,7 +3571,7 @@
         desc: "1-Hour Entry Window | 12H Candle Closes at 12:00 UTC",
         deadlineDesc: "1-Hour Entry Window",
         deadline: 1788602400000,
-        settlementTime: get12HCandleCloseTimestamp(),
+        settlementTime: 1788609600000, winningOption: "NO",
         isEnded: false,
         getDeadline: function() { return 1788602400000; },
         optA: "YES",
@@ -3654,7 +3647,7 @@
 
     function formatRemainingTime(deadlineMs) {
       const diff = (deadlineMs || 0) - Date.now();
-      if (diff <= 0) return { expired: true, text: "DEADLINE PASSED", short: "EXPIRED" };
+      if (diff <= 0) return { expired: true, text: "CLOSED (00:00:00)", short: "CLOSED" };
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const secs = Math.floor((diff % (1000 * 60)) / 1000);
@@ -3759,7 +3752,7 @@
                 <div class="p-2 rounded-xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between gap-2 font-mono text-[11px]">
                   <div class="flex items-center gap-1.5 text-cyan-300 font-medium">
                     <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <span>⏳ 12H Candle Close: <span id="q-candle-remaining-${q.id}" class="text-amber-300 font-bold">${formatRemainingTime(get12HCandleCloseTimestamp()).text}</span></span>
+                    <span>⏳ 12H Candle Close: <span id="q-candle-remaining-${q.id}" class="text-amber-300 font-bold">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
                   </div>
                   <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">Target: 12:00 UTC</span>
                 </div>
@@ -4051,7 +4044,7 @@
       const qId = getDuelQuestionId(duelData);
       const q = getQuestionById(qId);
       const entryDeadline = q ? (typeof q.getDeadline === "function" ? q.getDeadline() : Number(q.deadline)) : getQuestionEntryDeadline(qId);
-      const resolutionTime = q ? (Number(q.settlementTime) || Number(q.resolutionTime) || get12HCandleCloseTimestamp()) : get12HCandleCloseTimestamp();
+      const resolutionTime = q ? (Number(q.settlementTime) || Number(q.resolutionTime) || getQuestionSettlementTime(qId)) : getQuestionSettlementTime(qId);
       const now = Date.now();
 
       const hasOpponent = !!(duelData.opponent && duelData.opponent !== "0x0000000000000000000000000000000000000000");
@@ -4687,7 +4680,15 @@
         const el = document.querySelector(`.q-timer-display[data-qid="${q.id}"]`);
         const candleRemEl = document.getElementById(`q-candle-remaining-${q.id}`);
         if (candleRemEl) {
-          candleRemEl.textContent = formatRemainingTime(get12HCandleCloseTimestamp()).text;
+          const sTime = q.settlementTime || getQuestionSettlementTime(q.id);
+          const isCandlePassed = Date.now() >= sTime;
+          if (isCandlePassed) {
+            candleRemEl.textContent = "CLOSED (00:00:00)";
+            candleRemEl.className = "text-slate-400 font-bold tracking-wide";
+          } else {
+            candleRemEl.textContent = formatRemainingTime(sTime).text;
+            candleRemEl.className = "text-amber-300 font-bold";
+          }
         }
         const entryRemEl = document.getElementById(`q-entry-remaining-${q.id}`);
         if (entryRemEl) {
