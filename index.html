@@ -6970,6 +6970,15 @@ window.handleCreateQuestion = async function(e) {
         <h3 class="text-lg font-black text-white font-mono">Create On-Chain Market</h3>
       </div>
       
+      
+      <!-- Zero-Frontrunning Fair Play Banner -->
+      <div class="p-2.5 mb-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-start gap-2 text-cyan-300">
+        <span class="text-base">⚖️</span>
+        <div>
+          <p class="text-[11px] font-bold text-cyan-200">Fair Play & Anti-Frontrunning Law (قانون بسته شدن پیش از لایو):</p>
+          <p class="text-[10px] text-cyan-300/80 leading-snug">تمام چالش‌ها باید قبل از شروع زنده رویداد/باز شدن کندل طرح شوند. مهلت ورود (Entry Window) حتماً و قطعاً باید قبل از آغاز رویداد (Candle Open / Kickoff) بسته شود تا امکان فرانت‌رانینگ صفر باشد.</p>
+        </div>
+      </div>
       <!-- Creator Economy Banner -->
       <div class="p-3 mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-2.5">
         <span class="text-emerald-400 text-lg">💰</span>
@@ -7007,7 +7016,18 @@ window.handleCreateQuestion = async function(e) {
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        
+        <!-- Timeframe / Fair Play Preset -->
+        <div>
+          <label class="text-slate-400 text-[11px] block mb-1">Timing & Fair Play Preset (زمان‌بندی استاندارد)</label>
+          <select id="newQFairPlayPreset" onchange="applyTimingPreset(this.value)" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-3 py-2.5 text-cyan-300 focus:outline-none focus:border-cyan-400 font-bold">
+            <option value="daily_candle" selected>📅 Next Daily Candle (Entry closes at 00:00 UTC Open | Settles at Close)</option>
+            <option value="1h_candle">⚡ Next 1-Hour Candle (Entry closes at Top of Hour | Settles at Close)</option>
+            <option value="4h_candle">⏳ Next 4-Hour Candle (Entry closes at 4H Open | Settles at Close)</option>
+            <option value="custom">🛠️ Custom Timing</option>
+          </select>
+        </div>
+        <div id="customTimingBlock" class="grid grid-cols-2 gap-3 mt-2">
           <div>
             <label class="text-slate-400 text-[11px] block mb-1">Entry Window (Duration)</label>
             <select id="newQEntryDuration" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-cyan-400">
@@ -7058,6 +7078,36 @@ window.handleCreateQuestion = async function(e) {
       }
     }
     
+    
+    function applyTimingPreset(preset) {
+      const titleInput = document.getElementById("newQTitle");
+      const category = document.getElementById("newQCategory").value;
+      const resInput = document.getElementById("newQResolution");
+      
+      const now = Math.floor(Date.now() / 1000);
+      
+      if (preset === "1h_candle") {
+        // Next top of the hour
+        const nextHour = Math.ceil(now / 3600) * 3600;
+        const entrySeconds = Math.max(300, nextHour - now);
+        const settleSeconds = nextHour + 3600; // 1 hour after open
+        
+        if (titleInput && !titleInput.value.trim()) {
+          const d = new Date(nextHour * 1000);
+          titleInput.value = `Bitcoin 1-Hour Candle (${d.getUTCHours()}:00 UTC) Close: GREEN or RED?`;
+        }
+        if (resInput) resInput.value = "Coinbase BTC-USD 1-Hour Candle";
+      } else if (preset === "4h_candle") {
+        const next4H = Math.ceil(now / 14400) * 14400;
+        if (titleInput && !titleInput.value.trim()) {
+          titleInput.value = "Bitcoin 4-Hour Candle Close: GREEN or RED?";
+        }
+        if (resInput) resInput.value = "Coinbase BTC-USD 4-Hour Candle";
+      } else if (preset === "daily_candle") {
+        if (resInput) resInput.value = "Coinbase BTC-USD Daily Candle Close";
+      }
+    }
+  
     function openCreateQuestionModal() {
       const modal = document.getElementById("createQuestionModal");
       if (modal) modal.classList.remove("hidden");
