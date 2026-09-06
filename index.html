@@ -5328,6 +5328,28 @@
         }
         if (durationSec > 86400 * 30) durationSec = 86400 * 30;
 
+        // 🛡️ ON-CHAIN CRYPTOGRAPHIC ANTI-TAMPER VERIFICATION
+        if (q && q.isOnchain && window.QUESTION_REGISTRY_ADDRESS) {
+          try {
+            const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, provider);
+            const onchainQ = await regContract.getQuestion(q.id);
+            const liveHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(onchainQ.title));
+            const uiHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(q.title));
+            if (liveHash !== uiHash) {
+              showToast("🚨 TAMPERING DETECTED! Frontend title does not match on-chain registry!", "error");
+              if (btn) btn.disabled = false;
+              return;
+            }
+            if (onchainQ.isClosed || onchainQ.isSettled) {
+              showToast("⚠️ Question is closed/settled on-chain!", "warning");
+              if (btn) btn.disabled = false;
+              return;
+            }
+          } catch (verifErr) {
+            console.warn("On-chain question verification check:", verifErr);
+          }
+        }
+
         const cleanTopic = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
 
         const tx = await DUEL_CONTRACT.createDuelToken(
