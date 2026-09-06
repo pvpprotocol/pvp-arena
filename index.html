@@ -1912,6 +1912,18 @@
     ];
 
     var DUEL_CONTRACT_ADDRESS = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
+    var QUESTION_REGISTRY_ADDRESS = "0x5544caed6f15e8bb9b795a59ed0d7da4f7a9a806";
+    var QUESTION_REGISTRY_ABI = [
+      "function owner() view returns (address)",
+      "function backupAdmin() view returns (address)",
+      "function isAuthorizedCreator(address) view returns (bool)",
+      "function nextQuestionId() view returns (uint256)",
+      "function getAllQuestions() view returns (tuple(uint256 id, string title, string category, string resolutionSource, uint256 entryDeadline, uint256 settlementTime, bool isDynamicSettlement, uint256[] allowedTiers, bool isClosed, bool isSettled, uint8 winningOutcome, uint256 settledAt)[])",
+      "function getQuestion(uint256 qId) view returns (tuple(uint256 id, string title, string category, string resolutionSource, uint256 entryDeadline, uint256 settlementTime, bool isDynamicSettlement, uint256[] allowedTiers, bool isClosed, bool isSettled, uint8 winningOutcome, uint256 settledAt))",
+      "function createQuestion(string title, string category, string resolutionSource, uint256 entryDeadline, uint256 settlementTime, bool isDynamicSettlement, uint256[] allowedTiers) returns (uint256)",
+      "function closeQuestion(uint256 qId)",
+      "function settleQuestion(uint256 qId, uint8 winningOutcome)"
+    ];
     var DUEL_ABI = PVP_DUEL_ABI;
     var PVP_DUEL_ABI = [
       "function cancelDuel(uint256 duelId) external",
@@ -5778,7 +5790,68 @@
     });
   }
 
-  window.handleCreateQuestion = function(e) {
+  
+    // --- ON-CHAIN QUESTION REGISTRY INTEGRATION (Robinhood Chain) ---
+    async function loadOnchainQuestions() {
+      try {
+        const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.robinhood.com");
+        const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, rpcProvider);
+        const onchainList = await regContract.getAllQuestions();
+        if (onchainList && onchainList.length > 0) {
+          onchainList.forEach(q => {
+            const qId = q.id.toNumber();
+            const entryDeadline = q.entryDeadline.toNumber() * 1000;
+            const settlementTime = q.settlementTime.toNumber() * 1000;
+            const isSettled = q.isSettled;
+            const outcomeNum = q.winningOutcome;
+            let winningOption = null;
+            if (outcomeNum === 1) winningOption = "GREEN";
+            else if (outcomeNum === 2) winningOption = "RED";
+            else if (outcomeNum === 3) winningOption = "REFUND";
+
+            const isEnded = q.isClosed || isSettled || (entryDeadline && Date.now() >= entryDeadline);
+
+            const qObj = {
+              id: qId,
+              qNum: qId,
+              isOnchain: true,
+              category: q.category || "ONCHAIN",
+              title: q.title,
+              desc: q.resolutionSource ? ("Source: " + q.resolutionSource) : "On-Chain Registered Question",
+              deadlineDesc: "On-Chain Entry Window",
+              deadline: entryDeadline,
+              settlementTime: settlementTime,
+              winningOption: winningOption,
+              isEnded: isEnded,
+              getDeadline: function() { return entryDeadline; },
+              optA: "YES",
+              optALabel: "GREEN",
+              optASub: "Green Close",
+              optB: "NO",
+              optBLabel: "RED",
+              optBSub: "Red Close"
+            };
+
+            const existIdx = DUEL_QUESTIONS.findIndex(item => item.id === qId);
+            if (existIdx !== -1) {
+              DUEL_QUESTIONS[existIdx] = { ...DUEL_QUESTIONS[existIdx], ...qObj };
+            } else {
+              DUEL_QUESTIONS.unshift(qObj);
+            }
+          });
+
+          if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+          if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
+        }
+      } catch (err) {
+        console.warn("loadOnchainQuestions notice:", err);
+      }
+    }
+    window.loadOnchainQuestions = loadOnchainQuestions;
+    // Auto load on init
+    setTimeout(loadOnchainQuestions, 1000);
+
+window.handleCreateQuestion = async function(e) {
     e.preventDefault();
     const title = document.getElementById("newQTitle").value.trim();
     const category = document.getElementById("newQCategory").value.trim() || "GENERAL";
@@ -5788,6 +5861,48 @@
     const optB = document.getElementById("newQOptB").value.trim() || "RED";
     const optBSub = document.getElementById("newQOptBSub").value.trim() || "Red Close";
     const desc = document.getElementById("newQDesc").value.trim() || (Math.round(duration/3600) + "-Hour Entry Window");
+    const statusEl = document.getElementById("createQStatus");
+
+    // Check if web3 wallet is connected for on-chain submission
+    if (window.ethereum && typeof ethers !== "undefined") {
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const signerAddr = await signer.getAddress();
+        if (statusEl) statusEl.innerHTML = `<span class="text-amber-400 animate-pulse">Submitting to Robinhood Chain QuestionRegistry (0x5544...a806)...</span>`;
+
+        const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, signer);
+        const nowSec = Math.floor(Date.now() / 1000);
+        const entryDeadlineSec = nowSec + duration;
+        const settlementSec = entryDeadlineSec + duration;
+        const tiers = [1, 5, 10, 100, 1000];
+
+        const tx = await regContract.createQuestion(
+          title,
+          category.toUpperCase(),
+          "Official Reference (Coinbase / League)",
+          entryDeadlineSec,
+          settlementSec,
+          false,
+          tiers,
+          { gasLimit: 400000 }
+        );
+
+        if (statusEl) statusEl.innerHTML = `<span class="text-cyan-400 animate-pulse">Broadcast: ${tx.hash.slice(0, 12)}... Confirming...</span>`;
+        await tx.wait(1);
+
+        if (statusEl) {
+          statusEl.innerHTML = `✅ On-Chain Question created! <a href="https://explorer.mainnet.chain.robinhood.com/tx/${tx.hash}" target="_blank" class="underline text-amber-400">View Explorer</a>`;
+          setTimeout(() => { if (statusEl) statusEl.innerText = ""; }, 10000);
+        }
+        document.getElementById("createQuestionForm").reset();
+        await loadOnchainQuestions();
+        return;
+      } catch (err) {
+        console.warn("On-chain question create failed, falling back to local:", err);
+        if (statusEl) statusEl.innerHTML = `<span class="text-rose-400 text-xs">On-chain err: ${err.reason || err.message || "reverted"}. Storing locally...</span>`;
+      }
+    }
 
     const newId = DUEL_QUESTIONS.length > 0 ? Math.max(...DUEL_QUESTIONS.map(q => q.id || 0)) + 1 : 1;
     const now = Date.now();
@@ -5818,9 +5933,8 @@
     renderAdminQuestionsTable();
     if (typeof renderDuelQuestions === "function") renderDuelQuestions();
 
-    const statusEl = document.getElementById("createQStatus");
     if (statusEl) {
-      statusEl.innerText = "✅ Question #" + newId + " published live!";
+      statusEl.innerText = "✅ Question #" + newId + " published live (Local)!";
       setTimeout(() => { statusEl.innerText = ""; }, 4000);
     }
     document.getElementById("createQuestionForm").reset();
