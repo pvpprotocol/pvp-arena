@@ -42,3 +42,15 @@ pvphub.fun operates on a strict **Draw No Bet (DNB)** model:
   - The duel is treated as a **PUSH / VOID**.
   - **100% of the wagered funds are instantly unlocked and refundable to both players.**
   - **Zero fees (0%)** are charged — no platform cut, no creator fee, and no penalty. Both participants retain their exact capital.
+
+
+## 5. Fair Play & Zero-Frontrunning Law (Pre-Event Entry Deadline Standard)
+
+To maintain strict mathematical fairness and eliminate any possibility of front-running:
+- **Challenge Creation:** All questions/challenges must be submitted to the blockchain **prior** to the live opening of the event or candle.
+- **Entry Window Cutoff (Candle Open / Match Kickoff):**
+  - The entry deadline (`entryDeadline`) must strictly expire **before or at the exact timestamp of the candle open or match kickoff**.
+  - Once the candle begins forming or the match kicks off, the entry window is sealed shut (`ENTRY CLOSED`).
+  - **No participant can enter an in-progress candle or live game.** This prevents any player from observing early momentum (e.g. green wick pumping 10 minutes in) and unfairly exploiting an opponent.
+- **Duel State During Event:** Matched duels remain securely locked in the smart contract escrow during the live event.
+- **Settlement:** The oracle settles the outcome strictly upon the official close of the candle or final match whistle.
