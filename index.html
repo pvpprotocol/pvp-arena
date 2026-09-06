@@ -1938,7 +1938,7 @@
     ];
 
     var DUEL_CONTRACT_ADDRESS = "0x95E95BD305aD328AfEd15400903124B59bcc349b";
-    var QUESTION_REGISTRY_ADDRESS = "0x5544caed6f15e8bb9b795a59ed0d7da4f7a9a806";
+    var QUESTION_REGISTRY_ADDRESS = "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5";
     var QUESTION_REGISTRY_ABI = [
       "function owner() view returns (address)",
       "function backupAdmin() view returns (address)",
@@ -3589,7 +3589,7 @@
         winningOption: null,
         isEnded: false,
         resolutionSource: "Coinbase BTC-USD Daily Candle",
-        contract: "0x5544caed6f15e8bb9b795a59ed0d7da4f7a9a806",
+        contract: "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5",
         explorerTx: "https://explorer.mainnet.chain.robinhood.com/tx/0x5404aa81fef5ebc9546862baa42f6e2744c4557d851c176d36d5f904e091b574",
         allowedTiers: [1, 5, 10, 100, 1000],
         getDeadline: function() { return 1788707557000; },
@@ -7058,7 +7058,7 @@ window.handleCreateQuestion = async function(e) {
           "function createQuestion(string title, string category, string resolutionSource, uint256 entryDeadline, uint256 settlementTime, bool isDynamicSettlement, uint256[] allowedTiers) returns (uint256)"
         ];
 
-        const registryContract = new ethers.Contract("0x5544caed6f15e8bb9b795a59ed0d7da4f7a9a806", registryAbi, signer);
+        const registryContract = new ethers.Contract("0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5", registryAbi, signer);
 
         const tx = await registryContract.createQuestion(
           title,
