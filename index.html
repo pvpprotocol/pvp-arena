@@ -1537,10 +1537,28 @@
             Two participants lock equal collateral into the canonical escrow smart contract. Upon verified outcome resolution, funds are automatically distributed as follows:
           </p>
           <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
-            <li><strong class="text-white">90%</strong> allocated directly to the verified winner</li>
-            <li><strong class="text-white">3%</strong> rebate cashback returned to the runner up wallet</li>
-            <li><strong class="text-white">7%</strong> protocol treasury fee for buybacks and rewards</li>
+            <li><strong class="text-white">90%</strong> allocated directly to the verified winner (Net Profit Payout)</li>
+            <li><strong class="text-emerald-400">5%</strong> Question Creator Fee transferred directly and in cash to the market creator's wallet for every settled duel</li>
+            <li><strong class="text-cyan-400">3%</strong> rebate cashback returned to the runner-up wallet to preserve liquidity and enable immediate re-entry</li>
+            <li><strong class="text-slate-400">2%</strong> protocol treasury fee for platform maintenance and buybacks</li>
           </ul>
+          
+          <!-- CREATOR ECONOMY & 5% FEE SECTION IN WHITEPAPER -->
+          <div class="mt-6 p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">✨</span>
+              <h3 class="text-base font-bold text-emerald-400 font-mono">Permissionless Market Creation & 5% Creator Cash Reward</h3>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed font-mono">
+              PvP Arena operates as a completely permissionless protocol. Any user can create and deploy custom prediction markets directly on-chain through the <strong class="text-white">+ Create Market</strong> portal.
+            </p>
+            <ul class="list-disc list-inside text-sm text-slate-300 space-y-1.5 pl-2 font-mono">
+              <li><strong class="text-emerald-400">5% Cash Payout to Question Creator:</strong> The designer of any question earns an automatic 5% cash reward from the total pot of every settled duel under that question.</li>
+              <li><strong class="text-white">Anti-Spam Gas Policy:</strong> Question creators pay standard blockchain gas fees directly from their own connected wallet, ensuring high-quality, spam-free markets.</li>
+              <li><strong class="text-cyan-400">Instant Onchain Distribution:</strong> Creator rewards are routed directly to the creator's wallet at the moment of match settlement.</li>
+            </ul>
+          </div>
+
           <div class="mt-6 pt-4 border-t border-white/10">
             <h3 class="text-base font-bold text-cyan-300 font-mono mb-3">Core Rules</h3>
             <ol class="list-decimal list-inside text-sm text-slate-300 space-y-3 pl-2">
