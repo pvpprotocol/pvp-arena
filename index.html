@@ -3748,13 +3748,13 @@
                   ${isLive ? '<span class="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30">ENTRY OPEN</span>' : '<span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">ENTRY CLOSED</span>'}
                 </div>
 
-                <!-- 12H CANDLE CLOSE TARGET -->
+                <!-- EVENT & VARIABLE SETTLEMENT TARGET -->
                 <div class="p-2 rounded-xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between gap-2 font-mono text-[11px]">
                   <div class="flex items-center gap-1.5 text-cyan-300 font-medium">
                     <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <span>⏳ 12H Candle Close: <span id="q-candle-remaining-${q.id}" class="text-amber-300 font-bold">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
+                    <span>⏳ ${q.settlementLabel || (q.title && q.title.toLowerCase().includes("candle") ? "Candle Close" : (q.category === "sports" ? "Match End" : (q.category === "economy" ? "Report Release" : "Event Settlement")))}: <span id="q-candle-remaining-${q.id}" class="text-amber-300 font-bold">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
                   </div>
-                  <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">Target: 12:00 UTC</span>
+                  <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">${q.targetDesc || (q.title && q.title.toLowerCase().includes("candle") ? "Target: 12:00 UTC" : "Official Outcome")}</span>
                 </div>
               </div>
 
@@ -4683,7 +4683,7 @@
           const sTime = q.settlementTime || getQuestionSettlementTime(q.id);
           const isCandlePassed = Date.now() >= sTime;
           if (isCandlePassed) {
-            candleRemEl.textContent = "CLOSED (00:00:00)";
+            candleRemEl.textContent = "SETTLED / CLOSED";
             candleRemEl.className = "text-slate-400 font-bold tracking-wide";
           } else {
             candleRemEl.textContent = formatRemainingTime(sTime).text;
