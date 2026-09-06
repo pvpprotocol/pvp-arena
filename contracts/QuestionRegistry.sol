@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 /**
  * @title QuestionRegistry
  * @notice Canonical On-Chain Question & Oracle Registry for PvP Arena
- * @dev Multi-admin registry with Gas Tank refund support on Robinhood Chain
+ * @dev Permissionless market creation with 5% Creator Fee law and Anti-Spam gas policy
  */
 contract QuestionRegistry {
     address public owner;
@@ -14,6 +14,7 @@ contract QuestionRegistry {
 
     struct Question {
         uint256 id;
+        address creator;
         string title;
         string category;
         string resolutionSource;
@@ -32,6 +33,7 @@ contract QuestionRegistry {
 
     event QuestionCreated(
         uint256 indexed id,
+        address indexed creator,
         string title,
         string category,
         uint256 entryDeadline,
@@ -45,10 +47,10 @@ contract QuestionRegistry {
     event CreatorAuthUpdated(address indexed creator, bool status);
     event GasTankFunded(address indexed sender, uint256 amount);
 
-    modifier onlyAuthorized() {
+    modifier onlyAdmin() {
         require(
             msg.sender == owner || msg.sender == backupAdmin || isAuthorizedCreator[msg.sender],
-            "Not authorized"
+            "Not authorized admin"
         );
         _;
     }
@@ -72,6 +74,11 @@ contract QuestionRegistry {
         emit GasTankFunded(msg.sender, msg.value);
     }
 
+    /**
+     * @notice Permissionless Question Creation (Any user can design and launch a market)
+     * @dev Creator pays their own transaction gas fee (Anti-Spam policy)
+     * Creator earns 5% of total pool from every duel settled under this question
+     */
     function createQuestion(
         string calldata title,
         string calldata category,
@@ -80,12 +87,17 @@ contract QuestionRegistry {
         uint256 settlementTime,
         bool isDynamicSettlement,
         uint256[] calldata allowedTiers
-    ) external onlyAuthorized returns (uint256) {
+    ) external returns (uint256) {
         uint256 startGas = gasleft();
+        require(bytes(title).length > 0, "Title required");
+        require(entryDeadline > block.timestamp, "Entry deadline must be in future");
+        require(settlementTime >= entryDeadline, "Settlement must be >= entry deadline");
+
         uint256 qId = nextQuestionId++;
 
         questions[qId] = Question({
             id: qId,
+            creator: msg.sender,
             title: title,
             category: category,
             resolutionSource: resolutionSource,
@@ -99,13 +111,17 @@ contract QuestionRegistry {
             settledAt: 0
         });
 
-        emit QuestionCreated(qId, title, category, entryDeadline, settlementTime, isDynamicSettlement);
+        emit QuestionCreated(qId, msg.sender, title, category, entryDeadline, settlementTime, isDynamicSettlement);
 
-        _autoRefundGas(startGas);
+        // Anti-Spam gas policy: only official admins receive gas tank refund
+        if (msg.sender == owner || msg.sender == backupAdmin || isAuthorizedCreator[msg.sender]) {
+            _autoRefundGas(startGas);
+        }
+
         return qId;
     }
 
-    function closeQuestion(uint256 qId) external onlyAuthorized {
+    function closeQuestion(uint256 qId) external onlyAdmin {
         uint256 startGas = gasleft();
         require(questions[qId].id != 0, "Question not found");
         require(!questions[qId].isClosed, "Already closed");
@@ -116,7 +132,7 @@ contract QuestionRegistry {
         _autoRefundGas(startGas);
     }
 
-    function settleQuestion(uint256 qId, uint8 winningOutcome) external onlyAuthorized {
+    function settleQuestion(uint256 qId, uint8 winningOutcome) external onlyAdmin {
         uint256 startGas = gasleft();
         require(questions[qId].id != 0, "Question not found");
         require(!questions[qId].isSettled, "Already settled");
@@ -146,6 +162,11 @@ contract QuestionRegistry {
     function getQuestion(uint256 qId) external view returns (Question memory) {
         require(questions[qId].id != 0, "Question not found");
         return questions[qId];
+    }
+
+    function getQuestionCreator(uint256 qId) external view returns (address) {
+        require(questions[qId].id != 0, "Question not found");
+        return questions[qId].creator;
     }
 
     function getAllQuestions() external view returns (Question[] memory) {
