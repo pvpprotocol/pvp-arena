@@ -271,15 +271,15 @@
                 <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 2</span>
                 <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Select Stake Tier</h4>
               </div>
-              <span id="selected-tier-payout" class="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20">Winner: +$9.00 USDG</span>
+              <span id="selected-tier-payout" class="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20">Winner: +$1.80 USDG</span>
             </div>
             <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDG. Winner takes 90%, 3% auto-cashback, 7% platform fee.</p>
             
             <div class="grid grid-cols-5 gap-2 pt-1">
-              <button onclick="selectDuelTier(0.01)" id="tier-btn-0.01" class="tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20">
-                <span class="block text-[10px] text-cyan-300 font-bold uppercase">TEST</span>
-                <span class="block text-xs font-black text-white mt-0.5">$0.01</span>
-                <span class="block text-[9px] text-emerald-400/80 font-bold mt-0.5">+$0.018</span>
+              <button onclick="selectDuelTier(1)" id="tier-btn-1" class="tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20">
+                <span class="block text-[10px] text-cyan-300 font-bold uppercase">Micro</span>
+                <span class="block text-xs font-black text-white mt-0.5">$1</span>
+                <span class="block text-[9px] text-emerald-400 font-bold mt-0.5">+$1.80</span>
               </button>
               <button onclick="selectDuelTier(5)" id="tier-btn-5" class="tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20">
                 <span class="block text-[10px] text-cyan-300 font-bold uppercase">Standard</span>
@@ -3613,7 +3613,7 @@
     ];
 
     let selectedDuelQuestionId = 16;
-    let selectedDuelTier = 0.01;
+    let selectedDuelTier = 1;
     let selectedDuelOption = 'YES';
     let activeQuestionTab = 'live'; // 'live' or 'ended'
 
@@ -3806,7 +3806,7 @@
 
     function selectDuelTier(tier) {
       selectedDuelTier = tier;
-      const tiers = [0.01, 1, 5, 10, 100, 1000];
+      const tiers = [1, 5, 10, 100, 1000];
       tiers.forEach(t => {
         const btn = document.getElementById(`tier-btn-${t}`);
         if (!btn) return;
@@ -4150,7 +4150,7 @@
                 const onchainDeadlineSec = parseInt(log.data.slice(130, 194), 16);
                 const exactOnchainDeadlineMs = (onchainDeadlineSec > 0 && onchainDeadlineSec < 2500000000) ? (onchainDeadlineSec * 1000) : (Date.now() + 900000);
 
-                let tierStr = "0.01";
+                let tierStr = "1";
                 if (isUsdg) {
                   tierStr = (wagerRaw / 1000000).toString();
                 } else {
