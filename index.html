@@ -6998,7 +6998,7 @@ window.handleCreateQuestion = async function(e) {
         <!-- Sports DNB Rule Box (Visible when SPORTS is chosen) -->
         <div id="sportsDnbNotice" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300">
           <p class="font-bold flex items-center gap-1.5 text-[11px]"><span>⚽</span> Draw No Bet (قانون بازگشت وجه در تساوی):</p>
-          <p class="text-[10px] text-amber-200/80 mt-0.5 leading-relaxed">در مسابقات فوتبال/ورزشی: گزینه ۱ تیم الف و گزینه ۲ تیم ب است. در صورت تساوی (Draw) در پایان ۹۰ دقیقه، مسابقه لغو و ۱۰۰٪ پول هر دو بازیکن بدون کسر کارمزد برگردانده می‌شود.</p>
+          <p class="text-[10px] text-amber-200/80 mt-0.5 leading-relaxed">در مسابقات فوتبال/ورزشی: گزینه ۱ تیم الف و گزینه ۲ تیم ب است. در صورت تساوی (Draw) در پایان فول تایم (Full-Time)، مسابقه لغو و ۱۰۰٪ پول هر دو بازیکن بدون کسر کارمزد برگردانده می‌شود.</p>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -7069,8 +7069,8 @@ window.handleCreateQuestion = async function(e) {
       const resInput = document.getElementById("newQResolution");
       if (val === "SPORTS") {
         if (notice) notice.classList.remove("hidden");
-        if (titleInput && !titleInput.value) titleInput.placeholder = "e.g. Real Madrid vs Arsenal (Draw = 100% Refund)";
-        if (resInput) resInput.value = "Official Match Result (Full-Time 90min)";
+        if (titleInput && !titleInput.value) titleInput.placeholder = "e.g. Real Madrid vs Barcelona (Draw = 100% Refund)";
+        if (resInput) resInput.value = "Official Match Result (Full-Time)";
       } else {
         if (notice) notice.classList.add("hidden");
         if (titleInput && !titleInput.value) titleInput.placeholder = "e.g. Ethereum Daily Candle Close: GREEN or RED?";
