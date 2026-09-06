@@ -3547,7 +3547,7 @@
         deadline: 1788682800000,
         settlementTime: 1788685200000,
         isEnded: false,
-        getDeadline: function() { return 1788682500000; },
+        getDeadline: function() { return 1788682800000; },
         optA: "YES",
         optALabel: "GREEN",
         optASub: "Green Close",
@@ -5699,12 +5699,23 @@
   // Load custom questions from localStorage if exists
   function loadStoredQuestions() {
     try {
+      // Clear legacy cache to ensure latest code-defined questions take precedence
+      const version = localStorage.getItem("PVP_QUESTIONS_V");
+      if (version !== "v20m_18") {
+        localStorage.removeItem("PVP_CUSTOM_QUESTIONS");
+        localStorage.setItem("PVP_QUESTIONS_V", "v20m_18");
+        return;
+      }
       const stored = localStorage.getItem("PVP_CUSTOM_QUESTIONS");
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          DUEL_QUESTIONS.length = 0;
-          parsed.forEach(q => DUEL_QUESTIONS.push(q));
+          // Merge custom questions only (id > 100)
+          parsed.filter(q => q && q.id > 100).forEach(q => {
+            if (!DUEL_QUESTIONS.some(existing => existing.id === q.id)) {
+              DUEL_QUESTIONS.push(q);
+            }
+          });
         }
       }
     } catch(e) {
