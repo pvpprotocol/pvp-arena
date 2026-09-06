@@ -1,8 +1,7 @@
 // Automated Oracle & Settlement Keeper for PvP Arena (Robinhood Chain)
-// Automatically evaluates market resolutions (e.g. Coinbase Daily BTC Candle)
-// and executes on-chain settlement on QuestionRegistry and PvP duels.
+// Evaluates Coinbase BTC-USD daily candle close and executes on-chain settlement on QuestionRegistry.
 
-const { ethers } = require("ethers");
+const ethers = require("ethers");
 
 const RPC_URL = process.env.ROBINHOOD_RPC || "https://rpc.mainnet.chain.robinhood.com";
 const REGISTRY_ADDRESS = process.env.QUESTION_REGISTRY_ADDRESS || "0x5544caed6f15e8bb9b795a59ed0d7da4f7a9a806";
@@ -15,6 +14,16 @@ const REGISTRY_ABI = [
   "function settleQuestion(uint256 qId, uint8 winningOutcome) external"
 ];
 
+// Universal provider constructor (compatible with ethers v5 and v6)
+function getProvider(url) {
+  if (ethers.JsonRpcProvider) {
+    return new ethers.JsonRpcProvider(url);
+  } else if (ethers.providers && ethers.providers.JsonRpcProvider) {
+    return new ethers.providers.JsonRpcProvider(url);
+  }
+  throw new Error("ethers JsonRpcProvider not found");
+}
+
 async function fetchCoinbaseBtcDailyCandle(settlementTimestamp) {
   const url = "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400";
   const res = await fetch(url, { headers: { "User-Agent": "PvP-Oracle-Keeper" } });
@@ -23,7 +32,6 @@ async function fetchCoinbaseBtcDailyCandle(settlementTimestamp) {
   if (!Array.isArray(candles) || candles.length === 0) throw new Error("Invalid candles format");
 
   // Coinbase candles: [ timestamp, low, high, open, close, volume ]
-  // Match candle closest to the settlement date
   let matched = candles[0];
   for (const c of candles) {
     if (c[0] <= settlementTimestamp) {
@@ -32,10 +40,10 @@ async function fetchCoinbaseBtcDailyCandle(settlementTimestamp) {
     }
   }
 
-  const open = matched[3];
-  const close = matched[4];
+  const open = parseFloat(matched[3]);
+  const close = parseFloat(matched[4]);
   const candleTime = new Date(matched[0] * 1000).toISOString();
-  console.log("Matched Candle:", candleTime, "Open:", open, "Close:", close);
+  console.log("Matched Coinbase Candle:", candleTime, "Open:", open, "Close:", close);
 
   // 1: GREEN / YES (close >= open), 2: RED / NO (close < open)
   return close >= open ? 1 : 2;
@@ -45,7 +53,7 @@ async function runOracleSettlement() {
   console.log("=== Starting Automated Settlement Keeper ===");
   console.log("Current UTC Time:", new Date().toISOString());
 
-  const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
+  const provider = getProvider(RPC_URL);
   const block = await provider.getBlock("latest");
   const currentBlockTime = block.timestamp;
   console.log("Latest Robinhood Block:", block.number, "Timestamp:", currentBlockTime);
@@ -55,27 +63,30 @@ async function runOracleSettlement() {
     signer = new ethers.Wallet(PRIVATE_KEY, provider);
     console.log("Signer Address:", signer.address);
   } else {
-    console.log("No private key configured (read-only simulation mode)");
+    console.log("No private key configured (read-only monitoring & dry-run mode)");
   }
 
   const contract = new ethers.Contract(REGISTRY_ADDRESS, REGISTRY_ABI, signer || provider);
-  const total = (await contract.questionCount()).toNumber();
+  const rawCount = await contract.questionCount();
+  const total = Number(rawCount);
   console.log("Total Registered Questions:", total);
 
   for (let id = 1; id <= total; id++) {
     const q = await contract.getQuestion(id);
+    const qSettlementTime = Number(q.settlementTime);
     console.log("\n--- Checking Question #" + id + " --- " + q.title);
-    console.log("Settlement Time:", new Date(q.settlementTime.toNumber() * 1000).toISOString());
+    console.log("Resolution Source:", q.resolutionSource);
+    console.log("Settlement Time:", new Date(qSettlementTime * 1000).toISOString());
     console.log("Status:", q.isSettled ? "Already Settled (Outcome: " + q.winningOutcome + ")" : "Pending Settlement");
 
     if (q.isSettled) continue;
 
-    if (currentBlockTime >= q.settlementTime.toNumber()) {
+    if (currentBlockTime >= qSettlementTime) {
       console.log(">> Settlement time reached for Question #" + id + ". Evaluating outcome...");
       let outcome = 0;
 
       if (q.resolutionSource.toLowerCase().includes("coinbase")) {
-        outcome = await fetchCoinbaseBtcDailyCandle(q.settlementTime.toNumber());
+        outcome = await fetchCoinbaseBtcDailyCandle(qSettlementTime);
       } else {
         console.warn("Unknown resolution source:", q.resolutionSource);
         continue;
@@ -92,29 +103,36 @@ async function runOracleSettlement() {
         console.log("Tx Confirmed in Block:", receipt.blockNumber);
 
         // Notify relay
-        await fetch("https://ntfy.sh/" + NTFY_TOPIC, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            event: "question_settled",
-            questionId: id,
-            winningOutcome: outcome,
-            outcomeName,
-            settledAt: Date.now(),
-            txHash: tx.hash
-          })
-        });
-        console.log("Broadcasted settlement notification to relay.");
+        try {
+          await fetch("https://ntfy.sh/" + NTFY_TOPIC, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              event: "question_settled",
+              questionId: id,
+              winningOutcome: outcome,
+              outcomeName,
+              settledAt: Date.now(),
+              txHash: tx.hash
+            })
+          });
+          console.log("Broadcasted settlement notification to relay.");
+        } catch (e) {
+          console.warn("Failed to broadcast to relay:", e.message);
+        }
       } else {
         console.log("[DRY-RUN] Question #" + id + " would be settled with outcome: " + outcomeName);
       }
     } else {
-      const remainingSec = q.settlementTime.toNumber() - currentBlockTime;
-      console.log("Settlement not yet due. Remaining: " + Math.floor(remainingSec / 3600) + "h " + Math.floor((remainingSec % 3600) / 60) + "m " + (remainingSec % 60) + "s");
+      const remainingSec = qSettlementTime - currentBlockTime;
+      const hours = Math.floor(remainingSec / 3600);
+      const mins = Math.floor((remainingSec % 3600) / 60);
+      const secs = remainingSec % 60;
+      console.log("Settlement not yet due. Remaining: " + hours + "h " + mins + "m " + secs + "s");
     }
   }
 
-  console.log("\n=== Oracle Keeper Finished ===");
+  console.log("\n=== Oracle Keeper Finished Successfully ===");
 }
 
 if (require.main === module) {
