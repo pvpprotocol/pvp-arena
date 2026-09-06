@@ -30,3 +30,15 @@ PvP Arena operates as a fully permissionless prediction protocol. Any participan
 • **5% Creator Cash Reward:** The creator of any question/market earns an automatic, on-chain 5% cash fee from the total pot of every single duel that is matched and settled under their question.
 • **Anti-Spam Gas Policy:** To maintain market quality and prevent automated spam, question creators pay the standard network gas fees from their own connected wallet.
 • **Direct On-Chain Settlement:** Creator rewards are transferred directly to the creator's wallet upon official duel resolution, creating a recurring revenue stream for active community organizers, analysts, and market makers.
+
+## 4. Sports & 3-Way Market Standard (Draw No Bet / Push Policy)
+
+In traditional sports like Football (Soccer), a match may end in three possible outcomes: Team A Win, Team B Win, or Draw.
+
+pvphub.fun operates on a strict **Draw No Bet (DNB)** model:
+- **Option 1:** Team A (Home / Selection 1)
+- **Option 2:** Team B (Away / Selection 2)
+- **In Case of a Draw (تساوی در پایان بازی):**
+  - The duel is treated as a **PUSH / VOID**.
+  - **100% of the wagered funds are instantly unlocked and refundable to both players.**
+  - **Zero fees (0%)** are charged — no platform cut, no creator fee, and no penalty. Both participants retain their exact capital.
