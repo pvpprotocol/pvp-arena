@@ -161,16 +161,16 @@
           <span>⚔️</span> P2P Duels
         </button>
         <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
-          <span>🎮</span> 2048 Skill
+          <span>🎮</span> 2048 Skill <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">SOON</span>
         </button>
         <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
-          <span>🎯</span> Grand Jackpot
+          <span>🎯</span> Grand Jackpot <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">SOON</span>
         </button>
         <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
-          <span>🏆</span> Leaderboard
+          <span>🏆</span> Leaderboard <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">SOON</span>
         </button>
         <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
-          <span>📜</span> History
+          <span>📜</span> History <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">SOON</span>
         </button>
         <button onclick="switchTab('docs')" id="btn-tab-docs" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
           <span>📖</span> Protocol Docs
@@ -389,6 +389,49 @@
 
     <!-- 2. 2048 SKILL TAB -->
     <div id="tab-vault2048" class="tab-content hidden space-y-6">
+
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-cyan-500/30 bg-gradient-to-b from-cyan-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+      <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold mb-6">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        🔒 COMING SOON • PHASE 2
+      </div>
+
+      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-center text-4xl shadow-inner shadow-black/60">
+        🎮
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl font-black font-mono text-white mb-3 tracking-tight">
+        2048 Tournament Skill Vaults
+      </h2>
+
+      <p class="text-sm sm:text-base text-slate-300 max-w-lg mx-auto mb-6 leading-relaxed">
+        The onchain anti-cheat 2048 tournament engine is currently undergoing final audits and optimization. Only P2P Duels are open during Phase 1.
+      </p>
+
+      <div class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Status:</span>
+          <span class="text-amber-400 font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>Under Audit & Development</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Target Network:</span>
+          <span class="text-cyan-400 font-bold">Robinhood Chain</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Active Flagship Mode:</span>
+          <span class="text-emerald-400 font-bold">P2P Duels (LIVE 🟢)</span>
+        </div>
+      </div>
+
+      <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
+        <span>⚔️</span> PLAY P2P DUELS NOW
+      </button>
+    </div>
+  
+<div id="locked-vault2048-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       
       <!-- HORIZONTAL TICKET TIERS SELECTION (5 COLUMNS ACROSS) -->
       <div>
@@ -925,8 +968,54 @@
 
     </div>
 
+    </div>
+</div>
+
     <!-- 3. GRAND JACKPOT TAB -->
     <div id="tab-jackpot" class="tab-content hidden space-y-8">
+
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-amber-500/30 bg-gradient-to-b from-amber-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+      <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold mb-6">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        🔒 COMING SOON • PHASE 2
+      </div>
+
+      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-center text-4xl shadow-inner shadow-black/60">
+        🎯
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl font-black font-mono text-white mb-3 tracking-tight">
+        Grand Prediction Jackpot
+      </h2>
+
+      <p class="text-sm sm:text-base text-slate-300 max-w-lg mx-auto mb-6 leading-relaxed">
+        The multi-tier grand jackpot and target prediction vaults will unlock in Phase 2 once initial duel liquidity milestones are met.
+      </p>
+
+      <div class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Status:</span>
+          <span class="text-amber-400 font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>Under Audit & Development</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Target Network:</span>
+          <span class="text-cyan-400 font-bold">Robinhood Chain</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Active Flagship Mode:</span>
+          <span class="text-emerald-400 font-bold">P2P Duels (LIVE 🟢)</span>
+        </div>
+      </div>
+
+      <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
+        <span>⚔️</span> PLAY P2P DUELS NOW
+      </button>
+    </div>
+  
+<div id="locked-jackpot-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       
       <!-- ROUND COUNTDOWN & STATUS BANNER -->
       <div class="glass-panel p-6 rounded-3xl border border-cyan-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
@@ -1217,6 +1306,49 @@
 
     <!-- 4. LEADERBOARD TAB -->
     <div id="tab-leaderboard" class="tab-content hidden space-y-6">
+
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-purple-500/30 bg-gradient-to-b from-purple-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+      <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold mb-6">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        🔒 COMING SOON • PHASE 2
+      </div>
+
+      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-center text-4xl shadow-inner shadow-black/60">
+        🏆
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl font-black font-mono text-white mb-3 tracking-tight">
+        Global Onchain Leaderboards
+      </h2>
+
+      <p class="text-sm sm:text-base text-slate-300 max-w-lg mx-auto mb-6 leading-relaxed">
+        The unified global leaderboard tracking duel masteries, win streaks, and net profit rankings will open soon.
+      </p>
+
+      <div class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Status:</span>
+          <span class="text-amber-400 font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>Under Audit & Development</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Target Network:</span>
+          <span class="text-cyan-400 font-bold">Robinhood Chain</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Active Flagship Mode:</span>
+          <span class="text-emerald-400 font-bold">P2P Duels (LIVE 🟢)</span>
+        </div>
+      </div>
+
+      <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
+        <span>⚔️</span> PLAY P2P DUELS NOW
+      </button>
+    </div>
+  
+<div id="locked-leaderboard-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div onclick="setLeaderboardCategory('duel')" id="lb-cat-duel" class="glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">⚔️</span>
@@ -1269,6 +1401,49 @@
 
     <!-- 5. HISTORY TAB -->
     <div id="tab-history" class="tab-content hidden space-y-6">
+
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-blue-500/30 bg-gradient-to-b from-blue-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+      <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold mb-6">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        🔒 COMING SOON • PHASE 2
+      </div>
+
+      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center justify-center text-4xl shadow-inner shadow-black/60">
+        📜
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl font-black font-mono text-white mb-3 tracking-tight">
+        Onchain Settlement & Duel History
+      </h2>
+
+      <p class="text-sm sm:text-base text-slate-300 max-w-lg mx-auto mb-6 leading-relaxed">
+        Live settlement verification and historical duel logs are temporarily locked while indexing services synchronize.
+      </p>
+
+      <div class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Status:</span>
+          <span class="text-amber-400 font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>Under Audit & Development</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Target Network:</span>
+          <span class="text-cyan-400 font-bold">Robinhood Chain</span>
+        </div>
+        <div class="flex items-center justify-between text-slate-300">
+          <span>Active Flagship Mode:</span>
+          <span class="text-emerald-400 font-bold">P2P Duels (LIVE 🟢)</span>
+        </div>
+      </div>
+
+      <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
+        <span>⚔️</span> PLAY P2P DUELS NOW
+      </button>
+    </div>
+  
+<div id="locked-history-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div onclick="setHistoryCategory('duel')" id="hist-cat-duel" class="glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">⚔️</span>
@@ -3272,19 +3447,19 @@
     </button>
     <button onclick="switchTab('vault2048')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
       <span class="text-sm">🎮</span>
-      <span>2048</span>
+      <span>2048 <span class="text-[8px] text-amber-400">🔒</span></span>
     </button>
     <button onclick="switchTab('jackpot')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
       <span class="text-sm">🎯</span>
-      <span>Jackpot</span>
+      <span>Jackpot <span class="text-[8px] text-amber-400">🔒</span></span>
     </button>
     <button onclick="switchTab('leaderboard')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
       <span class="text-sm">🏆</span>
-      <span>Ranks</span>
+      <span>Ranks <span class="text-[8px] text-amber-400">🔒</span></span>
     </button>
     <button onclick="switchTab('history')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
       <span class="text-sm">📜</span>
-      <span>History</span>
+      <span>History <span class="text-[8px] text-amber-400">🔒</span></span>
     </button>
     <button onclick="switchTab('docs')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-slate-300 hover:text-white flex flex-col items-center gap-0.5">
       <span class="text-sm">📖</span>
