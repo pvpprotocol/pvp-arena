@@ -9,12 +9,11 @@ const PRIVATE_KEY = process.env.ORACLE_PRIVATE_KEY || process.env.DEPLOYER_PRIVA
 const NTFY_TOPIC = process.env.NTFY_TOPIC || "pvp-arena-rh-duels-v3";
 
 const REGISTRY_ABI = [
-  "function questionCount() view returns (uint256)",
+  "function nextQuestionId() view returns (uint256)",
   "function getQuestion(uint256 id) view returns (tuple(uint256 id, string title, string category, string resolutionSource, uint256 entryDeadline, uint256 settlementTime, bool isDynamicSettlement, uint256[] allowedTiers, bool isClosed, bool isSettled, uint8 winningOutcome, uint256 settledAt))",
   "function settleQuestion(uint256 qId, uint8 winningOutcome) external"
 ];
 
-// Universal provider constructor (compatible with ethers v5 and v6)
 function getProvider(url) {
   if (ethers.JsonRpcProvider) {
     return new ethers.JsonRpcProvider(url);
@@ -67,8 +66,8 @@ async function runOracleSettlement() {
   }
 
   const contract = new ethers.Contract(REGISTRY_ADDRESS, REGISTRY_ABI, signer || provider);
-  const rawCount = await contract.questionCount();
-  const total = Number(rawCount);
+  const nextId = await contract.nextQuestionId();
+  const total = Number(nextId) - 1;
   console.log("Total Registered Questions:", total);
 
   for (let id = 1; id <= total; id++) {
