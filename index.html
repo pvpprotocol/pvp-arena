@@ -3528,6 +3528,24 @@
 
     const DUEL_QUESTIONS = [
       { 
+        id: 18, 
+        qNum: 18,
+        category: "CRYPTO 1H (15M ENTRY)", 
+        title: "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?", 
+        desc: "15-Min Entry Window (08:00 to 08:15 UTC) | 1H Candle Closes at 09:00 UTC",
+        deadlineDesc: "15-Min Entry Window",
+        deadline: 1788682500000,
+        settlementTime: 1788685200000,
+        isEnded: false,
+        getDeadline: function() { return 1788682500000; },
+        optA: "YES",
+        optALabel: "GREEN",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "RED",
+        optBSub: "Red Close"
+      },
+      { 
         id: 15, 
         qNum: 15,
         category: "CRYPTO 12H (1H ENTRY)", 
