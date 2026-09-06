@@ -5,9 +5,10 @@ Risk to Reward Analysis: In traditional betting models, participants face an unf
 
 Two participants lock equal collateral into the canonical escrow smart contract. Upon verified outcome resolution, funds are automatically distributed as follows:
 
-• 90% allocated directly to the verified winner
-• 3% rebate cashback returned to the runner up wallet
-• 7% protocol treasury fee for buybacks and rewards
+• 90% allocated directly to the verified winner (Net Profit Payout)
+• 5% creator fee distributed directly and in cash to the Question/Market Creator wallet for every settled duel
+• 3% rebate cashback returned to the runner-up wallet to preserve liquidity and enable immediate re-entry
+• 2% protocol treasury fee for platform maintenance, infrastructure, and buybacks
 
 ### Core Rules
 1. Once an opponent joins and the duel is matched, the contest remains active until the official resolution is finalized, and immediately upon outcome confirmation, it transitions to the completed state for prize settlement.
@@ -21,3 +22,11 @@ Two participants lock equal collateral into the canonical escrow smart contract.
 5. In the event of a tie outcome or if none of the designated criteria are met, the contest concludes with no winner, and the original deposits of both participants are fully refunded without fee deductions.
 
 6. In the event of delay, outage, or unavailability of oracle reference data at the scheduled time, a 6-hour resolution grace period is initiated; if no verified data is obtained upon completion of this 6-hour window, the contest undergoes an emergency cancellation and all funds are refunded to both participants.
+
+
+### Permissionless Market Creation & Creator Economy (5% Cash Reward)
+PvP Arena operates as a fully permissionless prediction protocol. Any participant can design and deploy custom prediction markets directly on-chain.
+
+• **5% Creator Cash Reward:** The creator of any question/market earns an automatic, on-chain 5% cash fee from the total pot of every single duel that is matched and settled under their question.
+• **Anti-Spam Gas Policy:** To maintain market quality and prevent automated spam, question creators pay the standard network gas fees from their own connected wallet.
+• **Direct On-Chain Settlement:** Creator rewards are transferred directly to the creator's wallet upon official duel resolution, creating a recurring revenue stream for active community organizers, analysts, and market makers.
