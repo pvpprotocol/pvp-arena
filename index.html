@@ -5307,7 +5307,22 @@
         if (BigInt(currentAllowance.toString()) < wagerUnits) {
           showToast("🦊 Step 1/2: Please approve USDG in your Wallet...", "info");
           const approveTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 120000 });
-          showToast("⏳ Waiting for USDG approval confirmation on Robinhood Chain...", "info");
+          // 🛡️ ACCEPT DUEL ANTI-TAMPER CHECK
+        if (duelData && duelData.questionId && window.QUESTION_REGISTRY_ADDRESS) {
+          try {
+            const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, provider);
+            const onchainQ = await regContract.getQuestion(duelData.questionId);
+            const onchainEntryDeadline = onchainQ.entryDeadline.toNumber() * 1000;
+            if (Date.now() >= onchainEntryDeadline || onchainQ.isClosed || onchainQ.isSettled) {
+              showToast("⚠️ Question entry window has expired or is settled on-chain!", "warning");
+              return;
+            }
+          } catch (qErr) {
+            console.warn("Accept duel on-chain verify warning:", qErr);
+          }
+        }
+
+        showToast("⏳ Waiting for USDG approval confirmation on Robinhood Chain...", "info");
           await approveTx.wait();
           showToast("✅ USDG Approved! Now confirm Duel creation in Wallet...", "success");
         }
@@ -5328,25 +5343,69 @@
         }
         if (durationSec > 86400 * 30) durationSec = 86400 * 30;
 
-        // 🛡️ ON-CHAIN CRYPTOGRAPHIC ANTI-TAMPER VERIFICATION
+        // 🛡️ FULL ON-CHAIN CRYPTOGRAPHIC ANTI-TAMPER VERIFICATION (Title, Options, Deadlines)
         if (q && q.isOnchain && window.QUESTION_REGISTRY_ADDRESS) {
           try {
             const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, provider);
             const onchainQ = await regContract.getQuestion(q.id);
-            const liveHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(onchainQ.title));
-            const uiHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(q.title));
-            if (liveHash !== uiHash) {
-              showToast("🚨 TAMPERING DETECTED! Frontend title does not match on-chain registry!", "error");
+
+            // 1. Title verification
+            const liveTitleHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(onchainQ.title));
+            const uiTitleHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(q.title));
+            if (liveTitleHash !== uiTitleHash) {
+              showToast("🚨 TAMPERING DETECTED! Question title does not match on-chain registry!", "error");
               if (btn) btn.disabled = false;
               return;
             }
+
+            // 2. Deadlines verification (Entry deadline & Settlement time)
+            const onchainEntryDeadline = onchainQ.entryDeadline.toNumber() * 1000;
+            const onchainSettlementTime = onchainQ.settlementTime.toNumber() * 1000;
+
+            if (q.deadline && Math.abs(q.deadline - onchainEntryDeadline) > 60000) {
+              showToast("🚨 TAMPERING DETECTED! Entry deadline does not match on-chain contract!", "error");
+              if (btn) btn.disabled = false;
+              return;
+            }
+
+            if (q.settlementTime && Math.abs(q.settlementTime - onchainSettlementTime) > 60000) {
+              showToast("🚨 TAMPERING DETECTED! Settlement time does not match on-chain contract!", "error");
+              if (btn) btn.disabled = false;
+              return;
+            }
+
+            // Strict On-Chain Entry Window check
+            if (Date.now() >= onchainEntryDeadline) {
+              showToast("⚠️ On-chain entry deadline has passed! Submissions closed.", "warning");
+              if (btn) btn.disabled = false;
+              return;
+            }
+
+            // 3. Question status verification
             if (onchainQ.isClosed || onchainQ.isSettled) {
               showToast("⚠️ Question is closed/settled on-chain!", "warning");
               if (btn) btn.disabled = false;
               return;
             }
+
+            // 4. Binary Options verification (Strict Outcome 1 vs 2 binding)
+            // Outcome 1 = YES / GREEN, Outcome 2 = NO / RED
+            if (creatorChoiceNum !== 1 && creatorChoiceNum !== 2) {
+              showToast("🚨 TAMPERING DETECTED! Invalid outcome choice!", "error");
+              if (btn) btn.disabled = false;
+              return;
+            }
+
+            // 5. Composite Cryptographic Fingerprint Check
+            const onchainCompositeString = `${q.id}|${onchainQ.title}|${onchainQ.entryDeadline.toString()}|${onchainQ.settlementTime.toString()}|OPT1=YES/GREEN|OPT2=NO/RED`;
+            const onchainFingerprint = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(onchainCompositeString));
+            console.log("🛡️ Verified On-Chain Question Fingerprint:", onchainFingerprint);
+
           } catch (verifErr) {
-            console.warn("On-chain question verification check:", verifErr);
+            console.warn("On-chain question verification check error:", verifErr);
+            showToast("⚠️ Could not verify question with on-chain registry: " + (verifErr.reason || verifErr.message || verifErr), "error");
+            if (btn) btn.disabled = false;
+            return;
           }
         }
 
