@@ -93,6 +93,7 @@
   <script>
     window.switchTab = function(tabId) {
       try {
+        if (tabId === "whitepaper") tabId = "docs";
         const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"];
         tabs.forEach(function(t) {
           const el = document.getElementById("tab-" + t);
@@ -1536,7 +1537,7 @@
     </div>
 
     <!-- 6. PROTOCOL DOCS / WHITEPAPER TAB -->
-    <div id="tab-docs" class="tab-content hidden space-y-6">
+    <div id="tab-docs" data-alias="whitepaper" class="tab-content hidden space-y-6"><a id="whitepaper"></a>
       <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-white/10 space-y-10">
         <div class="border-b border-white/10 pb-6">
           <h1 class="text-3xl font-black text-white font-mono">pvphub.fun Whitepaper</h1>
@@ -1634,7 +1635,34 @@
 
       </div>
 
-                <!-- 4. OFFICIAL PVP TOKEN CONTRACT -->
+                
+          <!-- 4. SPORTS & 3-WAY OUTCOME STANDARD (DRAW NO BET) -->
+          <div class="space-y-4 border-t border-white/10 pt-8">
+            <h2 class="text-xl font-bold text-white font-mono">4. Sports & 3-Way Market Standard (Draw No Bet)</h2>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              For sporting contests with three potential outcomes (Team A win, Team B win, or Draw):
+            </p>
+            <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2 text-amber-200 text-sm font-mono">
+              <p><strong>Option 1:</strong> Team A (e.g. Real Madrid)</p>
+              <p><strong>Option 2:</strong> Team B (e.g. Barcelona)</p>
+              <p><strong>Full-Time Draw:</strong> In the event of a tie at the conclusion of official match play (Full-Time), the contest is deemed <strong>VOID / PUSH</strong>. 100% of collateral is returned immediately to both players with <strong>ZERO fee deduction</strong>.</p>
+            </div>
+          </div>
+
+          <!-- 5. FAIR PLAY & ZERO-FRONTRUNNING STANDARD -->
+          <div class="space-y-4 border-t border-white/10 pt-8">
+            <h2 class="text-xl font-bold text-white font-mono">5. Fair Play & Anti-Frontrunning Standard</h2>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Strict mathematical fairness is enforced across all prediction duels:
+            </p>
+            <div class="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 space-y-2 text-cyan-200 text-sm font-mono">
+              <p>• <strong>Pre-Event Creation:</strong> Challenges must be deployed to the blockchain strictly prior to the live opening of the event or candle.</p>
+              <p>• <strong>Entry Deadline Cutoff:</strong> The entry window strictly expires before or at the moment the candle opens or the match kicks off (<code class="text-white">ENTRY CLOSED</code>).</p>
+              <p>• <strong>Zero In-Progress Betting:</strong> No participant may enter or accept a duel during an active candle or live match, completely eliminating momentum front-running.</p>
+            </div>
+          </div>
+  
+        <!-- 4. OFFICIAL PVP TOKEN CONTRACT -->
         <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/30 bg-cyan-950/20 space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -1876,6 +1904,7 @@
 
     // TAB SWITCHING LOGIC
     function switchTab(tabId) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
       try {
         const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"];
         tabs.forEach(t => {
