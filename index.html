@@ -13,23 +13,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
-
     /* ============================================================
-       STRICT 3-COLOR MONOCHROME THEME
-       1. Background: Pure White (#ffffff)
-       2. Text: Pure Black (#000000)
-       3. Options / Buttons / Interactive: Slate Gray (#334155 / #1e293b / #cbd5e1)
+       HARMONIOUS 3-COLOR CLEAN MONOCHROME PALETTE:
+       1. WHITE (#ffffff) - Page background, card backgrounds
+       2. BLACK (#000000 / #0f172a) - Typography, primary CTA buttons, active states
+       3. SOFT LIGHT GRAY (#f4f5f7 / #e2e8f0) - Wells, inactive options, borders, pills
        ============================================================ */
     :root {
       --bg-page: #ffffff;
       --card-bg: #ffffff;
-      --card-border: #cbd5e1;
-      --text-main: #000000;
-      --text-muted: #334155;
-      --gray-primary: #334155;
-      --gray-dark: #1e293b;
-      --gray-light: #f1f5f9;
-      --gray-border: #94a3b8;
+      --border-light: #e2e8f0;
+      --bg-soft: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
     }
 
     * {
@@ -37,142 +33,116 @@
     }
 
     html, body {
-      font-family: 'Inter', sans-serif !important;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
       background-color: #ffffff !important;
-      color: #000000 !important;
+      color: #0f172a !important;
       background-image: none !important;
+      margin: 0;
+      padding: 0;
     }
 
     .font-mono {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: "JetBrains Mono", monospace;
     }
 
-    /* ALL Containers, Cards, Sections, Modals, Navbars -> Pure White Background with Slate Border */
+    /* Cards, Modals, Containers - Clean White with Soft Border */
     header, nav, main, footer, section, article, aside,
-    .glass-panel, .glass-panel-glow, 
-    [class*="bg-slate-"], [class*="bg-black"], [class*="bg-cyan-"], [class*="bg-purple-"],
-    .bg-\[\#05070d\], .bg-\[\#030712\], .bg-\[\#0f172a\], .bg-\[\#080d1a\],
+    .glass-panel, .glass-panel-glow,
     #createQuestionModal > div > div, .modal-content-box,
     .q-card, .duel-card {
       background-color: #ffffff !important;
       background-image: none !important;
-      border-color: #cbd5e1 !important;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
     }
 
     header.sticky {
       background: #ffffff !important;
-      border-bottom: 1px solid #cbd5e1 !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
     }
 
-    /* ALL Text Elements -> Pure Black */
-    body, p, span, div, h1, h2, h3, h4, h5, h6, label, td, th, li, a, b, strong,
-    [class*="text-white"], [class*="text-slate-"], [class*="text-gray-"],
-    [class*="text-cyan-"], [class*="text-purple-"], [class*="text-emerald-"], 
-    [class*="text-amber-"], [class*="text-rose-"], [class*="text-red-"], [class*="text-blue-"] {
-      color: #000000 !important;
-    }
-
-    /* ALL Borders -> Crisp Neutral Gray */
-    *, [class*="border-white"], [class*="border-slate-"], [class*="border-cyan-"], 
-    [class*="border-purple-"], [class*="border-blue-"] {
-      border-color: #cbd5e1 !important;
-    }
-
-    /* Inactive Options, Badges, Tags, Pills -> Light Gray with Gray Border and Black Text */
-    [class*="bg-cyan-500"], [class*="bg-purple-500"], [class*="bg-emerald-500"],
-    [class*="bg-amber-500"], [class*="bg-rose-500"], [class*="bg-red-500"],
-    [class*="bg-blue-500"], [class*="bg-blue-600"],
-    .badge, .tag, .pill {
-      background-color: #f1f5f9 !important;
-      background-image: none !important;
-      border: 1px solid #cbd5e1 !important;
-      color: #000000 !important;
-    }
-
-    /* Standard Interactive Option & Tab Buttons */
-    .tab-btn, .filter-btn, button, .tier-pick-btn {
-      color: #000000 !important;
-      background-color: #ffffff !important;
-      border: 1px solid #cbd5e1 !important;
-      transition: all 0.15s ease-in-out !important;
-    }
-    .tab-btn:hover, .filter-btn:hover, button:hover, .tier-pick-btn:hover {
-      background-color: #f1f5f9 !important;
-      border-color: #64748b !important;
-      color: #000000 !important;
-    }
-
-    /* ACTIVE / SELECTED Options & Action Buttons -> Solid Slate Gray with White Text */
-    .tab-btn.active, .filter-btn.active,
-    button[class*="from-"], div[class*="from-"], a[class*="from-"],
-    .btn-solid-white-text,
-    .bg-slate-800, .bg-slate-700,
-    .btn-action-primary {
-      background-color: #334155 !important;
-      background-image: none !important;
-      color: #ffffff !important;
-      border-color: #334155 !important;
-      box-shadow: 0 2px 6px rgba(51, 65, 85, 0.25) !important;
-    }
-    .tab-btn.active *, .filter-btn.active *, button[class*="from-"] *, .btn-solid-white-text * {
-      color: #ffffff !important;
-    }
-    .tab-btn.active:hover, button[class*="from-"]:hover, .btn-solid-white-text:hover {
-      background-color: #1e293b !important;
-      border-color: #1e293b !important;
-      color: #ffffff !important;
-    }
-
-    /* Question Cards & Duel Selection */
-    .q-card-selected, .duel-selected {
-      border: 2px solid #334155 !important;
-      box-shadow: 0 0 0 1px #334155 !important;
+    /* Wells & Secondary Backgrounds */
+    .bg-slate-900\/50, .bg-slate-900\/60, .bg-slate-950\/80, .bg-black\/40, .bg-black\/60,
+    .bg-slate-900, .bg-slate-950, [class*="bg-slate-800\/"] {
       background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
     }
 
-    /* Form Inputs, Dropdowns & Textareas */
-    input, select, textarea {
-      background-color: #ffffff !important;
-      color: #000000 !important;
-      border: 1px solid #94a3b8 !important;
-      outline: none !important;
+    /* Base Typography */
+    h1, h2, h3, h4, h5, h6 {
+      color: #0f172a !important;
     }
-    option {
-      background-color: #ffffff !important;
-      color: #000000 !important;
+
+    p, span, div, label, td, th, li {
+      color: inherit;
     }
-    option:checked, option:hover {
-      background-color: #334155 !important;
-      color: #ffffff !important;
-    }
-    input::placeholder, textarea::placeholder {
+
+    .text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500 {
       color: #64748b !important;
     }
+
+    .text-white {
+      color: #0f172a;
+    }
+
+    /* Primary Action Buttons (Connect Wallet, Deploy Market, Create Duel, Active Tabs) */
+    .btn-primary, #walletBtn, #deployMarketBtn, #createDuelBtn,
+    .bg-gradient-to-r.from-cyan-500.to-blue-600,
+    .bg-gradient-to-r.from-emerald-500.to-cyan-500,
+    .tab-btn.active, .tier-btn.active {
+      background: #000000 !important;
+      color: #ffffff !important;
+      border: 1px solid #000000 !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .btn-primary *, #walletBtn *, #deployMarketBtn *, #createDuelBtn * {
+      color: #ffffff !important;
+    }
+
+    /* Inactive Tabs & Option Buttons */
+    .tab-btn, .filter-btn, .category-tab-btn {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+      border: 1px solid #e2e8f0 !important;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover, .filter-btn:hover {
+      background-color: #e2e8f0 !important;
+    }
+
+    .tab-btn.active, .filter-btn.active {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border-color: #000000 !important;
+    }
+
+    /* Badges & Tags - Soft Gray with Crisp Text */
+    .badge, .tag, .pill, [class*="badge-"] {
+      background-color: #f1f5f9 !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+
+    /* Form Inputs, Selects */
+    input, select, textarea {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #0f172a !important;
+    }
     input:focus, select:focus, textarea:focus {
-      border-color: #334155 !important;
-      box-shadow: 0 0 0 2px rgba(51, 65, 85, 0.2) !important;
+      border-color: #000000 !important;
+      outline: none !important;
     }
 
-    /* Scrollbars */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+    /* Clean Borders everywhere */
+    .border-white\/10, .border-slate-800, .border-slate-700 {
+      border-color: #e2e8f0 !important;
     }
-    ::-webkit-scrollbar-track {
-      background: #ffffff;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-
   </style>
 
   <script>
@@ -3924,20 +3894,11 @@
         const btn = document.getElementById(btnId);
         if (!btn) return;
         if (t === tier) {
-          const isVip = t >= 1000;
-          btn.className = isVip
-            ? "tier-pick-btn p-2 rounded-xl border border-amber-500/80 bg-amber-500/20 text-center font-mono transition-all shadow-md shadow-amber-500/20"
-            : "tier-pick-btn p-2 rounded-xl border border-cyan-500/80 bg-cyan-500/20 text-center font-mono transition-all shadow-md shadow-cyan-500/20";
+          btn.className = "tier-pick-btn p-2 rounded-xl border-2 border-black bg-black text-white text-center font-mono font-bold transition-all shadow-sm";
         } else {
-          btn.className = "tier-pick-btn p-2 rounded-xl border border-white/10 bg-black/40 text-center font-mono transition-all hover:border-cyan-500/50";
+          btn.className = "tier-pick-btn p-2 rounded-xl border border-slate-200 bg-slate-50 text-black text-center font-mono font-medium transition-all hover:bg-slate-100";
         }
       });
-
-      const payoutEl = document.getElementById("selected-tier-payout");
-      if (payoutEl) {
-        const decimals = tier < 1 ? 3 : 2;
-        payoutEl.textContent = `Winner: +${(tier * 1.8).toFixed(decimals)} USDG`;
-      }
       updateDuelSummary();
     }
 
@@ -3981,11 +3942,11 @@
       if (!btnYes || !btnNo) return;
 
       if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-slate-800 bg-slate-800 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-slate-500/20 transition-all hover:scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-slate-300 bg-white text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-slate-600 hover:text-slate-800 hover:scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-black bg-black text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-slate-100 hover:scale-[1.02]";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-slate-300 bg-white text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-slate-600 hover:text-slate-800 hover:scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-slate-800 bg-slate-800 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-slate-500/20 transition-all hover:scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-slate-100 hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-black bg-black text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02]";
       }
     }
 
@@ -4173,9 +4134,9 @@
         const btn = document.getElementById(`filter-duels-${c.toLowerCase()}`);
         if (!btn) return;
         if (c === cat) {
-          btn.className = "px-3 py-1 rounded-lg font-bold bg-slate-800 text-white border border-slate-800 transition-all shadow-sm shadow-slate-500/20";
+          btn.className = "px-3 py-1.5 rounded-lg font-bold bg-black text-white border border-black transition-all shadow-sm";
         } else {
-          btn.className = "px-3 py-1 rounded-lg font-bold text-black bg-white border border-slate-200 hover:border-slate-600 hover:text-slate-800 transition-all";
+          btn.className = "px-3 py-1.5 rounded-lg font-medium text-black bg-[#f4f5f7] border border-[#e2e8f0] hover:bg-[#e2e8f0] transition-all";
         }
       });
       renderAllDuels();
@@ -4188,9 +4149,9 @@
         const btn = document.getElementById(`duel-tab-${t}`);
         if (!btn) return;
         if (t === tab) {
-          btn.className = "px-4 py-3 border-b-2 border-cyan-400 text-cyan-300 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+          btn.className = "px-4 py-3 border-b-2 border-black text-black font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
         } else {
-          btn.className = "px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+          btn.className = "px-4 py-3 border-b-2 border-transparent text-[#64748b] hover:text-black font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
         }
       });
       renderAllDuels();
@@ -4439,7 +4400,7 @@
       // Calculate categorized arrays
       const filteredKeys = keys.filter(k => {
         const item = store[k];
-        if (!item || item.status === cancelled) return false;
+        if (!item || item.status === 'cancelled') return false;
         const cat = getDuelCategory(item);
         if (cat !== currentDuelTab) return false;
 
