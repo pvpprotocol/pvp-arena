@@ -1378,7 +1378,7 @@
 
       <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
         <div class="p-4 border-b border-white/10 flex justify-between items-center">
-          <h4 id="lb-table-title" class="font-bold text-white font-mono text-sm">Top 100 Players — PvP Duels ($1 Tier)</h4>
+          <h4 id="lb-table-title" class="font-bold text-white font-mono text-sm">Top 100 Players , PvP Duels ($1 Tier)</h4>
           <span class="text-xs font-mono text-slate-400">Live 24h Standing</span>
         </div>
         <div class="overflow-x-auto">
@@ -1475,7 +1475,7 @@
 
       <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
         <div class="p-4 border-b border-white/10 flex justify-between items-center">
-          <h4 id="hist-table-title" class="font-bold text-white font-mono text-sm">Verified Reward Winners — PvP Duels ($1 Tier)</h4>
+          <h4 id="hist-table-title" class="font-bold text-white font-mono text-sm">Verified Reward Winners , PvP Duels ($1 Tier)</h4>
           <span class="text-xs font-mono text-emerald-400">Onchain Verified</span>
         </div>
         <div class="overflow-x-auto">
@@ -1607,7 +1607,7 @@
             <div class="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 space-y-2 text-cyan-200 text-sm font-mono">
               <p>• <strong>Pre-Event Creation:</strong> Challenges must be deployed to the blockchain strictly prior to the live opening of the event or candle.</p>
               <p>• <strong>Entry Deadline Cutoff:</strong> The entry window strictly expires before or at the moment the candle opens or the match kicks off (<code class="text-white">ENTRY CLOSED</code>).</p>
-              <p>• <strong>Zero In-Progress Betting:</strong> No participant may enter or accept a duel during an active candle or live match, completely eliminating momentum front-running.</p>
+              <p>• <strong>Zero In-Progress Betting:</strong> No participant may enter or accept a duel during an active candle or live match, completely eliminating momentum frontrunning.</p>
             </div>
           </div>
   
@@ -3313,9 +3313,9 @@
           const cInfo = get2048CycleInfo();
           const selectedRound = window.selectedLb2048Round !== undefined ? window.selectedLb2048Round : cInfo.cycleIndex;
           const isRoundActive = selectedRound === cInfo.cycleIndex;
-          title.innerHTML = "Top 100 Players — 2048 Skill ($" + curLbTier + " Tier) — Round #" + (selectedRound + 1) + (isRoundActive ? " <span class=\"text-emerald-400 text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 ml-2\">● ACTIVE</span>" : " <span class=\"text-slate-400 text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 ml-2\">ENDED</span>");
+          title.innerHTML = "Top 100 Players , 2048 Skill ($" + curLbTier + " Tier) , Round #" + (selectedRound + 1) + (isRoundActive ? " <span class=\"text-emerald-400 text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 ml-2\">● ACTIVE</span>" : " <span class=\"text-slate-400 text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 ml-2\">ENDED</span>");
         } else {
-          title.innerText = "Top 100 Players — " + catNames[curLbCat] + " ($" + curLbTier + " Tier)";
+          title.innerText = "Top 100 Players , " + catNames[curLbCat] + " ($" + curLbTier + " Tier)";
         }
       }
       
@@ -3436,7 +3436,7 @@
       
       const catNames = { duel: 'PvP Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('hist-table-title');
-      if (title) title.innerText = `Verified Reward Winners — ${catNames[curHistCat]} (${curHistTier} Tier)`;
+      if (title) title.innerText = `Verified Reward Winners , ${catNames[curHistCat]} (${curHistTier} Tier)`;
 
       const settledWinners = []; // Real-time onchain settlement records
 
@@ -6954,7 +6954,7 @@ window.handleCreateQuestion = async function(e) {
         <span class="text-base">⚖️</span>
         <div>
           <p class="text-[11px] font-bold text-cyan-200">Fair Play & Anti-Frontrunning Law (قانون بسته شدن پیش از لایو):</p>
-          <p class="text-[10px] text-cyan-300/80 leading-snug">تمام چالش‌ها باید قبل از شروع زنده رویداد/باز شدن کندل طرح شوند. مهلت ورود (Entry Window) حتماً و قطعاً باید قبل از آغاز رویداد (Candle Open / Kickoff) بسته شود تا امکان فرانت‌رانینگ صفر باشد.</p>
+          <p class="text-[10px] text-cyan-300/80 leading-snug">تمام چالشها باید قبل از شروع زنده رویداد/باز شدن کندل طرح شوند. مهلت ورود (Entry Window) حتماً و قطعاً باید قبل از آغاز رویداد (Candle Open / Kickoff) بسته شود تا امکان فرانترانینگ صفر باشد.</p>
         </div>
       </div>
       <!-- Creator Economy Banner -->
@@ -6976,7 +6976,7 @@ window.handleCreateQuestion = async function(e) {
         <!-- Sports DNB Rule Box (Visible when SPORTS is chosen) -->
         <div id="sportsDnbNotice" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300">
           <p class="font-bold flex items-center gap-1.5 text-[11px]"><span>⚽</span> Draw No Bet (قانون بازگشت وجه در تساوی):</p>
-          <p class="text-[10px] text-amber-200/80 mt-0.5 leading-relaxed">در مسابقات فوتبال/ورزشی: گزینه ۱ تیم الف و گزینه ۲ تیم ب است. در صورت تساوی (Draw) در پایان فول تایم (Full-Time)، مسابقه لغو و ۱۰۰٪ پول هر دو بازیکن بدون کسر کارمزد برگردانده می‌شود.</p>
+          <p class="text-[10px] text-amber-200/80 mt-0.5 leading-relaxed">در مسابقات فوتبال/ورزشی: گزینه ۱ تیم الف و گزینه ۲ تیم ب است. در صورت تساوی (Draw) در پایان فول تایم (Full-Time)، مسابقه لغو و ۱۰۰٪ پول هر دو بازیکن بدون کسر کارمزد برگردانده میشود.</p>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -6997,7 +6997,7 @@ window.handleCreateQuestion = async function(e) {
         
         <!-- Timeframe / Fair Play Preset -->
         <div>
-          <label class="text-slate-400 text-[11px] block mb-1">Timing & Fair Play Preset (زمان‌بندی استاندارد)</label>
+          <label class="text-slate-400 text-[11px] block mb-1">Timing & Fair Play Preset (زمانبندی استاندارد)</label>
           <select id="newQFairPlayPreset" onchange="applyTimingPreset(this.value)" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-3 py-2.5 text-cyan-300 focus:outline-none focus:border-cyan-400 font-bold">
             <option value="daily_candle" selected>📅 Next Daily Candle (Entry closes at 00:00 UTC Open | Settles at Close)</option>
             <option value="1h_candle">⚡ Next 1-Hour Candle (Entry closes at Top of Hour | Settles at Close)</option>
