@@ -215,7 +215,7 @@
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">5% Creator Fee Cash</span>
             </div>
             <p class="text-xs sm:text-sm text-slate-300 font-mono mt-1.5 leading-relaxed">
-              Duel 1v1 with 90% payout to winner & 3% cashback to loser, or launch your own prediction challenge and earn 5% cash from every settled duel pot!
+              Duel PvP with 90% payout to winner & 3% cashback to loser, or launch your own prediction challenge and earn 5% cash from every settled duel pot!
             </p>
           </div>
         </div>
@@ -4999,7 +4999,7 @@
           cardBgClass = "bg-slate-900/60 border-slate-800 opacity-80";
         }
 
-        statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> WAITING OUTCOME (1v1 BATTLE)</span>`;
+        statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> WAITING OUTCOME (PvP BATTLE)</span>`;
 
         if (isParticipant) {
           actionSection = `
@@ -5013,7 +5013,7 @@
         } else {
           actionSection = `
             <div class="flex items-center gap-2">
-              <span class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 font-mono text-xs border border-white/10">🔒 1v1 LOCKED</span>
+              <span class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 font-mono text-xs border border-white/10">🔒 PvP LOCKED</span>
               ${statusBadge}
             </div>
           `;
