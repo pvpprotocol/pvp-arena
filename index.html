@@ -159,7 +159,7 @@
       <!-- MAIN NAVIGATION TABS -->
       <nav class="flex overflow-x-auto max-w-full items-center gap-1 bg-slate-900/95 p-1.5 rounded-2xl border border-white/10">
         <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
-          <span>⚔️</span> P2P Duels
+          <span>⚔️</span> PvP Duels
         </button>
         <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-slate-300 hover:text-white flex items-center gap-2">
           <span>🎮</span> 2048 Skill <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">SOON</span>
@@ -200,7 +200,7 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-    <!-- 1. P2P DUELS TAB -->
+    <!-- 1. PVP DUELS TAB -->
     <div id="tab-duel" class="tab-content block space-y-8">
       <!-- SINGLE UNIFIED HERO BANNER -->
       <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900/80 to-emerald-950/40 flex flex-col md:flex-row items-center justify-between gap-5 shadow-xl">
@@ -331,7 +331,7 @@
         <!-- SUMMARY & CREATE BUTTON -->
         <div class="mt-6 flex justify-center">
           <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold font-mono text-sm shadow-xl shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-            <span>⚔️</span> CREATE P2P DUEL
+            <span>⚔️</span> CREATE PVP DUEL
           </button>
         </div>
       </div>
@@ -341,7 +341,7 @@
         <div class="p-5 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider flex items-center gap-2">
-              <span>⚔️</span> LIVE P2P DUELS
+              <span>⚔️</span> LIVE PVP DUELS
             </h3>
             <p class="text-xs text-slate-400">Robinhood Escrow Contract: <a href="https://explorer.mainnet.chain.robinhood.com/address/0x95E95BD305aD328AfEd15400903124B59bcc349b" target="_blank" rel="noopener" class="font-mono text-cyan-400 hover:underline">0x95E9...349b ↗</a></p>
           </div>
@@ -407,7 +407,7 @@
       </h2>
 
       <p class="text-sm sm:text-base text-slate-300 max-w-lg mx-auto mb-6 leading-relaxed">
-        The onchain anti-cheat 2048 tournament engine is currently undergoing final audits and optimization. Only P2P Duels are open during Phase 1.
+        The onchain anti-cheat 2048 tournament engine is currently undergoing final audits and optimization. Only PvP Duels are open during Phase 1.
       </p>
 
       <div class="p-4 rounded-2xl bg-slate-900/80 border border-white/10 max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
@@ -421,12 +421,12 @@
         </div>
         <div class="flex items-center justify-between text-slate-300">
           <span>Active Flagship Mode:</span>
-          <span class="text-emerald-400 font-bold">P2P Duels (LIVE 🟢)</span>
+          <span class="text-emerald-400 font-bold">PvP Duels (LIVE 🟢)</span>
         </div>
       </div>
 
       <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
-        <span>⚔️</span> PLAY P2P DUELS NOW
+        <span>⚔️</span> PLAY PVP DUELS NOW
       </button>
     </div>
   
@@ -1005,12 +1005,12 @@
         </div>
         <div class="flex items-center justify-between text-slate-300">
           <span>Active Flagship Mode:</span>
-          <span class="text-emerald-400 font-bold">P2P Duels (LIVE 🟢)</span>
+          <span class="text-emerald-400 font-bold">PvP Duels (LIVE 🟢)</span>
         </div>
       </div>
 
       <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
-        <span>⚔️</span> PLAY P2P DUELS NOW
+        <span>⚔️</span> PLAY PVP DUELS NOW
       </button>
     </div>
   
@@ -1340,12 +1340,12 @@
         </div>
         <div class="flex items-center justify-between text-slate-300">
           <span>Active Flagship Mode:</span>
-          <span class="text-emerald-400 font-bold">P2P Duels (LIVE 🟢)</span>
+          <span class="text-emerald-400 font-bold">PvP Duels (LIVE 🟢)</span>
         </div>
       </div>
 
       <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
-        <span>⚔️</span> PLAY P2P DUELS NOW
+        <span>⚔️</span> PLAY PVP DUELS NOW
       </button>
     </div>
   
@@ -1353,7 +1353,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div onclick="setLeaderboardCategory('duel')" id="lb-cat-duel" class="glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">⚔️</span>
-          <h4 class="font-black text-white font-mono text-sm">1. P2P DUELS</h4>
+          <h4 class="font-black text-white font-mono text-sm">1. PVP DUELS</h4>
           <p class="text-xs text-slate-400 mt-1">Wins & Streaks</p>
         </div>
         <div onclick="setLeaderboardCategory('2048')" id="lb-cat-2048" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
@@ -1378,7 +1378,7 @@
 
       <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
         <div class="p-4 border-b border-white/10 flex justify-between items-center">
-          <h4 id="lb-table-title" class="font-bold text-white font-mono text-sm">Top 100 Players — P2P Duels ($1 Tier)</h4>
+          <h4 id="lb-table-title" class="font-bold text-white font-mono text-sm">Top 100 Players — PvP Duels ($1 Tier)</h4>
           <span class="text-xs font-mono text-slate-400">Live 24h Standing</span>
         </div>
         <div class="overflow-x-auto">
@@ -1437,12 +1437,12 @@
         </div>
         <div class="flex items-center justify-between text-slate-300">
           <span>Active Flagship Mode:</span>
-          <span class="text-emerald-400 font-bold">P2P Duels (LIVE 🟢)</span>
+          <span class="text-emerald-400 font-bold">PvP Duels (LIVE 🟢)</span>
         </div>
       </div>
 
       <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
-        <span>⚔️</span> PLAY P2P DUELS NOW
+        <span>⚔️</span> PLAY PVP DUELS NOW
       </button>
     </div>
   
@@ -1450,7 +1450,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div onclick="setHistoryCategory('duel')" id="hist-cat-duel" class="glass-panel p-5 rounded-2xl border border-cyan-500/50 bg-cyan-950/20 cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">⚔️</span>
-          <h4 class="font-black text-white font-mono text-sm">1. P2P DUELS</h4>
+          <h4 class="font-black text-white font-mono text-sm">1. PVP DUELS</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 90% Duel Champions</p>
         </div>
         <div onclick="setHistoryCategory('2048')" id="hist-cat-2048" class="glass-panel p-5 rounded-2xl border border-white/10 hover:border-white/20 cursor-pointer transition-all text-center">
@@ -1475,7 +1475,7 @@
 
       <div class="glass-panel rounded-3xl border border-white/10 overflow-hidden">
         <div class="p-4 border-b border-white/10 flex justify-between items-center">
-          <h4 id="hist-table-title" class="font-bold text-white font-mono text-sm">Verified Reward Winners — P2P Duels ($1 Tier)</h4>
+          <h4 id="hist-table-title" class="font-bold text-white font-mono text-sm">Verified Reward Winners — PvP Duels ($1 Tier)</h4>
           <span class="text-xs font-mono text-emerald-400">Onchain Verified</span>
         </div>
         <div class="overflow-x-auto">
@@ -1511,7 +1511,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
               <div class="p-3 rounded-xl bg-slate-900/80 border border-white/10">
                 <span class="text-xs font-bold text-cyan-400 font-mono block">1. Prediction</span>
-                <span class="text-[11px] text-slate-400 font-mono mt-1 block">P2P Instant Duel price & outcome speculation with 90% winner share & 3% cashback rebate.</span>
+                <span class="text-[11px] text-slate-400 font-mono mt-1 block">PvP Instant Duel price & outcome speculation with 90% winner share & 3% cashback rebate.</span>
               </div>
               <div class="p-3 rounded-xl bg-slate-900/80 border border-white/10">
                 <span class="text-xs font-bold text-emerald-400 font-mono block">2. Skill</span>
@@ -1526,7 +1526,7 @@
         </div>
 
         <div class="space-y-4">
-          <h2 class="text-xl font-bold text-white font-mono">p2p Prediction</h2>
+          <h2 class="text-xl font-bold text-white font-mono">PvP Prediction</h2>
           <p class="text-sm text-slate-300 leading-relaxed">
             <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk to reward ratio (for example at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In pvphub, the winner earns 90% net profit directly, and the loser receives 3% rebate cashback to preserve liquidity and enable immediate reentry. Furthermore, pvphub operates as a completely permissionless protocol where any user can design and deploy custom prediction challenges directly onchain via the <strong class="text-white">+ Create Challenge</strong> portal, earning an automatic 5% cash reward from the total pot of every settled duel, routed instantly onchain to the creator's wallet at the moment of match settlement.
           </p>
@@ -2190,7 +2190,7 @@
     window.addEventListener("load", checkAutoConnect);
  }
 
-    // P2P DUELS ONCHAIN ESCROW LOGIC
+    // PVP DUELS ONCHAIN ESCROW LOGIC
     let activeDuelsCount = 0;
 
     
@@ -3305,7 +3305,7 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       
-      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
+      const catNames = { duel: 'PvP Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('lb-table-title');
       if (title) {
         if (curLbCat === "2048") {
@@ -3433,7 +3433,7 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       
-      const catNames = { duel: 'P2P Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
+      const catNames = { duel: 'PvP Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('hist-table-title');
       if (title) title.innerText = `Verified Reward Winners — ${catNames[curHistCat]} (${curHistTier} Tier)`;
 
@@ -4415,7 +4415,7 @@
       if (filteredKeys.length === 0) {
         let emptyIcon = "⚔️";
         let emptyTitle = "No open duel requests";
-        let emptySub = "Select a question and tier above, then click \"CREATE P2P DUEL\" to start!";
+        let emptySub = "Select a question and tier above, then click \"CREATE PVP DUEL\" to start!";
 
         if (currentDuelTab === 'matched') {
           emptyIcon = "⚡";
@@ -5535,7 +5535,7 @@
         return;
       }
 
-      // 2. Strict P2P validation: Only 1 person can accept
+      // 2. Strict PvP validation: Only 1 person can accept
       if (duelData && duelData.status !== 'open') {
         showToast("⚠️ This duel has already been accepted or is in progress!", "warning");
         return;
