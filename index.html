@@ -7102,35 +7102,7 @@ window.handleCreateQuestion = async function(e) {
         </div>
 
         
-        <!-- Timeframe / Fair Play Preset -->
-        <div>
-          <label class="text-slate-400 text-[11px] block mb-1">Timing & Fair Play Preset</label>
-          <select id="newQFairPlayPreset" onchange="applyTimingPreset(this.value)" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-3 py-2.5 text-cyan-300 focus:outline-none focus:border-cyan-400 font-bold">
-            <option value="daily_candle" selected>📅 Next Daily Candle (Entry closes at 00:00 UTC Open | Settles at Close)</option>
-            <option value="1h_candle">⚡ Next 1-Hour Candle (Entry closes at Top of Hour | Settles at Close)</option>
-            <option value="4h_candle">⏳ Next 4-Hour Candle (Entry closes at 4H Open | Settles at Close)</option>
-            <option value="custom">🛠️ Custom Timing</option>
-          </select>
-        </div>
-        <div id="customTimingBlock" class="grid grid-cols-2 gap-3 mt-2">
-          <div>
-            <label class="text-slate-400 text-[11px] block mb-1">Entry Window (Duration)</label>
-            <select id="newQEntryDuration" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-cyan-400">
-              <option value="3600">1 Hour</option>
-              <option value="7200" selected>2 Hours</option>
-              <option value="14400">4 Hours</option>
-              <option value="86400">24 Hours</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-slate-400 text-[11px] block mb-1">Settlement Time</label>
-            <select id="newQSettlementOffset" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-cyan-400">
-              <option value="candle_daily" selected>End of Daily Candle (00:00 UTC)</option>
-              <option value="4h">In 4 Hours</option>
-              <option value="24h">In 24 Hours</option>
-            </select>
-          </div>
-        </div>
+
 
         <!-- Auto-Generated Market Preview -->
         <div class="p-3 rounded-xl bg-slate-950 border border-cyan-500/30 flex items-start justify-between gap-3">
@@ -7399,8 +7371,8 @@ window.handleCreateQuestion = async function(e) {
       const title = document.getElementById("newQTitle").value.trim();
       const category = document.getElementById("newQCategory").value;
       const resolution = document.getElementById("newQResolution").value.trim();
-      const durationSec = parseInt(document.getElementById("newQEntryDuration").value);
-      const settlementType = document.getElementById("newQSettlementOffset").value;
+      // Timing is now strictly auto-derived based on category & verified event
+      let durationSec = 7200;
 
       if (!title) {
         alert("Please enter a market title / question.");
@@ -7449,20 +7421,26 @@ window.handleCreateQuestion = async function(e) {
         const signer = provider.getSigner();
 
         const now = Math.floor(Date.now() / 1000);
-        const entryDeadline = now + durationSec;
-        
+        let entryDeadline;
         let settlementTime;
-        if (settlementType === "candle_daily") {
-          const midnight = new Date();
-          midnight.setUTCHours(24, 0, 0, 0);
-          settlementTime = Math.floor(midnight.getTime() / 1000);
-          if (settlementTime <= entryDeadline) {
-            settlementTime += 86400;
-          }
-        } else if (settlementType === "4h") {
-          settlementTime = now + 14400;
+
+        if (category === "SPORTS" && selectedSportsFixture) {
+          entryDeadline = now + (selectedSportsFixture.kickoffOffsetHours * 3600);
+          settlementTime = entryDeadline + ((selectedSportsFixture.durationHours || 3) * 3600);
         } else {
-          settlementTime = now + 86400;
+          // CRYPTO candle markets (12h or 24h)
+          const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "12h";
+          entryDeadline = now + 7200; // 2 hour entry window
+          if (tf === "12h") {
+            settlementTime = now + 43200; // 12 hours from now
+          } else {
+            const midnight = new Date();
+            midnight.setUTCHours(24, 0, 0, 0);
+            settlementTime = Math.floor(midnight.getTime() / 1000);
+            if (settlementTime <= entryDeadline) {
+              settlementTime += 86400;
+            }
+          }
         }
 
         const allowedTiers = [
