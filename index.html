@@ -7250,11 +7250,11 @@ window.handleCreateQuestion = async function(e) {
 
     
     const WHITELISTED_CRYPTO_TOKENS = {
-      BTC: { name: "Bitcoin", symbol: "BTC", exchange: "Coinbase BTC-USD" },
-      ETH: { name: "Ethereum", symbol: "ETH", exchange: "Coinbase ETH-USD" },
-      SOL: { name: "Solana", symbol: "SOL", exchange: "Coinbase SOL-USD" },
-      BNB: { name: "BNB", symbol: "BNB", exchange: "Binance BNB-USDT" },
-      HYPE: { name: "Hyperliquid", symbol: "HYPE", exchange: "Hyperliquid HYPE-USD" }
+      BTC: { name: "Bitcoin", symbol: "BTC", pair: "BTC-USD", exchange: "Coinbase BTC-USD" },
+      ETH: { name: "Ethereum", symbol: "ETH", pair: "ETH-USD", exchange: "Coinbase ETH-USD" },
+      SOL: { name: "Solana", symbol: "SOL", pair: "SOL-USD", exchange: "Coinbase SOL-USD" },
+      BNB: { name: "BNB", symbol: "BNB", pair: "BNB-USDT", exchange: "Binance BNB-USDT" },
+      HYPE: { name: "Hyperliquid", symbol: "HYPE", pair: "HYPE-USD", exchange: "Hyperliquid HYPE-USD" }
     };
 
     function updateCryptoMarketInputs() {
@@ -7470,9 +7470,9 @@ window.handleCreateQuestion = async function(e) {
     async function submitNewQuestionOnchain() {
       const btn = document.getElementById("btnSubmitQuestion");
       const statusBox = document.getElementById("createQStatus");
-      const title = document.getElementById("newQTitle").value.trim();
+      let title = document.getElementById("newQTitle").value.trim();
       const category = document.getElementById("newQCategory").value;
-      const resolution = document.getElementById("newQResolution").value.trim();
+      let resolution = document.getElementById("newQResolution").value.trim();
       // Timing is now strictly auto-derived based on category & verified event
       let durationSec = 7200;
 
