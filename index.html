@@ -3809,8 +3809,8 @@
         const isSelected = q.id === selectedDuelQuestionId;
         const isLive = !q.isEnded && Date.now() < getQuestionDeadline(q.id);
         const borderClass = isSelected 
-          ? "border-[#e2e8f0] bg-[#f1f5f9] shadow-lg shadow-none ring-2 ring-black" 
-          : "border-[#e2e8f0] bg-white hover:border-[#e2e8f0]";
+          ? "border-slate-300 bg-slate-100 shadow-sm ring-1 ring-slate-300" 
+          : "border-slate-200 bg-white hover:border-slate-300";
         const dotClass = isSelected ? "bg-slate-700" : (isLive ? "bg-slate-400" : "bg-slate-300");
         const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#f1f5f9] text-black font-black shadow-md shadow-none ' : 'bg-[#f1f5f9] text-neutral-700 font-bold border border-[#e2e8f0] group-hover:border-[#e2e8f0]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
         
@@ -3936,11 +3936,11 @@
       if (!btnYes || !btnNo) return;
 
       if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-black bg-black text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-sm transition-all cursor-pointer";
-        btnNo.className = "p-3.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-[#f1f5f9] cursor-pointer";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-slate-400 bg-slate-200 text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-sm transition-all cursor-pointer";
+        btnNo.className = "p-3.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-slate-100 cursor-pointer";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-[#f1f5f9] cursor-pointer";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-black bg-black text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-sm transition-all cursor-pointer";
+        btnYes.className = "p-3.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-slate-100 cursor-pointer";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-slate-400 bg-slate-200 text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-sm transition-all cursor-pointer";
       }
     }
 
@@ -4143,7 +4143,7 @@
         const btn = document.getElementById(`duel-tab-${t}`);
         if (!btn) return;
         if (t === tab) {
-          btn.className = "px-4 py-3 border-b-2 border-black text-black font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+          btn.className = "px-4 py-3 border-b-2 border-slate-500 text-black font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
         } else {
           btn.className = "px-4 py-3 border-b-2 border-transparent text-[#64748b] hover:text-black font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
         }
@@ -5079,7 +5079,7 @@
       // 1. OPEN TAB
       if (category === "open") {
         if (isCreator) {
-          cardBgClass = "bg-white border-2 border-black shadow-md";
+          cardBgClass = "bg-white border border-slate-300 shadow-md";
           userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-black border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> ⚡ YOUR REQUEST</span>`;
           statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-[#f1f5f9] text-neutral-800 font-bold border border-[#e2e8f0] text-xs flex items-center gap-2">WAITING OPPONENT</span>`;
           actionSection = `
@@ -5178,7 +5178,7 @@
           cardBgClass = "bg-[#f8fafc] border-[#e2e8f0] shadow-[0_0_20px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/30";
           userRoleBadge = isParticipant ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-black border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc]"></span> ⚖️ NO WINNER (100% REFUND)</span>` : "";
         } else if (isWinner) {
-          cardBgClass = "bg-[#f1f5f9] border-[#e2e8f0] shadow-[0_0_20px_rgba(0,0,0,0.05)] ring-1 ring-neutral-800";
+          cardBgClass = "bg-[#f1f5f9] border-[#e2e8f0] shadow-[0_0_20px_rgba(0,0,0,0.05)] ring-1 ring-slate-300";
           userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f1f5f9] animate-pulse"></span> 🏆 WIN</span>`;
         } else if (isLoser) {
           cardBgClass = "bg-[#f8fafc] border-[#e2e8f0] shadow-[0_0_20px_rgba(244,63,94,0.2)] ring-1 ring-rose-500/40";
