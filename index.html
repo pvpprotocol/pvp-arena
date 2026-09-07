@@ -15,135 +15,130 @@
   <style>
 
     /* ============================================================
-       3-COLOR THEME:
+       STRICT 3-COLOR MONOCHROME THEME
        1. Background: Pure White (#ffffff)
        2. Text: Pure Black (#000000)
-       3. Options / Buttons / Interactive: Vibrant Blue (#2563eb)
+       3. Options / Buttons / Interactive: Slate Gray (#334155 / #1e293b / #cbd5e1)
        ============================================================ */
     :root {
       --bg-page: #ffffff;
       --card-bg: #ffffff;
-      --card-border: #e2e8f0;
+      --card-border: #cbd5e1;
       --text-main: #000000;
-      --text-muted: #1e293b;
-      --blue-primary: #2563eb;
-      --blue-hover: #1d4ed8;
+      --text-muted: #334155;
+      --gray-primary: #334155;
+      --gray-dark: #1e293b;
+      --gray-light: #f1f5f9;
+      --gray-border: #94a3b8;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       font-family: 'Inter', sans-serif !important;
       background-color: #ffffff !important;
       color: #000000 !important;
       background-image: none !important;
     }
+
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Glass Panels & Cards -> Pure White with Crisp Border */
-    .glass-panel, .glass-panel-glow {
-      background: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+    /* ALL Containers, Cards, Sections, Modals, Navbars -> Pure White Background with Slate Border */
+    header, nav, main, footer, section, article, aside,
+    .glass-panel, .glass-panel-glow, 
+    [class*="bg-slate-"], [class*="bg-black"], [class*="bg-cyan-"], [class*="bg-purple-"],
+    .bg-\[\#05070d\], .bg-\[\#030712\], .bg-\[\#0f172a\], .bg-\[\#080d1a\],
+    #createQuestionModal > div > div, .modal-content-box,
+    .q-card, .duel-card {
+      background-color: #ffffff !important;
+      background-image: none !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
     }
 
-    /* Sticky Navbar */
     header.sticky {
       background: #ffffff !important;
-      border-bottom: 1px solid #e2e8f0 !important;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
+      border-bottom: 1px solid #cbd5e1 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
     }
 
-    /* Force all dark backgrounds to Pure White */
-    .bg-slate-950, .bg-slate-900, .bg-slate-950\/80, .bg-slate-900\/60, .bg-slate-900\/80, 
-    .bg-slate-900\/90, .bg-slate-950\/90, .bg-slate-950\/50, .bg-slate-900\/50, .bg-slate-950\/40, 
-    .bg-slate-900\/40, .bg-slate-900\/70, .bg-black\/50, .bg-black\/60, .bg-black\/40, .bg-black\/80, 
-    .bg-black, .bg-slate-800, .bg-slate-800\/50, .bg-slate-800\/60, .bg-slate-800\/80,
-    .bg-cyan-950\/30, .bg-cyan-950\/40, .bg-cyan-950\/20, .bg-purple-950\/30, .bg-purple-950\/40 {
+    /* ALL Text Elements -> Pure Black */
+    body, p, span, div, h1, h2, h3, h4, h5, h6, label, td, th, li, a, b, strong,
+    [class*="text-white"], [class*="text-slate-"], [class*="text-gray-"],
+    [class*="text-cyan-"], [class*="text-purple-"], [class*="text-emerald-"], 
+    [class*="text-amber-"], [class*="text-rose-"], [class*="text-red-"], [class*="text-blue-"] {
+      color: #000000 !important;
+    }
+
+    /* ALL Borders -> Crisp Neutral Gray */
+    *, [class*="border-white"], [class*="border-slate-"], [class*="border-cyan-"], 
+    [class*="border-purple-"], [class*="border-blue-"] {
+      border-color: #cbd5e1 !important;
+    }
+
+    /* Inactive Options, Badges, Tags, Pills -> Light Gray with Gray Border and Black Text */
+    [class*="bg-cyan-500"], [class*="bg-purple-500"], [class*="bg-emerald-500"],
+    [class*="bg-amber-500"], [class*="bg-rose-500"], [class*="bg-red-500"],
+    [class*="bg-blue-500"], [class*="bg-blue-600"],
+    .badge, .tag, .pill {
+      background-color: #f1f5f9 !important;
+      background-image: none !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #000000 !important;
+    }
+
+    /* Standard Interactive Option & Tab Buttons */
+    .tab-btn, .filter-btn, button, .tier-pick-btn {
+      color: #000000 !important;
       background-color: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      transition: all 0.15s ease-in-out !important;
     }
-
-    /* Borders */
-    .border-white\/10, .border-white\/5, .border-white\/20, .border-white\/30, 
-    .border-slate-800, .border-slate-800\/60, .border-slate-700, .border-slate-600 {
-      border-color: #e2e8f0 !important;
-    }
-
-    /* All text -> Pure Black / Rich Slate */
-    .text-white, .text-slate-100, .text-slate-200, .text-slate-300, 
-    .text-slate-400, .text-slate-500, .text-gray-300, .text-gray-400 {
+    .tab-btn:hover, .filter-btn:hover, button:hover, .tier-pick-btn:hover {
+      background-color: #f1f5f9 !important;
+      border-color: #64748b !important;
       color: #000000 !important;
     }
 
-    /* All Interactive Options & Accents -> Vibrant Blue */
-    .text-cyan-400, .text-cyan-300, .text-purple-400, .text-purple-300, 
-    .text-emerald-400, .text-emerald-300, .text-amber-400, .text-amber-300, 
-    .text-rose-400, .text-rose-300, .text-red-400, .text-red-300 {
-      color: #2563eb !important;
-    }
-
-    /* Option Badges & Tags -> Crisp White with Blue text and border */
-    .bg-cyan-500\/10, .bg-cyan-500\/20, .bg-purple-500\/10, .bg-purple-500\/20,
-    .bg-emerald-500\/10, .bg-emerald-500\/20, .bg-amber-500\/10, .bg-amber-500\/20,
-    .bg-rose-500\/10, .bg-rose-500\/20, .bg-red-500\/10, .bg-red-500\/20 {
-      background-color: #eff6ff !important;
-      border: 1px solid #bfdbfe !important;
-      color: #2563eb !important;
-    }
-
-    /* Option & Tab Buttons */
-    .tab-btn {
-      color: #000000 !important;
-      background: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
-      font-weight: 600 !important;
-    }
-    .tab-btn:hover {
-      color: #2563eb !important;
-      border-color: #2563eb !important;
-    }
-    .tab-btn.active {
-      background: #2563eb !important;
-      color: #ffffff !important;
-      border-color: #2563eb !important;
-      font-weight: 800 !important;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
-    }
-
-    /* All Action & Option CTA Buttons -> Blue */
+    /* ACTIVE / SELECTED Options & Action Buttons -> Solid Slate Gray with White Text */
+    .tab-btn.active, .filter-btn.active,
     button[class*="from-"], div[class*="from-"], a[class*="from-"],
-    button[class*="bg-cyan-500"], button[class*="bg-blue-600"], button[class*="bg-purple-600"],
-    button[class*="bg-emerald-500"], button[class*="bg-rose-600"], .btn-solid-white-text {
-      background: #2563eb !important;
+    .btn-solid-white-text,
+    .bg-slate-800, .bg-slate-700,
+    .btn-action-primary {
+      background-color: #334155 !important;
       background-image: none !important;
       color: #ffffff !important;
-      border-color: #2563eb !important;
+      border-color: #334155 !important;
+      box-shadow: 0 2px 6px rgba(51, 65, 85, 0.25) !important;
     }
-    button[class*="from-"]:hover, button[class*="bg-blue-600"]:hover {
-      background: #1d4ed8 !important;
+    .tab-btn.active *, .filter-btn.active *, button[class*="from-"] *, .btn-solid-white-text * {
+      color: #ffffff !important;
     }
-    button[class*="from-"] *, div[class*="from-"] *, a[class*="from-"] * {
+    .tab-btn.active:hover, button[class*="from-"]:hover, .btn-solid-white-text:hover {
+      background-color: #1e293b !important;
+      border-color: #1e293b !important;
       color: #ffffff !important;
     }
 
-    /* Question cards selection */
-    .q-card-selected {
-      border: 2px solid #2563eb !important;
-      box-shadow: 0 0 0 1px #2563eb !important;
-      background-color: #f8faff !important;
+    /* Question Cards & Duel Selection */
+    .q-card-selected, .duel-selected {
+      border: 2px solid #334155 !important;
+      box-shadow: 0 0 0 1px #334155 !important;
+      background-color: #f8fafc !important;
     }
 
-    /* Inputs, Selects, and Dropdown Options */
+    /* Form Inputs, Dropdowns & Textareas */
     input, select, textarea {
       background-color: #ffffff !important;
       color: #000000 !important;
-      border: 1px solid #cbd5e1 !important;
+      border: 1px solid #94a3b8 !important;
       outline: none !important;
     }
     option {
@@ -151,22 +146,31 @@
       color: #000000 !important;
     }
     option:checked, option:hover {
-      background-color: #2563eb !important;
+      background-color: #334155 !important;
       color: #ffffff !important;
     }
     input::placeholder, textarea::placeholder {
       color: #64748b !important;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: #2563eb !important;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25) !important;
+      border-color: #334155 !important;
+      box-shadow: 0 0 0 2px rgba(51, 65, 85, 0.2) !important;
     }
 
-    /* Modals -> White background, Black text, Blue options */
-    #createQuestionModal > div > div, .modal-content-box {
-      background-color: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #ffffff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
 
   </style>
@@ -222,7 +226,7 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 </head>
-<body class="min-h-screen flex flex-col antialiased bg-[#f8fafc] text-slate-900 selection:bg-cyan-100 selection:text-cyan-900">
+<body class="min-h-screen flex flex-col antialiased bg-white text-black">
 
   <!-- TOP HEADER / NAVBAR -->
   <header class="sticky top-0 z-50 border-b border-white/10 bg-[#05070d]/90 backdrop-blur-xl">
@@ -3977,11 +3981,11 @@
       if (!btnYes || !btnNo) return;
 
       if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-blue-600 bg-blue-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-blue-500/30 transition-all hover:scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-slate-300 bg-white text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-blue-500 hover:text-blue-600 hover:scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-slate-800 bg-slate-800 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-slate-500/20 transition-all hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-slate-300 bg-white text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-slate-600 hover:text-slate-800 hover:scale-[1.02]";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-slate-300 bg-white text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-blue-500 hover:text-blue-600 hover:scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-blue-600 bg-blue-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-blue-500/30 transition-all hover:scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-slate-300 bg-white text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-slate-600 hover:text-slate-800 hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-slate-800 bg-slate-800 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-slate-500/20 transition-all hover:scale-[1.02]";
       }
     }
 
@@ -4169,9 +4173,9 @@
         const btn = document.getElementById(`filter-duels-${c.toLowerCase()}`);
         if (!btn) return;
         if (c === cat) {
-          btn.className = "px-3 py-1 rounded-lg font-bold bg-blue-600 text-white border border-blue-600 transition-all shadow-sm shadow-blue-500/30";
+          btn.className = "px-3 py-1 rounded-lg font-bold bg-slate-800 text-white border border-slate-800 transition-all shadow-sm shadow-slate-500/20";
         } else {
-          btn.className = "px-3 py-1 rounded-lg font-bold text-black bg-white border border-slate-200 hover:border-blue-500 hover:text-blue-600 transition-all";
+          btn.className = "px-3 py-1 rounded-lg font-bold text-black bg-white border border-slate-200 hover:border-slate-600 hover:text-slate-800 transition-all";
         }
       });
       renderAllDuels();
