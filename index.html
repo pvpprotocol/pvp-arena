@@ -722,7 +722,7 @@
                   <span class="text-[10px] text-slate-400 font-mono">Robinhood Chain</span>
                 </div>
                 <button onclick="submit2048ScoreOnchain()" id="btn-submit-score-onchain" class="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-black text-xs hover:from-cyan-300 hover:to-blue-400 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-500/20">
-                  ⚡ RECORD SCORE ON-CHAIN
+                  ⚡ RECORD SCORE ONCHAIN
                 </button>
                 <div id="score-onchain-status" class="text-[10px] text-center text-slate-400 mt-2 font-mono"></div>
               </div>
@@ -1528,7 +1528,7 @@
         <div class="space-y-4">
           <h2 class="text-xl font-bold text-white font-mono">p2p Prediction</h2>
           <p class="text-sm text-slate-300 leading-relaxed">
-            <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk to reward ratio (for example at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In PVP Arena, the winner earns 90% net profit directly, and the loser receives 3% rebate cashback to preserve liquidity and enable immediate re-entry. Furthermore, PvP Arena operates as a completely permissionless protocol where any user can design and deploy custom prediction challenges directly on-chain via the <strong class="text-white">+ Create Challenge</strong> portal, earning an automatic 5% cash reward from the total pot of every settled duel, routed instantly on-chain to the creator's wallet at the moment of match settlement.
+            <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk to reward ratio (for example at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In PVP Arena, the winner earns 90% net profit directly, and the loser receives 3% rebate cashback to preserve liquidity and enable immediate reentry. Furthermore, PvP Arena operates as a completely permissionless protocol where any user can design and deploy custom prediction challenges directly onchain via the <strong class="text-white">+ Create Challenge</strong> portal, earning an automatic 5% cash reward from the total pot of every settled duel, routed instantly onchain to the creator's wallet at the moment of match settlement.
           </p>
           <p class="text-sm text-slate-300 leading-relaxed">
             Two participants lock equal collateral into the canonical escrow smart contract. Upon verified outcome resolution, funds are automatically distributed as follows:
@@ -1536,7 +1536,7 @@
           <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
             <li><strong class="text-white">90%</strong> allocated directly to the verified winner (Net Profit Payout)</li>
             <li><strong class="text-emerald-400">5%</strong> Question Creator Fee transferred directly and in cash to the market creator's wallet for every settled duel</li>
-            <li><strong class="text-cyan-400">3%</strong> rebate cashback returned to the loser wallet to preserve liquidity and enable immediate re-entry</li>
+            <li><strong class="text-cyan-400">3%</strong> rebate cashback returned to the loser wallet to preserve liquidity and enable immediate reentry</li>
             <li><strong class="text-slate-400">2%</strong> protocol treasury fee for platform maintenance and buybacks</li>
           </ul>
 
@@ -2311,13 +2311,13 @@
           }]
         });
       } catch (err) {
-        console.error("${tokenSymbol} on-chain transfer rejected:", err);
+        console.error("${tokenSymbol} onchain transfer rejected:", err);
         throw new Error("Step 2/2 Deposit transaction was cancelled by user.");
       }
 
       // Strict Anti-Cheat Validation: Verify transaction hash returned by wallet
       if (!txHash || typeof txHash !== "string" || !txHash.startsWith("0x") || txHash.length !== 66) {
-        throw new Error("Invalid on-chain transaction hash returned from blockchain.");
+        throw new Error("Invalid onchain transaction hash returned from blockchain.");
       }
 
       showToast(`🎉 Step 2/2 Complete! ${totalCostUSD} ${tokenSymbol} Deposited.`, "success");
@@ -3992,7 +3992,7 @@
           delete store[duelData.id];
         } else {
           const existing = store[duelData.id] || {};
-          // STRICT BLOCKCHAIN ENFORCEMENT: If already matched on-chain, NEVER allow downgrade to open!
+          // STRICT BLOCKCHAIN ENFORCEMENT: If already matched onchain, NEVER allow downgrade to open!
           if ((existing.acceptTxHash || existing.status === 'in_progress') && duelData.status === 'open') {
             console.log(`[PVP] Ignoring relay open downgrade for ${duelData.id} - already locked onchain!`);
             return;
@@ -4572,12 +4572,12 @@
       const contract = new ethers.Contract(ESCROW_CONTRACT, PVP_DUEL_ABI, signer);
 
       try {
-        showToast("🔍 Checking on-chain status on Robinhood Chain...", "info");
+        showToast("🔍 Checking onchain status on Robinhood Chain...", "info");
         const onchainData = await contract.duels(onchainDuelId);
         const onchainStatus = onchainData.status; // 0=WAITING, 1=ACTIVE, 2=SETTLED, 3=CANCELLED
 
         if (onchainStatus === 2) {
-          showToast("✅ This duel was ALREADY settled & funds transferred on-chain!", "success");
+          showToast("✅ This duel was ALREADY settled & funds transferred onchain!", "success");
           duelData.claimed = true;
           duelData.cashbackClaimed = true;
           duelData.status = "completed";
@@ -4587,7 +4587,7 @@
         }
 
         if (onchainStatus !== 1) {
-          showToast("Duel is not in active state on-chain.", "error");
+          showToast("Duel is not in active state onchain.", "error");
           return;
         }
 
@@ -4630,7 +4630,7 @@
         const signature = await oracleWallet._signTypedData(domain, types, value);
 
         // Submit transaction via user wallet
-        showToast("🦊 Please confirm on-chain claim in your wallet...", "info");
+        showToast("🦊 Please confirm onchain claim in your wallet...", "info");
         const tx = await contract.settleDuelWithProof(
           onchainDuelId,
           winningOutcome,
@@ -4644,15 +4644,15 @@
         const receipt = await tx.wait();
 
         if (receipt.status === 1) {
-          // On-chain settleDuelWithProof atomically sends BOTH the winner prize AND the runner-up cashback in the SAME transaction!
+          // Onchain settleDuelWithProof atomically sends BOTH the winner prize AND the runner-up cashback in the SAME transaction!
           duelData.claimed = true;
           duelData.claimedAt = duelData.claimedAt || Date.now();
           duelData.cashbackClaimed = true;
           duelData.cashbackClaimedAt = duelData.cashbackClaimedAt || Date.now();
           if (isPrize) {
-            showToast(`🎉 WINNER PRIZE & CASHBACK SETTLED! +${payoutOrAmount} USDG sent on-chain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+            showToast(`🎉 WINNER PRIZE & CASHBACK SETTLED! +${payoutOrAmount} USDG sent onchain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
           } else {
-            showToast(`💸 CASHBACK & PRIZE SETTLED! +${payoutOrAmount} USDG sent on-chain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+            showToast(`💸 CASHBACK & PRIZE SETTLED! +${payoutOrAmount} USDG sent onchain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
           }
           duelData.status = "completed";
           duelData.settledTx = tx.hash;
@@ -4660,7 +4660,7 @@
           await broadcastDuel(duelData);
           renderAllDuels();
         } else {
-          showToast("❌ Transaction reverted on-chain.", "error");
+          showToast("❌ Transaction reverted onchain.", "error");
         }
 
       } catch(err) {
@@ -4669,7 +4669,7 @@
         if (msg.includes("user rejected") || msg.includes("rejected")) {
           showToast("Transaction rejected in wallet.", "error");
         } else if (msg.includes("Proof already used") || msg.includes("Duel not active")) {
-          showToast("✅ Duel already settled on-chain! Funds paid out.", "success");
+          showToast("✅ Duel already settled onchain! Funds paid out.", "success");
           if (isPrize) duelData.claimed = true;
           else duelData.cashbackClaimed = true;
           saveLocalDuel(duelData);
@@ -4867,7 +4867,7 @@
       if (!duelData) return "17-1";
       const qId = getDuelQuestionId(duelData);
 
-      // 1. On-Chain chronological ordering by blockchain transaction/block
+      // 1. Onchain chronological ordering by blockchain transaction/block
       if (duelData.onchainDuelId) {
         const curId = parseInt(duelData.onchainDuelId, 10);
         const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
@@ -5293,7 +5293,7 @@
         // Fast parallel fetch of balance and allowance
         // Direct execution: do NOT check wallet balance beforehand.
         // Let wallet & contract handle execution or revert if insufficient funds.
-        // Always check on-chain balance & allowance directly
+        // Always check onchain balance & allowance directly
         const [currentBal, currentAllowance, currentEthBal] = await Promise.all([
           USDG_CONTRACT.balanceOf(userAddress),
           USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS),
@@ -5322,11 +5322,11 @@
             const onchainQ = await regContract.getQuestion(duelData.questionId);
             const onchainEntryDeadline = onchainQ.entryDeadline.toNumber() * 1000;
             if (Date.now() >= onchainEntryDeadline || onchainQ.isClosed || onchainQ.isSettled) {
-              showToast("⚠️ Question entry window has expired or is settled on-chain!", "warning");
+              showToast("⚠️ Question entry window has expired or is settled onchain!", "warning");
               return;
             }
           } catch (qErr) {
-            console.warn("Accept duel on-chain verify warning:", qErr);
+            console.warn("Accept duel onchain verify warning:", qErr);
           }
         }
 
@@ -5351,7 +5351,7 @@
         }
         if (durationSec > 86400 * 30) durationSec = 86400 * 30;
 
-        // 🛡️ FULL ON-CHAIN CRYPTOGRAPHIC ANTI-TAMPER VERIFICATION (Title, Options, Deadlines)
+        // 🛡️ FULL ONCHAIN CRYPTOGRAPHIC ANTI-TAMPER VERIFICATION (Title, Options, Deadlines)
         if (q && q.isOnchain && window.QUESTION_REGISTRY_ADDRESS) {
           try {
             const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, provider);
@@ -5361,7 +5361,7 @@
             const liveTitleHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(onchainQ.title));
             const uiTitleHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(q.title));
             if (liveTitleHash !== uiTitleHash) {
-              showToast("🚨 TAMPERING DETECTED! Question title does not match on-chain registry!", "error");
+              showToast("🚨 TAMPERING DETECTED! Question title does not match onchain registry!", "error");
               if (btn) btn.disabled = false;
               return;
             }
@@ -5371,27 +5371,27 @@
             const onchainSettlementTime = onchainQ.settlementTime.toNumber() * 1000;
 
             if (q.deadline && Math.abs(q.deadline - onchainEntryDeadline) > 60000) {
-              showToast("🚨 TAMPERING DETECTED! Entry deadline does not match on-chain contract!", "error");
+              showToast("🚨 TAMPERING DETECTED! Entry deadline does not match onchain contract!", "error");
               if (btn) btn.disabled = false;
               return;
             }
 
             if (q.settlementTime && Math.abs(q.settlementTime - onchainSettlementTime) > 60000) {
-              showToast("🚨 TAMPERING DETECTED! Settlement time does not match on-chain contract!", "error");
+              showToast("🚨 TAMPERING DETECTED! Settlement time does not match onchain contract!", "error");
               if (btn) btn.disabled = false;
               return;
             }
 
-            // Strict On-Chain Entry Window check
+            // Strict Onchain Entry Window check
             if (Date.now() >= onchainEntryDeadline) {
-              showToast("⚠️ On-chain entry deadline has passed! Submissions closed.", "warning");
+              showToast("⚠️ Onchain entry deadline has passed! Submissions closed.", "warning");
               if (btn) btn.disabled = false;
               return;
             }
 
             // 3. Question status verification
             if (onchainQ.isClosed || onchainQ.isSettled) {
-              showToast("⚠️ Question is closed/settled on-chain!", "warning");
+              showToast("⚠️ Question is closed/settled onchain!", "warning");
               if (btn) btn.disabled = false;
               return;
             }
@@ -5407,11 +5407,11 @@
             // 5. Composite Cryptographic Fingerprint Check
             const onchainCompositeString = `${q.id}|${onchainQ.title}|${onchainQ.entryDeadline.toString()}|${onchainQ.settlementTime.toString()}|OPT1=YES/GREEN|OPT2=NO/RED`;
             const onchainFingerprint = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(onchainCompositeString));
-            console.log("🛡️ Verified On-Chain Question Fingerprint:", onchainFingerprint);
+            console.log("🛡️ Verified Onchain Question Fingerprint:", onchainFingerprint);
 
           } catch (verifErr) {
-            console.warn("On-chain question verification check error:", verifErr);
-            showToast("⚠️ Could not verify question with on-chain registry: " + (verifErr.reason || verifErr.message || verifErr), "error");
+            console.warn("Onchain question verification check error:", verifErr);
+            showToast("⚠️ Could not verify question with onchain registry: " + (verifErr.reason || verifErr.message || verifErr), "error");
             if (btn) btn.disabled = false;
             return;
           }
@@ -5562,7 +5562,7 @@
       const opponentOption = duelData.requiredOpponentOption || (duelData.creatorOption === 'YES' ? 'NO' : 'YES');
 
       // 4. DO NOT change status or broadcast to matched YET!
-      // Require the user to complete signature AND on-chain USDG payment FIRST!
+      // Require the user to complete signature AND onchain USDG payment FIRST!
       let txHash = null;
       try {
         // Call acceptDuelToken directly on official contract
@@ -5583,7 +5583,7 @@
           return;
         }
 
-        // Always check on-chain allowance directly to prevent ERC20 insufficient allowance reverts
+        // Always check onchain allowance directly to prevent ERC20 insufficient allowance reverts
         const curAllowance = await USDG_CONTRACT.allowance(signerAddress, DUEL_CONTRACT_ADDRESS);
         if (BigInt(curAllowance.toString()) < wagerUnits) {
           showToast("🦊 Approving USDG for duel acceptance in your Wallet...", "info");
@@ -5615,8 +5615,8 @@
         return;
       }
 
-      // 5. STRICT BLOCKCHAIN MATCHING: Lock duel permanently to on-chain txHash
-      showToast(`⚔️ On-chain Deposit Confirmed! Tx: ${txHash.slice(0,10)}...`, "success");
+      // 5. STRICT BLOCKCHAIN MATCHING: Lock duel permanently to onchain txHash
+      showToast(`⚔️ Onchain Deposit Confirmed! Tx: ${txHash.slice(0,10)}...`, "success");
       duelData.status = 'in_progress';
       duelData.opponent = userAddress;
       duelData.opponentOption = opponentOption;
@@ -5634,7 +5634,7 @@
       await broadcastDuel(duelData);
       renderDuelCard(duelData);
       renderAllDuels();
-      // Switch tab to matched automatically so user immediately sees their on-chain match
+      // Switch tab to matched automatically so user immediately sees their onchain match
       switchDuelTab('matched');
       showToast(`🎉 Match accepted! Status: WAITING OUTCOME. You took [${opponentOption}]!`, "success");
     }
@@ -5671,9 +5671,9 @@
         ];
         const duelContract = new ethers.Contract(ESCROW_CONTRACT, cancelAbi, signer);
 
-        console.log("Cancelling duel on-chain with numericId:", numericId);
+        console.log("Cancelling duel onchain with numericId:", numericId);
         
-        // Execute real on-chain transaction with explicit gasLimit for instant metamask popup
+        // Execute real onchain transaction with explicit gasLimit for instant metamask popup
         const tx = await duelContract.cancelDuel(numericId, { gasLimit: 260000 });
         showToast("⏳ Mining cancellation & refund on Robinhood Chain... Tx: " + tx.hash.slice(0, 10) + "...", "info");
         const receipt = await tx.wait();
@@ -5690,9 +5690,9 @@
           if (row) row.remove();
           updateDuelCounter();
           renderAllDuels();
-          showToast("💰 DEPOSIT REFUNDED! " + tier + " USDG returned to your wallet on-chain! Tx: " + tx.hash.slice(0, 10) + "...", "success");
+          showToast("💰 DEPOSIT REFUNDED! " + tier + " USDG returned to your wallet onchain! Tx: " + tx.hash.slice(0, 10) + "...", "success");
         } else {
-          showToast("❌ Cancellation transaction reverted on-chain.", "error");
+          showToast("❌ Cancellation transaction reverted onchain.", "error");
         }
       } catch (err) {
         console.error("Cancel duel error:", err);
@@ -5702,7 +5702,7 @@
         } else if (msg.includes("Not creator")) {
           showToast("❌ Only the creator can cancel this duel and reclaim deposit.", "error");
         } else if (msg.includes("Duel not waiting")) {
-          showToast("❌ Cannot cancel: Duel has already been accepted or settled on-chain.", "error");
+          showToast("❌ Cannot cancel: Duel has already been accepted or settled onchain.", "error");
         } else {
           showToast("Cancel error: " + (msg || err), "error");
         }
@@ -5880,7 +5880,7 @@
   }
 
   
-    // --- ON-CHAIN QUESTION REGISTRY INTEGRATION (Robinhood Chain) ---
+    // --- ONCHAIN QUESTION REGISTRY INTEGRATION (Robinhood Chain) ---
     async function loadOnchainQuestions() {
       try {
         const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.robinhood.com");
@@ -5908,9 +5908,9 @@
             isOnchain: true,
             category: q.category || "CRYPTO",
             title: q.title,
-            desc: q.resolutionSource ? ("Source: " + q.resolutionSource) : "On-Chain Registered Question",
+            desc: q.resolutionSource ? ("Source: " + q.resolutionSource) : "Onchain Registered Question",
             resolutionSource: q.resolutionSource,
-            deadlineDesc: "On-Chain Entry Window",
+            deadlineDesc: "Onchain Entry Window",
             deadline: entryDeadline,
             settlementTime: settlementTime,
             winningOption: winningOption,
@@ -5955,7 +5955,7 @@ window.handleCreateQuestion = async function(e) {
     const desc = document.getElementById("newQDesc").value.trim() || (Math.round(duration/3600) + "-Hour Entry Window");
     const statusEl = document.getElementById("createQStatus");
 
-    // Check if web3 wallet is connected for on-chain submission
+    // Check if web3 wallet is connected for onchain submission
     if (window.ethereum && typeof ethers !== "undefined") {
       try {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -5984,15 +5984,15 @@ window.handleCreateQuestion = async function(e) {
         await tx.wait(1);
 
         if (statusEl) {
-          statusEl.innerHTML = `✅ On-Chain Question created! <a href="https://explorer.mainnet.chain.robinhood.com/tx/${tx.hash}" target="_blank" class="underline text-amber-400">View Explorer</a>`;
+          statusEl.innerHTML = `✅ Onchain Question created! <a href="https://explorer.mainnet.chain.robinhood.com/tx/${tx.hash}" target="_blank" class="underline text-amber-400">View Explorer</a>`;
           setTimeout(() => { if (statusEl) statusEl.innerText = ""; }, 10000);
         }
         document.getElementById("createQuestionForm").reset();
         await loadOnchainQuestions();
         return;
       } catch (err) {
-        console.warn("On-chain question create failed, falling back to local:", err);
-        if (statusEl) statusEl.innerHTML = `<span class="text-rose-400 text-xs">On-chain err: ${err.reason || err.message || "reverted"}. Storing locally...</span>`;
+        console.warn("Onchain question create failed, falling back to local:", err);
+        if (statusEl) statusEl.innerHTML = `<span class="text-rose-400 text-xs">Onchain err: ${err.reason || err.message || "reverted"}. Storing locally...</span>`;
       }
     }
 
@@ -6875,13 +6875,13 @@ window.handleCreateQuestion = async function(e) {
         // Claim USDG pool by default
         const usdgToken = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
 
-        // Pre-check on-chain leader and pool before sending tx
+        // Pre-check onchain leader and pool before sending tx
         try {
           const leader = await contract.leaders(cycleId, tier);
           const pool = await contract.tokenPools(cycleId, tier, usdgToken);
 
           if (!leader.winner || leader.winner.toLowerCase() === ethers.constants.AddressZero) {
-            showToast("ℹ️ Round #" + cycleId + " score was not recorded on-chain before the deadline. Play the new active round to record and win!", "warning");
+            showToast("ℹ️ Round #" + cycleId + " score was not recorded onchain before the deadline. Play the new active round to record and win!", "warning");
             banner.classList.add("hidden");
             if (btn) { btn.disabled = false; btn.innerText = "🏆 CLAIM 80% PRIZE POOL"; }
             return;
@@ -6899,7 +6899,7 @@ window.handleCreateQuestion = async function(e) {
             return;
           }
           if (pool.isZero()) {
-            showToast("ℹ️ On-chain prize pool is empty for this tier.", "warning");
+            showToast("ℹ️ Onchain prize pool is empty for this tier.", "warning");
             banner.classList.add("hidden");
             if (btn) { btn.disabled = false; btn.innerText = "🏆 CLAIM 80% PRIZE POOL"; }
             return;
@@ -6944,7 +6944,7 @@ window.handleCreateQuestion = async function(e) {
       
       <div class="flex items-center gap-2 mb-2">
         <span class="text-2xl">✨</span>
-        <h3 class="text-lg font-black text-white font-mono">Create On-Chain Market</h3>
+        <h3 class="text-lg font-black text-white font-mono">Create Onchain Market</h3>
       </div>
       
       
@@ -7032,7 +7032,7 @@ window.handleCreateQuestion = async function(e) {
 
         <button onclick="submitNewQuestionOnchain()" id="btnSubmitQuestion" class="w-full mt-2 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 hover:brightness-110 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2">
           <span>🚀</span>
-          <span>Deploy Market On-Chain</span>
+          <span>Deploy Market Onchain</span>
         </button>
       </div>
     </div>
@@ -7183,7 +7183,7 @@ window.handleCreateQuestion = async function(e) {
         statusBox.classList.add("bg-rose-500/10", "border", "border-rose-500/30", "text-rose-400");
         statusBox.innerText = "Transaction failed: " + (err.reason || err.message || "Rejected");
         btn.disabled = false;
-        btn.innerHTML = "<span>🚀</span><span>Deploy Market On-Chain</span>";
+        btn.innerHTML = "<span>🚀</span><span>Deploy Market Onchain</span>";
       }
     }
   </script>
