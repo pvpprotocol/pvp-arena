@@ -7015,10 +7015,17 @@ window.handleCreateQuestion = async function(e) {
         </div>
       </div>
 
+      <!-- Zero-Typing Smart Selection Banner -->
+      <div class="p-2.5 mb-3 rounded-xl bg-slate-900/80 border border-white/10 flex items-center justify-between text-xs font-mono">
+        <span class="text-slate-300 flex items-center gap-1.5">
+          <span class="text-cyan-400">🛡️</span> <strong>Zero-Typing Mode:</strong> Choose from verified parameters below
+        </span>
+        <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Auto-Generated</span>
+      </div>
       <div class="space-y-3 font-mono text-xs">
         <div>
           <label class="text-slate-400 text-[11px] block mb-1">Market Question / Title</label>
-          <input id="newQTitle" type="text" placeholder="e.g. Ethereum Daily Candle Close: GREEN or RED?" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400">
+          <input id="newQTitle" type="text" readonly value="Bitcoin Daily Candle Close: GREEN or RED?" class="w-full bg-slate-950 border border-cyan-500/30 rounded-xl px-3 py-2.5 text-cyan-300 font-bold cursor-not-allowed focus:outline-none select-none">
         </div>
 
         
@@ -7031,17 +7038,14 @@ window.handleCreateQuestion = async function(e) {
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-slate-400 text-[11px] block mb-1">Category</label>
-            <select id="newQCategory" onchange="handleCategoryChange(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-cyan-400">
-              <option value="CRYPTO" selected>CRYPTO</option>
-              <option value="SPORTS">SPORTS (Football & NBA Only)</option>
-              <option value="POLITICS">POLITICS</option>
-              <option value="MARKETS">MARKETS</option>
-              <option value="TECH">TECH</option>
+            <select id="newQCategory" onchange="handleCategoryChange(this.value)" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-3 py-2.5 text-cyan-300 font-bold focus:outline-none focus:border-cyan-400">
+              <option value="CRYPTO" selected>📊 CRYPTO (5 Whitelisted Assets)</option>
+              <option value="SPORTS">⚽🏀 SPORTS (European Football & USA NBA)</option>
             </select>
           </div>
           <div>
             <label class="text-slate-400 text-[11px] block mb-1">Resolution Source</label>
-            <input id="newQResolution" type="text" value="Coinbase Daily Candle Close" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-cyan-400">
+            <input id="newQResolution" type="text" readonly value="Coinbase BTC-USD Daily Candle Close" class="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2.5 text-slate-300 font-semibold cursor-not-allowed focus:outline-none select-none">
           </div>
         </div>
 
@@ -7261,36 +7265,24 @@ window.handleCreateQuestion = async function(e) {
     function handleCategoryChange(val) {
       const notice = document.getElementById("sportsDnbNotice");
       const sportsPanel = document.getElementById("sportsVerificationPanel");
-      const titleInput = document.getElementById("newQTitle");
-      const resInput = document.getElementById("newQResolution");
+      const cryptoPanel = document.getElementById("cryptoVerificationPanel");
       const btn = document.getElementById("btnSubmitQuestion");
       
       if (val === "SPORTS") {
         if (notice) notice.classList.remove("hidden");
         if (sportsPanel) sportsPanel.classList.remove("hidden");
+        if (cryptoPanel) cryptoPanel.classList.add("hidden");
         handleSportsLeagueChange("FOOTBALL_UCL");
-      } else {
+      } else { // CRYPTO
         if (notice) notice.classList.add("hidden");
         if (sportsPanel) sportsPanel.classList.add("hidden");
+        if (cryptoPanel) cryptoPanel.classList.remove("hidden");
         selectedSportsFixture = null;
         if (btn) {
           btn.disabled = false;
           btn.classList.remove("opacity-50", "cursor-not-allowed");
         }
-        
-        if (val === "POLITICS") {
-          if (titleInput) titleInput.placeholder = "e.g. US Presidential Election Winner or Official Senate Vote";
-          if (resInput) resInput.value = "Associated Press (AP) / Official Government Registry";
-        } else if (val === "MARKETS") {
-          if (titleInput) titleInput.placeholder = "e.g. S&P 500 Daily Close: GREEN or RED?";
-          if (resInput) resInput.value = "NYSE / NASDAQ Official Market Close";
-        } else if (val === "TECH") {
-          if (titleInput) titleInput.placeholder = "e.g. SpaceX Starship Flight Test Success: YES or NO?";
-          if (resInput) resInput.value = "Official Company Release / FAA Confirmation";
-        } else { // CRYPTO
-          if (titleInput) titleInput.placeholder = "e.g. Ethereum Daily Candle Close: GREEN or RED?";
-          if (resInput) resInput.value = "Coinbase BTC-USD Daily Candle Close";
-        }
+        updateCryptoMarketInputs();
       }
     }
 
@@ -7409,6 +7401,10 @@ window.handleCreateQuestion = async function(e) {
         return;
       }
 
+      if (category !== "CRYPTO" && category !== "SPORTS") {
+        alert("Policy Error: Only Crypto and Sports categories are currently supported.");
+        return;
+      }
       if (category === "SPORTS" && !selectedSportsFixture) {
         alert("Verification Error: Only official Football and USA NBA matches verified in the sports calendar can be deployed onchain. Unverified/fake matches are strictly rejected.");
         return;
