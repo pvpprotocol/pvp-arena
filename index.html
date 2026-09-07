@@ -7045,6 +7045,51 @@ window.handleCreateQuestion = async function(e) {
           </div>
         </div>
 
+        
+        <!-- Crypto Specific Verification & Whitelist Token Selector -->
+        <div id="cryptoVerificationPanel" class="space-y-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-cyan-300 flex items-center gap-1.5">
+              <span>📊</span> Verified Crypto Asset (Candle Close Only)
+            </span>
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Whitelisted (5 Tokens)</span>
+          </div>
+
+          <p class="text-[10px] text-slate-400 leading-snug">
+            🔒 <strong class="text-white">Whitelisted Assets Only:</strong> Only official candle close markets for <strong class="text-amber-400">BTC, ETH, SOL, BNB, and HYPE (Hyperliquid)</strong> are permitted. Resolution is strictly based on the final <strong class="text-emerald-400">Candle Close (GREEN vs RED)</strong>.
+          </p>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-slate-400 text-[10px] block mb-1">Select Whitelisted Token</label>
+              <select id="cryptoTokenSelect" onchange="handleCryptoTokenChange(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-cyan-400">
+                <option value="BTC" selected>₿ Bitcoin (BTC)</option>
+                <option value="ETH">⟠ Ethereum (ETH)</option>
+                <option value="SOL">◎ Solana (SOL)</option>
+                <option value="BNB">🟡 BNB (BNB)</option>
+                <option value="HYPE">💧 Hyperliquid (HYPE)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-slate-400 text-[10px] block mb-1">Candle Timeframe</label>
+              <select id="cryptoTimeframeSelect" onchange="handleCryptoTimeframeChange(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-cyan-300 text-xs font-semibold focus:outline-none focus:border-cyan-400">
+                <option value="daily" selected>📅 Daily Candle Close (00:00 UTC)</option>
+                <option value="12h">⏳ 12-Hour Candle Close</option>
+                <option value="4h">⚡ 4-Hour Candle Close</option>
+                <option value="1h">⏱️ 1-Hour Candle Close</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Anti-Fake Crypto Badge -->
+          <div id="cryptoValidationBadge" class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-between text-[10px]">
+            <span id="cryptoValidationText" class="font-bold flex items-center gap-1.5">
+              <span>✅</span> Whitelisted Asset & Candle Close Oracle Active
+            </span>
+            <span id="cryptoExchangeText" class="text-slate-400 font-mono text-[9px]">Coinbase BTC-USD</span>
+          </div>
+        </div>
+
         <!-- Sports Specific Verification & League Selector -->
         <div id="sportsVerificationPanel" class="hidden space-y-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20">
           <div class="flex items-center justify-between">
@@ -7176,6 +7221,48 @@ window.handleCreateQuestion = async function(e) {
 
     let selectedSportsFixture = null;
 
+    
+    const WHITELISTED_CRYPTO_TOKENS = {
+      BTC: { name: "Bitcoin", symbol: "BTC", exchange: "Coinbase BTC-USD" },
+      ETH: { name: "Ethereum", symbol: "ETH", exchange: "Coinbase ETH-USD" },
+      SOL: { name: "Solana", symbol: "SOL", exchange: "Coinbase SOL-USD" },
+      BNB: { name: "BNB", symbol: "BNB", exchange: "Binance BNB-USDT" },
+      HYPE: { name: "Hyperliquid", symbol: "HYPE", exchange: "Hyperliquid HYPE-USD" }
+    };
+
+    function updateCryptoMarketInputs() {
+      const tokenKey = document.getElementById("cryptoTokenSelect") ? document.getElementById("cryptoTokenSelect").value : "BTC";
+      const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "daily";
+      const token = WHITELISTED_CRYPTO_TOKENS[tokenKey] || WHITELISTED_CRYPTO_TOKENS.BTC;
+      
+      const titleInput = document.getElementById("newQTitle");
+      const resInput = document.getElementById("newQResolution");
+      const exchEl = document.getElementById("cryptoExchangeText");
+
+      let tfLabel = "Daily";
+      if (tf === "1h") tfLabel = "1-Hour";
+      else if (tf === "4h") tfLabel = "4-Hour";
+      else if (tf === "12h") tfLabel = "12-Hour";
+
+      if (titleInput) {
+        titleInput.value = `${token.name} ${tfLabel} Candle Close: GREEN or RED?`;
+      }
+      if (resInput) {
+        resInput.value = `${token.exchange} ${tfLabel} Candle Close`;
+      }
+      if (exchEl) {
+        exchEl.innerText = `${token.exchange} (${tfLabel})`;
+      }
+    }
+
+    function handleCryptoTokenChange(val) {
+      updateCryptoMarketInputs();
+    }
+
+    function handleCryptoTimeframeChange(val) {
+      updateCryptoMarketInputs();
+    }
+  
     function handleCategoryChange(val) {
       const notice = document.getElementById("sportsDnbNotice");
       const sportsPanel = document.getElementById("sportsVerificationPanel");
@@ -7330,6 +7417,18 @@ window.handleCreateQuestion = async function(e) {
       if (category === "SPORTS" && !selectedSportsFixture) {
         alert("Verification Error: Only official Football and USA NBA matches verified in the sports calendar can be deployed onchain. Unverified/fake matches are strictly rejected.");
         return;
+      }
+
+      if (category === "CRYPTO") {
+        const tokenKey = document.getElementById("cryptoTokenSelect") ? document.getElementById("cryptoTokenSelect").value : "";
+        if (!["BTC", "ETH", "SOL", "BNB", "HYPE"].includes(tokenKey)) {
+          alert("Strict Policy Error: For Crypto candle markets, only Bitcoin (BTC), Ethereum (ETH), Solana (SOL), BNB, and Hyperliquid (HYPE) are permitted.");
+          return;
+        }
+        if (!title.toLowerCase().includes("candle") || !title.toLowerCase().includes("close")) {
+          alert("Strict Policy Error: Crypto markets are strictly restricted to Candle Close (GREEN or RED).");
+          return;
+        }
       }
 
       if (!window.ethereum) {
