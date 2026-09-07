@@ -7417,7 +7417,9 @@ window.handleCreateQuestion = async function(e) {
         } else {
           // CRYPTO candle markets (12h or 24h)
           const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "12h";
-          entryDeadline = now + 7200; // 2 hour entry window
+          // Smart dynamic entry window: 1 hour for 12h candle, 2 hours for 24h candle
+          const entryDuration = (tf === "12h") ? 3600 : 7200;
+          entryDeadline = now + entryDuration;
           if (tf === "12h") {
             settlementTime = now + 43200; // 12 hours from now
           } else {
