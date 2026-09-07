@@ -7023,34 +7023,37 @@ window.handleCreateQuestion = async function(e) {
         <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Auto-Generated</span>
       </div>
       <div class="space-y-3 font-mono text-xs">
+        <!-- Hidden inputs preserving exact contract & script payload values -->
+        <input id="newQTitle" type="hidden" value="Bitcoin Daily Candle Close: GREEN or RED?">
+        <input id="newQResolution" type="hidden" value="Coinbase BTC-USD Daily Candle Close">
+        <input id="newQCategory" type="hidden" value="CRYPTO">
+
+        <!-- 1. Category Selection Tabs (Zero-Typing) -->
         <div>
-          <label class="text-slate-400 text-[11px] block mb-1">Market Question / Title</label>
-          <input id="newQTitle" type="text" readonly value="Bitcoin Daily Candle Close: GREEN or RED?" class="w-full bg-slate-950 border border-cyan-500/30 rounded-xl px-3 py-2.5 text-cyan-300 font-bold cursor-not-allowed focus:outline-none select-none">
+          <label class="text-slate-400 text-[11px] block font-bold uppercase tracking-wider mb-2">Select Category</label>
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Crypto Option Button -->
+            <button type="button" id="catBtnCrypto" onclick="selectMarketCategory('CRYPTO')" class="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-gradient-to-b from-cyan-500/20 to-slate-900 border-cyan-400 text-white shadow-lg shadow-cyan-500/20">
+              <span class="text-2xl">📊</span>
+              <span class="font-bold text-xs">Crypto Market</span>
+              <span class="text-[9px] text-cyan-300 font-sans">Candle Close (12H / Daily)</span>
+            </button>
+
+            <!-- Sports Option Button -->
+            <button type="button" id="catBtnSports" onclick="selectMarketCategory('SPORTS')" class="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/30 hover:text-slate-200">
+              <span class="text-2xl">⚽🏀</span>
+              <span class="font-bold text-xs">Sports Arenas</span>
+              <span class="text-[9px] text-slate-400 font-sans">Top 5 EU + UCL + NBA</span>
+            </button>
+          </div>
         </div>
 
-        
         <!-- Sports DNB Rule Box (Visible when SPORTS is chosen) -->
         <div id="sportsDnbNotice" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300">
           <p class="font-bold flex items-center gap-1.5 text-[11px]"><span>⚽</span> Draw No Bet Rule:</p>
           <p class="text-[10px] text-amber-200/80 mt-0.5 leading-relaxed">Option 1 is Team A and Option 2 is Team B. In the event of a Full-Time Draw, the contest is void and 100% of collateral is refunded to both players with zero fee deduction.</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-slate-400 text-[11px] block mb-1">Category</label>
-            <select id="newQCategory" onchange="handleCategoryChange(this.value)" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-3 py-2.5 text-cyan-300 font-bold focus:outline-none focus:border-cyan-400">
-              <option value="CRYPTO" selected>📊 CRYPTO (5 Whitelisted Assets)</option>
-              <option value="SPORTS">⚽🏀 SPORTS (European Football & USA NBA)</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-slate-400 text-[11px] block mb-1">Resolution Source</label>
-            <input id="newQResolution" type="text" readonly value="Coinbase BTC-USD Daily Candle Close" class="w-full bg-slate-950 border border-white/10 rounded-xl px-3 py-2.5 text-slate-300 font-semibold cursor-not-allowed focus:outline-none select-none">
-          </div>
-        </div>
-
-        
-        <!-- Crypto Specific Verification & Whitelist Token Selector -->
         <div id="cryptoVerificationPanel" class="space-y-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20">
           <div class="flex items-center justify-between">
             <span class="text-[11px] font-bold text-cyan-300 flex items-center gap-1.5">
@@ -7166,6 +7169,19 @@ window.handleCreateQuestion = async function(e) {
           </div>
         </div>
 
+        <!-- Auto-Generated Market Preview -->
+        <div class="p-3 rounded-xl bg-slate-950 border border-cyan-500/30 flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="font-bold text-slate-300">Auto-Generated Market</span>
+            </div>
+            <div id="displayQTitle" class="text-white font-bold text-xs">Bitcoin Daily Candle Close: GREEN or RED?</div>
+            <div id="displayQResolution" class="text-cyan-300/80 text-[10px] mt-0.5 font-mono">Coinbase BTC-USD Daily Candle Close</div>
+          </div>
+          <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 whitespace-nowrap font-mono">Zero-Typing</span>
+        </div>
+
         <div class="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 text-[11px] text-slate-400">
           <span class="text-cyan-400 font-bold">Standard Tiers:</span> $1, $5, $10, $100, $1,000 USDG automatically supported.
         </div>
@@ -7243,12 +7259,14 @@ window.handleCreateQuestion = async function(e) {
 
       let tfLabel = (tf === "12h") ? "12-Hour" : "Daily";
 
-      if (titleInput) {
-        titleInput.value = `${token.name} ${tfLabel} Candle Close: GREEN or RED?`;
-      }
-      if (resInput) {
-        resInput.value = `${token.exchange} ${tfLabel} Candle Close`;
-      }
+      const titleStr = `${token.name} ${tfLabel} Candle Close: GREEN or RED?`;
+      const resStr = `${token.exchange} ${tfLabel} Candle Close`;
+      if (titleInput) titleInput.value = titleStr;
+      if (resInput) resInput.value = resStr;
+      const displayTitle = document.getElementById("displayQTitle");
+      const displayRes = document.getElementById("displayQResolution");
+      if (displayTitle) displayTitle.innerText = titleStr;
+      if (displayRes) displayRes.innerText = resStr;
       if (exchEl) {
         exchEl.innerText = `${token.exchange} (${tfLabel})`;
       }
@@ -7262,18 +7280,24 @@ window.handleCreateQuestion = async function(e) {
       updateCryptoMarketInputs();
     }
   
-    function handleCategoryChange(val) {
+    function selectMarketCategory(val) {
+      const catInput = document.getElementById("newQCategory");
+      if (catInput) catInput.value = val;
+
+      const btnCrypto = document.getElementById("catBtnCrypto");
+      const btnSports = document.getElementById("catBtnSports");
       const notice = document.getElementById("sportsDnbNotice");
       const sportsPanel = document.getElementById("sportsVerificationPanel");
       const cryptoPanel = document.getElementById("cryptoVerificationPanel");
       const btn = document.getElementById("btnSubmitQuestion");
-      
-      if (val === "SPORTS") {
-        if (notice) notice.classList.remove("hidden");
-        if (sportsPanel) sportsPanel.classList.remove("hidden");
-        if (cryptoPanel) cryptoPanel.classList.add("hidden");
-        handleSportsLeagueChange("FOOTBALL_UCL");
-      } else { // CRYPTO
+
+      if (val === "CRYPTO") {
+        if (btnCrypto) {
+          btnCrypto.className = "p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-gradient-to-b from-cyan-500/20 to-slate-900 border-cyan-400 text-white shadow-lg shadow-cyan-500/20";
+        }
+        if (btnSports) {
+          btnSports.className = "p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/30 hover:text-slate-200";
+        }
         if (notice) notice.classList.add("hidden");
         if (sportsPanel) sportsPanel.classList.add("hidden");
         if (cryptoPanel) cryptoPanel.classList.remove("hidden");
@@ -7283,7 +7307,22 @@ window.handleCreateQuestion = async function(e) {
           btn.classList.remove("opacity-50", "cursor-not-allowed");
         }
         updateCryptoMarketInputs();
+      } else if (val === "SPORTS") {
+        if (btnSports) {
+          btnSports.className = "p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-gradient-to-b from-emerald-500/20 to-slate-900 border-emerald-400 text-white shadow-lg shadow-emerald-500/20";
+        }
+        if (btnCrypto) {
+          btnCrypto.className = "p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/30 hover:text-slate-200";
+        }
+        if (notice) notice.classList.remove("hidden");
+        if (sportsPanel) sportsPanel.classList.remove("hidden");
+        if (cryptoPanel) cryptoPanel.classList.add("hidden");
+        handleSportsLeagueChange("FOOTBALL_UCL");
       }
+    }
+
+    function handleCategoryChange(val) {
+      selectMarketCategory(val);
     }
 
     function handleSportsLeagueChange(leagueKey) {
@@ -7322,6 +7361,10 @@ window.handleCreateQuestion = async function(e) {
         selectedSportsFixture = found;
         if (titleInput) titleInput.value = found.title;
         if (resInput) resInput.value = found.res;
+        const displayTitle = document.getElementById("displayQTitle");
+        const displayRes = document.getElementById("displayQResolution");
+        if (displayTitle) displayTitle.innerText = found.title;
+        if (displayRes) displayRes.innerText = found.res;
 
         if (badge) {
           badge.className = "p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-between text-[10px]";
