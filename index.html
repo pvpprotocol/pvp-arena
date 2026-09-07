@@ -7055,7 +7055,7 @@ window.handleCreateQuestion = async function(e) {
           </div>
 
           <p class="text-[10px] text-slate-400 leading-snug">
-            🔒 <strong class="text-white">Strict Fair-Play Policy:</strong> Only official <strong class="text-emerald-400">Football (Soccer)</strong> and <strong class="text-amber-400">USA NBA</strong> fixtures are permitted. Other sports cannot be registered.
+            🔒 <strong class="text-white">Strict Fair-Play Policy:</strong> Only official <strong class="text-emerald-400">Football (5 Top European Leagues + UEFA Champions League)</strong> and <strong class="text-amber-400">USA NBA</strong> fixtures are permitted. Other sports cannot be registered.
           </p>
 
           <div class="grid grid-cols-2 gap-2">
@@ -7063,8 +7063,11 @@ window.handleCreateQuestion = async function(e) {
               <label class="text-slate-400 text-[10px] block mb-1">Select League</label>
               <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-cyan-400">
                 <option value="FOOTBALL_UCL" selected>⚽ Football: UEFA Champions League</option>
-                <option value="FOOTBALL_EPL">⚽ Football: English Premier League</option>
-                <option value="FOOTBALL_LALIGA">⚽ Football: Spain La Liga</option>
+                <option value="FOOTBALL_EPL">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Football: English Premier League</option>
+                <option value="FOOTBALL_LALIGA">🇪🇸 Football: Spain La Liga</option>
+                <option value="FOOTBALL_BUNDESLIGA">🇩🇪 Football: Germany Bundesliga</option>
+                <option value="FOOTBALL_SERIE_A">🇮🇹 Football: Italy Serie A</option>
+                <option value="FOOTBALL_LIGUE_1">🇫🇷 Football: France Ligue 1</option>
                 <option value="NBA">🏀 Basketball: USA NBA</option>
               </select>
             </div>
@@ -7146,7 +7149,23 @@ window.handleCreateQuestion = async function(e) {
       ],
       FOOTBALL_LALIGA: [
         { id: "laliga-1", title: "Barcelona vs Atletico Madrid (Full-Time)", teamA: "Barcelona", teamB: "Atletico Madrid", kickoffOffsetHours: 7, res: "Official La Liga / ESPN (Full-Time)" },
-        { id: "laliga-2", title: "Real Madrid vs Real Sociedad (Full-Time)", teamA: "Real Madrid", teamB: "Real Sociedad", kickoffOffsetHours: 25, res: "Official La Liga / ESPN (Full-Time)" }
+        { id: "laliga-2", title: "Real Madrid vs Real Sociedad (Full-Time)", teamA: "Real Madrid", teamB: "Real Sociedad", kickoffOffsetHours: 25, res: "Official La Liga / ESPN (Full-Time)" },
+        { id: "laliga-3", title: "Sevilla vs Real Betis (Full-Time)", teamA: "Sevilla", teamB: "Real Betis", kickoffOffsetHours: 28, res: "Official La Liga / ESPN (Full-Time)" }
+      ],
+      FOOTBALL_BUNDESLIGA: [
+        { id: "bundes-1", title: "Bayern Munich vs Borussia Dortmund (Full-Time)", teamA: "Bayern Munich", teamB: "Borussia Dortmund", kickoffOffsetHours: 6, res: "Official Bundesliga / ESPN (Full-Time)" },
+        { id: "bundes-2", title: "Bayer Leverkusen vs RB Leipzig (Full-Time)", teamA: "Bayer Leverkusen", teamB: "RB Leipzig", kickoffOffsetHours: 10, res: "Official Bundesliga / ESPN (Full-Time)" },
+        { id: "bundes-3", title: "Eintracht Frankfurt vs VfB Stuttgart (Full-Time)", teamA: "Eintracht Frankfurt", teamB: "VfB Stuttgart", kickoffOffsetHours: 30, res: "Official Bundesliga / ESPN (Full-Time)" }
+      ],
+      FOOTBALL_SERIE_A: [
+        { id: "seriea-1", title: "Inter Milan vs Juventus (Full-Time)", teamA: "Inter Milan", teamB: "Juventus", kickoffOffsetHours: 7, res: "Official Serie A / ESPN (Full-Time)" },
+        { id: "seriea-2", title: "AC Milan vs AS Roma (Full-Time)", teamA: "AC Milan", teamB: "AS Roma", kickoffOffsetHours: 12, res: "Official Serie A / ESPN (Full-Time)" },
+        { id: "seriea-3", title: "Napoli vs Lazio (Full-Time)", teamA: "Napoli", teamB: "Lazio", kickoffOffsetHours: 32, res: "Official Serie A / ESPN (Full-Time)" }
+      ],
+      FOOTBALL_LIGUE_1: [
+        { id: "ligue1-1", title: "Paris Saint-Germain vs Marseille (Full-Time)", teamA: "Paris Saint-Germain", teamB: "Marseille", kickoffOffsetHours: 8, res: "Official Ligue 1 / ESPN (Full-Time)" },
+        { id: "ligue1-2", title: "Monaco vs Lyon (Full-Time)", teamA: "Monaco", teamB: "Lyon", kickoffOffsetHours: 14, res: "Official Ligue 1 / ESPN (Full-Time)" },
+        { id: "ligue1-3", title: "Lille vs Rennes (Full-Time)", teamA: "Lille", teamB: "Rennes", kickoffOffsetHours: 34, res: "Official Ligue 1 / ESPN (Full-Time)" }
       ],
       NBA: [
         { id: "nba-1", title: "Boston Celtics vs Los Angeles Lakers (Final Score)", teamA: "Boston Celtics", teamB: "Los Angeles Lakers", kickoffOffsetHours: 3, res: "Official NBA Result / ESPN (Final Score)" },
