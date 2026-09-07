@@ -3575,6 +3575,31 @@
 
     const DUEL_QUESTIONS = [
       {
+        id: 2,
+        qNum: 2,
+        isOnchain: true,
+        category: "CRYPTO 12H",
+        title: "Bitcoin 12H Candle (Sep 7, 2026) Close: GREEN or RED?",
+        desc: "1-Hour Entry Window | Closes at 00:00 UTC (Coinbase 12H Candle)",
+        deadlineDesc: "1-Hour Entry Window",
+        targetDesc: "Settlement: 00:00 UTC (12H Close)",
+        deadline: 1788780200000,
+        settlementTime: 1788825600000,
+        winningOption: null,
+        isEnded: false,
+        resolutionSource: "Coinbase BTC-USD 12H Candle (12:00-00:00 UTC)",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [1, 5, 10, 100, 1000],
+        getDeadline: function() { return 1788780200000; },
+        optA: "YES",
+        optALabel: "GREEN",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "RED",
+        optBSub: "Red Close"
+      },
+      {
         id: 1,
         qNum: 1,
         isOnchain: true,
@@ -3586,10 +3611,10 @@
         deadline: 1788707557000,
         settlementTime: 1788739200000,
         winningOption: null,
-        isEnded: false,
+        isEnded: true,
         resolutionSource: "Coinbase BTC-USD Daily Candle",
-        contract: "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/tx/0x5404aa81fef5ebc9546862baa42f6e2744c4557d851c176d36d5f904e091b574",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         allowedTiers: [1, 5, 10, 100, 1000],
         getDeadline: function() { return 1788707557000; },
         optA: "YES",
@@ -3601,7 +3626,7 @@
       }
     ];
 
-    let selectedDuelQuestionId = 16;
+    let selectedDuelQuestionId = 2;
     let selectedDuelTier = 1;
     let selectedDuelOption = 'YES';
     let activeQuestionTab = 'live'; // 'live' or 'ended'
@@ -3751,7 +3776,7 @@
             ${numBadge}
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-[11px] font-mono font-bold text-slate-400 tracking-wide">(Sep 6, 2026)</span>
+                <span class="text-[11px] font-mono font-bold text-slate-400 tracking-wide">(Sep 7, 2026)</span>
                 ${isSelected ? '<span class="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wide bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">Selected</span>' : ''}
               </div>
               <h5 class="text-xs font-bold text-white font-mono leading-snug">${q.title}</h5>
