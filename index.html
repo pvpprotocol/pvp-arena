@@ -7415,21 +7415,22 @@ window.handleCreateQuestion = async function(e) {
           entryDeadline = now + (selectedSportsFixture.kickoffOffsetHours * 3600);
           settlementTime = entryDeadline + ((selectedSportsFixture.durationHours || 3) * 3600);
         } else {
-          // CRYPTO candle markets (12h or 24h)
+          // CRYPTO candle markets: Strict Anti-Frontrunning & Upcoming Candle targeting
+          // Active/live candles cannot be bet on. Markets strictly target the upcoming candle.
+          // Entry window closes the exact second the upcoming candle opens.
+          // Settlement occurs when that upcoming candle closes.
           const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "12h";
-          // Smart dynamic entry window: 1 hour for 12h candle, 2 hours for 24h candle
-          const entryDuration = (tf === "12h") ? 3600 : 7200;
-          entryDeadline = now + entryDuration;
-          if (tf === "12h") {
-            settlementTime = now + 43200; // 12 hours from now
-          } else {
-            const midnight = new Date();
-            midnight.setUTCHours(24, 0, 0, 0);
-            settlementTime = Math.floor(midnight.getTime() / 1000);
-            if (settlementTime <= entryDeadline) {
-              settlementTime += 86400;
-            }
+          const candleInterval = (tf === "12h") ? 43200 : 86400;
+          const currentCandleStart = Math.floor(now / candleInterval) * candleInterval;
+          let nextCandleOpen = currentCandleStart + candleInterval;
+          
+          // If less than 15 minutes remaining before open, advance to next cycle to guarantee a valid entry window
+          if (nextCandleOpen - now < 900) {
+            nextCandleOpen += candleInterval;
           }
+          
+          entryDeadline = nextCandleOpen;             // Entry closes at candle OPEN
+          settlementTime = entryDeadline + candleInterval; // Duel settles at candle CLOSE
         }
 
         const allowedTiers = [
