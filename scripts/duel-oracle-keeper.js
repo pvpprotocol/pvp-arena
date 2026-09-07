@@ -9,7 +9,7 @@ const { ethers } = require("ethers");
 const NTFY_TOPIC = "pvp-arena-rh-duels-v3";
 const NTFY_URL = "https://ntfy.sh/" + NTFY_TOPIC;
 const RPC_URL = process.env.ROBINHOOD_RPC || "https://rpc.mainnet.chain.robinhood.com";
-const DUEL_CONTRACT_ADDRESS = process.env.DUEL_CONTRACT_ADDRESS || "0x95e95bd305ad328afed15400903124b59bcc349b";
+const DUEL_CONTRACT_ADDRESS = process.env.DUEL_CONTRACT_ADDRESS || "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905";
 const ORACLE_PRIVATE_KEY = process.env.ORACLE_PRIVATE_KEY || process.env.DEPLOYER_PRIVATE_KEY;
 
 // Defined questions and evaluation logic
