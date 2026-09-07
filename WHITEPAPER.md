@@ -1,4 +1,4 @@
-# PvP Arena Whitepaper
+# pvphub Whitepaper
 
 ## P2P Prediction
 Risk to Reward Analysis: In traditional betting models, participants face an unfavorable risk to reward ratio (for example at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In PVP Arena, the winner earns 90% net profit directly, and the runner up receives 3% rebate cashback to preserve liquidity and enable immediate re-entry.
@@ -11,46 +11,27 @@ Two participants lock equal collateral into the canonical escrow smart contract.
 • 2% protocol treasury fee for platform maintenance, infrastructure, and buybacks
 
 ### Core Rules
-1. Once an opponent joins and the duel is matched, the contest remains active until the official resolution is finalized, and immediately upon outcome confirmation, it transitions to the completed state for prize settlement.
+1. To guarantee strict fairness and equal opportunity for all participants, all challenges must be deployed onchain prior to event kickoff, with the entry window closing immediately at the start to eliminate in-progress betting and prevent live momentum frontrunning.
 
-2. Once an opponent enters and the competition officially begins, unilateral cancellation or withdrawal is strictly prohibited, and locked assets remain secured within the smart contract until the official result is recorded.
+2. Once an opponent joins and the duel is matched, the contest remains active until the official resolution is finalized, and immediately upon outcome confirmation, it transitions to the completed state for prize settlement.
 
-3. Upon expiration of the designated entry deadline, any request that has not been matched with an opponent automatically expires, and 100% of the deposited stake is refunded to the creator with zero platform fees.
+3. Once an opponent enters and the competition officially begins, unilateral cancellation or withdrawal is strictly prohibited, and locked assets remain secured within the smart contract until the official result is recorded.
 
-4. Prior to an opponent joining the contest, the creator may voluntarily cancel their request at any time and reclaim their full deposit without fee deduction or penalty.
+4. Upon expiration of the designated entry deadline, any request that has not been matched with an opponent automatically expires, and 100% of the deposited stake is refunded to the creator with zero platform fees.
 
-5. In the event of a tie outcome or if none of the designated criteria are met, the contest concludes with no winner, and the original deposits of both participants are fully refunded without fee deductions.
+5. Prior to an opponent joining the contest, the creator may voluntarily cancel their request at any time and reclaim their full deposit without fee deduction or penalty.
 
-6. In the event of delay, outage, or unavailability of oracle reference data at the scheduled time, a 6-hour resolution grace period is initiated; if no verified data is obtained upon completion of this 6-hour window, the contest undergoes an emergency cancellation and all funds are refunded to both participants.
+6. In the event of a tie outcome or if none of the designated criteria are met, the contest concludes with no winner, and the original deposits of both participants are fully refunded without fee deductions.
+
+7. In all contests featuring more than two potential outcomes, such as football matches with win, draw, or loss possibilities, the verified winner is the participant who selected the correct outcome. If neither participant selected the correct outcome, the contest concludes with no winner, and 100% of their deposited funds are fully refunded without fee deduction.
+
+8. In the event of delay, outage, or unavailability of oracle reference data at the scheduled time, a 6-hour resolution grace period is initiated; if no verified data is obtained upon completion of this 6-hour window, the contest undergoes an emergency cancellation and all funds are refunded to both participants.
 
 
 ### Permissionless Market Creation & Creator Economy (5% Cash Reward)
-PvP Arena operates as a fully permissionless prediction protocol. Any participant can design and deploy custom prediction markets directly on-chain.
+pvphub operates as a fully permissionless prediction protocol. Any participant can design and deploy custom prediction markets directly on-chain.
 
 • **5% Creator Cash Reward:** The creator of any question/market earns an automatic, on-chain 5% cash fee from the total pot of every single duel that is matched and settled under their question.
 • **Anti-Spam Gas Policy:** To maintain market quality and prevent automated spam, question creators pay the standard network gas fees from their own connected wallet.
 • **Direct On-Chain Settlement:** Creator rewards are transferred directly to the creator's wallet upon official duel resolution, creating a recurring revenue stream for active community organizers, analysts, and market makers.
 
-## 4. Sports & 3-Way Market Standard (Draw No Bet / Push Policy)
-
-In traditional sports like Football (Soccer), a match may end in three possible outcomes: Team A Win, Team B Win, or Draw.
-
-pvphub.fun operates on a strict **Draw No Bet (DNB)** model:
-- **Option 1:** Team A (Home / Selection 1)
-- **Option 2:** Team B (Away / Selection 2)
-- **In Case of a Draw (تساوی در پایان بازی):**
-  - The duel is treated as a **PUSH / VOID**.
-  - **100% of the wagered funds are instantly unlocked and refundable to both players.**
-  - **Zero fees (0%)** are charged — no platform cut, no creator fee, and no penalty. Both participants retain their exact capital.
-
-
-## 5. Fair Play & Zero-Frontrunning Law (Pre-Event Entry Deadline Standard)
-
-To maintain strict mathematical fairness and eliminate any possibility of front-running:
-- **Challenge Creation:** All questions/challenges must be submitted to the blockchain **prior** to the live opening of the event or candle.
-- **Entry Window Cutoff (Candle Open / Match Kickoff):**
-  - The entry deadline (`entryDeadline`) must strictly expire **before or at the exact timestamp of the candle open or match kickoff**.
-  - Once the candle begins forming or the match kicks off, the entry window is sealed shut (`ENTRY CLOSED`).
-  - **No participant can enter an in-progress candle or live game.** This prevents any player from observing early momentum (e.g. green wick pumping 10 minutes in) and unfairly exploiting an opponent.
-- **Duel State During Event:** Matched duels remain securely locked in the smart contract escrow during the live event.
-- **Settlement:** The oracle settles the outcome strictly upon the official close of the candle or final match whistle.
