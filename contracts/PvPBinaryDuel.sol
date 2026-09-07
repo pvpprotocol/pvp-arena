@@ -239,7 +239,6 @@ contract PvPBinaryDuel {
     ) external {
         Duel storage d = duels[duelId];
         require(d.status == DuelStatus.ACTIVE, "Duel not active");
-        require(winningOutcome == 1 || winningOutcome == 2, "Outcome must be 1 or 2");
         require(block.timestamp <= deadline, "Proof expired");
         require(!usedProofNonces[nonce], "Proof already used");
 
@@ -262,15 +261,46 @@ contract PvPBinaryDuel {
         d.status = DuelStatus.SETTLED;
         d.winningOutcome = winningOutcome;
 
-        address winner;
-        address loser;
+        address winner = address(0);
+        address loser = address(0);
 
-        if (d.creatorChoice == winningOutcome) {
-            winner = d.creator;
-            loser = d.challenger;
-        } else {
-            winner = d.challenger;
-            loser = d.creator;
+        uint8 challengerChoice = d.creatorChoice == 1 ? 2 : 1;
+
+        // Core Multi-Outcome & 3-Way Fair Rule:
+        // Winner must explicitly match the verified winning outcome.
+        if (winningOutcome != 0) {
+            if (d.creatorChoice == winningOutcome) {
+                winner = d.creator;
+                loser = d.challenger;
+            } else if (challengerChoice == winningOutcome) {
+                winner = d.challenger;
+                loser = d.creator;
+            }
+        }
+
+        // NO WINNER / DRAW / VOID CONDITION:
+        // In contests with more than 2 outcomes (e.g. Football: Win, Draw, Loss),
+        // if neither participant selected the winning outcome (e.g. winningOutcome is Draw or an unchosen 3rd/4th option),
+        // the contest concludes with NO WINNER and 100% of deposited funds are refunded to both participants with ZERO fee deductions.
+        if (winner == address(0)) {
+            uint256 refundAmount = d.wagerAmount;
+            if (d.token == address(0)) {
+                if (refundAmount > 0) {
+                    (bool cSent, ) = payable(d.creator).call{value: refundAmount}("");
+                    require(cSent, "Creator refund failed");
+                    (bool chSent, ) = payable(d.challenger).call{value: refundAmount}("");
+                    require(chSent, "Challenger refund failed");
+                }
+            } else {
+                if (refundAmount > 0) {
+                    bool cSuccess = IERC20(d.token).transfer(d.creator, refundAmount);
+                    require(cSuccess, "Creator token refund failed");
+                    bool chSuccess = IERC20(d.token).transfer(d.challenger, refundAmount);
+                    require(chSuccess, "Challenger token refund failed");
+                }
+            }
+            emit DuelSettled(duelId, address(0), address(0), winningOutcome, 0, 0, 0);
+            return;
         }
 
         uint256 totalPool = d.wagerAmount * 2;
