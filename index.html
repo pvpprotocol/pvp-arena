@@ -3575,6 +3575,32 @@
 
     const DUEL_QUESTIONS = [
       {
+        id: 2,
+        qNum: 2,
+        isOnchain: true,
+        category: "CRYPTO 12H",
+        title: "Bitcoin 12H Candle (Sep 7, 2026) Close: GREEN or RED?",
+        desc: "1-Hour Entry Window | Closes at 00:00 UTC (Coinbase 12H Candle)",
+        deadlineDesc: "1-Hour Entry Window",
+        targetDesc: "Settlement: 00:00 UTC (12H Close)",
+        deadline: 1788780200000,
+        settlementTime: 1788825600000,
+        winningOption: null,
+        isEnded: false,
+        resolutionSource: "Coinbase BTC-USD 12H Candle (12:00-00:00 UTC)",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [1, 5, 10, 100, 1000],
+        getDeadline: function() { return 1788780200000; },
+        optA: "YES",
+        optALabel: "GREEN",
+        optASub: "Green Close",
+        optB: "NO",
+        optBLabel: "RED",
+        optBSub: "Red Close"
+      },
+
+      {
         id: 1,
         qNum: 1,
         isOnchain: true,
