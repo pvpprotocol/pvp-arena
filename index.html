@@ -7179,10 +7179,35 @@ window.handleCreateQuestion = async function(e) {
       const resInput = document.getElementById("newQResolution");
       const exchEl = document.getElementById("cryptoExchangeText");
 
-      let tfLabel = (tf === "12h") ? "12-Hour" : "24-Hour";
+      const now = Math.floor(Date.now() / 1000);
+      const is12h = (tf === "12h");
+      const candleInterval = is12h ? 43200 : 86400;
+      const currentCandleStart = Math.floor(now / candleInterval) * candleInterval;
+      let nextCandleOpen = currentCandleStart + candleInterval;
+      if (nextCandleOpen - now < 900) {
+        nextCandleOpen += candleInterval;
+      }
+      const entryDeadline = nextCandleOpen;
+      const settlementTime = entryDeadline + candleInterval;
 
-      const titleStr = `${token.name} ${tfLabel} Candle Close: GREEN or RED?`;
-      const resStr = `${token.exchange} ${tfLabel} Candle Close`;
+      const startDate = new Date(entryDeadline * 1000);
+      const endDate = new Date(settlementTime * 1000);
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const m = months[startDate.getUTCMonth()];
+      const d = startDate.getUTCDate();
+      const y = startDate.getUTCFullYear();
+
+      let titleStr, resStr;
+      if (is12h) {
+        const sh = String(startDate.getUTCHours()).padStart(2, "0") + ":00";
+        const eh = String(endDate.getUTCHours()).padStart(2, "0") + ":00";
+        titleStr = `${token.name} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close: GREEN or RED?`;
+        resStr = `Coinbase ${token.pair} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close`;
+      } else {
+        titleStr = `${token.name} 24h Candle (${m} ${d}, ${y} UTC) Close: GREEN or RED?`;
+        resStr = `Coinbase ${token.pair} 24h Candle (${m} ${d}, ${y} UTC) Close`;
+      }
+
       if (titleInput) titleInput.value = titleStr;
       if (resInput) resInput.value = resStr;
       const displayTitle = document.getElementById("displayQTitle");
@@ -7190,7 +7215,7 @@ window.handleCreateQuestion = async function(e) {
       if (displayTitle) displayTitle.innerText = titleStr;
       if (displayRes) displayRes.innerText = resStr;
       if (exchEl) {
-        exchEl.innerText = `${token.exchange} (${tfLabel})`;
+        exchEl.innerText = `${token.exchange} (${is12h ? "12h" : "24h"})`;
       }
     }
 
@@ -7431,6 +7456,25 @@ window.handleCreateQuestion = async function(e) {
           
           entryDeadline = nextCandleOpen;             // Entry closes at candle OPEN
           settlementTime = entryDeadline + candleInterval; // Duel settles at candle CLOSE
+
+          const startDate = new Date(entryDeadline * 1000);
+          const endDate = new Date(settlementTime * 1000);
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          const m = months[startDate.getUTCMonth()];
+          const d = startDate.getUTCDate();
+          const y = startDate.getUTCFullYear();
+          const tokenKey = document.getElementById("cryptoTokenSelect") ? document.getElementById("cryptoTokenSelect").value : "BTC";
+          const token = WHITELISTED_CRYPTO_TOKENS[tokenKey] || { name: tokenKey, pair: `${tokenKey}-USD`, exchange: "Coinbase" };
+
+          if (tf === "12h") {
+            const sh = String(startDate.getUTCHours()).padStart(2, "0") + ":00";
+            const eh = String(endDate.getUTCHours()).padStart(2, "0") + ":00";
+            title = `${token.name} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close: GREEN or RED?`;
+            resolution = `Coinbase ${token.pair} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close`;
+          } else {
+            title = `${token.name} 24h Candle (${m} ${d}, ${y} UTC) Close: GREEN or RED?`;
+            resolution = `Coinbase ${token.pair} 24h Candle (${m} ${d}, ${y} UTC) Close`;
+          }
         }
 
         const allowedTiers = [
