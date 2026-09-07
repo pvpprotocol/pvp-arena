@@ -7056,7 +7056,7 @@ window.handleCreateQuestion = async function(e) {
           </div>
 
           <p class="text-[10px] text-slate-400 leading-snug">
-            🔒 <strong class="text-white">Whitelisted Assets Only:</strong> Only official candle close markets for <strong class="text-amber-400">BTC, ETH, SOL, BNB, and HYPE (Hyperliquid)</strong> are permitted. Resolution is strictly based on the final <strong class="text-emerald-400">Candle Close (GREEN vs RED)</strong>.
+            🔒 <strong class="text-white">Whitelisted Assets Only:</strong> Only official candle close markets for <strong class="text-amber-400">BTC, ETH, SOL, BNB, and HYPE (Hyperliquid)</strong> are permitted. Resolution is strictly based on the final <strong class="text-emerald-400">12-Hour or Daily Candle Close (GREEN vs RED)</strong>.
           </p>
 
           <div class="grid grid-cols-2 gap-2">
@@ -7075,8 +7075,6 @@ window.handleCreateQuestion = async function(e) {
               <select id="cryptoTimeframeSelect" onchange="handleCryptoTimeframeChange(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-cyan-300 text-xs font-semibold focus:outline-none focus:border-cyan-400">
                 <option value="daily" selected>📅 Daily Candle Close (00:00 UTC)</option>
                 <option value="12h">⏳ 12-Hour Candle Close</option>
-                <option value="4h">⚡ 4-Hour Candle Close</option>
-                <option value="1h">⏱️ 1-Hour Candle Close</option>
               </select>
             </div>
           </div>
@@ -7239,10 +7237,7 @@ window.handleCreateQuestion = async function(e) {
       const resInput = document.getElementById("newQResolution");
       const exchEl = document.getElementById("cryptoExchangeText");
 
-      let tfLabel = "Daily";
-      if (tf === "1h") tfLabel = "1-Hour";
-      else if (tf === "4h") tfLabel = "4-Hour";
-      else if (tf === "12h") tfLabel = "12-Hour";
+      let tfLabel = (tf === "12h") ? "12-Hour" : "Daily";
 
       if (titleInput) {
         titleInput.value = `${token.name} ${tfLabel} Candle Close: GREEN or RED?`;
@@ -7427,6 +7422,11 @@ window.handleCreateQuestion = async function(e) {
         }
         if (!title.toLowerCase().includes("candle") || !title.toLowerCase().includes("close")) {
           alert("Strict Policy Error: Crypto markets are strictly restricted to Candle Close (GREEN or RED).");
+          return;
+        }
+        const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "";
+        if (tf !== "12h" && tf !== "daily") {
+          alert("Strict Policy Error: Only 12-Hour and Daily candle timeframes are permitted for Crypto markets.");
           return;
         }
       }
