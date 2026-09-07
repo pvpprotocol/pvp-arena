@@ -7000,8 +7000,8 @@ window.handleCreateQuestion = async function(e) {
       
       <div class="space-y-3 font-mono text-xs">
         <!-- Hidden inputs preserving exact contract & script payload values -->
-        <input id="newQTitle" type="hidden" value="Bitcoin 24-Hour Candle Close: GREEN or RED?">
-        <input id="newQResolution" type="hidden" value="Coinbase BTC-USD 24-Hour Candle Close">
+        <input id="newQTitle" type="hidden" value="Bitcoin 12-Hour Candle Close: GREEN or RED?">
+        <input id="newQResolution" type="hidden" value="Coinbase BTC-USD 12-Hour Candle Close">
         <input id="newQCategory" type="hidden" value="CRYPTO">
 
         <!-- 1. Category Selection Tabs (Zero-Typing) -->
@@ -7050,8 +7050,8 @@ window.handleCreateQuestion = async function(e) {
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Candle Timeframe</label>
               <select id="cryptoTimeframeSelect" onchange="handleCryptoTimeframeChange(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-cyan-300 text-xs font-semibold focus:outline-none focus:border-cyan-400">
-                <option value="daily" selected>📅 24-Hour Candle Close (00:00 UTC)</option>
-                <option value="12h">⏳ 12-Hour Candle Close</option>
+                <option value="12h" selected>⏳ 12-Hour Candle Close</option>
+                <option value="daily">📅 24-Hour Candle Close (00:00 UTC)</option>
               </select>
             </div>
           </div>
@@ -7146,8 +7146,8 @@ window.handleCreateQuestion = async function(e) {
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span class="font-bold text-slate-300">Auto-Generated Market</span>
             </div>
-            <div id="displayQTitle" class="text-white font-bold text-xs">Bitcoin 24-Hour Candle Close: GREEN or RED?</div>
-            <div id="displayQResolution" class="text-cyan-300/80 text-[10px] mt-0.5 font-mono">Coinbase BTC-USD Daily Candle Close</div>
+            <div id="displayQTitle" class="text-white font-bold text-xs">Bitcoin 12-Hour Candle Close: GREEN or RED?</div>
+            <div id="displayQResolution" class="text-cyan-300/80 text-[10px] mt-0.5 font-mono">Coinbase BTC-USD 12-Hour Candle Close</div>
           </div>
           <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 whitespace-nowrap font-mono">Zero-Typing</span>
         </div>
@@ -7220,7 +7220,7 @@ window.handleCreateQuestion = async function(e) {
 
     function updateCryptoMarketInputs() {
       const tokenKey = document.getElementById("cryptoTokenSelect") ? document.getElementById("cryptoTokenSelect").value : "BTC";
-      const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "daily";
+      const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "12h";
       const token = WHITELISTED_CRYPTO_TOKENS[tokenKey] || WHITELISTED_CRYPTO_TOKENS.BTC;
       
       const titleInput = document.getElementById("newQTitle");
