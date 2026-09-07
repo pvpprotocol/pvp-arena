@@ -345,7 +345,14 @@
             </h3>
             <p class="text-xs text-slate-400">Robinhood Escrow Contract: <a href="https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905" target="_blank" rel="noopener" class="font-mono text-cyan-400 hover:underline">0x11e8...b905 ↗</a></p>
           </div>
-          <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 self-start md:self-auto">0 Total</span>
+          <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
+            <div class="flex items-center bg-black/50 p-1 rounded-xl border border-white/10 text-xs font-mono">
+              <button type="button" id="filter-duels-all" onclick="filterDuelsCategory('ALL')" class="px-3 py-1 rounded-lg font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition-all shadow-sm shadow-cyan-500/20">ALL</button>
+              <button type="button" id="filter-duels-crypto" onclick="filterDuelsCategory('CRYPTO')" class="px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-white transition-all">📊 CRYPTO</button>
+              <button type="button" id="filter-duels-sports" onclick="filterDuelsCategory('SPORTS')" class="px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-white transition-all">⚽ SPORTS</button>
+            </div>
+            <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">0 Total</span>
+          </div>
         </div>
 
         <!-- 4 DISTINCT DUEL CATEGORY TABS -->
@@ -4067,6 +4074,23 @@
     let currentDuelTab = 'open';
 
     
+    let currentDuelCategoryFilter = ALL;
+
+    function filterDuelsCategory(cat) {
+      currentDuelCategoryFilter = cat;
+      const cats = [ALL, CRYPTO, SPORTS];
+      cats.forEach(c => {
+        const btn = document.getElementById(`filter-duels-${c.toLowerCase()}`);
+        if (!btn) return;
+        if (c === cat) {
+          btn.className = "px-3 py-1 rounded-lg font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition-all shadow-sm shadow-cyan-500/20";
+        } else {
+          btn.className = "px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-white transition-all";
+        }
+      });
+      renderAllDuels();
+    }
+
     function switchDuelTab(tab) {
       currentDuelTab = tab;
       const tabs = ['open', 'matched', 'completed', 'expired'];
@@ -4325,9 +4349,21 @@
       // Calculate categorized arrays
       const filteredKeys = keys.filter(k => {
         const item = store[k];
-        if (!item || item.status === 'cancelled') return false;
+        if (!item || item.status === cancelled) return false;
         const cat = getDuelCategory(item);
-        return cat === currentDuelTab;
+        if (cat !== currentDuelTab) return false;
+
+        if (currentDuelCategoryFilter !== ALL) {
+          const qId = getDuelQuestionId(item);
+          const q = getQuestionById(qId);
+          const topic = ((item.topic || "") + " " + (item.questionText || "") + " " + (q && q.title ? q.title : "") + " " + (q && q.category ? q.category : "")).toUpperCase();
+          const isSports = topic.includes("FOOTBALL") || topic.includes("NBA") || topic.includes("SOCCER") || topic.includes("CHAMPIONS LEAGUE") || topic.includes("PREMIER LEAGUE") || topic.includes("LA LIGA") || (topic.includes("VS") && (topic.includes("MADRID") || topic.includes("CITY") || topic.includes("ARSENAL") || topic.includes("CHELSEA") || topic.includes("LAKERS") || topic.includes("CELTICS") || topic.includes("BAYERN") || topic.includes("PSG")));
+          const isCrypto = !isSports;
+          if (currentDuelCategoryFilter === CRYPTO && !isCrypto) return false;
+          if (currentDuelCategoryFilter === SPORTS && !isSports) return false;
+        }
+
+        return true;
       });
 
       function isUserDuelParticipant(d) {
@@ -7009,19 +7045,14 @@ window.handleCreateQuestion = async function(e) {
         <!-- 1. Category Selection Tabs (Zero-Typing) -->
         <div>
           <label class="text-slate-400 text-[11px] block font-bold uppercase tracking-wider mb-2">Select Category</label>
-          <div class="grid grid-cols-2 gap-3">
-            <!-- Crypto Option Button -->
-            <button type="button" id="catBtnCrypto" onclick="selectMarketCategory('CRYPTO')" class="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-gradient-to-b from-cyan-500/20 to-slate-900 border-cyan-400 text-white shadow-lg shadow-cyan-500/20">
-              <span class="text-2xl">📊</span>
-              <span class="font-bold text-xs">Crypto Market</span>
-              <span class="text-[9px] text-cyan-300 font-sans">Candle Close (12H / 24H)</span>
+          <div class="flex items-center bg-slate-900/90 p-1 rounded-xl border border-white/10 gap-1 font-mono text-xs">
+            <button type="button" id="catBtnCrypto" onclick="selectMarketCategory(CRYPTO)" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400 text-white shadow-md shadow-cyan-500/20">
+              <span>📊</span>
+              <span>Crypto Market</span>
             </button>
-
-            <!-- Sports Option Button -->
-            <button type="button" id="catBtnSports" onclick="selectMarketCategory('SPORTS')" class="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/30 hover:text-slate-200">
-              <span class="text-2xl">⚽🏀</span>
-              <span class="font-bold text-xs">Sports Arenas</span>
-              <span class="text-[9px] text-slate-400 font-sans">Top 5 EU + UCL + NBA</span>
+            <button type="button" id="catBtnSports" onclick="selectMarketCategory(SPORTS)" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-slate-200 border border-transparent">
+              <span>⚽</span>
+              <span>Sports Arenas</span>
             </button>
           </div>
         </div>
@@ -7242,10 +7273,10 @@ window.handleCreateQuestion = async function(e) {
 
       if (val === "CRYPTO") {
         if (btnCrypto) {
-          btnCrypto.className = "p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-gradient-to-b from-cyan-500/20 to-slate-900 border-cyan-400 text-white shadow-lg shadow-cyan-500/20";
+          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400 text-white shadow-md shadow-cyan-500/20";
         }
         if (btnSports) {
-          btnSports.className = "p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/30 hover:text-slate-200";
+          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-slate-200 border border-transparent";
         }
         if (notice) notice.classList.add("hidden");
         if (sportsPanel) sportsPanel.classList.add("hidden");
@@ -7258,10 +7289,10 @@ window.handleCreateQuestion = async function(e) {
         updateCryptoMarketInputs();
       } else if (val === "SPORTS") {
         if (btnSports) {
-          btnSports.className = "p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-gradient-to-b from-emerald-500/20 to-slate-900 border-emerald-400 text-white shadow-lg shadow-emerald-500/20";
+          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-400 text-white shadow-md shadow-emerald-500/20";
         }
         if (btnCrypto) {
-          btnCrypto.className = "p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/30 hover:text-slate-200";
+          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-slate-200 border border-transparent";
         }
         if (notice) notice.classList.remove("hidden");
         if (sportsPanel) sportsPanel.classList.remove("hidden");
@@ -7371,7 +7402,10 @@ window.handleCreateQuestion = async function(e) {
   
     function openCreateQuestionModal() {
       const modal = document.getElementById("createQuestionModal");
-      if (modal) modal.classList.remove("hidden");
+      if (modal) {
+        modal.classList.remove("hidden");
+        selectMarketCategory(CRYPTO);
+      }
     }
 
     function closeCreateQuestionModal() {
