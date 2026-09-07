@@ -7000,8 +7000,8 @@ window.handleCreateQuestion = async function(e) {
       
       <div class="space-y-3 font-mono text-xs">
         <!-- Hidden inputs preserving exact contract & script payload values -->
-        <input id="newQTitle" type="hidden" value="Bitcoin Daily Candle Close: GREEN or RED?">
-        <input id="newQResolution" type="hidden" value="Coinbase BTC-USD Daily Candle Close">
+        <input id="newQTitle" type="hidden" value="Bitcoin 24-Hour Candle Close: GREEN or RED?">
+        <input id="newQResolution" type="hidden" value="Coinbase BTC-USD 24-Hour Candle Close">
         <input id="newQCategory" type="hidden" value="CRYPTO">
 
         <!-- 1. Category Selection Tabs (Zero-Typing) -->
@@ -7012,7 +7012,7 @@ window.handleCreateQuestion = async function(e) {
             <button type="button" id="catBtnCrypto" onclick="selectMarketCategory('CRYPTO')" class="p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all bg-gradient-to-b from-cyan-500/20 to-slate-900 border-cyan-400 text-white shadow-lg shadow-cyan-500/20">
               <span class="text-2xl">📊</span>
               <span class="font-bold text-xs">Crypto Market</span>
-              <span class="text-[9px] text-cyan-300 font-sans">Candle Close (12H / Daily)</span>
+              <span class="text-[9px] text-cyan-300 font-sans">Candle Close (12H / 24H)</span>
             </button>
 
             <!-- Sports Option Button -->
@@ -7033,7 +7033,7 @@ window.handleCreateQuestion = async function(e) {
         <div id="cryptoVerificationPanel" class="space-y-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20">
           <div class="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-xs text-cyan-200 font-mono flex items-center gap-2">
             <span class="text-cyan-400">🛡️</span>
-            <span>Strictly based on Coinbase 12-Hour or Daily candle close.</span>
+            <span>Strictly based on Coinbase 12-Hour or 24-Hour candle close.</span>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
@@ -7050,7 +7050,7 @@ window.handleCreateQuestion = async function(e) {
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Candle Timeframe</label>
               <select id="cryptoTimeframeSelect" onchange="handleCryptoTimeframeChange(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-cyan-300 text-xs font-semibold focus:outline-none focus:border-cyan-400">
-                <option value="daily" selected>📅 Daily Candle Close (00:00 UTC)</option>
+                <option value="daily" selected>📅 24-Hour Candle Close (00:00 UTC)</option>
                 <option value="12h">⏳ 12-Hour Candle Close</option>
               </select>
             </div>
@@ -7146,7 +7146,7 @@ window.handleCreateQuestion = async function(e) {
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span class="font-bold text-slate-300">Auto-Generated Market</span>
             </div>
-            <div id="displayQTitle" class="text-white font-bold text-xs">Bitcoin Daily Candle Close: GREEN or RED?</div>
+            <div id="displayQTitle" class="text-white font-bold text-xs">Bitcoin 24-Hour Candle Close: GREEN or RED?</div>
             <div id="displayQResolution" class="text-cyan-300/80 text-[10px] mt-0.5 font-mono">Coinbase BTC-USD Daily Candle Close</div>
           </div>
           <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 whitespace-nowrap font-mono">Zero-Typing</span>
@@ -7227,7 +7227,7 @@ window.handleCreateQuestion = async function(e) {
       const resInput = document.getElementById("newQResolution");
       const exchEl = document.getElementById("cryptoExchangeText");
 
-      let tfLabel = (tf === "12h") ? "12-Hour" : "Daily";
+      let tfLabel = (tf === "12h") ? "12-Hour" : "24-Hour";
 
       const titleStr = `${token.name} ${tfLabel} Candle Close: GREEN or RED?`;
       const resStr = `${token.exchange} ${tfLabel} Candle Close`;
