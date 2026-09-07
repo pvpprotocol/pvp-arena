@@ -4500,23 +4500,35 @@
         const cOpt = (duel.creatorOption || "YES").toUpperCase();
         const oOpt = (duel.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
 
+        let isDrawOrNoWinner = false;
         if (cOpt === winningOption) {
           winner = duel.creator;
           loser = duel.opponent;
-        } else {
+        } else if (oOpt === winningOption) {
           winner = duel.opponent;
           loser = duel.creator;
+        } else {
+          // Multi-outcome rule: Neither participant selected the correct outcome (e.g. Draw in football or unpicked 3rd/4th option)
+          winner = null;
+          loser = null;
+          isDrawOrNoWinner = true;
         }
 
         duel.status = "completed";
         duel.winningOption = winningOption;
         duel.winner = winner;
         duel.loser = loser;
+        duel.isDraw = isDrawOrNoWinner;
+        duel.isNoWinner = isDrawOrNoWinner;
         duel.resolvedAt = Date.now();
         saveLocalDuel(duel);
         await broadcastDuel(duel);
         renderAllDuels();
-        showToast(`🏆 Duel resolved! Winning outcome: [${winningOption}]. Winner can claim prize!`, "success");
+        if (isDrawOrNoWinner) {
+          showToast(`⚖️ Duel ended with NO WINNER (Outcome: [${winningOption}]). 100% of deposits refunded to both players with 0% fee!`, "info");
+        } else {
+          showToast(`🏆 Duel resolved! Winning outcome: [${winningOption}]. Winner can claim prize!`, "success");
+        }
       } catch (err) {
         console.error("resolveDuelOutcome error:", err);
         showToast("Error resolving duel", "error");
@@ -4567,10 +4579,12 @@
           return;
         }
 
-        // Determine winning outcome: 1 for YES, 2 for NO
+        // Determine winning outcome: 1 for YES/A, 2 for NO/B, 0 for DRAW/VOID/NO_WINNER
         let winningOutcome = 1;
         const winningOpt = ((duelData.id === "duel_13" || duelData.onchainDuelId === 13 || duelData.onchainDuelId === "13") ? "NO" : (duelData.winningOption || "YES")).toUpperCase();
-        if (winningOpt === "NO" || winningOpt === "2") {
+        if (duelData.isNoWinner || duelData.isDraw || isPrize === 'refund' || winningOpt === "DRAW" || winningOpt === "VOID") {
+          winningOutcome = 0; // Onchain signals NO WINNER -> 100% refund to both
+        } else if (winningOpt === "NO" || winningOpt === "2") {
           winningOutcome = 2;
         }
 
@@ -4620,12 +4634,15 @@
         const receipt = await tx.wait();
 
         if (receipt.status === 1) {
-          // Onchain settleDuelWithProof atomically sends BOTH the winner prize AND the runner-up cashback in the SAME transaction!
+          // Onchain settleDuelWithProof atomically settles prizes or 100% refunds in the SAME transaction!
           duelData.claimed = true;
           duelData.claimedAt = duelData.claimedAt || Date.now();
           duelData.cashbackClaimed = true;
           duelData.cashbackClaimedAt = duelData.cashbackClaimedAt || Date.now();
-          if (isPrize) {
+          duelData.refundClaimed = true;
+          if (isPrize === 'refund' || duelData.isNoWinner || duelData.isDraw) {
+            showToast(`⚖️ 100% REFUND SETTLED! +${payoutOrAmount} USDG returned onchain with 0% fee! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+          } else if (isPrize) {
             showToast(`🎉 WINNER PRIZE & CASHBACK SETTLED! +${payoutOrAmount} USDG sent onchain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
           } else {
             showToast(`💸 CASHBACK & PRIZE SETTLED! +${payoutOrAmount} USDG sent onchain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
@@ -4665,6 +4682,11 @@
       await executeOnChainSettlement(duelId, true, payout);
     }
     window.claimDuelPrize = claimDuelPrize;
+
+    async function claimDuelRefund(duelId, tier) {
+      await executeOnChainSettlement(duelId, 'refund', tier);
+    }
+    window.claimDuelRefund = claimDuelRefund;
 
     async function reclaimExpiredDeposit(duelId, tier) {
       await cancelDuel(duelId, tier);
@@ -5041,7 +5063,12 @@
         // WIN = Green border
         // LOSE = Red border
         // Non-participant = Site theme background (slate border)
-        if (isWinner) {
+        const isNoWinnerMatch = duelData.isNoWinner || duelData.isDraw || (!duelData.winner && !duelData.loser && duelData.status === 'completed');
+
+        if (isNoWinnerMatch) {
+          cardBgClass = "bg-amber-950/25 border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/30";
+          userRoleBadge = isParticipant ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> ⚖️ NO WINNER (100% REFUND)</span>` : "";
+        } else if (isWinner) {
           cardBgClass = "bg-emerald-950/25 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)] ring-1 ring-emerald-500/40";
           userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 🏆 WIN</span>`;
         } else if (isLoser) {
@@ -5052,10 +5079,31 @@
           userRoleBadge = "";
         }
 
-        // User explicitly asked to remove "🏆 COMPLETED" badge!
         statusBadge = "";
 
-        if (isWinner) {
+        if (isNoWinnerMatch) {
+          if (isParticipant) {
+            if (duelData.claimed || duelData.refundClaimed) {
+              actionSection = `
+                <div class="flex items-center gap-2">
+                  <span class="px-3.5 py-2 rounded-xl bg-amber-950/60 text-amber-300 font-mono text-xs font-bold border border-amber-500/40 flex items-center gap-1">✅ 100% REFUNDED (+${safeTier} USDG)</span>
+                </div>
+              `;
+            } else {
+              actionSection = `
+                <div class="flex items-center gap-2">
+                  <button onclick="claimDuelRefund('${duelData.id}', ${safeTier})" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:brightness-110 text-black font-extrabold text-xs shadow-md shadow-amber-500/20 flex items-center gap-1.5 transition-all active:scale-95">
+                    💰 CLAIM 100% REFUND (+${safeTier} USDG)
+                  </button>
+                </div>
+              `;
+            }
+          } else {
+            actionSection = `
+              <span class="px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-400 font-mono text-xs border border-amber-500/20">⚖️ DRAW (100% REFUNDED)</span>
+            `;
+          }
+        } else if (isWinner) {
           if (duelData.claimed) {
             actionSection = `
               <div class="flex items-center gap-2">
