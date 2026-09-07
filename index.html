@@ -13,17 +13,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
+
     /* ============================================================
-       HARMONIOUS 3-COLOR CLEAN MONOCHROME PALETTE:
-       1. WHITE (#ffffff) - Page background, card backgrounds
-       2. BLACK (#000000 / #0f172a) - Typography, primary CTA buttons, active states
-       3. SOFT LIGHT GRAY (#f4f5f7 / #e2e8f0) - Wells, inactive options, borders, pills
+       POLYMARKET-INSPIRED MODERN CLEAN VIBRANT PALETTE
+       - Clean White/Light Slate Canvas
+       - Vibrant Royal Blue (#2563eb) Primary Accents
+       - Emerald (#059669) & Rose (#e11d48) Odds/Outcome Highlights
+       - Subtle ambient backdrop glow
        ============================================================ */
     :root {
-      --bg-page: #ffffff;
+      --bg-page: #f8fafc;
       --card-bg: #ffffff;
       --border-light: #e2e8f0;
-      --bg-soft: #f8fafc;
+      --primary-blue: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-green: #10b981;
+      --accent-rose: #f43f5e;
       --text-main: #0f172a;
       --text-muted: #64748b;
     }
@@ -34,9 +39,10 @@
 
     html, body {
       font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
-      background-color: #ffffff !important;
+      background-color: #f8fafc !important;
       color: #0f172a !important;
-      background-image: none !important;
+      background-image: radial-gradient(1200px circle at 50% 0%, rgba(37, 99, 235, 0.05) 0%, rgba(248, 250, 252, 1) 100%) !important;
+      background-attachment: fixed !important;
       margin: 0;
       padding: 0;
     }
@@ -45,98 +51,77 @@
       font-family: "JetBrains Mono", monospace;
     }
 
-    /* Cards, Modals, Containers - Clean White with Soft Border */
-    header, nav, main, footer, section, article, aside,
-    .bg-white shadow-sm, .bg-white shadow-sm-glow,
-    #createQuestionModal > div > div, .modal-content-box,
-    .q-card, .duel-card {
-      background-color: #ffffff !important;
-      background-image: none !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
+    /* Cards & Modals: Pure crisp white with subtle depth */
+    .bg-white, .q-card, .duel-card,
+    #createQuestionModal > div > div, .modal-content-box {
+      background-color: #ffffff;
+      border-color: #e2e8f0;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
     }
 
+    /* Sticky Header: Frosted modern glass */
     header.sticky {
-      background: #ffffff !important;
-      border-bottom: 1px solid #e2e8f0 !important;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+      background: rgba(255, 255, 255, 0.85) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
     }
 
-    /* Wells & Secondary Backgrounds */
-    .bg-white\/50, .bg-white\/60, .bg-white\/80, .bg-black\/40, .bg-black\/60,
-    .bg-white, .bg-white, [class*="bg-slate-800\/"] {
-      background-color: #f8fafc !important;
-      border-color: #e2e8f0 !important;
+    /* Primary Action Buttons (Connect Wallet, Deploy Market, Create Duel) */
+    #walletBtn, #deployMarketBtn, #createDuelBtn, .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+      color: #ffffff !important;
+      border: 1px solid #1d4ed8 !important;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2) !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
-
-    /* Base Typography */
-    h1, h2, h3, h4, h5, h6 {
-      color: #0f172a !important;
+    #walletBtn:hover, #deployMarketBtn:hover, #createDuelBtn:hover, .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3) !important;
+      transform: translateY(-1px);
     }
-
-    p, span, div, label, td, th, li {
-      color: inherit;
-    }
-
-    .text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500 {
-      color: #64748b !important;
-    }
-
-    .text-white {
-      color: #0f172a;
-    }
-
-    /* Primary Action Buttons (Connect Wallet, Deploy Market, Create Duel, Active Tabs) */
-    .btn-primary, #walletBtn, #deployMarketBtn, #createDuelBtn,
-    .bg-gradient-to-r.from-cyan-500.to-blue-600,
-    
-
-    .btn-primary *, #walletBtn *, #deployMarketBtn *, #createDuelBtn * {
+    #walletBtn *, #deployMarketBtn *, #createDuelBtn *, .btn-primary * {
       color: #ffffff !important;
     }
 
-    /* Inactive Tabs & Option Buttons */
-    .tab-btn, .filter-btn, .category-tab-btn {
-      background-color: #f8fafc !important;
-      color: #0f172a !important;
-      border: 1px solid #e2e8f0 !important;
-      transition: all 0.15s ease;
+    /* Badges with life and color */
+    .badge-live {
+      background: #ecfdf5 !important;
+      color: #059669 !important;
+      border: 1px solid #a7f3d0 !important;
+    }
+    .badge-crypto {
+      background: #eff6ff !important;
+      color: #2563eb !important;
+      border: 1px solid #bfdbfe !important;
+    }
+    .badge-sports {
+      background: #fffbeb !important;
+      color: #d97706 !important;
+      border: 1px solid #fde68a !important;
     }
 
-    .tab-btn:hover, .filter-btn:hover {
-      background-color: #e2e8f0 !important;
+    /* Payout text highlights */
+    .text-payout {
+      color: #059669 !important;
+      font-weight: 700;
     }
 
-    .tab-btn.active, .filter-btn.active {
-      background-color: #e2e8f0 !important;
-      color: #000000 !important;
-      border-color: #94a3b8 !important;
-    }
-
-    /* Badges & Tags - Soft Gray with Crisp Text */
-    .badge, .tag, .pill, [class*="badge-"] {
-      background-color: #f1f5f9 !important;
-      border: 1px solid #e2e8f0 !important;
-      color: #0f172a !important;
-    }
-
-    /* Form Inputs, Selects */
+    /* Form Inputs */
     input, select, textarea {
       background-color: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
+      border: 1px solid #cbd5e1 !important;
       color: #0f172a !important;
+      border-radius: 0.75rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: #000000 !important;
+      border-color: #2563eb !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
       outline: none !important;
     }
 
-    /* Clean Borders everywhere */
-    .border-white\/10, .border-[#e2e8f0], .border-[#cbd5e1] {
-      border-color: #e2e8f0 !important;
-    }
   </style>
 
   <script>
@@ -198,7 +183,7 @@
       
       <!-- LOGO & BRAND -->
       <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('duel')">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-none ring-1 ring-white/20">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-none ring-1 ring-white/20">
           <span class="text-2xl font-black text-white">⚔️</span>
         </div>
         <div>
@@ -3809,8 +3794,8 @@
         const isSelected = q.id === selectedDuelQuestionId;
         const isLive = !q.isEnded && Date.now() < getQuestionDeadline(q.id);
         const borderClass = isSelected 
-          ? "border-slate-300 bg-slate-100 shadow-sm ring-1 ring-slate-300" 
-          : "border-slate-200 bg-white hover:border-slate-300";
+          ? "border-2 border-blue-600 bg-blue-50/40 shadow-md shadow-blue-500/10 ring-1 ring-blue-500" 
+          : "border border-slate-200 bg-white hover:border-blue-200 hover:shadow-sm";
         const dotClass = isSelected ? "bg-slate-700" : (isLive ? "bg-slate-400" : "bg-slate-300");
         const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#f1f5f9] text-black font-black shadow-md shadow-none ' : 'bg-[#f1f5f9] text-neutral-700 font-bold border border-[#e2e8f0] group-hover:border-[#e2e8f0]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
         
@@ -3820,7 +3805,7 @@
 
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-neutral-700 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-black"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-neutral-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
 
         const winnerBadge = (isQuestionEnded && q.winningOption)
           ? `<div class="mt-2 text-[10px] font-mono bg-[#f1f5f9] border border-[#e2e8f0] text-neutral-800 px-2 py-1 rounded-lg flex items-center justify-between">
@@ -3888,9 +3873,9 @@
         const btn = document.getElementById(btnId);
         if (!btn) return;
         if (t === tier) {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-slate-500 bg-slate-200 text-black text-center font-mono font-bold transition-all shadow-sm cursor-pointer";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-700 text-center font-mono font-bold transition-all shadow-sm shadow-blue-500/10 cursor-pointer scale-[1.02]";
         } else {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-center font-mono font-medium transition-all hover:bg-slate-50 cursor-pointer";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-700 text-center font-mono font-medium transition-all cursor-pointer";
         }
       });
       updateDuelSummary();
@@ -3936,11 +3921,11 @@
       if (!btnYes || !btnNo) return;
 
       if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-slate-400 bg-slate-200 text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-sm transition-all cursor-pointer";
-        btnNo.className = "p-3.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-slate-100 cursor-pointer";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-blue-600 bg-blue-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md shadow-blue-500/20 transition-all cursor-pointer scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-rose-200 bg-rose-50/60 text-rose-700 hover:bg-rose-100/70 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-slate-100 cursor-pointer";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-slate-400 bg-slate-200 text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-sm transition-all cursor-pointer";
+        btnYes.className = "p-3.5 rounded-xl border border-blue-200 bg-blue-50/60 text-blue-700 hover:bg-blue-100/70 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-rose-600 bg-rose-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md shadow-rose-500/20 transition-all cursor-pointer scale-[1.02]";
       }
     }
 
