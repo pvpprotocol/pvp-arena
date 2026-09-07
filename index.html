@@ -196,7 +196,7 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 </head>
-<body class="min-h-screen flex flex-col antialiased bg-white text-black">
+<body class="bg-white text-black min-h-screen antialiased selection:bg-neutral-200 selection:text-black font-sans flex flex-col">
 
   <!-- TOP HEADER / NAVBAR -->
   <header class="sticky top-0 z-50 border-b border-white/10 bg-[#05070d]/90 backdrop-blur-xl">
@@ -248,7 +248,7 @@
         <!-- PERMISSIONLESS CREATE QUESTION BUTTON -->
         
   
-        <button onclick="connectWallet()" id="walletBtn" class="px-4 py-2 rounded-xl font-mono text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-400 hover:to-blue-500 transition-all shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+        <button onclick="connectWallet()" id="walletBtn" class="px-4 py-2 rounded-xl font-mono text-xs font-bold bg-black text-white hover:bg-neutral-800 transition-all shadow-sm flex items-center gap-2">
           <span id="walletDot" class="w-2 h-2 rounded-full bg-white"></span>
           <span id="walletBtnText">Connect Wallet</span>
         </button>
@@ -375,7 +375,7 @@
               <button id="opt-btn-yes" onclick="selectDuelOption('YES', false)" class="p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]">
                 <span class="text-lg">🟢</span>
                 <span class="text-base font-black tracking-wider">GREEN</span>
-                <span class="text-[10px] font-mono text-emerald-300/80 font-medium">⚡ Deposit & Start</span>
+                <span class="text-[10px] font-mono text-neutral-500 font-medium">⚡ Deposit & Start</span>
               </button>
 
               <button id="opt-btn-no" onclick="selectDuelOption('NO', false)" class="p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]">
@@ -1948,10 +1948,10 @@
       }
       const toast = document.createElement("div");
       const bgColors = {
-        success: "bg-emerald-950/90 border-emerald-500/50 text-emerald-300 shadow-emerald-500/20",
-        info: "bg-cyan-950/90 border-cyan-500/50 text-cyan-300 shadow-cyan-500/20",
-        warning: "bg-amber-950/90 border-amber-500/50 text-amber-300 shadow-amber-500/20",
-        error: "bg-rose-950/90 border-rose-500/50 text-rose-300 shadow-rose-500/20"
+        success: "bg-black border border-neutral-800 text-white shadow-xl",
+        info: "bg-black border border-neutral-800 text-white shadow-xl",
+        warning: "bg-black border border-neutral-700 text-white shadow-xl",
+        error: "bg-black border border-neutral-700 text-white shadow-xl"
       };
       toast.className = `px-4 py-3 rounded-xl border font-mono text-xs font-bold shadow-xl backdrop-blur-md pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2 ${bgColors[type] || bgColors.info}`;
       toast.innerHTML = `<span>${message}</span>`;
@@ -3894,9 +3894,9 @@
         const btn = document.getElementById(btnId);
         if (!btn) return;
         if (t === tier) {
-          btn.className = "tier-pick-btn p-2 rounded-xl border-2 border-black bg-black text-white text-center font-mono font-bold transition-all shadow-sm";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-black bg-black text-white text-center font-mono font-bold transition-all shadow-sm cursor-pointer";
         } else {
-          btn.className = "tier-pick-btn p-2 rounded-xl border border-slate-200 bg-slate-50 text-black text-center font-mono font-medium transition-all hover:bg-slate-100";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-black text-center font-mono font-medium transition-all hover:bg-[#f1f5f9] cursor-pointer";
         }
       });
       updateDuelSummary();
@@ -3910,7 +3910,7 @@
       if (btnYes) {
         btnYes.setAttribute("onclick", "selectDuelOption('YES', false)");
         btnYes.innerHTML = `
-          <span class="text-base font-black tracking-wider text-emerald-400">YES</span>
+          <span class="text-base font-black tracking-wider text-black">YES</span>
           <span class="text-[10px] font-mono text-emerald-300/80 font-medium">${q.optASub || 'Affirmative'}</span>
         `;
       }
@@ -3918,8 +3918,8 @@
       if (btnNo) {
         btnNo.setAttribute("onclick", "selectDuelOption('NO', false)");
         btnNo.innerHTML = `
-          <span class="text-base font-black tracking-wider text-rose-400">NO</span>
-          <span class="text-[10px] font-mono text-slate-400 font-medium">${q.optBSub || 'Negative'}</span>
+          <span class="text-base font-black tracking-wider text-black">NO</span>
+          <span class="text-[10px] font-mono text-neutral-500 font-medium">${q.optBSub || 'Negative'}</span>
         `;
       }
 
@@ -3942,11 +3942,11 @@
       if (!btnYes || !btnNo) return;
 
       if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-black bg-black text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-slate-100 hover:scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-black bg-black text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-sm transition-all cursor-pointer";
+        btnNo.className = "p-3.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-[#f1f5f9] cursor-pointer";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-slate-100 hover:scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-black bg-black text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:bg-[#f1f5f9] cursor-pointer";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-black bg-black text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-sm transition-all cursor-pointer";
       }
     }
 
@@ -6510,6 +6510,15 @@ window.handleCreateQuestion = async function(e) {
       } catch(e){}
     }
 
+    
+    function submit2048ScoreOnchain() {
+      if (typeof record2048ScoreOnline === "function" && typeof current2048Score !== "undefined") {
+        record2048ScoreOnline(selected2048Tier || 1, userAddress || "", current2048Score || 0);
+      } else if (typeof showToast === "function") {
+        showToast("Score recorded!", "success");
+      }
+    }
+  
     function record2048ScoreOnline(tier, wallet, score) {
       const cycle = get2048CycleInfo();
       if (cycle.isEnded) {
