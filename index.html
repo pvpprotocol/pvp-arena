@@ -110,9 +110,9 @@
     }
 
     .tab-btn.active, .filter-btn.active {
-      background-color: #000000 !important;
-      color: #ffffff !important;
-      border-color: #000000 !important;
+      background-color: #e2e8f0 !important;
+      color: #000000 !important;
+      border-color: #94a3b8 !important;
     }
 
     /* Badges & Tags - Soft Gray with Crisp Text */
@@ -295,12 +295,12 @@
         <!-- Question Tabs: LIVE vs ENDED -->
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2e8f0] pb-3 mb-3">
           <div class="flex items-center gap-2">
-            <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-black text-white shadow-sm">
+            <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-200 text-black border border-slate-300 shadow-sm">
             <span class="w-2 h-2 rounded-full bg-[#f1f5f9] animate-pulse"></span>
             <span>⚡ LIVE QUESTIONS</span>
             <span id="q-badge-live" class="ml-1 px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-800 text-[10px]">3</span>
           </button>
-          <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200">
+          <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">
             <span class="w-2 h-2 rounded-full bg-slate-500"></span>
             <span>🔒 ENDED / RESOLVED</span>
             <span id="q-badge-ended" class="ml-1 px-1.5 py-0.5 rounded-full bg-slate-800 text-neutral-700 text-[10px]">1</span>
@@ -401,9 +401,9 @@
           </div>
           <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <div class="flex items-center bg-black/50 p-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
-              <button type="button" id="filter-duels-all" onclick="filterDuelsCategory('ALL')" class="px-3 py-1 rounded-lg font-bold bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0] transition-all shadow-sm shadow-none">ALL</button>
-              <button type="button" id="filter-duels-crypto" onclick="filterDuelsCategory('CRYPTO')" class="px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-slate-900 transition-all">📊 CRYPTO</button>
-              <button type="button" id="filter-duels-sports" onclick="filterDuelsCategory('SPORTS')" class="px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-slate-900 transition-all">⚽ SPORTS</button>
+              <button type="button" id="filter-duels-all" onclick="filterDuelsCategory('ALL')" class="px-3 py-1.5 rounded-lg font-bold bg-slate-200 text-black border border-slate-400 transition-all shadow-sm">ALL</button>
+              <button type="button" id="filter-duels-crypto" onclick="filterDuelsCategory('CRYPTO')" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all">📊 CRYPTO</button>
+              <button type="button" id="filter-duels-sports" onclick="filterDuelsCategory('SPORTS')" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all">⚽ SPORTS</button>
             </div>
             <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0]">0 Total</span>
           </div>
@@ -3699,8 +3699,8 @@
       const endedBtn = document.getElementById("q-tab-ended-btn");
       if (liveBtn && endedBtn) {
         if (tab === 'live') {
-          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-black text-white shadow-sm";
-          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200";
+          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-200 text-black border border-slate-300 shadow-sm";
+          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50";
         } else {
           endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200";
           liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-black text-white shadow-sm";
@@ -3811,7 +3811,7 @@
         const borderClass = isSelected 
           ? "border-[#e2e8f0] bg-[#f1f5f9] shadow-lg shadow-none ring-2 ring-black" 
           : "border-[#e2e8f0] bg-white hover:border-[#e2e8f0]";
-        const dotClass = isSelected ? "bg-black" : (isLive ? "bg-neutral-800" : "bg-neutral-400");
+        const dotClass = isSelected ? "bg-slate-700" : (isLive ? "bg-slate-400" : "bg-slate-300");
         const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#f1f5f9] text-black font-black shadow-md shadow-none ' : 'bg-[#f1f5f9] text-neutral-700 font-bold border border-[#e2e8f0] group-hover:border-[#e2e8f0]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
         
         const qDeadline = getQuestionDeadline(q.id);
@@ -3888,9 +3888,9 @@
         const btn = document.getElementById(btnId);
         if (!btn) return;
         if (t === tier) {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-black bg-black text-white text-center font-mono font-bold transition-all shadow-sm cursor-pointer";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-slate-500 bg-slate-200 text-black text-center font-mono font-bold transition-all shadow-sm cursor-pointer";
         } else {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-black text-center font-mono font-medium transition-all hover:bg-[#f1f5f9] cursor-pointer";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-center font-mono font-medium transition-all hover:bg-slate-50 cursor-pointer";
         }
       });
       updateDuelSummary();
@@ -4128,9 +4128,9 @@
         const btn = document.getElementById(`filter-duels-${c.toLowerCase()}`);
         if (!btn) return;
         if (c === cat) {
-          btn.className = "px-3 py-1.5 rounded-lg font-bold bg-black text-white border border-black transition-all shadow-sm";
+          btn.className = "px-3 py-1.5 rounded-lg font-bold bg-slate-200 text-black border border-slate-400 transition-all shadow-sm";
         } else {
-          btn.className = "px-3 py-1.5 rounded-lg font-medium text-black bg-[#f4f5f7] border border-[#e2e8f0] hover:bg-[#e2e8f0] transition-all";
+          btn.className = "px-3 py-1.5 rounded-lg font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all";
         }
       });
       renderAllDuels();
@@ -7100,11 +7100,11 @@ window.handleCreateQuestion = async function(e) {
         <div>
           <label class="text-slate-400 text-[11px] block font-bold uppercase tracking-wider mb-2">Select Category</label>
           <div class="flex items-center bg-white/90 p-1 rounded-xl border border-[#e2e8f0] gap-1 font-mono text-xs">
-            <button type="button" id="catBtnCrypto" onclick="selectMarketCategory('CRYPTO')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-black text-white border border-[#e2e8f0] text-white shadow-md shadow-none">
+            <button type="button" id="catBtnCrypto" onclick="selectMarketCategory('CRYPTO')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-slate-200 text-black border border-slate-400 shadow-sm">
               <span>📊</span>
               <span>Crypto Market</span>
             </button>
-            <button type="button" id="catBtnSports" onclick="selectMarketCategory('SPORTS')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-neutral-800 border border-transparent">
+            <button type="button" id="catBtnSports" onclick="selectMarketCategory('SPORTS')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-white text-slate-600 border border-slate-200 hover:bg-slate-50">
               <span>⚽</span>
               <span>Sports Arenas</span>
             </button>
@@ -7327,7 +7327,7 @@ window.handleCreateQuestion = async function(e) {
 
       if (val === "CRYPTO") {
         if (btnCrypto) {
-          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-black text-white border border-[#e2e8f0] text-white shadow-md shadow-none";
+          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-slate-200 text-black border border-slate-400";
         }
         if (btnSports) {
           btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-neutral-800 border border-transparent";
@@ -7343,7 +7343,7 @@ window.handleCreateQuestion = async function(e) {
         updateCryptoMarketInputs();
       } else if (val === "SPORTS") {
         if (btnSports) {
-          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-black text-white border border-[#e2e8f0] text-white shadow-md shadow-none";
+          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-slate-200 text-black border border-slate-400";
         }
         if (btnCrypto) {
           btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-neutral-800 border border-transparent";
