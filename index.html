@@ -47,7 +47,7 @@
 
     /* Cards, Modals, Containers - Clean White with Soft Border */
     header, nav, main, footer, section, article, aside,
-    .glass-panel, .glass-panel-glow,
+    .bg-white shadow-sm, .bg-white shadow-sm-glow,
     #createQuestionModal > div > div, .modal-content-box,
     .q-card, .duel-card {
       background-color: #ffffff !important;
@@ -190,7 +190,7 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 </head>
-<body class="bg-white text-black min-h-screen antialiased selection:bg-neutral-200 selection:text-black font-sans flex flex-col">
+<body class="bg-[#f8fafc] text-slate-900 min-h-screen antialiased selection:bg-slate-200 selection:text-black font-sans flex flex-col">
 
   <!-- TOP HEADER / NAVBAR -->
   <header class="sticky top-0 z-50 border-b border-[#e2e8f0] bg-[#05070d]/90 backdrop-blur-xl">
@@ -212,22 +212,22 @@
 
       <!-- MAIN NAVIGATION TABS -->
       <nav class="flex overflow-x-auto max-w-full items-center gap-1 bg-white/95 p-1.5 rounded-2xl border border-[#e2e8f0]">
-        <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-white flex items-center gap-2">
+        <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all bg-black text-white shadow-sm flex items-center gap-2">
           <span>⚔️</span> PvP Duels
         </button>
-        <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-white flex items-center gap-2">
+        <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2">
           <span>🎮</span> 2048 Skill <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#f8fafc] text-black border border-[#e2e8f0]">SOON</span>
         </button>
-        <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-white flex items-center gap-2">
+        <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2">
           <span>🎯</span> Grand Jackpot <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#f8fafc] text-black border border-[#e2e8f0]">SOON</span>
         </button>
-        <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-white flex items-center gap-2">
+        <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2">
           <span>🏆</span> Leaderboard <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#f8fafc] text-black border border-[#e2e8f0]">SOON</span>
         </button>
-        <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-white flex items-center gap-2">
+        <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2">
           <span>📜</span> History <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#f8fafc] text-black border border-[#e2e8f0]">SOON</span>
         </button>
-        <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-white flex items-center gap-2 bg-[#f1f5f9] border border-[#e2e8f0] hover:border-[#e2e8f0]">
+        <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2 bg-[#f1f5f9] border border-[#e2e8f0] hover:border-[#e2e8f0]">
           <span>📜</span> Whitepaper
         </button>
         <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-800 bg-[#f8fafc] border border-[#e2e8f0] hover:bg-[#f8fafc] items-center gap-2 shadow-sm shadow-none">
@@ -257,15 +257,15 @@
     <!-- 1. PVP DUELS TAB -->
     <div id="tab-duel" class="tab-content block space-y-8">
       <!-- SINGLE UNIFIED HERO BANNER -->
-      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-blue-600/40 bg-white flex flex-col md:flex-row items-center justify-between gap-5 shadow-xl">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-5 shadow-sm">
         <div class="flex items-start sm:items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-[#f1f5f9] border border-blue-600/40 flex items-center justify-center text-2xl shrink-0">
+          <div class="w-12 h-12 rounded-2xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-center text-2xl shrink-0">
             ⚔️
           </div>
           <div>
             <div class="flex flex-wrap items-center gap-2">
               <h3 class="text-base sm:text-lg font-black text-black font-mono uppercase tracking-wider">pvphub</h3>
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">Head to Head</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-slate-200">Head to Head</span>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0]">5% Creator Fee Cash</span>
             </div>
             <p class="text-xs sm:text-sm text-neutral-700 font-mono mt-1.5 leading-relaxed">
@@ -273,14 +273,14 @@
             </p>
           </div>
         </div>
-        <button onclick="openCreateQuestionModal()" class="w-full md:w-auto px-6 py-3.5 rounded-2xl font-mono text-xs font-black bg-white text-black hover:brightness-110 transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-none shrink-0 uppercase tracking-wider transform hover:scale-[1.02]">
+        <button onclick="openCreateQuestionModal()" class="w-full md:w-auto px-6 py-3 rounded-xl font-mono text-xs font-bold bg-black text-white hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 shadow-sm shrink-0 uppercase tracking-wider">
           <span>✨</span>
           <span>+ Create Challenge</span>
           <span class="ml-1 text-[10px] px-2 py-0.5 rounded bg-black/20 text-black font-extrabold">5% CASH</span>
         </button>
       </div>
 
-      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-6">
+      <div class="bg-white shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#e2e8f0] pb-4">
           <div>
             <div class="flex items-center gap-2">
@@ -295,12 +295,12 @@
         <!-- Question Tabs: LIVE vs ENDED -->
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2e8f0] pb-3 mb-3">
           <div class="flex items-center gap-2">
-            <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0] shadow-sm shadow-none">
+            <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-black text-white shadow-sm">
             <span class="w-2 h-2 rounded-full bg-[#f1f5f9] animate-pulse"></span>
             <span>⚡ LIVE QUESTIONS</span>
-            <span id="q-badge-live" class="ml-1 px-1.5 py-0.5 rounded-full bg-[#f1f5f9] text-white text-[10px]">3</span>
+            <span id="q-badge-live" class="ml-1 px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-800 text-[10px]">3</span>
           </button>
-          <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-white text-slate-400 border border-[#e2e8f0] hover:text-white">
+          <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200">
             <span class="w-2 h-2 rounded-full bg-slate-500"></span>
             <span>🔒 ENDED / RESOLVED</span>
             <span id="q-badge-ended" class="ml-1 px-1.5 py-0.5 rounded-full bg-slate-800 text-neutral-700 text-[10px]">1</span>
@@ -318,7 +318,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-2">
           
           <!-- STEP 2: CHOOSE TIER -->
-          <div class="lg:col-span-7 glass-panel p-5 rounded-2xl border border-[#e2e8f0] bg-white space-y-3">
+          <div class="lg:col-span-7 bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-white space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-black font-mono text-xs font-bold border border-[#e2e8f0]">STEP 2</span>
@@ -358,7 +358,7 @@
           </div>
 
           <!-- STEP 3: CHOOSE POSITION (YES or NO - 100% ENGLISH) -->
-          <div class="lg:col-span-5 glass-panel p-5 rounded-2xl border border-[#e2e8f0] bg-white space-y-3">
+          <div class="lg:col-span-5 bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-white space-y-3">
             <div class="flex items-center gap-2">
               <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-black font-mono text-xs font-bold border border-[#e2e8f0]">STEP 3</span>
               <h4 class="text-xs font-bold font-mono text-black uppercase tracking-wider">Choose Position</h4>
@@ -391,7 +391,7 @@
       </div>
       
       <!-- ACTIVE ONCHAIN DUELS LOBBY -->
-      <div class="glass-panel rounded-3xl border border-[#e2e8f0] overflow-hidden">
+      <div class="bg-white shadow-sm rounded-3xl border border-[#e2e8f0] overflow-hidden">
         <div class="p-5 border-b border-[#e2e8f0] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider flex items-center gap-2">
@@ -402,8 +402,8 @@
           <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <div class="flex items-center bg-black/50 p-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
               <button type="button" id="filter-duels-all" onclick="filterDuelsCategory('ALL')" class="px-3 py-1 rounded-lg font-bold bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0] transition-all shadow-sm shadow-none">ALL</button>
-              <button type="button" id="filter-duels-crypto" onclick="filterDuelsCategory('CRYPTO')" class="px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-white transition-all">📊 CRYPTO</button>
-              <button type="button" id="filter-duels-sports" onclick="filterDuelsCategory('SPORTS')" class="px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-white transition-all">⚽ SPORTS</button>
+              <button type="button" id="filter-duels-crypto" onclick="filterDuelsCategory('CRYPTO')" class="px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-slate-900 transition-all">📊 CRYPTO</button>
+              <button type="button" id="filter-duels-sports" onclick="filterDuelsCategory('SPORTS')" class="px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-slate-900 transition-all">⚽ SPORTS</button>
             </div>
             <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0]">0 Total</span>
           </div>
@@ -414,7 +414,7 @@
           <button id="duel-tab-open" onclick="switchDuelTab('open')" class="px-4 py-3 border-b-2 border-[#e2e8f0] text-neutral-800 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
             <span>⚔️</span>
             <span>OPEN REQUESTS</span>
-            <span id="badge-count-open" class="px-2 py-0.5 rounded-full text-[10px] bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">0</span>
+            <span id="badge-count-open" class="px-2 py-0.5 rounded-full text-[10px] bg-[#f1f5f9] text-neutral-800 border border-slate-200">0</span>
           </button>
 
           <button id="duel-tab-matched" onclick="switchDuelTab('matched')" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-neutral-800 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
@@ -450,9 +450,9 @@
     <!-- 2. 2048 SKILL TAB -->
     <div id="tab-vault2048" class="tab-content hidden space-y-6">
 
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-blue-600/40 bg-gradient-to-b from-cyan-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-white shadow-sm border-slate-200 bg-gradient-to-b from-cyan-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#f1f5f9] blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
       
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#e2e8f0] text-neutral-800 text-xs font-mono font-bold mb-6">
         <span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span>
@@ -509,11 +509,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
           
           <!-- TIER 1 () -->
-          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all flex flex-col justify-between space-y-3 hover:border-[#e2e8f0]">
+          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all flex flex-col justify-between space-y-3 hover:border-[#e2e8f0]">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.0001 TIER <span class="text-[10px] text-neutral-800 font-normal">($1 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-slate-200">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -535,7 +535,7 @@
             <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
               <div class="flex items-center justify-between bg-white/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-slate-900 text-xs focus:outline-none focus:border-[#e2e8f0]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(1); startNew2048Game(true);" id="buy-btn-usdc-1" class="w-full py-2 px-2 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -547,11 +547,11 @@
           </div>
 
           <!-- TIER 5 () -->
-          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
+          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.0005 TIER <span class="text-[10px] text-neutral-800 font-normal">($5 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-slate-200">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -573,7 +573,7 @@
             <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
               <div class="flex items-center justify-between bg-white/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-slate-900 text-xs focus:outline-none focus:border-[#e2e8f0]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(5); startNew2048Game(true);" id="buy-btn-usdc-5" class="w-full py-2 px-2 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -585,11 +585,11 @@
           </div>
 
           <!-- TIER 10 (0) -->
-          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
+          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.001 TIER <span class="text-[10px] text-neutral-800 font-normal">($10 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-slate-200">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -611,7 +611,7 @@
             <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
               <div class="flex items-center justify-between bg-white/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-slate-900 text-xs focus:outline-none focus:border-[#e2e8f0]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(10); startNew2048Game(true);" id="buy-btn-usdc-10" class="w-full py-2 px-2 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -623,11 +623,11 @@
           </div>
 
           <!-- TIER 100 (00) -->
-          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
+          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.01 TIER <span class="text-[10px] text-neutral-800 font-normal">($100 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-neutral-800 border border-slate-200">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -649,7 +649,7 @@
             <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
               <div class="flex items-center justify-between bg-white/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-slate-900 text-xs focus:outline-none focus:border-[#e2e8f0]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(100); startNew2048Game(true);" id="buy-btn-usdc-100" class="w-full py-2 px-2 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -661,7 +661,7 @@
           </div>
 
           <!-- TIER 1000 (,000) -->
-          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
+          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-black text-base">$1,000 TIER</span>
@@ -687,7 +687,7 @@
             <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
               <div class="flex items-center justify-between bg-white/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-white text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-14 px-1.5 py-0.5 bg-white border border-[#cbd5e1] rounded text-center font-mono font-bold text-slate-900 text-xs focus:outline-none focus:border-[#e2e8f0]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(1000); startNew2048Game(true);" id="buy-btn-usdc-1000" class="w-full py-2 px-2 rounded-xl bg-[#f8fafc] hover:bg-[#f8fafc] text-black text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -702,7 +702,7 @@
       </div>
 
       <!-- PLAYABLE 2048 HERO BOARD (CENTERED & PROMINENT) -->
-      <div class="max-w-2xl mx-auto w-full glass-panel p-6 rounded-3xl border border-[#e2e8f0] flex flex-col items-center relative shadow-2xl">
+      <div class="max-w-2xl mx-auto w-full bg-white shadow-sm p-6 rounded-3xl border border-[#e2e8f0] flex flex-col items-center relative shadow-2xl">
         
         <div class="w-full flex items-center justify-between mb-4 flex-wrap gap-2">
           <div>
@@ -815,7 +815,7 @@
       </div>
 
       <!-- LIVE TOP 3 RECORD HOLDERS -->
-      <div class="glass-panel p-6 rounded-3xl border border-[#e2e8f0] space-y-5 mt-6">
+      <div class="bg-white shadow-sm p-6 rounded-3xl border border-[#e2e8f0] space-y-5 mt-6">
         <div class="flex items-center justify-between flex-wrap gap-3">
           <div class="flex items-center gap-2">
             <span class="text-xl">🏆</span>
@@ -867,7 +867,7 @@
               </div>
             </div>
             <div id="my-card-status-1" class="pt-2 border-t border-[#e2e8f0] mt-2">
-              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-neutral-800 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-1" class="font-black text-black">#--</span>
@@ -903,7 +903,7 @@
               </div>
             </div>
             <div id="my-card-status-5" class="pt-2 border-t border-[#e2e8f0] mt-2">
-              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-neutral-800 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-5" class="font-black text-black">#--</span>
@@ -939,7 +939,7 @@
               </div>
             </div>
             <div id="my-card-status-10" class="pt-2 border-t border-[#e2e8f0] mt-2">
-              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-neutral-800 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-10" class="font-black text-black">#--</span>
@@ -975,7 +975,7 @@
               </div>
             </div>
             <div id="my-card-status-100" class="pt-2 border-t border-[#e2e8f0] mt-2">
-              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-neutral-800 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-100" class="font-black text-black">#--</span>
@@ -1011,7 +1011,7 @@
               </div>
             </div>
             <div id="my-card-status-1000" class="pt-2 border-t border-[#e2e8f0] mt-2">
-              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-neutral-800 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-1000" class="font-black text-black">#--</span>
@@ -1034,9 +1034,9 @@
     <!-- 3. GRAND JACKPOT TAB -->
     <div id="tab-jackpot" class="tab-content hidden space-y-8">
 
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-[#e2e8f0] bg-gradient-to-b from-amber-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-white shadow-sm border-[#e2e8f0] bg-gradient-to-b from-amber-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#f1f5f9] blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
       
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#e2e8f0] text-neutral-800 text-xs font-mono font-bold mb-6">
         <span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span>
@@ -1078,7 +1078,7 @@
 <div id="locked-jackpot-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       
       <!-- ROUND COUNTDOWN & STATUS BANNER -->
-      <div class="glass-panel p-6 rounded-3xl border border-blue-600/40 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+      <div class="bg-white shadow-sm p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
         <div>
           <div class="flex items-center gap-2 mb-1">
             <span class="w-2.5 h-2.5 rounded-full bg-[#f1f5f9] animate-pulse"></span>
@@ -1142,15 +1142,15 @@
               <div id="target-inputs-1" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-1-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-1-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-1-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-1-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-1-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
               </div>
 
@@ -1185,15 +1185,15 @@
               <div id="target-inputs-5" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-5-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-5-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-5-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-5-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-5-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-5-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-5-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-5-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
               </div>
 
@@ -1228,15 +1228,15 @@
               <div id="target-inputs-10" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-10-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-10-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-10-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-10-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-10-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-10-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-10-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-10-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
               </div>
 
@@ -1271,15 +1271,15 @@
               <div id="target-inputs-100" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-100-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-100-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-100-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-100-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-100-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-100-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-100-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-100-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
               </div>
 
@@ -1314,15 +1314,15 @@
               <div id="target-inputs-1000" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-1000-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1000-1" placeholder="e.g. 2048.50" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-1000-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-1000-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1000-2" placeholder="e.g. 2100.00" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
                 <div id="target-row-1000-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-1000-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1000-3" placeholder="e.g. 2250.75" class="w-full bg-white border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-slate-900 font-mono focus:border-[#e2e8f0] focus:outline-none" />
                 </div>
               </div>
 
@@ -1335,7 +1335,7 @@
 
 
       <!-- LIVE ROUND PREDICTIONS FEED TABLE -->
-      <div class="glass-panel rounded-3xl border border-[#e2e8f0] overflow-hidden shadow-xl">
+      <div class="bg-white shadow-sm rounded-3xl border border-[#e2e8f0] overflow-hidden shadow-xl">
         <div class="p-4 border-b border-[#e2e8f0] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <h4 class="font-bold text-white font-mono text-sm">LIVE ROUND PREDICTIONS FEED</h4>
@@ -1369,9 +1369,9 @@
     <!-- 4. LEADERBOARD TAB -->
     <div id="tab-leaderboard" class="tab-content hidden space-y-6">
 
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-[#e2e8f0] bg-gradient-to-b from-purple-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-white shadow-sm border-[#e2e8f0] bg-gradient-to-b from-purple-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#f1f5f9] blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
       
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#e2e8f0] text-neutral-800 text-xs font-mono font-bold mb-6">
         <span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span>
@@ -1412,17 +1412,17 @@
   
 <div id="locked-leaderboard-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div onclick="setLeaderboardCategory('duel')" id="lb-cat-duel" class="glass-panel p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center">
+        <div onclick="setLeaderboardCategory('duel')" id="lb-cat-duel" class="bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">⚔️</span>
           <h4 class="font-black text-white font-mono text-sm">1. PVP DUELS</h4>
           <p class="text-xs text-slate-400 mt-1">Wins & Streaks</p>
         </div>
-        <div onclick="setLeaderboardCategory('2048')" id="lb-cat-2048" class="glass-panel p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
+        <div onclick="setLeaderboardCategory('2048')" id="lb-cat-2048" class="bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎮</span>
           <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
           <p class="text-xs text-slate-400 mt-1">Single High Score Records</p>
         </div>
-        <div onclick="setLeaderboardCategory('jackpot')" id="lb-cat-jackpot" class="glass-panel p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
+        <div onclick="setLeaderboardCategory('jackpot')" id="lb-cat-jackpot" class="bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎯</span>
           <h4 class="font-black text-white font-mono text-sm">3. GRAND JACKPOT</h4>
           <p class="text-xs text-slate-400 mt-1">Closest Predictions</p>
@@ -1430,14 +1430,14 @@
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="setLeaderboardTier(1)" id="lb-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">$1 Tier Vault</button>
+        <button onclick="setLeaderboardTier(1)" id="lb-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#f1f5f9] text-neutral-800 border border-slate-200">$1 Tier Vault</button>
         <button onclick="setLeaderboardTier(5)" id="lb-tier-5" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]">$5 Tier Vault</button>
         <button onclick="setLeaderboardTier(10)" id="lb-tier-10" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]">$10 Tier Vault</button>
         <button onclick="setLeaderboardTier(100)" id="lb-tier-100" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]">$100 Tier Vault</button>
         <button onclick="setLeaderboardTier(1000)" id="lb-tier-1000" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]">$1,000 Tier Vault</button>
       </div>
 
-      <div class="glass-panel rounded-3xl border border-[#e2e8f0] overflow-hidden">
+      <div class="bg-white shadow-sm rounded-3xl border border-[#e2e8f0] overflow-hidden">
         <div class="p-4 border-b border-[#e2e8f0] flex justify-between items-center">
           <h4 id="lb-table-title" class="font-bold text-white font-mono text-sm">Top 100 Players , PvP Duels ($1 Tier)</h4>
           <span class="text-xs font-mono text-slate-400">Live 24h Standing</span>
@@ -1466,9 +1466,9 @@
     <!-- 5. HISTORY TAB -->
     <div id="tab-history" class="tab-content hidden space-y-6">
 
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-blue-500/30 bg-gradient-to-b from-blue-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-white shadow-sm border-slate-200 bg-gradient-to-b from-blue-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#f1f5f9] blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
       
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#e2e8f0] text-neutral-800 text-xs font-mono font-bold mb-6">
         <span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span>
@@ -1509,17 +1509,17 @@
   
 <div id="locked-history-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div onclick="setHistoryCategory('duel')" id="hist-cat-duel" class="glass-panel p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center">
+        <div onclick="setHistoryCategory('duel')" id="hist-cat-duel" class="bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">⚔️</span>
           <h4 class="font-black text-white font-mono text-sm">1. PVP DUELS</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 90% Duel Champions</p>
         </div>
-        <div onclick="setHistoryCategory('2048')" id="hist-cat-2048" class="glass-panel p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
+        <div onclick="setHistoryCategory('2048')" id="hist-cat-2048" class="bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎮</span>
           <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 80% 24h Top Record Holders</p>
         </div>
-        <div onclick="setHistoryCategory('jackpot')" id="hist-cat-jackpot" class="glass-panel p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
+        <div onclick="setHistoryCategory('jackpot')" id="hist-cat-jackpot" class="bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎯</span>
           <h4 class="font-black text-white font-mono text-sm">3. GRAND JACKPOT</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 80% 1h Closest Predictions</p>
@@ -1527,14 +1527,14 @@
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="setHistoryTier(1)" id="hist-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">$1 Tier Vault</button>
+        <button onclick="setHistoryTier(1)" id="hist-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#f1f5f9] text-neutral-800 border border-slate-200">$1 Tier Vault</button>
         <button onclick="setHistoryTier(5)" id="hist-tier-5" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]">$5 Tier Vault</button>
         <button onclick="setHistoryTier(10)" id="hist-tier-10" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]">$10 Tier Vault</button>
         <button onclick="setHistoryTier(100)" id="hist-tier-100" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]">$100 Tier Vault</button>
         <button onclick="setHistoryTier(1000)" id="hist-tier-1000" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]">$1,000 Tier Vault</button>
       </div>
 
-      <div class="glass-panel rounded-3xl border border-[#e2e8f0] overflow-hidden">
+      <div class="bg-white shadow-sm rounded-3xl border border-[#e2e8f0] overflow-hidden">
         <div class="p-4 border-b border-[#e2e8f0] flex justify-between items-center">
           <h4 id="hist-table-title" class="font-bold text-white font-mono text-sm">Verified Reward Winners , PvP Duels ($1 Tier)</h4>
           <span class="text-xs font-mono text-neutral-800">Onchain Verified</span>
@@ -1563,10 +1563,10 @@
 
     <!-- 6. PROTOCOL DOCS / WHITEPAPER TAB -->
     <div id="tab-docs" data-alias="whitepaper" class="tab-content hidden space-y-6"><a id="whitepaper"></a>
-      <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-[#e2e8f0] space-y-10">
+      <div class="bg-white shadow-sm p-8 sm:p-12 rounded-3xl border border-[#e2e8f0] space-y-10">
         <div class="border-b border-[#e2e8f0] pb-6">
           <h1 class="text-3xl font-black text-white font-mono">pvphub.fun Whitepaper</h1>
-          <div class="mt-4 p-4 rounded-2xl bg-[#f1f5f9] border border-blue-600/40">
+          <div class="mt-4 p-4 rounded-2xl bg-[#f1f5f9] border border-slate-200">
             <h3 class="text-sm font-bold text-neutral-800 font-mono mb-1.5">Core Ecosystem Pillars</h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
@@ -1648,7 +1648,7 @@
 
                 
           <!-- 4. OFFICIAL PVP TOKEN CONTRACT -->
-        <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-blue-600/40 bg-[#f1f5f9] space-y-4">
+        <div class="bg-white shadow-sm p-6 sm:p-8 rounded-2xl border border-slate-200 bg-[#f1f5f9] space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <span class="text-xs font-bold text-neutral-800 font-mono block">OFFICIAL $PVP TOKEN CONTRACT</span>
@@ -1659,7 +1659,7 @@
               <span id="copy-btn-text">Copy Contract</span>
             </button>
           </div>
-          <div class="p-3 rounded-xl bg-black/60 border border-blue-600/40 font-mono text-xs text-neutral-800 break-all select-all flex items-center justify-between">
+          <div class="p-3 rounded-xl bg-black/60 border border-slate-200 font-mono text-xs text-neutral-800 break-all select-all flex items-center justify-between">
             <span id="pvp-contract-address">0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3</span>
           </div>
         </div>
@@ -1668,7 +1668,7 @@
     <!-- 7. ADMIN PANEL TAB -->
     <div id="tab-admin" class="tab-content hidden space-y-8">
       <!-- ADMIN HEADER BANNER -->
-      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] bg-white shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="bg-white shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] bg-white shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-3xl shrink-0 shadow-lg shadow-none">
             👑
@@ -1685,7 +1685,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <a href="https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-blue-600/40 text-xs font-mono text-neutral-800 hover:text-neutral-800 transition-all flex items-center gap-1.5">
+          <a href="https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-slate-200 text-xs font-mono text-neutral-800 hover:text-neutral-800 transition-all flex items-center gap-1.5">
             <span>📜</span> Escrow Contract ↗
           </a>
           <button onclick="refreshAdminDuelsStats()" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-xs font-mono text-black hover:bg-[#f8fafc] font-bold transition-all flex items-center gap-1.5">
@@ -1696,28 +1696,28 @@
 
       <!-- KEY METRICS ROW -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
+        <div class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
           <div>
             <p class="text-[11px] font-mono text-slate-400">Total Duels Created</p>
             <h4 id="admin-total-duels" class="text-xl font-black font-mono text-white mt-1">Loading...</h4>
           </div>
           <span class="text-2xl">⚔️</span>
         </div>
-        <div class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
+        <div class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
           <div>
             <p class="text-[11px] font-mono text-slate-400">Active Topics / Questions</p>
             <h4 id="admin-total-questions" class="text-xl font-black font-mono text-neutral-800 mt-1">0</h4>
           </div>
           <span class="text-2xl">⚡</span>
         </div>
-        <div class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
+        <div class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
           <div>
             <p class="text-[11px] font-mono text-slate-400">Treasury Fee Share</p>
             <h4 class="text-xl font-black font-mono text-neutral-800 mt-1">7%</h4>
           </div>
           <span class="text-2xl">🏦</span>
         </div>
-        <div class="glass-panel p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
+        <div class="bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
           <div>
             <p class="text-[11px] font-mono text-slate-400">Oracle Settlement</p>
             <h4 class="text-xl font-black font-mono text-neutral-800 mt-1">EIP-712</h4>
@@ -1727,7 +1727,7 @@
       </div>
 
       <!-- SECTION 1: CREATE NEW DUEL QUESTION -->
-      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-5">
+      <div class="bg-white shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-5">
         <div class="border-b border-[#e2e8f0] pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <div class="flex items-center gap-2">
@@ -1743,18 +1743,18 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Question Title / Prompt</label>
-              <input type="text" id="newQTitle" required placeholder="e.g. #18: Will BTC Break $95,000 Before Friday?" class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-white font-mono text-xs focus:border-[#e2e8f0] outline-none">
+              <input type="text" id="newQTitle" required placeholder="e.g. #18: Will BTC Break $95,000 Before Friday?" class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-slate-900 font-mono text-xs focus:border-[#e2e8f0] outline-none">
             </div>
             <div>
               <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Category Badge</label>
-              <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, ROBINHOOD ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-white font-mono text-xs focus:border-[#e2e8f0] outline-none">
+              <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, ROBINHOOD ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-slate-900 font-mono text-xs focus:border-[#e2e8f0] outline-none">
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Entry Window Duration</label>
-              <select id="newQDuration" class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-white font-mono text-xs focus:border-[#e2e8f0] outline-none">
+              <select id="newQDuration" class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-slate-900 font-mono text-xs focus:border-[#e2e8f0] outline-none">
                 <option value="1800">30 Minutes</option>
                 <option value="3600" selected>1 Hour</option>
                 <option value="7200">2 Hours</option>
@@ -1781,7 +1781,7 @@
 
           <div>
             <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Description / Settlement Note</label>
-            <input type="text" id="newQDesc" placeholder="e.g. 1-Hour Entry Window | Resolves upon 12H Candle Close" class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-white font-mono text-xs focus:border-[#e2e8f0] outline-none">
+            <input type="text" id="newQDesc" placeholder="e.g. 1-Hour Entry Window | Resolves upon 12H Candle Close" class="w-full px-4 py-2.5 rounded-xl bg-white border border-[#e2e8f0] text-slate-900 font-mono text-xs focus:border-[#e2e8f0] outline-none">
           </div>
 
           <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
@@ -1794,7 +1794,7 @@
       </div>
 
       <!-- SECTION 2: QUESTIONS REGISTRY MANAGER TABLE -->
-      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-4">
+      <div class="bg-white shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e2e8f0] pb-4">
           <div>
             <h3 class="text-base font-black text-black font-mono uppercase tracking-wide flex items-center gap-2">
@@ -1803,7 +1803,7 @@
             <p class="text-xs text-slate-400 font-mono mt-1">Manage all live and ended questions. Changes apply immediately.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="exportQuestionsJSON()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-[#e2e8f0] text-xs font-mono text-neutral-700 hover:text-white transition-all flex items-center gap-1.5">
+            <button onclick="exportQuestionsJSON()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-[#e2e8f0] text-xs font-mono text-neutral-700 hover:text-black transition-all flex items-center gap-1.5">
               <span>📋</span> Copy Questions JSON
             </button>
             <button onclick="resetQuestionsToDefault()" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-xs font-mono text-neutral-800 hover:bg-[#f8fafc] transition-all">
@@ -1831,7 +1831,7 @@
       </div>
 
       <!-- SECTION 3: ONCHAIN DUEL INSPECTOR -->
-      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-4">
+      <div class="bg-white shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-4">
         <div class="border-b border-[#e2e8f0] pb-4">
           <h3 class="text-base font-black text-black font-mono uppercase tracking-wide flex items-center gap-2">
             <span>🔍</span> Onchain Duel Inspector (Robinhood Chain)
@@ -1840,7 +1840,7 @@
         </div>
 
         <div class="flex flex-col sm:flex-row items-center gap-3">
-          <input type="number" id="inspectDuelIdInput" placeholder="Enter Duel ID (e.g. 1, 2, 3...)" min="1" class="w-full sm:w-64 px-4 py-2 rounded-xl bg-white border border-[#e2e8f0] text-white font-mono text-xs focus:border-[#e2e8f0] outline-none">
+          <input type="number" id="inspectDuelIdInput" placeholder="Enter Duel ID (e.g. 1, 2, 3...)" min="1" class="w-full sm:w-64 px-4 py-2 rounded-xl bg-white border border-[#e2e8f0] text-slate-900 font-mono text-xs focus:border-[#e2e8f0] outline-none">
           <button onclick="inspectOnchainDuel()" class="w-full sm:w-auto px-5 py-2 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] text-neutral-800 font-mono text-xs font-bold hover:bg-[#f1f5f9] transition-all flex items-center justify-center gap-2">
             <span>🔎</span> Query Contract
           </button>
@@ -2416,7 +2416,7 @@
         html += `
           <div class="relative">
             <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#${i}</span>
-            <input type="text" inputmode="decimal" value="${val}" placeholder="Target e.g. 2450.${50 + i * 10}" id="target-input-${tier}-${i}" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white/90 border border-[#e2e8f0] text-white font-mono text-xs focus:outline-none ${focusBorder}">
+            <input type="text" inputmode="decimal" value="${val}" placeholder="Target e.g. 2450.${50 + i * 10}" id="target-input-${tier}-${i}" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-white/90 border border-[#e2e8f0] text-slate-900 font-mono text-xs focus:outline-none ${focusBorder}">
           </div>
         `;
       }
@@ -2993,7 +2993,7 @@
           topStartBtn.onclick = function() { startNew2048Game(true); };
         } else {
           topStartBtn.innerText = "🎟️ BUY TICKET"; topStartBtn.className = "p-2 px-3 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-black font-mono text-xs font-bold transition-all active:scale-95";
-          topStartBtn.className = "p-2 px-3 rounded-xl bg-[#f1f5f9] text-neutral-800 hover:bg-[#f1f5f9] border border-blue-600/40 font-mono text-xs font-bold transition-all";
+          topStartBtn.className = "p-2 px-3 rounded-xl bg-[#f1f5f9] text-neutral-800 hover:bg-[#f1f5f9] border border-slate-200 font-mono text-xs font-bold transition-all";
           topStartBtn.onclick = function() { buy2048Ticket(selected2048Tier, "USDG"); };
         }
       }
@@ -3111,8 +3111,8 @@
 
         if (t === tier) {
           if (card) card.className = t >= 1000
-            ? "glass-panel p-4 rounded-2xl border-2 border-[#e2e8f0] bg-[#f8fafc] cursor-pointer transition-all space-y-3"
-            : "glass-panel p-4 rounded-2xl border-2 border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all space-y-3";
+            ? "bg-white shadow-sm p-4 rounded-2xl border-2 border-[#e2e8f0] bg-[#f8fafc] cursor-pointer transition-all space-y-3"
+            : "bg-white shadow-sm p-4 rounded-2xl border-2 border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all space-y-3";
           if (tag) {
             tag.innerText = "ACTIVE TIER";
             tag.className = t >= 1000
@@ -3126,8 +3126,8 @@
           }
         } else {
           if (card) card.className = t >= 1000
-            ? "glass-panel p-4 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] hover:border-[#e2e8f0] cursor-pointer transition-all space-y-3"
-            : "glass-panel p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] bg-white cursor-pointer transition-all space-y-3";
+            ? "bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] hover:border-[#e2e8f0] cursor-pointer transition-all space-y-3"
+            : "bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] bg-white cursor-pointer transition-all space-y-3";
           if (tag) {
             tag.innerText = "SELECT";
             tag.className = "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#e2e8f0] text-slate-400";
@@ -3312,9 +3312,9 @@
         const el = document.getElementById('lb-cat-' + c);
         if (el) {
           if (c === cat) {
-            el.className = 'glass-panel p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center';
+            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center';
           } else {
-            el.className = 'glass-panel p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center';
+            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center';
           }
         }
       });
@@ -3327,7 +3327,7 @@
         const b = document.getElementById('lb-tier-' + t);
         if (b) {
           if (t === tier) {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#f1f5f9] text-neutral-800 border border-blue-600/40';
+            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#f1f5f9] text-neutral-800 border border-slate-200';
           } else {
             b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]';
           }
@@ -3441,9 +3441,9 @@
         const el = document.getElementById('hist-cat-' + c);
         if (el) {
           if (c === cat) {
-            el.className = 'glass-panel p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center';
+            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center';
           } else {
-            el.className = 'glass-panel p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center';
+            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center';
           }
         }
       });
@@ -3456,7 +3456,7 @@
         const b = document.getElementById('hist-tier-' + t);
         if (b) {
           if (t === tier) {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#f1f5f9] text-neutral-800 border border-blue-600/40';
+            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#f1f5f9] text-neutral-800 border border-slate-200';
           } else {
             b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-white text-neutral-700 hover:bg-[#e2e8f0]';
           }
@@ -3539,27 +3539,27 @@
 
   <!-- MOBILE BOTTOM FLOATING NAVIGATION BAR -->
   <div id="mobile-bottom-nav" class="lg:hidden fixed bottom-3 left-3 right-3 z-50 bg-[#070b14]/95 backdrop-blur-xl border border-white/15 rounded-2xl p-1.5 shadow-2xl flex items-center justify-around">
-    <button onclick="switchTab('duel')" class="tab-btn active px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-white flex flex-col items-center gap-0.5">
+    <button onclick="switchTab('duel')" class="tab-btn active px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-black flex flex-col items-center gap-0.5">
       <span class="text-sm">⚔️</span>
       <span>Duels</span>
     </button>
-    <button onclick="switchTab('vault2048')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-white flex flex-col items-center gap-0.5">
+    <button onclick="switchTab('vault2048')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-black flex flex-col items-center gap-0.5">
       <span class="text-sm">🎮</span>
       <span>2048 <span class="text-[8px] text-neutral-800">🔒</span></span>
     </button>
-    <button onclick="switchTab('jackpot')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-white flex flex-col items-center gap-0.5">
+    <button onclick="switchTab('jackpot')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-black flex flex-col items-center gap-0.5">
       <span class="text-sm">🎯</span>
       <span>Jackpot <span class="text-[8px] text-neutral-800">🔒</span></span>
     </button>
-    <button onclick="switchTab('leaderboard')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-white flex flex-col items-center gap-0.5">
+    <button onclick="switchTab('leaderboard')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-black flex flex-col items-center gap-0.5">
       <span class="text-sm">🏆</span>
       <span>Ranks <span class="text-[8px] text-neutral-800">🔒</span></span>
     </button>
-    <button onclick="switchTab('history')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-white flex flex-col items-center gap-0.5">
+    <button onclick="switchTab('history')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-black flex flex-col items-center gap-0.5">
       <span class="text-sm">📜</span>
       <span>History <span class="text-[8px] text-neutral-800">🔒</span></span>
     </button>
-    <button onclick="switchTab('docs')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-white flex flex-col items-center gap-0.5">
+    <button onclick="switchTab('docs')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-black flex flex-col items-center gap-0.5">
       <span class="text-sm">📜</span>
       <span>Whitepaper</span>
     </button>
@@ -3699,11 +3699,11 @@
       const endedBtn = document.getElementById("q-tab-ended-btn");
       if (liveBtn && endedBtn) {
         if (tab === 'live') {
-          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0] shadow-sm shadow-none";
-          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-white text-slate-400 border border-[#e2e8f0] hover:text-white";
+          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-black text-white shadow-sm";
+          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200";
         } else {
-          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#f8fafc] text-neutral-800 border border-[#e2e8f0] shadow-sm shadow-none";
-          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-white text-slate-400 border border-[#e2e8f0] hover:text-white";
+          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200";
+          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-black text-white shadow-sm";
         }
       }
       renderDuelQuestions();
@@ -3809,10 +3809,10 @@
         const isSelected = q.id === selectedDuelQuestionId;
         const isLive = !q.isEnded && Date.now() < getQuestionDeadline(q.id);
         const borderClass = isSelected 
-          ? "border-[#e2e8f0] bg-[#f1f5f9] shadow-lg shadow-none ring-1 ring-cyan-500/50" 
+          ? "border-[#e2e8f0] bg-[#f1f5f9] shadow-lg shadow-none ring-2 ring-black" 
           : "border-[#e2e8f0] bg-white hover:border-[#e2e8f0]";
         const dotClass = isSelected ? "bg-black" : (isLive ? "bg-neutral-800" : "bg-neutral-400");
-        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#f1f5f9] text-black font-black shadow-md shadow-none ring-2 ring-cyan-400' : 'bg-[#f1f5f9] text-neutral-700 font-bold border border-[#e2e8f0] group-hover:border-[#e2e8f0]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
+        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#f1f5f9] text-black font-black shadow-md shadow-none ' : 'bg-[#f1f5f9] text-neutral-700 font-bold border border-[#e2e8f0] group-hover:border-[#e2e8f0]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
         
         const qDeadline = getQuestionDeadline(q.id);
         const timeObj = formatRemainingTime(qDeadline);
@@ -3854,7 +3854,7 @@
                 </div>
 
                 <!-- EVENT & VARIABLE SETTLEMENT TARGET -->
-                <div class="p-2 rounded-xl bg-[#f1f5f9] border border-blue-600/40 flex items-center justify-between gap-2 font-mono text-[11px]">
+                <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between gap-2 font-mono text-[11px]">
                   <div class="flex items-center gap-1.5 text-neutral-800 font-medium">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#f1f5f9] animate-pulse"></span>
                     <span>⏳ ${q.settlementLabel || (q.title && q.title.toLowerCase().includes("candle") ? "Candle Close" : (q.category === "sports" ? "Match End" : (q.category === "economy" ? "Report Release" : "Event Settlement")))}: <span id="q-candle-remaining-${q.id}" class="text-black font-bold">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
@@ -4878,7 +4878,7 @@
         const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f1f5f9] border border-blue-600/40 text-neutral-800 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f1f5f9] animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f1f5f9] border border-slate-200 text-neutral-800 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f1f5f9] animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
           el.textContent = timeObj.text;
         }
       });
@@ -5061,7 +5061,7 @@
       const isVip = safeTier >= 1000;
       const tierBadgeClass = isVip 
         ? "bg-[#f8fafc] text-black border-[#e2e8f0]" 
-        : "bg-[#f1f5f9] text-neutral-800 border-blue-600/40";
+        : "bg-[#f1f5f9] text-neutral-800 border-slate-200";
 
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
       const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
@@ -5354,7 +5354,7 @@
             <div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="px-2.5 py-0.5 rounded-lg bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0] text-[11px] font-mono font-black tracking-wider flex items-center gap-1 shadow-sm">⚔️ DUEL #${dispNum}</span>
-                <span class="text-xs font-mono font-bold text-white">${questionText}</span>
+                <span class="text-xs font-mono font-bold text-slate-900">${questionText}</span>
                 ${userRoleBadge}
               </div>
               ${completedDetailsHtml}
@@ -7080,9 +7080,9 @@ window.handleCreateQuestion = async function(e) {
 </script>
 
   <!-- ================= CREATE QUESTION MODAL (PERMISSIONLESS) ================= -->
-  <div id="createQuestionModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-    <div class="bg-[#0c101c] border border-blue-600/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl shadow-none relative">
-      <button onclick="closeCreateQuestionModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg font-bold">✕</button>
+  <div id="createQuestionModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl max-w-lg w-full p-6 shadow-2xl shadow-none relative">
+      <button onclick="closeCreateQuestionModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-900 text-lg font-bold">✕</button>
       
       <div class="flex items-center gap-2 mb-2">
         <span class="text-2xl">✨</span>
@@ -7118,7 +7118,7 @@ window.handleCreateQuestion = async function(e) {
         </div>
 
         <div id="cryptoVerificationPanel" class="space-y-3 p-3 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
-          <div class="p-2.5 rounded-xl bg-[#f1f5f9] border border-blue-600/40 text-xs text-neutral-800 font-mono flex items-center gap-2">
+          <div class="p-2.5 rounded-xl bg-[#f1f5f9] border border-slate-200 text-xs text-neutral-800 font-mono flex items-center gap-2">
             <span class="text-neutral-800">🛡️</span>
             <span>Strictly based on Coinbase candle close.</span>
           </div>
@@ -7126,7 +7126,7 @@ window.handleCreateQuestion = async function(e) {
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Select Whitelisted Token</label>
-              <select id="cryptoTokenSelect" onchange="handleCryptoTokenChange(this.value)" class="w-full bg-white border border-[#e2e8f0] rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-[#e2e8f0]">
+              <select id="cryptoTokenSelect" onchange="handleCryptoTokenChange(this.value)" class="w-full bg-white border border-[#e2e8f0] rounded-lg px-2.5 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-[#e2e8f0]">
                 <option value="BTC" selected>₿ Bitcoin (BTC)</option>
                 <option value="ETH">⟠ Ethereum (ETH)</option>
                 <option value="SOL">◎ Solana (SOL)</option>
@@ -7151,7 +7151,7 @@ window.handleCreateQuestion = async function(e) {
             <span class="text-[11px] font-bold text-neutral-800 flex items-center gap-1.5">
               <span>🛡️</span> Sports Oracle & Fixture Verification
             </span>
-            <span class="text-[9px] px-2 py-0.5 rounded-full bg-[#f1f5f9] text-neutral-800 border border-blue-600/40">API-Verified</span>
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-[#f1f5f9] text-neutral-800 border border-slate-200">API-Verified</span>
           </div>
 
           <p class="text-[10px] text-slate-400 leading-snug">
@@ -7161,7 +7161,7 @@ window.handleCreateQuestion = async function(e) {
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Select League</label>
-              <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-white border border-[#e2e8f0] rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-[#e2e8f0]">
+              <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-white border border-[#e2e8f0] rounded-lg px-2.5 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-[#e2e8f0]">
                 <option value="FOOTBALL_UCL" selected>⚽ Football: UEFA Champions League</option>
                 <option value="FOOTBALL_EPL">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Football: English Premier League</option>
                 <option value="FOOTBALL_LALIGA">🇪🇸 Football: Spain La Liga</option>
@@ -7516,7 +7516,7 @@ window.handleCreateQuestion = async function(e) {
         btn.disabled = true;
         btn.innerHTML = '<span class="animate-spin">⏳</span> Submitting to Robinhood Chain...';
         statusBox.classList.remove("hidden", "bg-[#f8fafc]", "border-[#e2e8f0]", "text-neutral-800");
-        statusBox.classList.add("bg-[#f1f5f9]", "border", "border-blue-600/40", "text-neutral-800");
+        statusBox.classList.add("bg-[#f1f5f9]", "border", "border-slate-200", "text-neutral-800");
         statusBox.innerText = "Please confirm the transaction in your wallet. (You pay gas fee directly - Anti-Spam policy)";
 
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -7594,7 +7594,7 @@ window.handleCreateQuestion = async function(e) {
         statusBox.innerText = "Transaction broadcasted! Waiting for block confirmation on Robinhood Chain...";
         await tx.wait();
 
-        statusBox.classList.remove("bg-[#f1f5f9]", "border-blue-600/40", "text-neutral-800");
+        statusBox.classList.remove("bg-[#f1f5f9]", "border-slate-200", "text-neutral-800");
         statusBox.classList.add("bg-[#f1f5f9]", "border-[#e2e8f0]", "text-neutral-800");
         statusBox.innerText = "✅ Market created successfully! You are now the official Creator and earn 5% on all duels.";
 
@@ -7605,7 +7605,7 @@ window.handleCreateQuestion = async function(e) {
 
       } catch (err) {
         console.error("Error creating market:", err);
-        statusBox.classList.remove("hidden", "bg-[#f1f5f9]", "border-blue-600/40", "text-neutral-800");
+        statusBox.classList.remove("hidden", "bg-[#f1f5f9]", "border-slate-200", "text-neutral-800");
         statusBox.classList.add("bg-[#f8fafc]", "border", "border-[#e2e8f0]", "text-neutral-800");
         statusBox.innerText = "Transaction failed: " + (err.reason || err.message || "Rejected");
         btn.disabled = false;
