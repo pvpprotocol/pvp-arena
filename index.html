@@ -13,82 +13,181 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
+    /* ============================================================
+       AAVE LIGHT / WHITE THEME
+       Inspired by Aave Protocol (https://app.aave.com)
+       ============================================================ */
+    :root {
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --aave-cyan: #2ebac6;
+      --aave-purple: #b6509e;
+      --aave-gradient: linear-gradient(135deg, #2ebac6 0%, #b6509e 100%);
+    }
+
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #05070d;
-      color: #cbd5e1;
+      font-family: 'Inter', sans-serif !important;
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
       background-image: 
-        radial-gradient(circle at 15% 10%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 85% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.6) 0%, transparent 80%);
-      background-attachment: fixed;
+        radial-gradient(circle at 10% 8%, rgba(46, 186, 198, 0.09) 0%, transparent 45%),
+        radial-gradient(circle at 90% 12%, rgba(182, 80, 158, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 60%) !important;
+      background-attachment: fixed !important;
     }
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
+
+    /* Glass Panels & Cards -> Crisp Aave White Cards */
     .glass-panel {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
     .glass-panel-glow {
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: 0 10px 30px -5px rgba(46, 186, 198, 0.14), 0 4px 6px -2px rgba(15, 23, 42, 0.03) !important;
+    }
+
+    /* Sticky Navbar */
+    header.sticky {
+      background: rgba(255, 255, 255, 0.94) !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 4px 0 rgba(15, 23, 42, 0.04) !important;
+    }
+
+    /* Dark utility classes conversion to Light/White */
+    .bg-slate-950, .bg-slate-900, .bg-slate-950\/80, .bg-slate-900\/60, .bg-slate-900\/80, 
+    .bg-slate-900\/90, .bg-slate-950\/90, .bg-slate-950\/50, .bg-slate-900\/50, .bg-slate-950\/40, 
+    .bg-slate-900\/40, .bg-slate-900\/70, .bg-black\/50, .bg-black\/60, .bg-black\/40, .bg-black\/80, .bg-black {
+      background-color: #ffffff !important;
+    }
+
+    .bg-slate-800, .bg-slate-800\/50, .bg-slate-800\/60, .bg-slate-800\/80,
+    .bg-cyan-950\/30, .bg-cyan-950\/40, .bg-cyan-950\/20, .bg-purple-950\/30, .bg-purple-950\/40 {
+      background-color: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    /* Borders */
+    .border-white\/10, .border-white\/5, .border-white\/20, .border-white\/30, 
+    .border-slate-800, .border-slate-800\/60, .border-slate-700 {
+      border-color: #e2e8f0 !important;
+    }
+
+    /* Text */
+    .text-white {
+      color: #0f172a !important;
+    }
+    .text-slate-100, .text-slate-200, .text-slate-300 {
+      color: #1e293b !important;
+    }
+    .text-slate-400 {
+      color: #64748b !important;
+    }
+    .text-slate-500 {
+      color: #94a3b8 !important;
+    }
+
+    /* Vibrant Accents */
+    .text-cyan-400, .text-cyan-300 {
+      color: #0891b2 !important;
+    }
+    .text-purple-400, .text-purple-300 {
+      color: #9333ea !important;
+    }
+    .text-emerald-400, .text-emerald-300 {
+      color: #059669 !important;
+    }
+    .text-amber-400, .text-amber-300 {
+      color: #d97706 !important;
+    }
+    .text-rose-400, .text-rose-300, .text-red-400, .text-red-300 {
+      color: #e11d48 !important;
+    }
+
+    /* Soft Pastel Badges */
+    .bg-cyan-500\/10, .bg-cyan-500\/20 {
+      background-color: #ecfeff !important;
+      border-color: #a5f3fc !important;
+      color: #0891b2 !important;
+    }
+    .bg-purple-500\/10, .bg-purple-500\/20 {
+      background-color: #faf5ff !important;
+      border-color: #e9d5ff !important;
+      color: #9333ea !important;
+    }
+    .bg-emerald-500\/10, .bg-emerald-500\/20 {
+      background-color: #ecfdf5 !important;
+      border-color: #a7f3d0 !important;
+      color: #059669 !important;
+    }
+    .bg-amber-500\/10, .bg-amber-500\/20 {
+      background-color: #fffbeb !important;
+      border-color: #fde68a !important;
+      color: #d97706 !important;
+    }
+    .bg-rose-500\/10, .bg-rose-500\/20, .bg-red-500\/10, .bg-red-500\/20 {
+      background-color: #fff1f2 !important;
+      border-color: #fecdd3 !important;
+      color: #e11d48 !important;
+    }
+
+    /* Tab Buttons */
+    .tab-btn {
+      color: #64748b !important;
+      border: 1px solid transparent !important;
+    }
+    .tab-btn:hover {
+      color: #0f172a !important;
+      background: #f1f5f9 !important;
     }
     .tab-btn.active {
-      background: rgba(6, 182, 212, 0.15);
-      color: #22d3ee;
-      border-color: rgba(6, 182, 212, 0.4);
+      background: #ffffff !important;
+      color: #0891b2 !important;
+      border-color: #0891b2 !important;
+      box-shadow: 0 2px 8px rgba(8, 145, 178, 0.12) !important;
+      font-weight: 800 !important;
     }
-    
-    .grid-2048 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-gap: 12px;
-      background: rgba(15, 23, 42, 0.8);
-      padding: 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      width: 320px;
-      height: 320px;
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+
+    /* Keep button white text on colored/gradient CTA buttons */
+    button[class*="from-"], div[class*="from-"], a[class*="from-"],
+    button[class*="bg-cyan-500"], button[class*="bg-blue-600"], button[class*="bg-purple-600"],
+    button[class*="bg-emerald-500"], .btn-solid-white-text {
+      color: #ffffff !important;
     }
-    @media (min-width: 640px) {
-      .grid-2048 {
-        width: 380px;
-        height: 380px;
-        grid-gap: 14px;
-        padding: 14px;
-      }
+    button[class*="from-"] *, div[class*="from-"] *, a[class*="from-"] * {
+      color: inherit;
     }
-    .tile {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 900;
-      font-size: 1.25rem;
-      border-radius: 12px;
-      transition: all 0.12s ease-in-out;
-      user-select: none;
+
+    /* Inputs, Selects, and Textareas */
+    input, select, textarea {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
     }
-    .tile-0 { background: rgba(30, 41, 59, 0.5); color: transparent; }
-    .tile-2 { background: #e2e8f0; color: #0f172a; box-shadow: 0 2px 8px rgba(255,255,255,0.2); }
-    .tile-4 { background: #cbd5e1; color: #0f172a; box-shadow: 0 2px 8px rgba(255,255,255,0.3); }
-    .tile-8 { background: #fb923c; color: #ffffff; box-shadow: 0 0 12px rgba(251,146,60,0.4); }
-    .tile-16 { background: #f97316; color: #ffffff; box-shadow: 0 0 14px rgba(249,115,22,0.5); }
-    .tile-32 { background: #ef4444; color: #ffffff; box-shadow: 0 0 16px rgba(239,68,68,0.5); }
-    .tile-64 { background: #dc2626; color: #ffffff; box-shadow: 0 0 18px rgba(220,38,38,0.6); }
-    .tile-128 { background: #eab308; color: #0f172a; box-shadow: 0 0 20px rgba(234,179,8,0.6); font-size: 1.1rem; }
-    .tile-256 { background: #facc15; color: #0f172a; box-shadow: 0 0 22px rgba(250,204,21,0.7); font-size: 1.1rem; }
-    .tile-512 { background: #06b6d4; color: #ffffff; box-shadow: 0 0 24px rgba(6,182,212,0.7); font-size: 1.1rem; }
-    .tile-1024 { background: #3b82f6; color: #ffffff; box-shadow: 0 0 26px rgba(59,130,246,0.8); font-size: 0.95rem; }
-    .tile-2048 { background: #8b5cf6; color: #ffffff; box-shadow: 0 0 30px rgba(139,92,246,0.9); font-size: 0.95rem; }
-    .tile-super { background: #ec4899; color: #ffffff; box-shadow: 0 0 35px rgba(236,72,153,1); font-size: 0.85rem; }
-  </style>
+    input::placeholder, textarea::placeholder {
+      color: #94a3b8 !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #0891b2 !important;
+      box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.2) !important;
+    }
+
+    /* Modals */
+    #createQuestionModal > div > div, .modal-content-box {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2) !important;
+    }
+</style>
 
   <script>
     window.switchTab = function(tabId) {
@@ -136,7 +235,7 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
+<body class="min-h-screen flex flex-col antialiased bg-[#f8fafc] text-slate-900 selection:bg-cyan-100 selection:text-cyan-900">
 
   <!-- TOP HEADER / NAVBAR -->
   <header class="sticky top-0 z-50 border-b border-white/10 bg-[#05070d]/90 backdrop-blur-xl">
