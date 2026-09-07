@@ -4070,7 +4070,7 @@
 
       // =========================================================================
       // LAW 1 (PERMANENT SYSTEM RULE):
-      // Upon the expiration of the question's entry deadline (مهلت شرکت در مسابقه):
+      // Upon the expiration of the question's entry deadline:
       // If no opponent was found for a duel request matching that question ID,
       // that request MUST IMMEDIATELY move to the EXPIRED tab!
       // =========================================================================
@@ -6928,8 +6928,8 @@ window.handleCreateQuestion = async function(e) {
       <div class="p-2.5 mb-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-start gap-2 text-cyan-300">
         <span class="text-base">⚖️</span>
         <div>
-          <p class="text-[11px] font-bold text-cyan-200">Fair Play & Anti-Frontrunning Law (قانون بسته شدن پیش از لایو):</p>
-          <p class="text-[10px] text-cyan-300/80 leading-snug">تمام چالشها باید قبل از شروع زنده رویداد/باز شدن کندل طرح شوند. مهلت ورود (Entry Window) حتماً و قطعاً باید قبل از آغاز رویداد (Candle Open / Kickoff) بسته شود تا امکان فرانترانینگ صفر باشد.</p>
+          <p class="text-[11px] font-bold text-cyan-200">Fair Play & Anti-Frontrunning Law:</p>
+          <p class="text-[10px] text-cyan-300/80 leading-snug">All challenges must be deployed onchain prior to event kickoff or candle open. The entry window strictly closes at start to eliminate live momentum frontrunning.</p>
         </div>
       </div>
       <!-- Creator Economy Banner -->
@@ -6950,16 +6950,17 @@ window.handleCreateQuestion = async function(e) {
         
         <!-- Sports DNB Rule Box (Visible when SPORTS is chosen) -->
         <div id="sportsDnbNotice" class="hidden p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300">
-          <p class="font-bold flex items-center gap-1.5 text-[11px]"><span>⚽</span> Draw No Bet (قانون بازگشت وجه در تساوی):</p>
-          <p class="text-[10px] text-amber-200/80 mt-0.5 leading-relaxed">در مسابقات فوتبال/ورزشی: گزینه ۱ تیم الف و گزینه ۲ تیم ب است. در صورت تساوی (Draw) در پایان فول تایم (Full-Time)، مسابقه لغو و ۱۰۰٪ پول هر دو بازیکن بدون کسر کارمزد برگردانده میشود.</p>
+          <p class="font-bold flex items-center gap-1.5 text-[11px]"><span>⚽</span> Draw No Bet Rule:</p>
+          <p class="text-[10px] text-amber-200/80 mt-0.5 leading-relaxed">Option 1 is Team A and Option 2 is Team B. In the event of a Full-Time Draw, the contest is void and 100% of collateral is refunded to both players with zero fee deduction.</p>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-slate-400 text-[11px] block mb-1">Category</label>
-            <select id="newQCategory" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-cyan-400">
-              <option value="CRYPTO">CRYPTO</option>
-              <option value="MARKETS">MARKETS</option>
+            <select id="newQCategory" onchange="handleCategoryChange(this.value)" class="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-cyan-400">
+              <option value="CRYPTO" selected>CRYPTO</option>
               <option value="SPORTS">SPORTS</option>
+              <option value="POLITICS">POLITICS</option>
+              <option value="MARKETS">MARKETS</option>
               <option value="TECH">TECH</option>
             </select>
           </div>
@@ -6972,7 +6973,7 @@ window.handleCreateQuestion = async function(e) {
         
         <!-- Timeframe / Fair Play Preset -->
         <div>
-          <label class="text-slate-400 text-[11px] block mb-1">Timing & Fair Play Preset (زمانبندی استاندارد)</label>
+          <label class="text-slate-400 text-[11px] block mb-1">Timing & Fair Play Preset</label>
           <select id="newQFairPlayPreset" onchange="applyTimingPreset(this.value)" class="w-full bg-slate-900 border border-cyan-500/30 rounded-xl px-3 py-2.5 text-cyan-300 focus:outline-none focus:border-cyan-400 font-bold">
             <option value="daily_candle" selected>📅 Next Daily Candle (Entry closes at 00:00 UTC Open | Settles at Close)</option>
             <option value="1h_candle">⚡ Next 1-Hour Candle (Entry closes at Top of Hour | Settles at Close)</option>
@@ -7020,14 +7021,27 @@ window.handleCreateQuestion = async function(e) {
       const notice = document.getElementById("sportsDnbNotice");
       const titleInput = document.getElementById("newQTitle");
       const resInput = document.getElementById("newQResolution");
+      
       if (val === "SPORTS") {
         if (notice) notice.classList.remove("hidden");
-        if (titleInput && !titleInput.value) titleInput.placeholder = "e.g. Real Madrid vs Barcelona (Draw = 100% Refund)";
-        if (resInput) resInput.value = "Official Match Result (Full-Time)";
-      } else {
+        if (titleInput) titleInput.placeholder = "e.g. Real Madrid vs Barcelona (Full-Time)";
+        if (resInput) resInput.value = "Official League Result / ESPN (Full-Time)";
+      } else if (val === "POLITICS") {
         if (notice) notice.classList.add("hidden");
-        if (titleInput && !titleInput.value) titleInput.placeholder = "e.g. Ethereum Daily Candle Close: GREEN or RED?";
-        if (resInput) resInput.value = "Coinbase Daily Candle Close";
+        if (titleInput) titleInput.placeholder = "e.g. US Presidential Election Winner or Official Senate Vote";
+        if (resInput) resInput.value = "Associated Press (AP) / Official Government Registry";
+      } else if (val === "MARKETS") {
+        if (notice) notice.classList.add("hidden");
+        if (titleInput) titleInput.placeholder = "e.g. S&P 500 Daily Close: GREEN or RED?";
+        if (resInput) resInput.value = "NYSE / NASDAQ Official Market Close";
+      } else if (val === "TECH") {
+        if (notice) notice.classList.add("hidden");
+        if (titleInput) titleInput.placeholder = "e.g. SpaceX Starship Flight Test Success: YES or NO?";
+        if (resInput) resInput.value = "Official Company Release / FAA Confirmation";
+      } else { // CRYPTO
+        if (notice) notice.classList.add("hidden");
+        if (titleInput) titleInput.placeholder = "e.g. Ethereum Daily Candle Close: GREEN or RED?";
+        if (resInput) resInput.value = "Coinbase BTC-USD Daily Candle Close";
       }
     }
     
@@ -7040,24 +7054,19 @@ window.handleCreateQuestion = async function(e) {
       const now = Math.floor(Date.now() / 1000);
       
       if (preset === "1h_candle") {
-        // Next top of the hour
         const nextHour = Math.ceil(now / 3600) * 3600;
-        const entrySeconds = Math.max(300, nextHour - now);
-        const settleSeconds = nextHour + 3600; // 1 hour after open
-        
         if (titleInput && !titleInput.value.trim()) {
           const d = new Date(nextHour * 1000);
           titleInput.value = `Bitcoin 1-Hour Candle (${d.getUTCHours()}:00 UTC) Close: GREEN or RED?`;
         }
-        if (resInput) resInput.value = "Coinbase BTC-USD 1-Hour Candle";
+        if (resInput && category === "CRYPTO") resInput.value = "Coinbase BTC-USD 1-Hour Candle";
       } else if (preset === "4h_candle") {
-        const next4H = Math.ceil(now / 14400) * 14400;
         if (titleInput && !titleInput.value.trim()) {
           titleInput.value = "Bitcoin 4-Hour Candle Close: GREEN or RED?";
         }
-        if (resInput) resInput.value = "Coinbase BTC-USD 4-Hour Candle";
+        if (resInput && category === "CRYPTO") resInput.value = "Coinbase BTC-USD 4-Hour Candle";
       } else if (preset === "daily_candle") {
-        if (resInput) resInput.value = "Coinbase BTC-USD Daily Candle Close";
+        if (resInput && category === "CRYPTO") resInput.value = "Coinbase BTC-USD Daily Candle Close";
       }
     }
   
