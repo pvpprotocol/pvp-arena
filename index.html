@@ -13,183 +13,170 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
+
     /* ============================================================
-       AAVE LIGHT / WHITE THEME
-       Inspired by Aave Protocol (https://app.aave.com)
+       3-COLOR THEME:
+       1. Background: Pure White (#ffffff)
+       2. Text: Pure Black (#000000)
+       3. Options / Buttons / Interactive: Vibrant Blue (#2563eb)
        ============================================================ */
     :root {
-      --bg-page: #f8fafc;
+      --bg-page: #ffffff;
       --card-bg: #ffffff;
       --card-border: #e2e8f0;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --aave-cyan: #2ebac6;
-      --aave-purple: #b6509e;
-      --aave-gradient: linear-gradient(135deg, #2ebac6 0%, #b6509e 100%);
+      --text-main: #000000;
+      --text-muted: #1e293b;
+      --blue-primary: #2563eb;
+      --blue-hover: #1d4ed8;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       font-family: 'Inter', sans-serif !important;
-      background-color: #f8fafc !important;
-      color: #0f172a !important;
-      background-image: 
-        radial-gradient(circle at 10% 8%, rgba(46, 186, 198, 0.09) 0%, transparent 45%),
-        radial-gradient(circle at 90% 12%, rgba(182, 80, 158, 0.08) 0%, transparent 45%),
-        radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 60%) !important;
-      background-attachment: fixed !important;
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      background-image: none !important;
     }
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Glass Panels & Cards -> Crisp Aave White Cards */
-    .glass-panel {
+    /* Glass Panels & Cards -> Pure White with Crisp Border */
+    .glass-panel, .glass-panel-glow {
       background: #ffffff !important;
       border: 1px solid #e2e8f0 !important;
-      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
-    }
-    .glass-panel-glow {
-      background: #ffffff !important;
-      border: 1px solid #cbd5e1 !important;
-      box-shadow: 0 10px 30px -5px rgba(46, 186, 198, 0.14), 0 4px 6px -2px rgba(15, 23, 42, 0.03) !important;
     }
 
     /* Sticky Navbar */
     header.sticky {
-      background: rgba(255, 255, 255, 0.94) !important;
+      background: #ffffff !important;
       border-bottom: 1px solid #e2e8f0 !important;
-      box-shadow: 0 1px 4px 0 rgba(15, 23, 42, 0.04) !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
     }
 
-    /* Dark utility classes conversion to Light/White */
+    /* Force all dark backgrounds to Pure White */
     .bg-slate-950, .bg-slate-900, .bg-slate-950\/80, .bg-slate-900\/60, .bg-slate-900\/80, 
     .bg-slate-900\/90, .bg-slate-950\/90, .bg-slate-950\/50, .bg-slate-900\/50, .bg-slate-950\/40, 
-    .bg-slate-900\/40, .bg-slate-900\/70, .bg-black\/50, .bg-black\/60, .bg-black\/40, .bg-black\/80, .bg-black {
-      background-color: #ffffff !important;
-    }
-
-    .bg-slate-800, .bg-slate-800\/50, .bg-slate-800\/60, .bg-slate-800\/80,
+    .bg-slate-900\/40, .bg-slate-900\/70, .bg-black\/50, .bg-black\/60, .bg-black\/40, .bg-black\/80, 
+    .bg-black, .bg-slate-800, .bg-slate-800\/50, .bg-slate-800\/60, .bg-slate-800\/80,
     .bg-cyan-950\/30, .bg-cyan-950\/40, .bg-cyan-950\/20, .bg-purple-950\/30, .bg-purple-950\/40 {
-      background-color: #f1f5f9 !important;
-      border-color: #e2e8f0 !important;
+      background-color: #ffffff !important;
     }
 
     /* Borders */
     .border-white\/10, .border-white\/5, .border-white\/20, .border-white\/30, 
-    .border-slate-800, .border-slate-800\/60, .border-slate-700 {
+    .border-slate-800, .border-slate-800\/60, .border-slate-700, .border-slate-600 {
       border-color: #e2e8f0 !important;
     }
 
-    /* Text */
-    .text-white {
-      color: #0f172a !important;
-    }
-    .text-slate-100, .text-slate-200, .text-slate-300 {
-      color: #1e293b !important;
-    }
-    .text-slate-400 {
-      color: #64748b !important;
-    }
-    .text-slate-500 {
-      color: #94a3b8 !important;
+    /* All text -> Pure Black / Rich Slate */
+    .text-white, .text-slate-100, .text-slate-200, .text-slate-300, 
+    .text-slate-400, .text-slate-500, .text-gray-300, .text-gray-400 {
+      color: #000000 !important;
     }
 
-    /* Vibrant Accents */
-    .text-cyan-400, .text-cyan-300 {
-      color: #0891b2 !important;
-    }
-    .text-purple-400, .text-purple-300 {
-      color: #9333ea !important;
-    }
-    .text-emerald-400, .text-emerald-300 {
-      color: #059669 !important;
-    }
-    .text-amber-400, .text-amber-300 {
-      color: #d97706 !important;
-    }
+    /* All Interactive Options & Accents -> Vibrant Blue */
+    .text-cyan-400, .text-cyan-300, .text-purple-400, .text-purple-300, 
+    .text-emerald-400, .text-emerald-300, .text-amber-400, .text-amber-300, 
     .text-rose-400, .text-rose-300, .text-red-400, .text-red-300 {
-      color: #e11d48 !important;
+      color: #2563eb !important;
     }
 
-    /* Soft Pastel Badges */
-    .bg-cyan-500\/10, .bg-cyan-500\/20 {
-      background-color: #ecfeff !important;
-      border-color: #a5f3fc !important;
-      color: #0891b2 !important;
-    }
-    .bg-purple-500\/10, .bg-purple-500\/20 {
-      background-color: #faf5ff !important;
-      border-color: #e9d5ff !important;
-      color: #9333ea !important;
-    }
-    .bg-emerald-500\/10, .bg-emerald-500\/20 {
-      background-color: #ecfdf5 !important;
-      border-color: #a7f3d0 !important;
-      color: #059669 !important;
-    }
-    .bg-amber-500\/10, .bg-amber-500\/20 {
-      background-color: #fffbeb !important;
-      border-color: #fde68a !important;
-      color: #d97706 !important;
-    }
+    /* Option Badges & Tags -> Crisp White with Blue text and border */
+    .bg-cyan-500\/10, .bg-cyan-500\/20, .bg-purple-500\/10, .bg-purple-500\/20,
+    .bg-emerald-500\/10, .bg-emerald-500\/20, .bg-amber-500\/10, .bg-amber-500\/20,
     .bg-rose-500\/10, .bg-rose-500\/20, .bg-red-500\/10, .bg-red-500\/20 {
-      background-color: #fff1f2 !important;
-      border-color: #fecdd3 !important;
-      color: #e11d48 !important;
+      background-color: #eff6ff !important;
+      border: 1px solid #bfdbfe !important;
+      color: #2563eb !important;
     }
 
-    /* Tab Buttons */
+    /* Option & Tab Buttons */
     .tab-btn {
-      color: #64748b !important;
-      border: 1px solid transparent !important;
+      color: #000000 !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      font-weight: 600 !important;
     }
     .tab-btn:hover {
-      color: #0f172a !important;
-      background: #f1f5f9 !important;
+      color: #2563eb !important;
+      border-color: #2563eb !important;
     }
     .tab-btn.active {
-      background: #ffffff !important;
-      color: #0891b2 !important;
-      border-color: #0891b2 !important;
-      box-shadow: 0 2px 8px rgba(8, 145, 178, 0.12) !important;
+      background: #2563eb !important;
+      color: #ffffff !important;
+      border-color: #2563eb !important;
       font-weight: 800 !important;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
     }
 
-    /* Keep button white text on colored/gradient CTA buttons */
+    /* All Action & Option CTA Buttons -> Blue */
     button[class*="from-"], div[class*="from-"], a[class*="from-"],
     button[class*="bg-cyan-500"], button[class*="bg-blue-600"], button[class*="bg-purple-600"],
-    button[class*="bg-emerald-500"], .btn-solid-white-text {
+    button[class*="bg-emerald-500"], button[class*="bg-rose-600"], .btn-solid-white-text {
+      background: #2563eb !important;
+      background-image: none !important;
       color: #ffffff !important;
+      border-color: #2563eb !important;
+    }
+    button[class*="from-"]:hover, button[class*="bg-blue-600"]:hover {
+      background: #1d4ed8 !important;
     }
     button[class*="from-"] *, div[class*="from-"] *, a[class*="from-"] * {
-      color: inherit;
+      color: #ffffff !important;
     }
 
-    /* Inputs, Selects, and Textareas */
+    /* Question cards selection */
+    .q-card-selected {
+      border: 2px solid #2563eb !important;
+      box-shadow: 0 0 0 1px #2563eb !important;
+      background-color: #f8faff !important;
+    }
+
+    /* Inputs, Selects, and Dropdown Options */
     input, select, textarea {
       background-color: #ffffff !important;
-      color: #0f172a !important;
-      border-color: #cbd5e1 !important;
+      color: #000000 !important;
+      border: 1px solid #cbd5e1 !important;
+      outline: none !important;
+    }
+    option {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+    option:checked, option:hover {
+      background-color: #2563eb !important;
+      color: #ffffff !important;
     }
     input::placeholder, textarea::placeholder {
-      color: #94a3b8 !important;
+      color: #64748b !important;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: #0891b2 !important;
-      box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.2) !important;
+      border-color: #2563eb !important;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25) !important;
     }
 
-    /* Modals */
+    /* Modals -> White background, Black text, Blue options */
     #createQuestionModal > div > div, .modal-content-box {
       background-color: #ffffff !important;
       border: 1px solid #e2e8f0 !important;
-      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2) !important;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
     }
-</style>
+
+  </style>
 
   <script>
+
+    const ALL = 'ALL';
+    const CRYPTO = 'CRYPTO';
+    const SPORTS = 'SPORTS';
+
     window.switchTab = function(tabId) {
       try {
         if (tabId === "whitepaper") tabId = "docs";
@@ -302,15 +289,15 @@
     <!-- 1. PVP DUELS TAB -->
     <div id="tab-duel" class="tab-content block space-y-8">
       <!-- SINGLE UNIFIED HERO BANNER -->
-      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900/80 to-emerald-950/40 flex flex-col md:flex-row items-center justify-between gap-5 shadow-xl">
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-blue-600/40 bg-gradient-to-r from-cyan-950/40 via-slate-900/80 to-emerald-950/40 flex flex-col md:flex-row items-center justify-between gap-5 shadow-xl">
         <div class="flex items-start sm:items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-2xl shrink-0">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-blue-600/40 flex items-center justify-center text-2xl shrink-0">
             ⚔️
           </div>
           <div>
             <div class="flex flex-wrap items-center gap-2">
               <h3 class="text-base sm:text-lg font-black text-white font-mono uppercase tracking-wider">pvphub</h3>
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Head to Head</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-blue-600/40">Head to Head</span>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">5% Creator Fee Cash</span>
             </div>
             <p class="text-xs sm:text-sm text-slate-300 font-mono mt-1.5 leading-relaxed">
@@ -329,7 +316,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/10 pb-4">
           <div>
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 1</span>
+              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-blue-600/40">STEP 1</span>
               <h3 class="text-base font-black text-white font-mono uppercase tracking-wide">Select Binary Duel Question</h3>
             </div>
             <p class="text-xs text-slate-400 font-mono mt-1">Select an active question. Each duel question is available across all 5 stake tiers!</p>
@@ -366,7 +353,7 @@
           <div class="lg:col-span-7 glass-panel p-5 rounded-2xl border border-white/10 bg-slate-900/60 space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 2</span>
+                <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-blue-600/40">STEP 2</span>
                 <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Select Stake Tier</h4>
               </div>
               <span id="selected-tier-payout" class="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20">Winner: +$0.018 USDG</span>
@@ -405,7 +392,7 @@
           <!-- STEP 3: CHOOSE POSITION (YES or NO - 100% ENGLISH) -->
           <div class="lg:col-span-5 glass-panel p-5 rounded-2xl border border-white/10 bg-slate-900/60 space-y-3">
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-cyan-500/30">STEP 3</span>
+              <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold border border-blue-600/40">STEP 3</span>
               <h4 class="text-xs font-bold font-mono text-white uppercase tracking-wider">Choose Position</h4>
             </div>
             <p class="text-[11px] text-slate-400 font-mono">Select GREEN or RED. Opponent must take the opposite side to enter.</p>
@@ -459,7 +446,7 @@
           <button id="duel-tab-open" onclick="switchDuelTab('open')" class="px-4 py-3 border-b-2 border-cyan-400 text-cyan-300 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
             <span>⚔️</span>
             <span>OPEN REQUESTS</span>
-            <span id="badge-count-open" class="px-2 py-0.5 rounded-full text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">0</span>
+            <span id="badge-count-open" class="px-2 py-0.5 rounded-full text-[10px] bg-cyan-500/20 text-cyan-300 border border-blue-600/40">0</span>
           </button>
 
           <button id="duel-tab-matched" onclick="switchDuelTab('matched')" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
@@ -495,7 +482,7 @@
     <!-- 2. 2048 SKILL TAB -->
     <div id="tab-vault2048" class="tab-content hidden space-y-6">
 
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-cyan-500/30 bg-gradient-to-b from-cyan-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl glass-panel border-blue-600/40 bg-gradient-to-b from-cyan-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"></div>
       <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
       
@@ -558,7 +545,7 @@
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.0001 TIER <span class="text-[10px] text-cyan-400 font-normal">($1 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-blue-600/40">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -596,7 +583,7 @@
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.0005 TIER <span class="text-[10px] text-cyan-400 font-normal">($5 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-blue-600/40">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -634,7 +621,7 @@
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.001 TIER <span class="text-[10px] text-cyan-400 font-normal">($10 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-blue-600/40">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -672,7 +659,7 @@
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.01 TIER <span class="text-[10px] text-cyan-400 font-normal">($100 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-slate-900 border border-white/10 text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-blue-600/40">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
@@ -912,7 +899,7 @@
               </div>
             </div>
             <div id="my-card-status-1" class="pt-2 border-t border-white/10 mt-2">
-              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-1" class="font-black text-amber-300">#--</span>
@@ -948,7 +935,7 @@
               </div>
             </div>
             <div id="my-card-status-5" class="pt-2 border-t border-white/10 mt-2">
-              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-5" class="font-black text-amber-300">#--</span>
@@ -984,7 +971,7 @@
               </div>
             </div>
             <div id="my-card-status-10" class="pt-2 border-t border-white/10 mt-2">
-              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-10" class="font-black text-amber-300">#--</span>
@@ -1020,7 +1007,7 @@
               </div>
             </div>
             <div id="my-card-status-100" class="pt-2 border-t border-white/10 mt-2">
-              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-100" class="font-black text-amber-300">#--</span>
@@ -1056,7 +1043,7 @@
               </div>
             </div>
             <div id="my-card-status-1000" class="pt-2 border-t border-white/10 mt-2">
-              <div class="p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-between text-[11px] font-mono">
+              <div class="p-2 rounded-xl bg-cyan-950/50 border border-blue-600/40 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-cyan-400 font-bold">👤 Your Rank:</span>
                   <span id="my-rank-1000" class="font-black text-amber-300">#--</span>
@@ -1123,7 +1110,7 @@
 <div id="locked-jackpot-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       
       <!-- ROUND COUNTDOWN & STATUS BANNER -->
-      <div class="glass-panel p-6 rounded-3xl border border-cyan-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+      <div class="glass-panel p-6 rounded-3xl border border-blue-600/40 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
         <div>
           <div class="flex items-center gap-2 mb-1">
             <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
@@ -1475,7 +1462,7 @@
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="setLeaderboardTier(1)" id="lb-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1 Tier Vault</button>
+        <button onclick="setLeaderboardTier(1)" id="lb-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-blue-600/40">$1 Tier Vault</button>
         <button onclick="setLeaderboardTier(5)" id="lb-tier-5" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$5 Tier Vault</button>
         <button onclick="setLeaderboardTier(10)" id="lb-tier-10" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$10 Tier Vault</button>
         <button onclick="setLeaderboardTier(100)" id="lb-tier-100" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$100 Tier Vault</button>
@@ -1572,7 +1559,7 @@
       </div>
 
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="setHistoryTier(1)" id="hist-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">$1 Tier Vault</button>
+        <button onclick="setHistoryTier(1)" id="hist-tier-1" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-blue-600/40">$1 Tier Vault</button>
         <button onclick="setHistoryTier(5)" id="hist-tier-5" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$5 Tier Vault</button>
         <button onclick="setHistoryTier(10)" id="hist-tier-10" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$10 Tier Vault</button>
         <button onclick="setHistoryTier(100)" id="hist-tier-100" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10">$100 Tier Vault</button>
@@ -1611,7 +1598,7 @@
       <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-white/10 space-y-10">
         <div class="border-b border-white/10 pb-6">
           <h1 class="text-3xl font-black text-white font-mono">pvphub.fun Whitepaper</h1>
-          <div class="mt-4 p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30">
+          <div class="mt-4 p-4 rounded-2xl bg-cyan-500/10 border border-blue-600/40">
             <h3 class="text-sm font-bold text-cyan-300 font-mono mb-1.5">Core Ecosystem Pillars</h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
@@ -1693,7 +1680,7 @@
 
                 
           <!-- 4. OFFICIAL PVP TOKEN CONTRACT -->
-        <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/30 bg-cyan-950/20 space-y-4">
+        <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-blue-600/40 bg-cyan-950/20 space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <span class="text-xs font-bold text-cyan-400 font-mono block">OFFICIAL $PVP TOKEN CONTRACT</span>
@@ -1704,7 +1691,7 @@
               <span id="copy-btn-text">Copy Contract</span>
             </button>
           </div>
-          <div class="p-3 rounded-xl bg-black/60 border border-cyan-500/30 font-mono text-xs text-cyan-300 break-all select-all flex items-center justify-between">
+          <div class="p-3 rounded-xl bg-black/60 border border-blue-600/40 font-mono text-xs text-cyan-300 break-all select-all flex items-center justify-between">
             <span id="pvp-contract-address">0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3</span>
           </div>
         </div>
@@ -1730,7 +1717,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <a href="https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-black/40 border border-cyan-500/30 text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-all flex items-center gap-1.5">
+          <a href="https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-black/40 border border-blue-600/40 text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-all flex items-center gap-1.5">
             <span>📜</span> Escrow Contract ↗
           </a>
           <button onclick="refreshAdminDuelsStats()" class="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-xs font-mono text-amber-300 hover:bg-amber-500/30 font-bold transition-all flex items-center gap-1.5">
@@ -3038,7 +3025,7 @@
           topStartBtn.onclick = function() { startNew2048Game(true); };
         } else {
           topStartBtn.innerText = "🎟️ BUY TICKET"; topStartBtn.className = "p-2 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-mono text-xs font-bold transition-all active:scale-95";
-          topStartBtn.className = "p-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30 font-mono text-xs font-bold transition-all";
+          topStartBtn.className = "p-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-blue-600/40 font-mono text-xs font-bold transition-all";
           topStartBtn.onclick = function() { buy2048Ticket(selected2048Tier, "USDG"); };
         }
       }
@@ -3372,7 +3359,7 @@
         const b = document.getElementById('lb-tier-' + t);
         if (b) {
           if (t === tier) {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-blue-600/40';
           } else {
             b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10';
           }
@@ -3501,7 +3488,7 @@
         const b = document.getElementById('hist-tier-' + t);
         if (b) {
           if (t === tier) {
-            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
+            b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-cyan-500/20 text-cyan-300 border border-blue-600/40';
           } else {
             b.className = 'px-4 py-2 rounded-xl text-xs font-bold font-mono bg-slate-900 text-slate-300 hover:bg-white/10';
           }
@@ -3865,7 +3852,7 @@
 
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-blue-600/40 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
 
         const winnerBadge = (isQuestionEnded && q.winningOption)
           ? `<div class="mt-2 text-[10px] font-mono bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-1 rounded-lg flex items-center justify-between">
@@ -3899,7 +3886,7 @@
                 </div>
 
                 <!-- EVENT & VARIABLE SETTLEMENT TARGET -->
-                <div class="p-2 rounded-xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between gap-2 font-mono text-[11px]">
+                <div class="p-2 rounded-xl bg-cyan-950/40 border border-blue-600/40 flex items-center justify-between gap-2 font-mono text-[11px]">
                   <div class="flex items-center gap-1.5 text-cyan-300 font-medium">
                     <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
                     <span>⏳ ${q.settlementLabel || (q.title && q.title.toLowerCase().includes("candle") ? "Candle Close" : (q.category === "sports" ? "Match End" : (q.category === "economy" ? "Report Release" : "Event Settlement")))}: <span id="q-candle-remaining-${q.id}" class="text-amber-300 font-bold">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
@@ -3990,11 +3977,11 @@
       if (!btnYes || !btnNo) return;
 
       if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-500/50 hover:text-rose-300 hover:scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-blue-600 bg-blue-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-blue-500/30 transition-all hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-slate-300 bg-white text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-blue-500 hover:text-blue-600 hover:scale-[1.02]";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border border-white/10 bg-black/40 text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-emerald-500/50 hover:text-emerald-300 hover:scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border border-rose-500/80 bg-rose-500/20 text-rose-300 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-slate-300 bg-white text-black font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-blue-500 hover:text-blue-600 hover:scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-blue-600 bg-blue-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-blue-500/30 transition-all hover:scale-[1.02]";
       }
     }
 
@@ -4177,14 +4164,14 @@
 
     function filterDuelsCategory(cat) {
       currentDuelCategoryFilter = cat;
-      const cats = [ALL, CRYPTO, SPORTS];
+      const cats = ['ALL', 'CRYPTO', 'SPORTS'];
       cats.forEach(c => {
         const btn = document.getElementById(`filter-duels-${c.toLowerCase()}`);
         if (!btn) return;
         if (c === cat) {
-          btn.className = "px-3 py-1 rounded-lg font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition-all shadow-sm shadow-cyan-500/20";
+          btn.className = "px-3 py-1 rounded-lg font-bold bg-blue-600 text-white border border-blue-600 transition-all shadow-sm shadow-blue-500/30";
         } else {
-          btn.className = "px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-white transition-all";
+          btn.className = "px-3 py-1 rounded-lg font-bold text-black bg-white border border-slate-200 hover:border-blue-500 hover:text-blue-600 transition-all";
         }
       });
       renderAllDuels();
@@ -4452,14 +4439,14 @@
         const cat = getDuelCategory(item);
         if (cat !== currentDuelTab) return false;
 
-        if (currentDuelCategoryFilter !== ALL) {
+        if (currentDuelCategoryFilter !== 'ALL') {
           const qId = getDuelQuestionId(item);
           const q = getQuestionById(qId);
           const topic = ((item.topic || "") + " " + (item.questionText || "") + " " + (q && q.title ? q.title : "") + " " + (q && q.category ? q.category : "")).toUpperCase();
           const isSports = topic.includes("FOOTBALL") || topic.includes("NBA") || topic.includes("SOCCER") || topic.includes("CHAMPIONS LEAGUE") || topic.includes("PREMIER LEAGUE") || topic.includes("LA LIGA") || (topic.includes("VS") && (topic.includes("MADRID") || topic.includes("CITY") || topic.includes("ARSENAL") || topic.includes("CHELSEA") || topic.includes("LAKERS") || topic.includes("CELTICS") || topic.includes("BAYERN") || topic.includes("PSG")));
           const isCrypto = !isSports;
-          if (currentDuelCategoryFilter === CRYPTO && !isCrypto) return false;
-          if (currentDuelCategoryFilter === SPORTS && !isSports) return false;
+          if (currentDuelCategoryFilter === 'CRYPTO' && !isCrypto) return false;
+          if (currentDuelCategoryFilter === 'SPORTS' && !isSports) return false;
         }
 
         return true;
@@ -4932,7 +4919,7 @@
         const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 border border-blue-600/40 text-cyan-300 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
           el.textContent = timeObj.text;
         }
       });
@@ -5115,7 +5102,7 @@
       const isVip = safeTier >= 1000;
       const tierBadgeClass = isVip 
         ? "bg-amber-500/20 text-amber-300 border-amber-500/30" 
-        : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
+        : "bg-cyan-500/20 text-cyan-300 border-blue-600/40";
 
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
       const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
@@ -5135,7 +5122,7 @@
         if (isCreator) {
           cardBgClass = "bg-amber-950/25 border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.12)] ring-1 ring-amber-500/30";
           userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> ⚡ YOUR REQUEST</span>`;
-          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-cyan-500/30 text-xs flex items-center gap-2 shadow-sm"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
+          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-slate-800 text-cyan-400 font-bold border border-blue-600/40 text-xs flex items-center gap-2 shadow-sm"><span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> WAITING OPPONENT</span>`;
           actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
@@ -7126,7 +7113,7 @@ window.handleCreateQuestion = async function(e) {
 
   <!-- ================= CREATE QUESTION MODAL (PERMISSIONLESS) ================= -->
   <div id="createQuestionModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-    <div class="bg-[#0c101c] border border-cyan-500/30 rounded-3xl max-w-lg w-full p-6 shadow-2xl shadow-cyan-500/10 relative">
+    <div class="bg-[#0c101c] border border-blue-600/40 rounded-3xl max-w-lg w-full p-6 shadow-2xl shadow-cyan-500/10 relative">
       <button onclick="closeCreateQuestionModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg font-bold">✕</button>
       
       <div class="flex items-center gap-2 mb-2">
@@ -7145,11 +7132,11 @@ window.handleCreateQuestion = async function(e) {
         <div>
           <label class="text-slate-400 text-[11px] block font-bold uppercase tracking-wider mb-2">Select Category</label>
           <div class="flex items-center bg-slate-900/90 p-1 rounded-xl border border-white/10 gap-1 font-mono text-xs">
-            <button type="button" id="catBtnCrypto" onclick="selectMarketCategory(CRYPTO)" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400 text-white shadow-md shadow-cyan-500/20">
+            <button type="button" id="catBtnCrypto" onclick="selectMarketCategory('CRYPTO')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400 text-white shadow-md shadow-cyan-500/20">
               <span>📊</span>
               <span>Crypto Market</span>
             </button>
-            <button type="button" id="catBtnSports" onclick="selectMarketCategory(SPORTS)" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-slate-200 border border-transparent">
+            <button type="button" id="catBtnSports" onclick="selectMarketCategory('SPORTS')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-slate-200 border border-transparent">
               <span>⚽</span>
               <span>Sports Arenas</span>
             </button>
@@ -7163,7 +7150,7 @@ window.handleCreateQuestion = async function(e) {
         </div>
 
         <div id="cryptoVerificationPanel" class="space-y-3 p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/20">
-          <div class="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-xs text-cyan-200 font-mono flex items-center gap-2">
+          <div class="p-2.5 rounded-xl bg-cyan-950/40 border border-blue-600/40 text-xs text-cyan-200 font-mono flex items-center gap-2">
             <span class="text-cyan-400">🛡️</span>
             <span>Strictly based on Coinbase candle close.</span>
           </div>
@@ -7196,7 +7183,7 @@ window.handleCreateQuestion = async function(e) {
             <span class="text-[11px] font-bold text-cyan-300 flex items-center gap-1.5">
               <span>🛡️</span> Sports Oracle & Fixture Verification
             </span>
-            <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">API-Verified</span>
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-blue-600/40">API-Verified</span>
           </div>
 
           <p class="text-[10px] text-slate-400 leading-snug">
@@ -7503,7 +7490,7 @@ window.handleCreateQuestion = async function(e) {
       const modal = document.getElementById("createQuestionModal");
       if (modal) {
         modal.classList.remove("hidden");
-        selectMarketCategory(CRYPTO);
+        selectMarketCategory('CRYPTO');
       }
     }
 
@@ -7561,7 +7548,7 @@ window.handleCreateQuestion = async function(e) {
         btn.disabled = true;
         btn.innerHTML = '<span class="animate-spin">⏳</span> Submitting to Robinhood Chain...';
         statusBox.classList.remove("hidden", "bg-rose-500/10", "border-rose-500/30", "text-rose-400");
-        statusBox.classList.add("bg-cyan-500/10", "border", "border-cyan-500/30", "text-cyan-300");
+        statusBox.classList.add("bg-cyan-500/10", "border", "border-blue-600/40", "text-cyan-300");
         statusBox.innerText = "Please confirm the transaction in your wallet. (You pay gas fee directly - Anti-Spam policy)";
 
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -7639,7 +7626,7 @@ window.handleCreateQuestion = async function(e) {
         statusBox.innerText = "Transaction broadcasted! Waiting for block confirmation on Robinhood Chain...";
         await tx.wait();
 
-        statusBox.classList.remove("bg-cyan-500/10", "border-cyan-500/30", "text-cyan-300");
+        statusBox.classList.remove("bg-cyan-500/10", "border-blue-600/40", "text-cyan-300");
         statusBox.classList.add("bg-emerald-500/10", "border-emerald-500/30", "text-emerald-400");
         statusBox.innerText = "✅ Market created successfully! You are now the official Creator and earn 5% on all duels.";
 
@@ -7650,7 +7637,7 @@ window.handleCreateQuestion = async function(e) {
 
       } catch (err) {
         console.error("Error creating market:", err);
-        statusBox.classList.remove("hidden", "bg-cyan-500/10", "border-cyan-500/30", "text-cyan-300");
+        statusBox.classList.remove("hidden", "bg-cyan-500/10", "border-blue-600/40", "text-cyan-300");
         statusBox.classList.add("bg-rose-500/10", "border", "border-rose-500/30", "text-rose-400");
         statusBox.innerText = "Transaction failed: " + (err.reason || err.message || "Rejected");
         btn.disabled = false;
