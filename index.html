@@ -945,7 +945,7 @@
             </div>
             <p class="text-[11px] text-slate-400 font-mono">Select GREEN or RED. Opponent must take the opposite side to enter.</p>
             
-            <div class="grid grid-cols-2 gap-3 pt-1">
+            <div id="duel-options-container" class="grid grid-cols-2 gap-3 pt-1">
               <button id="opt-btn-yes" onclick="selectDuelOption(YES, false)" class="p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02] cursor-pointer">
                 <span class="text-lg"></span>
                 <span class="text-base font-black tracking-wider">GREEN</span>
@@ -4217,57 +4217,100 @@
 
     const DUEL_QUESTIONS = [
       {
-        id: 2,
+        id: 101,
+        qNum: 1,
+        isOnchain: true,
+        category: "SPORTS",
+        title: "برنده بازی بارسلون و چلسی چه تیمی است؟ (Barcelona vs Chelsea)",
+        desc: "24-Hour Entry Window | Official UEFA / International Fixture",
+        deadlineDesc: "24-Hour Entry Window",
+        targetDesc: "Settlement: Full-Time Result",
+        deadline: Date.now() + 86400000,
+        settlementTime: Date.now() + 90000000,
+        winningOption: null,
+        isEnded: false,
+        isThreeWay: true,
+        opt1: "برد بارسلون",
+        opt2: "مساوی",
+        opt3: "برد چلسی",
+        resolutionSource: "Official Match Result / ESPN",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 86400000; }
+      },
+      {
+        id: 102,
         qNum: 2,
         isOnchain: true,
         category: "CRYPTO 12H",
-        title: "Bitcoin 12H Candle (Sep 7, 2026) Close: GREEN or RED?",
-        desc: "1-Hour Entry Window | Closes at 00:00 UTC (Coinbase 12H Candle)",
-        deadlineDesc: "1-Hour Entry Window",
-        targetDesc: "Settlement: 00:00 UTC (12H Close)",
-        deadline: 1788780200000,
-        settlementTime: 1788825600000,
+        title: "Bitcoin 12H Candle Close: GREEN or RED?",
+        desc: "12-Hour Entry Window | Closes at UTC (Coinbase 12H Candle)",
+        deadlineDesc: "12-Hour Entry Window",
+        targetDesc: "Settlement: 12H Close",
+        deadline: Date.now() + 43200000,
+        settlementTime: Date.now() + 43200000,
         winningOption: null,
         isEnded: false,
-        resolutionSource: "Coinbase BTC-USD 12H Candle (12:00-00:00 UTC)",
+        isThreeWay: false,
+        opt1: "GREEN",
+        opt2: "RED",
+        resolutionSource: "Coinbase BTC-USD 12H Candle",
         contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [1, 5, 10, 100, 1000],
-        getDeadline: function() { return 1788780200000; },
-        optA: "YES",
-        optALabel: "GREEN",
-        optASub: "Green Close",
-        optB: "NO",
-        optBLabel: "RED",
-        optBSub: "Red Close"
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 43200000; }
       },
-
       {
-        id: 1,
-        qNum: 1,
+        id: 103,
+        qNum: 3,
         isOnchain: true,
-        category: "CRYPTO",
-        title: "Bitcoin Daily Candle (Sep 6, 2026) Close: GREEN or RED?",
-        desc: "2-Hour Entry Window | Closes at 00:00 UTC (Coinbase Daily Candle)",
-        deadlineDesc: "2-Hour Entry Window",
-        targetDesc: "Settlement: 00:00 UTC",
-        deadline: 1788707557000,
-        settlementTime: 1788739200000,
+        category: "SPORTS",
+        title: "برنده بازی لس‌آنجلس لیکرز و بوستون سلتیکس چه تیمی است؟ (Lakers vs Celtics)",
+        desc: "Official NBA Match | Final Score Result",
+        deadlineDesc: "18-Hour Entry Window",
+        targetDesc: "Settlement: Final Score",
+        deadline: Date.now() + 64800000,
+        settlementTime: Date.now() + 68400000,
         winningOption: null,
-        isEnded: true,
-        resolutionSource: "Coinbase BTC-USD Daily Candle",
+        isEnded: false,
+        isThreeWay: false,
+        opt1: "برد لس‌آنجلس لیکرز",
+        opt2: "برد بوستون سلتیکس",
+        resolutionSource: "Official NBA / ESPN",
         contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [1, 5, 10, 100, 1000],
-        getDeadline: function() { return 1788707557000; },
-        optA: "YES",
-        optALabel: "GREEN",
-        optASub: "Green Close",
-        optB: "NO",
-        optBLabel: "RED",
-        optBSub: "Red Close"
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 64800000; }
+      },
+      {
+        id: 104,
+        qNum: 4,
+        isOnchain: true,
+        category: "SPORTS",
+        title: "برنده بازی رئال مادرید و منچسترسیتی چه تیمی است؟ (Real Madrid vs Man City)",
+        desc: "Official UEFA Champions League | Full-Time Result",
+        deadlineDesc: "24-Hour Entry Window",
+        targetDesc: "Settlement: Full-Time Result",
+        deadline: Date.now() + 86400000,
+        settlementTime: Date.now() + 90000000,
+        winningOption: null,
+        isEnded: false,
+        isThreeWay: true,
+        opt1: "برد رئال مادرید",
+        opt2: "مساوی",
+        opt3: "برد منچسترسیتی",
+        resolutionSource: "Official UEFA / ESPN",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 86400000; }
       }
     ];
+    let selectedDuelQuestionId = 101;
+    let selectedDuelTier = 0.01;
+    let selectedDuelOption = "برد بارسلون";
+    let activeQuestionTab = "live";
 
     let selectedDuelQuestionId = 2;
     let selectedDuelTier = 0.01;
@@ -4479,55 +4522,54 @@
 
     function updateOptionButtonsUI() {
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
-      const btnYes = document.getElementById("opt-btn-yes");
-      const btnNo = document.getElementById("opt-btn-no");
+      const container = document.getElementById("duel-options-container");
+      if (!container) return;
 
-      if (btnYes) {
-        btnYes.setAttribute("onclick", "selectDuelOption('YES', false)");
-        btnYes.innerHTML = `
-          <span class="text-base font-black tracking-wider text-[#f8fafc]">${q.optALabel || 'YES'}</span>
-          <span class="text-[10px] font-mono text-[#cbd5e1] font-medium">${q.optASub || 'Affirmative'}</span>
-        `;
+      let options = [];
+      if (q.isThreeWay) {
+        options = [
+          { key: q.opt1 || "برد بارسلون", label: q.opt1 || "برد بارسلون", sub: "Choice 1", hoverBorder: "hover:border-[#22c55e]" },
+          { key: q.opt2 || "مساوی", label: q.opt2 || "مساوی", sub: "Choice 2", hoverBorder: "hover:border-[#38bdf8]" },
+          { key: q.opt3 || "برد چلسی", label: q.opt3 || "برد چلسی", sub: "Choice 3", hoverBorder: "hover:border-[#ef4444]" }
+        ];
+        container.className = "grid grid-cols-3 gap-2.5 pt-1";
+      } else {
+        options = [
+          { key: q.opt1 || "GREEN", label: q.opt1 || "GREEN", sub: "Choice 1", hoverBorder: "hover:border-[#22c55e]" },
+          { key: q.opt2 || "RED", label: q.opt2 || "RED", sub: "Choice 2", hoverBorder: "hover:border-[#ef4444]" }
+        ];
+        container.className = "grid grid-cols-2 gap-3 pt-1";
       }
 
-      if (btnNo) {
-        btnNo.setAttribute("onclick", "selectDuelOption('NO', false)");
-        btnNo.innerHTML = `
-          <span class="text-base font-black tracking-wider text-[#f8fafc]">${q.optBLabel || 'NO'}</span>
-          <span class="text-[10px] font-mono text-neutral-500 font-medium">${q.optBSub || 'Negative'}</span>
-        `;
+      if (!options.some(o => o.key === selectedDuelOption)) {
+        selectedDuelOption = options[0].key;
       }
 
-      applyOptionStyles();
+      container.innerHTML = options.map((opt, idx) => {
+        const isSelected = opt.key === selectedDuelOption;
+        const cls = isSelected
+          ? "opt-btn p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]"
+          : "opt-btn p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] " + opt.hoverBorder + " hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        return '<button onclick="selectDuelOption(\'' + opt.key.replace(/'/g, "\\'") + '\', false)" class="' + cls + '">' +
+          '<span class="text-sm md:text-base font-black tracking-wider text-[#f8fafc]">' + opt.label + '</span>' +
+          '<span class="text-[10px] font-mono text-[#cbd5e1] font-medium">' + opt.sub + '</span>' +
+        '</button>';
+      }).join("");
     }
 
     async function selectDuelOption(opt, triggerOnchain = false) {
       selectedDuelOption = opt;
-      applyOptionStyles();
+      updateOptionButtonsUI();
       updateDuelSummary();
       if (triggerOnchain) {
-        // Instant 1-Click execution on YES / NO tap
         await createDuel();
       }
     }
 
     function applyOptionStyles() {
-      const btnYes = document.getElementById("opt-btn-yes");
-      const btnNo = document.getElementById("opt-btn-no");
-      if (!btnYes || !btnNo) return;
-
-      if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] hover:border-[#ef4444] hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
-      } else {
-        btnYes.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] hover:border-[#22c55e] hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]";
-      }
-    } else {
-        btnYes.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-slate-400 hover:border-blue-500/50 hover:text-blue-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-[#f87171] bg-[#29161a] text-[#f87171] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-[#f87171]/15 transition-all cursor-pointer scale-[1.02]";
-      }
+      updateOptionButtonsUI();
     }
+
 
     function updateDuelSummary() {
       // Summary text removed as requested
