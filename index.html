@@ -557,7 +557,14 @@
       color: #cbd5e1 !important;
     }
 
-  </style>
+  
+    .tab-btn .tab-dot {
+      display: none !important;
+    }
+    .tab-btn.active .tab-dot {
+      display: inline-block !important;
+    }
+</style>
 
   <script>
 
@@ -596,13 +603,13 @@
           btn.classList.add("text-[#94a3b8]");
         });
 
-        const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab="" + tabId + ""]");
+        const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", #m-btn-tab-" + tabId + ", [data-tab='" + tabId + "']");
         activeBtns.forEach(function(b) { 
           b.classList.add("active"); 
+          b.classList.remove("text-[#94a3b8]");
           b.classList.add("text-white");
         });
 
-        // Update page title & topbar breadcrumb
         const titles = {
           "duel": { title: "PvP Duels Arena", icon: "⚔️", sub: "" },
           "vault2048": { title: "2048 Skill Challenge", icon: "🎮", sub: "Proof of Play & Daily Rewards" },
@@ -706,28 +713,43 @@
       <nav class="space-y-1.5">
         <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-white">
           <span class="flex items-center gap-3 text-sm"><span>⚔️</span> PvP Duels</span>
-          <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span></button>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
+        </button>
         <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🎯</span> Grand Jackpot</span>
-          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+          <div class="flex items-center gap-2">
+            <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+            <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
+          </div>
         </button>
         <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🎮</span> 2048 Skill</span>
-          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+          <div class="flex items-center gap-2">
+            <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+            <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
+          </div>
         </button>
         <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🏆</span> Leaderboard</span>
-          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+          <div class="flex items-center gap-2">
+            <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+            <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
+          </div>
         </button>
         <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>📜</span> History</span>
-          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+          <div class="flex items-center gap-2">
+            <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+            <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
+          </div>
         </button>
         <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>📖</span> Whitepaper</span>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
         <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>👑</span> Admin Panel</span>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
       </nav>
     </div>
@@ -755,23 +777,29 @@
         <button onclick="toggleMobileSidebar()" class="p-2 text-slate-400 hover:text-white text-lg">✕</button>
       </div>
       <nav class="space-y-1.5">
-        <button onclick="switchTab('duel')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-blue-400 bg-[#182633]">
+        <button onclick="switchTab('duel')" id="m-btn-tab-duel" class="tab-btn active w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-white">
           <span class="flex items-center gap-3"><span>⚔️</span> PvP Duels</span>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
-        <button onclick="switchTab('jackpot')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+        <button onclick="switchTab('jackpot')" id="m-btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#94a3b8] hover:text-white">
           <span class="flex items-center gap-3"><span>🎯</span> Grand Jackpot</span>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
-        <button onclick="switchTab('vault2048')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+        <button onclick="switchTab('vault2048')" id="m-btn-tab-vault2048" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#94a3b8] hover:text-white">
           <span class="flex items-center gap-3"><span>🎮</span> 2048 Skill</span>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
-        <button onclick="switchTab('leaderboard')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+        <button onclick="switchTab('leaderboard')" id="m-btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#94a3b8] hover:text-white">
           <span class="flex items-center gap-3"><span>🏆</span> Leaderboard</span>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
-        <button onclick="switchTab('history')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+        <button onclick="switchTab('history')" id="m-btn-tab-history" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#94a3b8] hover:text-white">
           <span class="flex items-center gap-3"><span>📜</span> History</span>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
-        <button onclick="switchTab('docs')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+        <button onclick="switchTab('docs')" id="m-btn-tab-docs" data-tab="docs" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#94a3b8] hover:text-white">
           <span class="flex items-center gap-3"><span>📖</span> Whitepaper</span>
+          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
       </nav>
     </div>
@@ -2458,8 +2486,12 @@
           btn.classList.remove("active");
         });
 
-        const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab='" + tabId + "']");
-        activeBtns.forEach(b => b.classList.add("active"));
+        const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", #m-btn-tab-" + tabId + ", [data-tab='" + tabId + "']");
+        activeBtns.forEach(b => {
+          b.classList.add("active");
+          b.classList.remove("text-[#94a3b8]");
+          b.classList.add("text-white");
+        });
 
         try {
           if (tabId === "admin") { if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable(); if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats(); }
