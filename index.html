@@ -13,24 +13,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
-
     /* ============================================================
-       POLYMARKET-INSPIRED MODERN CLEAN VIBRANT PALETTE
-       - Clean White/Light Slate Canvas
-       - Vibrant Royal Blue (#2563eb) Primary Accents
-       - Emerald (#059669) & Rose (#e11d48) Odds/Outcome Highlights
-       - Subtle ambient backdrop glow
+       JUPITER (jup.ag) SIGNATURE COSMIC DARK & LIME DESIGN SYSTEM
+       - Cosmic Obsidian Canvas (#090d14)
+       - Jupiter Lime (#c7f284) Signature Primary Accent & Action Buttons
+       - Solar Amber (#fba43a) Secondary Accent & Warm Highlights
+       - Sleek Glassmorphism Dark Slate Cards (#131b27)
+       - Electric Coral (#f87171) for NO / Down outcomes
+       - Pure Crisp Typography (#f8fafc & #94a3b8)
        ============================================================ */
     :root {
-      --bg-page: #f8fafc;
-      --card-bg: #ffffff;
-      --border-light: #e2e8f0;
-      --primary-blue: #2563eb;
-      --primary-hover: #1d4ed8;
-      --accent-green: #10b981;
-      --accent-rose: #f43f5e;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
+      --bg-page: #090d14;
+      --card-bg: #131b27;
+      --card-inner: #0e141f;
+      --border-jup: #1f2b3e;
+      --jup-lime: #c7f284;
+      --jup-lime-hover: #d9f99d;
+      --jup-amber: #fba43a;
+      --jup-coral: #f87171;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
 
     * {
@@ -39,9 +41,9 @@
 
     html, body {
       font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
-      background-color: #f8fafc !important;
-      color: #0f172a !important;
-      background-image: radial-gradient(1200px circle at 50% 0%, rgba(37, 99, 235, 0.05) 0%, rgba(248, 250, 252, 1) 100%) !important;
+      background-color: #090d14 !important;
+      color: #f8fafc !important;
+      background-image: radial-gradient(1200px circle at 50% -20%, rgba(199, 242, 132, 0.08) 0%, rgba(251, 164, 58, 0.03) 40%, rgba(9, 13, 20, 1) 100%) !important;
       background-attachment: fixed !important;
       margin: 0;
       padding: 0;
@@ -51,78 +53,123 @@
       font-family: "JetBrains Mono", monospace;
     }
 
-    /* Cards & Modals: Pure crisp white with subtle depth */
+    /* All Cards, Modals, Containers: Deep Jupiter Slate Glass */
     .bg-white, .q-card, .duel-card,
-    #createQuestionModal > div > div, .modal-content-box {
-      background-color: #ffffff;
-      border-color: #e2e8f0;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+    #createQuestionModal > div > div, .modal-content-box,
+    .bg-slate-50, .bg-[#f8fafc], .bg-[#f1f5f9], .bg-slate-100 {
+      background-color: #131b27 !important;
+      border-color: #1f2b3e !important;
+      color: #f8fafc !important;
     }
 
-    /* Sticky Header: Frosted modern glass */
-    header.sticky {
-      background: rgba(255, 255, 255, 0.85) !important;
-      backdrop-filter: blur(12px) !important;
-      -webkit-backdrop-filter: blur(12px) !important;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
-    }
-
-    /* Primary Action Buttons (Connect Wallet, Deploy Market, Create Duel) */
-    #walletBtn, #deployMarketBtn, #createDuelBtn, .btn-primary {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-      color: #ffffff !important;
-      border: 1px solid #1d4ed8 !important;
-      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2) !important;
+    .q-card, .duel-card {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
-    #walletBtn:hover, #deployMarketBtn:hover, #createDuelBtn:hover, .btn-primary:hover {
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
-      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3) !important;
+    .q-card:hover, .duel-card:hover {
+      border-color: #2e3e58 !important;
       transform: translateY(-1px);
     }
-    #walletBtn *, #deployMarketBtn *, #createDuelBtn *, .btn-primary * {
-      color: #ffffff !important;
+
+    /* Sticky Header: Frosted Cosmic Glass */
+    header.sticky {
+      background: rgba(9, 13, 20, 0.88) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border-bottom: 1px solid #1f2b3e !important;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
     }
 
-    /* Badges with life and color */
+    /* Navigation Container */
+    header nav {
+      background: #0e141f !important;
+      border: 1px solid #1f2b3e !important;
+    }
+
+    /* Navigation Tabs */
+    .tab-btn {
+      color: #94a3b8 !important;
+      border: 1px solid transparent !important;
+      background: transparent !important;
+      transition: all 0.15s ease !important;
+    }
+    .tab-btn:hover {
+      color: #ffffff !important;
+      background: #182333 !important;
+    }
+    .tab-btn.active, #btn-tab-duel.active {
+      background: #1a2638 !important;
+      color: #c7f284 !important;
+      border: 1px solid #c7f284 !important;
+      box-shadow: 0 0 12px rgba(199, 242, 132, 0.2) !important;
+    }
+
+    /* THE ICONIC JUPITER LIME CTA BUTTON (Connect Wallet, Create Market, Create Duel) */
+    #walletBtn, #deployMarketBtn, #createDuelBtn, .btn-primary, .btn-jup-lime {
+      background: #c7f284 !important;
+      color: #080b11 !important;
+      border: 1px solid #c7f284 !important;
+      font-weight: 800 !important;
+      box-shadow: 0 0 20px rgba(199, 242, 132, 0.25) !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    #walletBtn:hover, #deployMarketBtn:hover, #createDuelBtn:hover, .btn-primary:hover, .btn-jup-lime:hover {
+      background: #d9f99d !important;
+      box-shadow: 0 0 30px rgba(199, 242, 132, 0.45) !important;
+      transform: translateY(-1px) scale(1.01);
+    }
+    #walletBtn *, #deployMarketBtn *, #createDuelBtn *, .btn-primary *, .btn-jup-lime * {
+      color: #080b11 !important;
+    }
+
+    /* Text Colors overrides for high readability */
+    .text-black, .text-slate-900, .text-neutral-800, .text-neutral-900 {
+      color: #f8fafc !important;
+    }
+    .text-slate-700, .text-slate-600, .text-neutral-700, .text-neutral-600 {
+      color: #cbd5e1 !important;
+    }
+    .text-slate-500, .text-slate-400, .text-neutral-500 {
+      color: #94a3b8 !important;
+    }
+
+    /* Badges with Jupiter accents */
     .badge-live {
-      background: #ecfdf5 !important;
-      color: #059669 !important;
-      border: 1px solid #a7f3d0 !important;
+      background: rgba(199, 242, 132, 0.12) !important;
+      color: #c7f284 !important;
+      border: 1px solid rgba(199, 242, 132, 0.3) !important;
     }
     .badge-crypto {
-      background: #eff6ff !important;
-      color: #2563eb !important;
-      border: 1px solid #bfdbfe !important;
+      background: rgba(96, 165, 250, 0.12) !important;
+      color: #60a5fa !important;
+      border: 1px solid rgba(96, 165, 250, 0.3) !important;
     }
     .badge-sports {
-      background: #fffbeb !important;
-      color: #d97706 !important;
-      border: 1px solid #fde68a !important;
+      background: rgba(251, 164, 58, 0.12) !important;
+      color: #fba43a !important;
+      border: 1px solid rgba(251, 164, 58, 0.3) !important;
     }
 
-    /* Payout text highlights */
+    /* Jupiter Payout Highlight */
     .text-payout {
-      color: #059669 !important;
-      font-weight: 700;
+      color: #c7f284 !important;
+      font-weight: 800;
     }
 
-    /* Form Inputs */
+    /* Form Inputs: Deep dark container */
     input, select, textarea {
-      background-color: #ffffff !important;
-      border: 1px solid #cbd5e1 !important;
-      color: #0f172a !important;
+      background-color: #0e141f !important;
+      border: 1px solid #1f2b3e !important;
+      color: #f8fafc !important;
       border-radius: 0.75rem;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: all 0.15s ease;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: #2563eb !important;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+      border-color: #c7f284 !important;
+      box-shadow: 0 0 0 3px rgba(199, 242, 132, 0.2) !important;
       outline: none !important;
     }
-
-  </style>
+</style>
 
   <script>
 
@@ -175,7 +222,7 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 </head>
-<body class="bg-[#f8fafc] text-slate-900 min-h-screen antialiased selection:bg-slate-200 selection:text-black font-sans flex flex-col">
+<body class="bg-[#090d14] text-[#f8fafc] min-h-screen antialiased selection:bg-[#c7f284] selection:text-black font-sans flex flex-col">
 
   <!-- TOP HEADER / NAVBAR -->
   <header class="sticky top-0 z-50 border-b border-[#e2e8f0] bg-[#05070d]/90 backdrop-blur-xl">
@@ -3873,9 +3920,9 @@
         const btn = document.getElementById(btnId);
         if (!btn) return;
         if (t === tier) {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-700 text-center font-mono font-bold transition-all shadow-sm shadow-blue-500/10 cursor-pointer scale-[1.02]";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-[#c7f284] bg-[#182633] text-[#c7f284] text-center font-mono font-bold transition-all shadow-md shadow-[#c7f284]/15 cursor-pointer scale-[1.02]";
         } else {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-700 text-center font-mono font-medium transition-all cursor-pointer";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-[#1f2b3e] bg-[#131b27] hover:border-[#2e3e58] hover:bg-[#182333] text-slate-300 text-center font-mono font-medium transition-all cursor-pointer";
         }
       });
       updateDuelSummary();
@@ -3920,16 +3967,16 @@
       const btnNo = document.getElementById("opt-btn-no");
       if (!btnYes || !btnNo) return;
 
-      if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-blue-600 bg-blue-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md shadow-blue-500/20 transition-all cursor-pointer scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border border-rose-200 bg-rose-50/60 text-rose-700 hover:bg-rose-100/70 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+      if (selectedDuelOption === YES) {
+        btnYes.className = "p-3.5 rounded-xl border-2 border-[#c7f284] bg-[#162923] text-[#c7f284] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-[#c7f284]/15 transition-all cursor-pointer scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-[#1f2b3e] bg-[#131b27] text-slate-400 hover:border-[#f87171]/50 hover:text-[#f87171] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border border-blue-200 bg-blue-50/60 text-blue-700 hover:bg-blue-100/70 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
-        btnNo.className = "p-3.5 rounded-xl border-2 border-rose-600 bg-rose-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md shadow-rose-500/20 transition-all cursor-pointer scale-[1.02]";
+        btnYes.className = "p-3.5 rounded-xl border border-[#1f2b3e] bg-[#131b27] text-slate-400 hover:border-[#c7f284]/50 hover:text-[#c7f284] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-[#f87171] bg-[#29161a] text-[#f87171] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-[#f87171]/15 transition-all cursor-pointer scale-[1.02]";
       }
     }
 
-    function updateDuelSummary() {
+    updateDuelSummary() {
       // Summary text removed as requested
       return;
     }
