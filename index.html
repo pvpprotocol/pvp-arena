@@ -7855,14 +7855,15 @@ window.handleCreateQuestion = async function(e) {
 
         <!-- Sports Specific Verification & League Selector -->
         <div id="sportsVerificationPanel" class="hidden space-y-3 p-3 rounded-xl bg-[#182230] border border-[#334155]">
-          <div class="text-[11px] font-bold text-[#cbd5e1] flex items-center gap-1.5">
-            <span>🛡️</span> Sports Oracle & Fixture Verification
+          <div class="text-[11px] font-bold text-[#cbd5e1] flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><span>🛡️</span> Sports Oracle & Fixture Verification</span>
+            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">Official Calendar</span>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Select League</label>
-              <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]">
+              <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-2 text-[#f8fafc] text-xs focus:outline-none focus:border-cyan-500/50">
                 <option value="FOOTBALL_EPL" selected>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Football: English Premier League</option>
                 <option value="FOOTBALL_LALIGA">🇪🇸 Football: Spain La Liga</option>
                 <option value="FOOTBALL_BUNDESLIGA">🇩🇪 Football: Germany Bundesliga</option>
@@ -7871,23 +7872,49 @@ window.handleCreateQuestion = async function(e) {
                 <option value="NBA">🏀 Basketball: USA NBA</option>
               </select>
             </div>
-            <div>
-              <label class="text-slate-400 text-[10px] block mb-1">Verified Official Fixture</label>
-              <select id="sportsFixtureSelect" onchange="handleFixtureSelect(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#cbd5e1] text-xs font-semibold focus:outline-none focus:border-[#334155]">
-                <!-- Populated dynamically -->
-              </select>
+
+            <!-- Team Search Autocomplete -->
+            <div class="relative">
+              <label class="text-slate-400 text-[10px] block mb-1">Search Team (e.g. type "B")</label>
+              <div class="relative">
+                <input type="text" id="sportsTeamSearchInput" oninput="handleSportsTeamSearch(this.value)" onfocus="handleSportsTeamSearch(this.value)" placeholder="Type team name..." class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-2 text-[#f8fafc] text-xs focus:outline-none focus:border-cyan-500/50 placeholder:text-slate-500" autocomplete="off" />
+                <span class="absolute right-2.5 top-2.5 text-slate-400 text-xs pointer-events-none">🔍</span>
+              </div>
+              <!-- Autocomplete Dropdown List -->
+              <div id="sportsTeamSuggestions" class="hidden absolute left-0 right-0 top-full mt-1 bg-[#0f172a] border border-[#334155] rounded-lg shadow-2xl z-50 max-h-48 overflow-y-auto divide-y divide-[#1e293b]"></div>
             </div>
           </div>
 
+          <!-- Detected Match Card -->
+          <div id="sportsDetectedMatchCard" class="p-3 rounded-lg bg-[#131b27] border border-[#334155] flex flex-col gap-2">
+            <div class="flex items-center justify-between text-[10px]">
+              <span class="text-slate-400">Scheduled Fixture</span>
+              <span id="sportsMatchKickoffBadge" class="px-2 py-0.5 rounded text-[9px] font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">Official Calendar</span>
+            </div>
+            
+            <div class="flex items-center justify-between py-1 border-y border-[#1e293b]">
+              <div class="flex items-center gap-2">
+                <span id="sportsHomeTeamName" class="text-xs font-bold text-emerald-400">Team A</span>
+                <span class="text-[10px] text-slate-500 font-bold">VS</span>
+                <span id="sportsAwayTeamName" class="text-xs font-bold text-rose-400">Team B</span>
+              </div>
+              <span id="sportsMatchStatusBadge" class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">Confirmed</span>
+            </div>
 
+            <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-400">
+              <div>📅 Kickoff / Entry Closes: <span id="sportsMatchKickoffTime" class="text-slate-200 font-medium font-mono">In ~5h</span></div>
+              <div>⚖️ Oracle: <span id="sportsMatchOracleName" class="text-slate-200 font-medium">ESPN / Official</span></div>
+            </div>
+          </div>
+
+          <!-- All Fixtures Dropdown -->
+          <div>
+            <label class="text-slate-400 text-[10px] block mb-1">Or Select From All League Fixtures</label>
+            <select id="sportsFixtureSelect" onchange="handleFixtureSelect(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#cbd5e1] text-xs font-semibold focus:outline-none focus:border-[#334155]">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
         </div>
-
-        
-
-
-
-
-
 
         <div id="createQStatus" class="hidden text-[11px] p-2.5 rounded-xl"></div>
 
@@ -7904,161 +7931,61 @@ window.handleCreateQuestion = async function(e) {
     // Official Verified Fixtures Database (Football & USA NBA Only)
     const VERIFIED_SPORTS_FIXTURES = {
       FOOTBALL_EPL: [
-        { id: "epl-1", title: "Arsenal vs Chelsea (Full-Time)", teamA: "Arsenal", teamB: "Chelsea", kickoffOffsetHours: 5, res: "Official Premier League / ESPN (Full-Time)" },
-        { id: "epl-2", title: "Liverpool vs Manchester United (Full-Time)", teamA: "Liverpool", teamB: "Manchester United", kickoffOffsetHours: 8, res: "Official Premier League / ESPN (Full-Time)" },
-        { id: "epl-3", title: "Tottenham Hotspur vs Newcastle (Full-Time)", teamA: "Tottenham Hotspur", teamB: "Newcastle", kickoffOffsetHours: 26, res: "Official Premier League / ESPN (Full-Time)" }
+        { id: "epl-1", title: "Arsenal vs Chelsea (Full-Time Match Result)", teamA: "Arsenal", teamB: "Chelsea", matchDay: "Saturday, Sep 12", matchTime: "16:30 UTC", kickoffOffsetHours: 5, durationHours: 2, res: "Official Premier League / ESPN (Full-Time)" },
+        { id: "epl-2", title: "Liverpool vs Manchester United (Full-Time Match Result)", teamA: "Liverpool", teamB: "Manchester United", matchDay: "Sunday, Sep 13", matchTime: "15:30 UTC", kickoffOffsetHours: 24, durationHours: 2, res: "Official Premier League / ESPN (Full-Time)" },
+        { id: "epl-3", title: "Manchester City vs Tottenham Hotspur (Full-Time Match Result)", teamA: "Manchester City", teamB: "Tottenham Hotspur", matchDay: "Sunday, Sep 13", matchTime: "18:00 UTC", kickoffOffsetHours: 26, durationHours: 2, res: "Official Premier League / ESPN (Full-Time)" },
+        { id: "epl-4", title: "Aston Villa vs Newcastle (Full-Time Match Result)", teamA: "Aston Villa", teamB: "Newcastle", matchDay: "Saturday, Sep 12", matchTime: "14:00 UTC", kickoffOffsetHours: 3, durationHours: 2, res: "Official Premier League / ESPN (Full-Time)" },
+        { id: "epl-5", title: "Brighton vs West Ham (Full-Time Match Result)", teamA: "Brighton", teamB: "West Ham", matchDay: "Monday, Sep 14", matchTime: "19:00 UTC", kickoffOffsetHours: 48, durationHours: 2, res: "Official Premier League / ESPN (Full-Time)" }
       ],
       FOOTBALL_LALIGA: [
-        { id: "laliga-1", title: "Barcelona vs Atletico Madrid (Full-Time)", teamA: "Barcelona", teamB: "Atletico Madrid", kickoffOffsetHours: 7, res: "Official La Liga / ESPN (Full-Time)" },
-        { id: "laliga-2", title: "Real Madrid vs Real Sociedad (Full-Time)", teamA: "Real Madrid", teamB: "Real Sociedad", kickoffOffsetHours: 25, res: "Official La Liga / ESPN (Full-Time)" },
-        { id: "laliga-3", title: "Sevilla vs Real Betis (Full-Time)", teamA: "Sevilla", teamB: "Real Betis", kickoffOffsetHours: 28, res: "Official La Liga / ESPN (Full-Time)" }
+        { id: "laliga-1", title: "Barcelona vs Atletico Madrid (Full-Time Match Result)", teamA: "Barcelona", teamB: "Atletico Madrid", matchDay: "Saturday, Sep 12", matchTime: "19:00 UTC", kickoffOffsetHours: 7, durationHours: 2, res: "Official La Liga / ESPN (Full-Time)" },
+        { id: "laliga-2", title: "Real Madrid vs Real Sociedad (Full-Time Match Result)", teamA: "Real Madrid", teamB: "Real Sociedad", matchDay: "Sunday, Sep 13", matchTime: "19:00 UTC", kickoffOffsetHours: 25, durationHours: 2, res: "Official La Liga / ESPN (Full-Time)" },
+        { id: "laliga-3", title: "Sevilla vs Real Betis (Full-Time Match Result)", teamA: "Sevilla", teamB: "Real Betis", matchDay: "Sunday, Sep 13", matchTime: "21:00 UTC", kickoffOffsetHours: 28, durationHours: 2, res: "Official La Liga / ESPN (Full-Time)" },
+        { id: "laliga-4", title: "Athletic Bilbao vs Valencia (Full-Time Match Result)", teamA: "Athletic Bilbao", teamB: "Valencia", matchDay: "Monday, Sep 14", matchTime: "19:00 UTC", kickoffOffsetHours: 48, durationHours: 2, res: "Official La Liga / ESPN (Full-Time)" },
+        { id: "laliga-5", title: "Villarreal vs Girona (Full-Time Match Result)", teamA: "Villarreal", teamB: "Girona", matchDay: "Saturday, Sep 12", matchTime: "16:15 UTC", kickoffOffsetHours: 5, durationHours: 2, res: "Official La Liga / ESPN (Full-Time)" }
       ],
       FOOTBALL_BUNDESLIGA: [
-        { id: "bundes-1", title: "Bayern Munich vs Borussia Dortmund (Full-Time)", teamA: "Bayern Munich", teamB: "Borussia Dortmund", kickoffOffsetHours: 6, res: "Official Bundesliga / ESPN (Full-Time)" },
-        { id: "bundes-2", title: "Bayer Leverkusen vs RB Leipzig (Full-Time)", teamA: "Bayer Leverkusen", teamB: "RB Leipzig", kickoffOffsetHours: 10, res: "Official Bundesliga / ESPN (Full-Time)" },
-        { id: "bundes-3", title: "Eintracht Frankfurt vs VfB Stuttgart (Full-Time)", teamA: "Eintracht Frankfurt", teamB: "VfB Stuttgart", kickoffOffsetHours: 30, res: "Official Bundesliga / ESPN (Full-Time)" }
+        { id: "bundes-1", title: "Bayern Munich vs Borussia Dortmund (Full-Time Match Result)", teamA: "Bayern Munich", teamB: "Borussia Dortmund", matchDay: "Saturday, Sep 12", matchTime: "16:30 UTC", kickoffOffsetHours: 6, durationHours: 2, res: "Official Bundesliga / ESPN (Full-Time)" },
+        { id: "bundes-2", title: "Bayer Leverkusen vs RB Leipzig (Full-Time Match Result)", teamA: "Bayer Leverkusen", teamB: "RB Leipzig", matchDay: "Saturday, Sep 12", matchTime: "18:30 UTC", kickoffOffsetHours: 10, durationHours: 2, res: "Official Bundesliga / ESPN (Full-Time)" },
+        { id: "bundes-3", title: "Eintracht Frankfurt vs VfB Stuttgart (Full-Time Match Result)", teamA: "Eintracht Frankfurt", teamB: "VfB Stuttgart", matchDay: "Sunday, Sep 13", matchTime: "15:30 UTC", kickoffOffsetHours: 24, durationHours: 2, res: "Official Bundesliga / ESPN (Full-Time)" }
       ],
       FOOTBALL_SERIE_A: [
-        { id: "seriea-1", title: "Inter Milan vs Juventus (Full-Time)", teamA: "Inter Milan", teamB: "Juventus", kickoffOffsetHours: 7, res: "Official Serie A / ESPN (Full-Time)" },
-        { id: "seriea-2", title: "AC Milan vs AS Roma (Full-Time)", teamA: "AC Milan", teamB: "AS Roma", kickoffOffsetHours: 12, res: "Official Serie A / ESPN (Full-Time)" },
-        { id: "seriea-3", title: "Napoli vs Lazio (Full-Time)", teamA: "Napoli", teamB: "Lazio", kickoffOffsetHours: 32, res: "Official Serie A / ESPN (Full-Time)" }
+        { id: "seriea-1", title: "Inter Milan vs Juventus (Full-Time Match Result)", teamA: "Inter Milan", teamB: "Juventus", matchDay: "Saturday, Sep 12", matchTime: "18:45 UTC", kickoffOffsetHours: 7, durationHours: 2, res: "Official Serie A / ESPN (Full-Time)" },
+        { id: "seriea-2", title: "AC Milan vs AS Roma (Full-Time Match Result)", teamA: "AC Milan", teamB: "AS Roma", matchDay: "Sunday, Sep 13", matchTime: "18:45 UTC", kickoffOffsetHours: 26, durationHours: 2, res: "Official Serie A / ESPN (Full-Time)" },
+        { id: "seriea-3", title: "Napoli vs Lazio (Full-Time Match Result)", teamA: "Napoli", teamB: "Lazio", matchDay: "Sunday, Sep 13", matchTime: "16:00 UTC", kickoffOffsetHours: 24, durationHours: 2, res: "Official Serie A / ESPN (Full-Time)" }
       ],
       FOOTBALL_LIGUE_1: [
-        { id: "ligue1-1", title: "Paris Saint-Germain vs Marseille (Full-Time)", teamA: "Paris Saint-Germain", teamB: "Marseille", kickoffOffsetHours: 8, res: "Official Ligue 1 / ESPN (Full-Time)" },
-        { id: "ligue1-2", title: "Monaco vs Lyon (Full-Time)", teamA: "Monaco", teamB: "Lyon", kickoffOffsetHours: 14, res: "Official Ligue 1 / ESPN (Full-Time)" },
-        { id: "ligue1-3", title: "Lille vs Rennes (Full-Time)", teamA: "Lille", teamB: "Rennes", kickoffOffsetHours: 34, res: "Official Ligue 1 / ESPN (Full-Time)" }
+        { id: "ligue1-1", title: "Paris Saint-Germain vs Marseille (Full-Time Match Result)", teamA: "Paris Saint-Germain", teamB: "Marseille", matchDay: "Sunday, Sep 13", matchTime: "18:45 UTC", kickoffOffsetHours: 26, durationHours: 2, res: "Official Ligue 1 / ESPN (Full-Time)" },
+        { id: "ligue1-2", title: "Monaco vs Lyon (Full-Time Match Result)", teamA: "Monaco", teamB: "Lyon", matchDay: "Saturday, Sep 12", matchTime: "19:00 UTC", kickoffOffsetHours: 8, durationHours: 2, res: "Official Ligue 1 / ESPN (Full-Time)" },
+        { id: "ligue1-3", title: "Lille vs Rennes (Full-Time Match Result)", teamA: "Lille", teamB: "Rennes", matchDay: "Sunday, Sep 13", matchTime: "15:00 UTC", kickoffOffsetHours: 23, durationHours: 2, res: "Official Ligue 1 / ESPN (Full-Time)" }
       ],
       NBA: [
-        { id: "nba-1", title: "Boston Celtics vs Los Angeles Lakers (Final Score)", teamA: "Boston Celtics", teamB: "Los Angeles Lakers", kickoffOffsetHours: 3, res: "Official NBA Result / ESPN (Final Score)" },
-        { id: "nba-2", title: "Golden State Warriors vs Denver Nuggets (Final Score)", teamA: "Golden State Warriors", teamB: "Denver Nuggets", kickoffOffsetHours: 6, res: "Official NBA Result / ESPN (Final Score)" },
-        { id: "nba-3", title: "Milwaukee Bucks vs New York Knicks (Final Score)", teamA: "Milwaukee Bucks", teamB: "New York Knicks", kickoffOffsetHours: 9, res: "Official NBA Result / ESPN (Final Score)" }
+        { id: "nba-1", title: "Boston Celtics vs Los Angeles Lakers (Final Score Result)", teamA: "Boston Celtics", teamB: "Los Angeles Lakers", matchDay: "Tonight", matchTime: "23:30 UTC", kickoffOffsetHours: 3, durationHours: 3, res: "Official NBA Result / ESPN (Final Score)" },
+        { id: "nba-2", title: "Golden State Warriors vs Denver Nuggets (Final Score Result)", teamA: "Golden State Warriors", teamB: "Denver Nuggets", matchDay: "Tonight", matchTime: "02:00 UTC", kickoffOffsetHours: 6, durationHours: 3, res: "Official NBA Result / ESPN (Final Score)" },
+        { id: "nba-3", title: "Milwaukee Bucks vs New York Knicks (Final Score Result)", teamA: "Milwaukee Bucks", teamB: "New York Knicks", matchDay: "Tomorrow", matchTime: "00:00 UTC", kickoffOffsetHours: 9, durationHours: 3, res: "Official NBA Result / ESPN (Final Score)" }
       ]
     };
 
     let selectedSportsFixture = null;
 
-    
-    const WHITELISTED_CRYPTO_TOKENS = {
-      BTC: { name: "Bitcoin", symbol: "BTC", icon: "₿", pair: "BTC-USD", exchange: "Coinbase BTC-USD", badgeClass: "bg-[#f7931a]/15 text-[#f7931a] border-[#f7931a]/30" },
-      ETH: { name: "Ethereum", symbol: "ETH", icon: "⟠", pair: "ETH-USD", exchange: "Coinbase ETH-USD", badgeClass: "bg-[#627eea]/15 text-[#a5b4fc] border-[#627eea]/30" },
-      SOL: { name: "Solana", symbol: "SOL", icon: "◎", pair: "SOL-USD", exchange: "Coinbase SOL-USD", badgeClass: "bg-[#14f195]/15 text-[#14f195] border-[#14f195]/30" },
-      BNB: { name: "Binance", symbol: "BNB", icon: "🔶", pair: "BNB-USDT", exchange: "Binance BNB-USDT", badgeClass: "bg-[#f3ba2f]/15 text-[#f3ba2f] border-[#f3ba2f]/30" },
-      HYPE: { name: "Hyperliquid", symbol: "HYPE", icon: "⚡", pair: "HYPE-USD", exchange: "Hyperliquid HYPE-USD", badgeClass: "bg-[#00f2fe]/15 text-[#38bdf8] border-[#00f2fe]/30" }
-    };
-
-    function updateCryptoMarketInputs() {
-      const tokenKey = document.getElementById("cryptoTokenSelect") ? document.getElementById("cryptoTokenSelect").value : "BTC";
-      const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "12h";
-      const token = WHITELISTED_CRYPTO_TOKENS[tokenKey] || WHITELISTED_CRYPTO_TOKENS.BTC;
-      
-      const titleInput = document.getElementById("newQTitle");
-      const resInput = document.getElementById("newQResolution");
-      const exchEl = document.getElementById("cryptoExchangeText");
-
-      const now = Math.floor(Date.now() / 1000);
-      const is12h = (tf === "12h");
-      const candleInterval = is12h ? 43200 : 86400;
-      const currentCandleStart = Math.floor(now / candleInterval) * candleInterval;
-      let nextCandleOpen = currentCandleStart + candleInterval;
-      if (nextCandleOpen - now < 900) {
-        nextCandleOpen += candleInterval;
-      }
-      const entryDeadline = nextCandleOpen;
-      const settlementTime = entryDeadline + candleInterval;
-
-      const startDate = new Date(entryDeadline * 1000);
-      const endDate = new Date(settlementTime * 1000);
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const m = months[startDate.getUTCMonth()];
-      const d = startDate.getUTCDate();
-      const y = startDate.getUTCFullYear();
-
-      let titleStr, resStr;
-      const tokenIcon = token.icon ? (token.icon + " ") : "";
-      if (is12h) {
-        const sh = String(startDate.getUTCHours()).padStart(2, "0") + ":00";
-        const eh = String(endDate.getUTCHours()).padStart(2, "0") + ":00";
-        titleStr = `${tokenIcon}${token.name} (${token.symbol}) 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close: GREEN or RED?`;
-        resStr = `${token.exchange} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close`;
-      } else {
-        titleStr = `${tokenIcon}${token.name} (${token.symbol}) 24h Candle (${m} ${d}, ${y} UTC) Close: GREEN or RED?`;
-        resStr = `${token.exchange} 24h Candle (${m} ${d}, ${y} UTC) Close`;
-      }
-
-      if (titleInput) titleInput.value = titleStr;
-      if (resInput) resInput.value = resStr;
-      const displayTitle = document.getElementById("displayQTitle");
-      const displayRes = document.getElementById("displayQResolution");
-      if (displayTitle) displayTitle.innerText = titleStr;
-      if (displayRes) displayRes.innerText = resStr;
-      if (exchEl) {
-        exchEl.innerText = `${token.exchange} (${is12h ? "12h" : "24h"})`;
-      }
-    }
-
-    function handleCryptoTokenChange(val) {
-      updateCryptoMarketInputs();
-    }
-
-    function handleCryptoTimeframeChange(val) {
-      updateCryptoMarketInputs();
-    }
-  
-    function selectMarketCategory(val) {
-      const catInput = document.getElementById("newQCategory");
-      if (catInput) catInput.value = val;
-
-      const btnCrypto = document.getElementById("catBtnCrypto");
-      const btnSports = document.getElementById("catBtnSports");
-      const notice = document.getElementById("sportsDnbNotice");
-      const sportsPanel = document.getElementById("sportsVerificationPanel");
-      const cryptoPanel = document.getElementById("cryptoVerificationPanel");
-      const btn = document.getElementById("btnSubmitQuestion");
-
-      if (val === "CRYPTO") {
-        if (btnCrypto) {
-          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#1a2638] text-[#f8fafc] border border-slate-400";
-        }
-        if (btnSports) {
-          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white bg-[#131b27] border border-[#334155] hover:bg-[#1e293b]";
-        }
-        if (notice) notice.classList.add("hidden");
-        if (sportsPanel) sportsPanel.classList.add("hidden");
-        if (cryptoPanel) cryptoPanel.classList.remove("hidden");
-        selectedSportsFixture = null;
-        if (btn) {
-          btn.disabled = false;
-          btn.classList.remove("opacity-50", "cursor-not-allowed");
-        }
-        updateCryptoMarketInputs();
-      } else if (val === "SPORTS") {
-        if (btnSports) {
-          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#1a2638] text-[#f8fafc] border border-slate-400";
-        }
-        if (btnCrypto) {
-          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white bg-[#131b27] border border-[#334155] hover:bg-[#1e293b]";
-        }
-        if (notice) notice.classList.remove("hidden");
-        if (sportsPanel) sportsPanel.classList.remove("hidden");
-        if (cryptoPanel) cryptoPanel.classList.add("hidden");
-        handleSportsLeagueChange("FOOTBALL_EPL");
-      }
-    }
-
-    function handleCategoryChange(val) {
-      selectMarketCategory(val);
-    }
-
     function handleSportsLeagueChange(leagueKey) {
       const fixtureSelect = document.getElementById("sportsFixtureSelect");
+      const searchInput = document.getElementById("sportsTeamSearchInput");
+      const suggestions = document.getElementById("sportsTeamSuggestions");
       const fixtures = VERIFIED_SPORTS_FIXTURES[leagueKey] || [];
-      if (!fixtureSelect) return;
 
+      if (searchInput) searchInput.value = "";
+      if (suggestions) {
+        suggestions.classList.add("hidden");
+        suggestions.innerHTML = "";
+      }
+
+      if (!fixtureSelect) return;
       fixtureSelect.innerHTML = "";
-      fixtures.forEach((f, idx) => {
+      fixtures.forEach((f) => {
         const opt = document.createElement("option");
         opt.value = f.id;
-        opt.text = f.title;
+        opt.text = `${f.matchDay} • ${f.teamA} vs ${f.teamB}`;
         fixtureSelect.appendChild(opt);
       });
 
@@ -8066,6 +7993,83 @@ window.handleCreateQuestion = async function(e) {
         handleFixtureSelect(fixtures[0].id);
       }
     }
+
+    function handleSportsTeamSearch(val) {
+      const leagueSelect = document.getElementById("sportsLeagueSelect");
+      const leagueKey = leagueSelect ? leagueSelect.value : "FOOTBALL_EPL";
+      const fixtures = VERIFIED_SPORTS_FIXTURES[leagueKey] || [];
+      const container = document.getElementById("sportsTeamSuggestions");
+      if (!container) return;
+
+      const query = (val || "").trim().toLowerCase();
+      if (!query) {
+        container.classList.add("hidden");
+        container.innerHTML = "";
+        return;
+      }
+
+      const matches = [];
+      fixtures.forEach(f => {
+        if (f.teamA.toLowerCase().includes(query)) {
+          matches.push({ matchedTeam: f.teamA, opponentTeam: f.teamB, role: "Home", fixture: f });
+        }
+        if (f.teamB.toLowerCase().includes(query)) {
+          matches.push({ matchedTeam: f.teamB, opponentTeam: f.teamA, role: "Away", fixture: f });
+        }
+      });
+
+      if (matches.length === 0) {
+        container.innerHTML = `<div class="p-2.5 text-[11px] text-slate-400">No teams found matching "${val}" in this league.</div>`;
+        container.classList.remove("hidden");
+        return;
+      }
+
+      container.innerHTML = "";
+      matches.forEach(m => {
+        const row = document.createElement("div");
+        row.className = "px-3 py-2.5 cursor-pointer hover:bg-[#1e293b] flex items-center justify-between text-xs transition-colors";
+        row.innerHTML = `
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-white text-xs">${m.matchedTeam}</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400">${m.role}</span>
+            </div>
+            <span class="text-[10px] text-slate-400">Opponent: <b class="text-rose-400">${m.opponentTeam}</b> (${m.fixture.matchDay})</span>
+          </div>
+          <span class="text-[10px] text-cyan-400 font-bold bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">Auto-Pair Opponent →</span>
+        `;
+        row.onclick = () => {
+          selectSportsTeamAndMatch(m);
+        };
+        container.appendChild(row);
+      });
+      container.classList.remove("hidden");
+    }
+
+    function selectSportsTeamAndMatch(matchObj) {
+      const searchInput = document.getElementById("sportsTeamSearchInput");
+      const suggestions = document.getElementById("sportsTeamSuggestions");
+      if (searchInput) searchInput.value = matchObj.matchedTeam;
+      if (suggestions) {
+        suggestions.classList.add("hidden");
+        suggestions.innerHTML = "";
+      }
+
+      const fixtureSelect = document.getElementById("sportsFixtureSelect");
+      if (fixtureSelect) {
+        fixtureSelect.value = matchObj.fixture.id;
+      }
+      handleFixtureSelect(matchObj.fixture.id);
+    }
+
+    // Hide suggestions when clicking outside
+    document.addEventListener("click", function(e) {
+      const suggestions = document.getElementById("sportsTeamSuggestions");
+      const searchInput = document.getElementById("sportsTeamSearchInput");
+      if (suggestions && searchInput && !suggestions.contains(e.target) && e.target !== searchInput) {
+        suggestions.classList.add("hidden");
+      }
+    });
 
     function handleFixtureSelect(fixtureId) {
       let found = null;
@@ -8076,50 +8080,37 @@ window.handleCreateQuestion = async function(e) {
 
       const titleInput = document.getElementById("newQTitle");
       const resInput = document.getElementById("newQResolution");
-      const badge = document.getElementById("sportsValidationBadge");
-      const badgeText = document.getElementById("sportsValidationText");
-      const kickoffText = document.getElementById("sportsMatchKickoff");
       const btn = document.getElementById("btnSubmitQuestion");
+
+      const homeEl = document.getElementById("sportsHomeTeamName");
+      const awayEl = document.getElementById("sportsAwayTeamName");
+      const kickoffTimeEl = document.getElementById("sportsMatchKickoffTime");
+      const oracleEl = document.getElementById("sportsMatchOracleName");
+      const kickoffBadge = document.getElementById("sportsMatchKickoffBadge");
 
       if (found) {
         selectedSportsFixture = found;
         if (titleInput) titleInput.value = found.title;
         if (resInput) resInput.value = found.res;
+
+        if (homeEl) homeEl.innerText = found.teamA;
+        if (awayEl) awayEl.innerText = found.teamB;
+        if (kickoffTimeEl) kickoffTimeEl.innerText = `${found.matchDay} ${found.matchTime} (in ~${found.kickoffOffsetHours}h)`;
+        if (oracleEl) oracleEl.innerText = found.res;
+        if (kickoffBadge) kickoffBadge.innerText = `Kickoff in ~${found.kickoffOffsetHours}h`;
+
         const displayTitle = document.getElementById("displayQTitle");
         const displayRes = document.getElementById("displayQResolution");
         if (displayTitle) displayTitle.innerText = found.title;
         if (displayRes) displayRes.innerText = found.res;
 
-        if (badge) {
-          badge.className = "p-2 rounded-lg bg-[#182230] border border-[#334155] text-neutral-800 flex items-center justify-between text-[10px]";
-        }
-        if (badgeText) {
-          /* removed */
-        }
-        if (kickoffText) {
-          kickoffText.innerText = "Kickoff in ~" + found.kickoffOffsetHours + "h";
-        }
         if (btn) {
           btn.disabled = false;
           btn.classList.remove("opacity-50", "cursor-not-allowed");
         }
-      } else {
-        selectedSportsFixture = null;
-        if (badge) {
-          badge.className = "p-2 rounded-lg bg-[#182230] border border-[#334155] text-neutral-800 flex items-center justify-between text-[10px]";
-        }
-        if (badgeText) {
-          badgeText.innerHTML = "<span>⚠️</span> UNVERIFIED / FAKE MATCH DETECTED";
-        }
-        if (kickoffText) kickoffText.innerText = "NOT IN CALENDAR";
-        if (btn) {
-          btn.disabled = true;
-          btn.classList.add("opacity-50", "cursor-not-allowed");
-        }
       }
     }
-    
-    
+
     function applyTimingPreset(preset) {
       const titleInput = document.getElementById("newQTitle");
       const category = document.getElementById("newQCategory").value;
