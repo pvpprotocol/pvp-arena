@@ -2579,6 +2579,7 @@
     var DUEL_ABI = PVP_DUEL_ABI;
     var PVP_DUEL_ABI = [
       "function cancelDuel(uint256 duelId) external",
+      "function reclaimDuelStake(uint256 duelId) external",
       "function createDuelToken(address token, uint256 wagerAmount, uint8 creatorChoice, uint256 duration, string topic) payable returns (uint256)",
       "function acceptDuelToken(uint256 duelId) payable",
       "function nextDuelId() view returns (uint256)",
@@ -5419,6 +5420,11 @@
     }
     window.claimDuelPrize = claimDuelPrize;
 
+    
+    async function reclaimDuelStake(duelId, tier) {
+      await executeOnChainSettlement(duelId, 'reclaim', tier);
+    }
+    window.reclaimDuelStake = reclaimDuelStake;
     async function claimDuelRefund(duelId, tier) {
       await executeOnChainSettlement(duelId, 'refund', tier);
     }
@@ -5784,12 +5790,16 @@
           const creatorAddr = (duelData.creator || "").toLowerCase();
           const oppAddr = (duelData.opponent || "").toLowerCase();
 
-          if (winAddr && u === winAddr) {
-            isWinner = true;
-          } else if (loseAddr && u === loseAddr) {
-            isLoser = true;
-          } else if (winAddr && (u === creatorAddr || u === oppAddr)) {
-            isLoser = true;
+          // Check if duel concluded with NO WINNER / DRAW / VOID (e.g. neither participant picked winning option)
+          const isNoWinnerCheck = duelData.isNoWinner || duelData.isDraw || (!duelData.winner && !duelData.loser && duelData.status === "completed");
+          if (!isNoWinnerCheck) {
+            if (winAddr && u === winAddr) {
+              isWinner = true;
+            } else if (loseAddr && u === loseAddr) {
+              isLoser = true;
+            } else if (winAddr && (u === creatorAddr || u === oppAddr)) {
+              isLoser = true;
+            }
           }
         }
 
@@ -5819,24 +5829,24 @@
 
         if (isNoWinnerMatch) {
           if (isParticipant) {
-            if (duelData.claimed || duelData.refundClaimed) {
+            if (duelData.reclaimed || duelData.refundClaimed || duelData.claimed) {
               actionSection = `
                 <div class="flex items-center gap-2">
-                  <span class="px-3.5 py-2 rounded-xl bg-[#182230] text-[#f8fafc] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">✅ 100% REFUNDED (+${safeTier} USDG)</span>
+                  <span class="px-3.5 py-2 rounded-xl bg-[#182230] text-[#f8fafc] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">✅ 100% RECLAIMED (+${safeTier} USDG)</span>
                 </div>
               `;
             } else {
               actionSection = `
                 <div class="flex items-center gap-2">
-                  <button onclick="claimDuelRefund('${duelData.id}', ${safeTier})" class="px-4 py-2 rounded-xl bg-black text-white hover:brightness-110 text-[#f8fafc] font-extrabold text-xs shadow-md shadow-none flex items-center gap-1.5 transition-all active:scale-95">
-                    💰 CLAIM 100% REFUND (+${safeTier} USDG)
+                  <button onclick="reclaimDuelStake('${duelData.id}', ${safeTier})" class="px-4 py-2 rounded-xl bg-black text-white hover:brightness-110 text-[#f8fafc] font-extrabold text-xs shadow-md shadow-none flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer">
+                    🔄 RECLAIM (+${safeTier} USDG)
                   </button>
                 </div>
               `;
             }
           } else {
             actionSection = `
-              <span class="px-3 py-1.5 rounded-xl bg-[#182230] text-[#cbd5e1] font-mono text-xs border border-[#334155]">⚖️ DRAW (100% REFUNDED)</span>
+              <span class="px-3 py-1.5 rounded-xl bg-[#182230] text-[#cbd5e1] font-mono text-xs border border-[#334155]">⚖️ NO WINNER (100% RECLAIMABLE)</span>
             `;
           }
         } else if (isWinner) {
