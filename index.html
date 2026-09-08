@@ -2201,6 +2201,7 @@
             <li class="leading-relaxed">Prior to an opponent joining the contest, the creator may voluntarily cancel their request at any time and reclaim their full deposit without fee deduction or penalty.</li>
                         <li class="leading-relaxed">In sports contests, Option 1 is Team A and Option 2 is Team B. In the event of a Full-Time Draw, the contest is void and 100% of collateral is refunded to both players with zero fee deduction.</li>
             <li class="leading-relaxed">In the event of delay, outage, or unavailability of oracle reference data at the scheduled time, a 6-hour resolution grace period is initiated; if no verified data is obtained upon completion of this 6-hour window, the contest undergoes an emergency cancellation and all funds are refunded to both participants.</li>
+            <li class="leading-relaxed">Sports prediction challenges may only be created and deployed for the current active matchweek (Gameweek / Matchday). Scheduling contests for future rounds in advance is strictly disabled until the ongoing matchweek has concluded and settled.</li>
           </ol>
           </div>
         </div>
@@ -7860,6 +7861,15 @@ window.handleCreateQuestion = async function(e) {
             <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">Official Calendar</span>
           </div>
 
+          <!-- Active Matchweek Notice -->
+          <div class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#131b27] border border-cyan-500/30 text-[11px]">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-slate-300">Active Round: <strong id="sportsActiveRoundLabel" class="text-cyan-300 font-mono font-bold">Current Matchweek</strong></span>
+            </div>
+            <span class="text-[9px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20 font-medium">Weekly Progression Only</span>
+          </div>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Select League</label>
@@ -7928,6 +7938,16 @@ window.handleCreateQuestion = async function(e) {
 
   <script>
     
+    // Official Active League Rounds (Matchweek by Matchweek Policy)
+    const ACTIVE_LEAGUE_ROUNDS = {
+      FOOTBALL_EPL: "Matchweek 3",
+      FOOTBALL_LALIGA: "Matchweek 3",
+      FOOTBALL_BUNDESLIGA: "Matchweek 2",
+      FOOTBALL_SERIE_A: "Matchweek 3",
+      FOOTBALL_LIGUE_1: "Matchweek 3",
+      NBA: "Regular Season Round"
+    };
+
     // Official Verified Fixtures Database (Football & USA NBA Only)
     const VERIFIED_SPORTS_FIXTURES = {
       FOOTBALL_EPL: [
@@ -7969,6 +7989,10 @@ window.handleCreateQuestion = async function(e) {
     let selectedSportsFixture = null;
 
     function handleSportsLeagueChange(leagueKey) {
+      const roundLabel = document.getElementById("sportsActiveRoundLabel");
+      if (roundLabel && ACTIVE_LEAGUE_ROUNDS[leagueKey]) {
+        roundLabel.innerText = ACTIVE_LEAGUE_ROUNDS[leagueKey];
+      }
       const fixtureSelect = document.getElementById("sportsFixtureSelect");
       const searchInput = document.getElementById("sportsTeamSearchInput");
       const suggestions = document.getElementById("sportsTeamSuggestions");
