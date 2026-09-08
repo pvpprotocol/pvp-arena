@@ -7925,13 +7925,7 @@ window.handleCreateQuestion = async function(e) {
             </div>
           </div>
 
-          <!-- Anti-Fake Badge -->
-          <div id="sportsValidationBadge" class="p-2 rounded-lg bg-[#182230] border border-[#334155] text-[#cbd5e1] flex items-center justify-between text-[10px]">
-            <span id="sportsValidationText" class="font-bold flex items-center gap-1.5">
-              <span>✅</span> Official Match Verified in Sports Calendar
-            </span>
-            <span id="sportsMatchKickoff" class="text-slate-400 font-mono"></span>
-          </div>
+
         </div>
 
         
@@ -8151,7 +8145,7 @@ window.handleCreateQuestion = async function(e) {
           badge.className = "p-2 rounded-lg bg-[#182230] border border-[#334155] text-neutral-800 flex items-center justify-between text-[10px]";
         }
         if (badgeText) {
-          badgeText.innerHTML = "<span>✅</span> Official Match Verified in Sports Calendar";
+          /* removed */
         }
         if (kickoffText) {
           kickoffText.innerText = "Kickoff in ~" + found.kickoffOffsetHours + "h";
