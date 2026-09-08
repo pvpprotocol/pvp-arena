@@ -404,21 +404,48 @@
     }
 
     /* ALL FILTER OPTIONS & TABS (Live/Ended, Crypto/Sports) */
-    .status-tab-btn, .filter-cat-btn, .duel-cat-btn {
+    .status-tab-btn, .filter-cat-btn, .duel-cat-btn, #q-tab-live-btn, #q-tab-ended-btn {
       color: #94a3b8 !important;
       background: #131b27 !important;
       border: 1px solid #334155 !important;
       transition: all 0.15s ease !important;
     }
-    .status-tab-btn:hover, .filter-cat-btn:hover, .duel-cat-btn:hover {
+    .status-tab-btn:hover, .filter-cat-btn:hover, .duel-cat-btn:hover, #q-tab-live-btn:hover, #q-tab-ended-btn:hover {
       color: #ffffff !important;
       background: #1e293b !important;
       border-color: #475569 !important;
     }
-    .status-tab-btn.active, .filter-cat-btn.active, .duel-cat-btn.active {
+    .status-tab-btn.active, .filter-cat-btn.active, .duel-cat-btn.active, #q-tab-live-btn.active, #q-tab-ended-btn.active {
       color: #ffffff !important;
       background: #1e293b !important;
       border: 1px solid #94a3b8 !important;
+    }
+    .status-tab-btn:hover *, .filter-cat-btn:hover *, .duel-cat-btn:hover *, #q-tab-live-btn:hover *, #q-tab-ended-btn:hover * {
+      color: #ffffff !important;
+    }
+    #active-topics-count-badge {
+      background-color: #182230 !important;
+      border: 1px solid #334155 !important;
+      color: #cbd5e1 !important;
+      transition: all 0.15s ease !important;
+      cursor: default;
+    }
+    #active-topics-count-badge:hover {
+      background-color: #1e293b !important;
+      border-color: #475569 !important;
+      color: #ffffff !important;
+    }
+    #q-badge-live, #q-badge-ended {
+      background-color: #182230 !important;
+      border: 1px solid #334155 !important;
+      color: #cbd5e1 !important;
+      transition: all 0.15s ease !important;
+    }
+    #q-tab-live-btn:hover #q-badge-live, #q-tab-ended-btn:hover #q-badge-ended,
+    #q-tab-live-btn.active #q-badge-live, #q-tab-ended-btn.active #q-badge-ended {
+      background-color: #131b27 !important;
+      border-color: #475569 !important;
+      color: #ffffff !important;
     }
 
     /* ALL TIER SELECTION OPTIONS ($0.01, $5, $10, $100, $1000) */
@@ -810,14 +837,14 @@
         <!-- Question Tabs: LIVE vs ENDED -->
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#334155] pb-3 mb-3">
           <div class="flex items-center gap-2">
-            <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-200 text-[#f8fafc] border border-[#334155] shadow-sm">
+            <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="status-tab-btn active px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 shadow-sm cursor-pointer">
             <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span><span>⚡ LIVE QUESTIONS</span>
-            <span id="q-badge-live" class="ml-1 px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-800 text-[10px]">3</span>
+            <span id="q-badge-live" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">3</span>
           </button>
-          <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#131b27] text-slate-600 border border-[#334155] hover:bg-slate-50">
+          <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="status-tab-btn px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 cursor-pointer">
             <span class="w-2 h-2 rounded-full bg-slate-500"></span>
             <span>🔒 ENDED / RESOLVED</span>
-            <span id="q-badge-ended" class="ml-1 px-1.5 py-0.5 rounded-full bg-slate-800 text-neutral-700 text-[10px]">1</span>
+            <span id="q-badge-ended" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">1</span>
           </button>
           </div>
           
@@ -4210,11 +4237,11 @@
       const endedBtn = document.getElementById("q-tab-ended-btn");
       if (liveBtn && endedBtn) {
         if (tab === 'live') {
-          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#1f2b3e] text-blue-400 border border-blue-500 shadow-sm";
-          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#131b27] text-[#94a3b8] border border-[#334155] hover:bg-[#1a2638] hover:text-white";
+          liveBtn.classList.add("active");
+          endedBtn.classList.remove("active");
         } else {
-          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-[#334155] hover:bg-slate-200";
-          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-black text-white shadow-sm";
+          endedBtn.classList.add("active");
+          liveBtn.classList.remove("active");
         }
       }
       renderDuelQuestions();
