@@ -170,23 +170,30 @@
       outline: none !important;
     }
 
-    /* Left Sidebar Navigation Styles */
-    aside .tab-btn {
+    /* Left Sidebar Navigation Styles (Jupiter Canonical) */
+    aside .tab-btn, #jupSidebar .tab-btn, #mobileSidebar .tab-btn {
       color: #94a3b8 !important;
+      background: transparent !important;
       border: 1px solid transparent !important;
-      background: #0e141f !important;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out !important;
       text-align: left !important;
     }
-    aside .tab-btn:hover {
+    aside .tab-btn:hover, #jupSidebar .tab-btn:hover, #mobileSidebar .tab-btn:hover {
       color: #ffffff !important;
-      background: #1f2b3e !important;
-      border-color: #2a3a52 !important;
+      background: #131b27 !important;
+      border-color: #1f2b3e !important;
     }
-    aside .tab-btn.active {
-      background: #1c2838 !important;
-      color: #c7f284 !important;
-      border: 1px solid #c7f284 !important;
-      box-shadow: 0 0 12px rgba(199, 242, 132, 0.15) !important;
+    aside .tab-btn:hover span:not(.badge-tag), #jupSidebar .tab-btn:hover span:not(.badge-tag), #mobileSidebar .tab-btn:hover span:not(.badge-tag) {
+      color: #ffffff !important;
+    }
+    aside .tab-btn.active, #jupSidebar .tab-btn.active, #mobileSidebar .tab-btn.active {
+      background: #182633 !important;
+      color: #ffffff !important;
+      border-left: 4px solid #c7f284 !important;
+      box-shadow: 0 0 15px rgba(199, 242, 132, 0.12) !important;
+    }
+    aside .tab-btn.active span:not(.badge-tag), #jupSidebar .tab-btn.active span:not(.badge-tag), #mobileSidebar .tab-btn.active span:not(.badge-tag) {
+      color: #ffffff !important;
     }
 
   
@@ -322,7 +329,9 @@
           btn.classList.remove("border-l-4");
           btn.classList.remove("border-[#c7f284]");
           btn.classList.remove("bg-[#182633]");
+          btn.classList.remove("text-white");
           btn.classList.remove("text-[#c7f284]");
+          btn.classList.add("text-[#94a3b8]");
         });
 
         const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab="" + tabId + ""]");
@@ -437,30 +446,30 @@
 
       <!-- Left Navigation Menu Items -->
       <nav class="space-y-1.5">
-        <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer border-l-4 border-[#c7f284] bg-[#182633] text-[#c7f284]">
+        <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer border-l-4 border-[#c7f284] bg-[#182633] text-white">
           <span class="flex items-center gap-3 text-sm"><span>⚔️</span> PvP Duels</span>
           <span class="w-2 h-2 rounded-full bg-[#c7f284] animate-pulse"></span>
         </button>
-        <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+        <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🎮</span> 2048 Skill</span>
-          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
         </button>
-        <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+        <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🎯</span> Grand Jackpot</span>
-          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
         </button>
-        <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+        <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🏆</span> Leaderboard</span>
-          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
         </button>
-        <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+        <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>📜</span> History</span>
-          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
         </button>
-        <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+        <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>📖</span> Whitepaper</span>
         </button>
-        <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+        <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>👑</span> Admin Panel</span>
         </button>
       </nav>
