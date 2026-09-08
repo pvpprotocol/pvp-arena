@@ -7873,14 +7873,7 @@ window.handleCreateQuestion = async function(e) {
             <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">Official Calendar</span>
           </div>
 
-          <!-- Active Matchweek Notice -->
-          <div class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#131b27] border border-cyan-500/30 text-[11px]">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span class="text-slate-300">Active Round: <strong id="sportsActiveRoundLabel" class="text-cyan-300 font-mono font-bold">Current Matchweek</strong></span>
-            </div>
-            <span class="text-[9px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20 font-medium">Weekly Progression Only</span>
-          </div>
+
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div>
@@ -7907,25 +7900,28 @@ window.handleCreateQuestion = async function(e) {
             </div>
           </div>
 
-          <!-- Detected Match Card -->
-          <div id="sportsDetectedMatchCard" class="p-3 rounded-lg bg-[#131b27] border border-[#334155] flex flex-col gap-2">
-            <div class="flex items-center justify-between text-[10px]">
-              <span class="text-slate-400">Scheduled Fixture</span>
-              <span id="sportsMatchKickoffBadge" class="px-2 py-0.5 rounded text-[9px] font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">Official Calendar</span>
+          <!-- Detected Match Card (Auto-detects Round, Teams & Schedule) -->
+          <div id="sportsDetectedMatchCard" class="p-3 rounded-xl bg-[#131b27] border border-[#334155] flex flex-col gap-2.5">
+            <div class="flex items-center justify-between text-[11px]">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="sportsDetectedRoundLabel" class="font-mono font-bold text-cyan-300">Auto-Detected Fixture</span>
+              </div>
+              <span id="sportsMatchKickoffBadge" class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 font-mono">Official Calendar</span>
             </div>
             
-            <div class="flex items-center justify-between py-1 border-y border-[#1e293b]">
+            <div class="flex items-center justify-between py-2 px-3 rounded-lg bg-[#0f172a] border border-[#1e293b]">
               <div class="flex items-center gap-2">
                 <span id="sportsHomeTeamName" class="text-xs font-bold text-emerald-400">Team A</span>
-                <span class="text-[10px] text-slate-500 font-bold">VS</span>
+                <span class="text-[10px] text-slate-500 font-bold px-1 py-0.5 bg-slate-800 rounded">VS</span>
                 <span id="sportsAwayTeamName" class="text-xs font-bold text-rose-400">Team B</span>
               </div>
-              <span id="sportsMatchStatusBadge" class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">Confirmed</span>
+              <span id="sportsMatchStatusBadge" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono font-bold">Verified Match</span>
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-400">
               <div>📅 Kickoff / Entry Closes: <span id="sportsMatchKickoffTime" class="text-slate-200 font-medium font-mono">In ~5h</span></div>
-              <div>⚖️ Oracle: <span id="sportsMatchOracleName" class="text-slate-200 font-medium">ESPN / Official</span></div>
+              <div>⚖️ Oracle: <span id="sportsMatchOracleName" class="text-slate-200 font-medium font-mono">ESPN / Official</span></div>
             </div>
           </div>
 
@@ -8070,7 +8066,7 @@ window.handleCreateQuestion = async function(e) {
               <span class="font-bold text-white text-xs">${m.matchedTeam}</span>
               <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400">${m.role}</span>
             </div>
-            <span class="text-[10px] text-slate-400">Opponent: <b class="text-rose-400">${m.opponentTeam}</b> (${m.fixture.matchDay})</span>
+            <span class="text-[10px] text-slate-400">Opponent: <b class="text-rose-400">${m.opponentTeam}</b> • ${m.fixture.round || "Active Matchweek"} (${m.fixture.matchDay})</span>
           </div>
           <span class="text-[10px] text-cyan-400 font-bold bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">Auto-Pair Opponent →</span>
         `;
@@ -8131,9 +8127,11 @@ window.handleCreateQuestion = async function(e) {
 
         if (homeEl) homeEl.innerText = found.teamA;
         if (awayEl) awayEl.innerText = found.teamB;
-        if (kickoffTimeEl) kickoffTimeEl.innerText = `${found.matchDay} ${found.matchTime} (in ~${found.kickoffOffsetHours}h)`;
+        if (kickoffTimeEl) kickoffTimeEl.innerText = `${found.matchDay} • ${found.matchTime} (in ~${found.kickoffOffsetHours}h)`;
         if (oracleEl) oracleEl.innerText = found.res;
         if (kickoffBadge) kickoffBadge.innerText = `Kickoff in ~${found.kickoffOffsetHours}h`;
+        const roundBadge = document.getElementById("sportsDetectedRoundLabel");
+        if (roundBadge) roundBadge.innerText = (found.round ? found.round + " • " : "") + found.teamA + " vs " + found.teamB;
 
         const displayTitle = document.getElementById("displayQTitle");
         const displayRes = document.getElementById("displayQResolution");
