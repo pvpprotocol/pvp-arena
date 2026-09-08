@@ -4237,119 +4237,8 @@
       return getQuestionEntryDeadline(15);
     }
 
-    const DUEL_QUESTIONS = [
-      {
-        id: 102,
-        qNum: 1,
-        isOnchain: true,
-        category: "CRYPTO 12H",
-        title: "₿ Bitcoin (BTC) 12H Candle Close: GREEN or RED?",
-        desc: "12-Hour Entry Window | Closes at UTC (Coinbase 12H Candle)",
-        deadlineDesc: "12-Hour Entry Window",
-        targetDesc: "Settlement: 12H Close",
-        deadline: Date.now() + 43200000,
-        settlementTime: Date.now() + 43200000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: false,
-        opt1: "GREEN",
-        opt2: "RED",
-        resolutionSource: "Coinbase BTC-USD 12H Candle",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 43200000; }
-      },
-      {
-        id: 106,
-        qNum: 2,
-        isOnchain: true,
-        category: "CRYPTO 12H",
-        title: "⟠ Ethereum (ETH) 12H Candle Close: GREEN or RED?",
-        desc: "12-Hour Entry Window | Closes at UTC (Coinbase ETH-USD)",
-        deadlineDesc: "12-Hour Entry Window",
-        targetDesc: "Settlement: 12H Close",
-        deadline: Date.now() + 43200000,
-        settlementTime: Date.now() + 43200000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: false,
-        opt1: "GREEN",
-        opt2: "RED",
-        resolutionSource: "Coinbase ETH-USD 12H Candle",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 43200000; }
-      },
-      {
-        id: 103,
-        qNum: 3,
-        isOnchain: true,
-        category: "CRYPTO 12H",
-        title: "◎ Solana (SOL) 12H Candle Close: GREEN or RED?",
-        desc: "12-Hour Entry Window | Closes at UTC (Coinbase SOL-USD)",
-        deadlineDesc: "12-Hour Entry Window",
-        targetDesc: "Settlement: 12H Close",
-        deadline: Date.now() + 43200000,
-        settlementTime: Date.now() + 43200000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: false,
-        opt1: "GREEN",
-        opt2: "RED",
-        resolutionSource: "Coinbase SOL-USD 12H Candle",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 43200000; }
-      },
-      {
-        id: 105,
-        qNum: 4,
-        isOnchain: true,
-        category: "CRYPTO 12H",
-        title: "🔶 Binance (BNB) 12H Candle Close: GREEN or RED?",
-        desc: "12-Hour Entry Window | Closes at UTC (Binance BNB-USDT)",
-        deadlineDesc: "12-Hour Entry Window",
-        targetDesc: "Settlement: 12H Close",
-        deadline: Date.now() + 43200000,
-        settlementTime: Date.now() + 43200000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: false,
-        opt1: "GREEN",
-        opt2: "RED",
-        resolutionSource: "Binance BNB-USDT 12H Candle",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 43200000; }
-      },
-      {
-        id: 104,
-        qNum: 5,
-        isOnchain: true,
-        category: "CRYPTO 12H",
-        title: "⚡ Hyperliquid (HYPE) 12H Candle Close: GREEN or RED?",
-        desc: "12-Hour Entry Window | Closes at UTC (Hyperliquid HYPE-USD)",
-        deadlineDesc: "12-Hour Entry Window",
-        targetDesc: "Settlement: 12H Close",
-        deadline: Date.now() + 43200000,
-        settlementTime: Date.now() + 43200000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: false,
-        opt1: "GREEN",
-        opt2: "RED",
-        resolutionSource: "Hyperliquid HYPE-USD 12H Candle",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 43200000; }
-      }
-    ];
-    let selectedDuelQuestionId = 102;
+    const DUEL_QUESTIONS = [];
+    let selectedDuelQuestionId = null;
     let selectedDuelTier = 0.01;
     let selectedDuelOption = "GREEN";
     let activeQuestionTab = "live";
@@ -4491,7 +4380,17 @@
       }
 
       if (displayQuestions.length === 0) {
-        grid.innerHTML = `<div class="col-span-full py-8 text-center text-slate-500 font-mono text-xs">No questions found in this category.</div>`;
+        grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-500 font-mono text-xs flex flex-col items-center justify-center gap-2 border border-dashed border-[#334155] rounded-2xl bg-[#131b27]/50">
+          <span class="text-slate-300 font-bold text-sm">⚡ No Active Contests on Blockchain</span>
+          <span class="text-slate-500 text-[11px]">All challenges must be verified and registered onchain with an official Question ID.</span>
+        </div>`;
+        // Also update options container if empty
+        const optContainer = document.getElementById("duel-options-container");
+        if (optContainer) {
+          optContainer.innerHTML = `<div class="col-span-2 py-6 text-center text-slate-500 font-mono text-xs border border-dashed border-[#334155] rounded-xl bg-[#182230]/40">
+            Waiting for onchain contest creation...
+          </div>`;
+        }
         return;
       }
 
@@ -4570,7 +4469,7 @@
 
     function selectDuelQuestion(qId) {
       selectedDuelQuestionId = qId;
-      const q = DUEL_QUESTIONS.find(x => String(x.id) === String(qId)) || DUEL_QUESTIONS[0];
+      const q = DUEL_QUESTIONS.find(x => String(x.id) === String(qId));
       selectedDuelOption = q ? (q.opt1 || 'GREEN') : 'GREEN';
       renderDuelQuestions();
     }
