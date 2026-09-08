@@ -886,16 +886,31 @@
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#334155] pb-3 mb-3">
           <div class="flex items-center gap-2">
             <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="status-tab-btn active px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 shadow-sm cursor-pointer">
-            <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span><span>⚡ LIVE QUESTIONS</span>
-            <span id="q-badge-live" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">3</span>
-          </button>
-          <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="status-tab-btn px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 cursor-pointer">
-            <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-            <span>🔒 ENDED / RESOLVED</span>
-            <span id="q-badge-ended" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">1</span>
-          </button>
+              <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span><span>⚡ LIVE CONTESTS</span>
+              <span id="q-badge-live" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">0</span>
+            </button>
+            <button id="q-tab-ended-btn" onclick="switchQuestionTab('ended')" class="status-tab-btn px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 cursor-pointer">
+              <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+              <span>🔒 ENDED / RESOLVED</span>
+              <span id="q-badge-ended" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">0</span>
+            </button>
           </div>
-          
+
+          <!-- 3 Distinct Categories: Crypto, Football, NBA -->
+          <div class="flex items-center gap-1.5 p-1 rounded-xl bg-[#0f172a] border border-[#334155]">
+            <button id="cat-tab-crypto" onclick="switchDuelCategory('crypto')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-sm">
+              <span>⚡</span><span>CRYPTO</span>
+              <span id="cat-badge-crypto" class="text-[10px] px-1.5 py-0.2 rounded-full bg-blue-500/30 text-blue-300">0</span>
+            </button>
+            <button id="cat-tab-football" onclick="switchDuelCategory('football')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent">
+              <span>⚽</span><span>FOOTBALL</span>
+              <span id="cat-badge-football" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400">0</span>
+            </button>
+            <button id="cat-tab-nba" onclick="switchDuelCategory('nba')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent">
+              <span>🏀</span><span>NBA</span>
+              <span id="cat-badge-nba" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400">0</span>
+            </button>
+          </div>
         </div>
 
         <!-- Interactive Questions Grid -->
@@ -4242,6 +4257,21 @@
     let selectedDuelTier = 0.01;
     let selectedDuelOption = "GREEN";
     let activeQuestionTab = "live";
+    let activeDuelCategory = "crypto"; // "crypto" | "football" | "nba"
+
+    window.switchDuelCategory = function(cat) {
+      activeDuelCategory = cat;
+      ["crypto", "football", "nba"].forEach(c => {
+        const btn = document.getElementById("cat-tab-" + c);
+        if (!btn) return;
+        if (c === cat) {
+          btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-sm";
+        } else {
+          btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent";
+        }
+      });
+      renderDuelQuestions();
+    };
 
 
 
@@ -4343,10 +4373,32 @@
       return '';
     }
 
+    function isQuestionMatchingCategory(q, cat) {
+      const c = ((q.category || "") + " " + (q.title || "")).toLowerCase();
+      if (cat === "crypto") {
+        return c.includes("crypto") || c.includes("12h") || c.includes("btc") || c.includes("eth") || c.includes("sol") || c.includes("bnb") || c.includes("hype") || c.includes("candle");
+      }
+      if (cat === "football") {
+        return c.includes("football") || c.includes("soccer") || c.includes("epl") || c.includes("premier") || c.includes("la liga") || c.includes("bundesliga") || c.includes("serie") || c.includes("ligue");
+      }
+      if (cat === "nba") {
+        return c.includes("nba") || c.includes("basketball") || c.includes("lakers") || c.includes("celtics") || c.includes("warriors");
+      }
+      return true;
+    }
+
     function renderDuelQuestions() {
       // Badges calculation
       const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && Date.now() < getQuestionDeadline(item.id));
       const endedQuestions = DUEL_QUESTIONS.filter(item => item.isEnded || Date.now() >= getQuestionDeadline(item.id));
+
+      // Update category badges
+      const cBadge = document.getElementById("cat-badge-crypto");
+      if (cBadge) cBadge.textContent = liveQuestions.filter(q => isQuestionMatchingCategory(q, "crypto")).length;
+      const fBadge = document.getElementById("cat-badge-football");
+      if (fBadge) fBadge.textContent = liveQuestions.filter(q => isQuestionMatchingCategory(q, "football")).length;
+      const nBadge = document.getElementById("cat-badge-nba");
+      if (nBadge) nBadge.textContent = liveQuestions.filter(q => isQuestionMatchingCategory(q, "nba")).length;
 
       const topicsBadge = document.getElementById("active-topics-count-badge");
       if (topicsBadge) {
@@ -4361,34 +4413,35 @@
       if (!grid) return;
       grid.innerHTML = "";
 
+      let poolQuestions = (activeQuestionTab === 'live' ? liveQuestions : endedQuestions)
+        .filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
+
       let displayQuestions = [];
       if (activeQuestionTab === 'live') {
-        // Clone and sort live questions: LEAST time remaining first!
-        displayQuestions = [...liveQuestions].sort((a, b) => {
+        displayQuestions = [...poolQuestions].sort((a, b) => {
           const aRem = getQuestionDeadline(a.id) - Date.now();
           const bRem = getQuestionDeadline(b.id) - Date.now();
           return aRem - bRem;
         });
 
-        // Ensure selected question is live
         if (displayQuestions.length > 0 && !displayQuestions.some(q => q.id === selectedDuelQuestionId)) {
           selectedDuelQuestionId = displayQuestions[0].id;
         }
       } else {
-        // Ended questions
-        displayQuestions = [...endedQuestions].sort((a, b) => b.id - a.id);
+        displayQuestions = [...poolQuestions].sort((a, b) => b.id - a.id);
       }
 
       if (displayQuestions.length === 0) {
+        const catLabels = { crypto: "CRYPTO", football: "FOOTBALL", nba: "NBA" };
+        const label = catLabels[activeDuelCategory] || "CONTEST";
         grid.innerHTML = `<div class="col-span-full py-16 text-center text-slate-500 font-mono text-xs flex flex-col items-center justify-center gap-2 border border-dashed border-[#334155] rounded-2xl bg-[#131b27]/50">
-          <span class="text-slate-300 font-bold text-sm">⚡ No Active Contests on Blockchain</span>
-          <span class="text-slate-500 text-[11px]">All challenges must be verified and registered onchain with an official Question ID.</span>
+          <span class="text-slate-300 font-bold text-sm">⚡ No Active ${label} Contests on Blockchain</span>
+          <span class="text-slate-500 text-[11px]">All ${label} challenges must be verified and registered onchain with an official Question ID.</span>
         </div>`;
-        // Also update options container if empty
         const optContainer = document.getElementById("duel-options-container");
         if (optContainer) {
           optContainer.innerHTML = `<div class="col-span-2 py-6 text-center text-slate-500 font-mono text-xs border border-dashed border-[#334155] rounded-xl bg-[#182230]/40">
-            Waiting for onchain contest creation...
+            Waiting for onchain ${label} contest creation...
           </div>`;
         }
         return;
