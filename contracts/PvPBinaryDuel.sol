@@ -53,6 +53,9 @@ contract PvPBinaryDuel {
     // Nonces to prevent signature replay attacks
     mapping(bytes32 => bool) public usedProofNonces;
 
+    // duelId => participant => hasReclaimedStake
+    mapping(uint256 => mapping(address => bool)) public hasReclaimedStake;
+
     // EIP-712 Domain Separator components
     bytes32 public immutable DOMAIN_SEPARATOR;
     bytes32 public constant SETTLEMENT_TYPEHASH = keccak256(
@@ -86,6 +89,7 @@ contract PvPBinaryDuel {
     );
 
     event DuelCancelled(uint256 indexed duelId, address indexed creator, uint256 refundAmount);
+    event DuelStakeReclaimed(uint256 indexed duelId, address indexed participant, uint256 amount);
     event OracleUpdated(address indexed oldOracle, address indexed newOracle);
     event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
 
@@ -341,6 +345,37 @@ contract PvPBinaryDuel {
     /**
      * @notice Cancel duel if no challenger accepted and it expired (or creator cancels)
      */
+        /**
+     * @notice Reclaim 100% deposited stake if duel ended with NO WINNER / VOID / DRAW
+     * @dev If neither participant selected the winning outcome, no winner reward or cashback is awarded;
+     *      instead, both participants can reclaim their exact original deposited wager with 0% fee.
+     * @param duelId ID of the settled duel
+     */
+    function reclaimDuelStake(uint256 duelId) external {
+        Duel storage d = duels[duelId];
+        require(d.status == DuelStatus.SETTLED, "Duel not settled");
+        require(msg.sender == d.creator || msg.sender == d.challenger, "Not participant");
+        require(!hasReclaimedStake[duelId][msg.sender], "Stake already reclaimed");
+
+        // Verify that this duel actually ended with NO WINNER
+        uint8 challengerChoice = d.creatorChoice == 1 ? 2 : 1;
+        bool hasWinner = (d.winningOutcome != 0) && (d.creatorChoice == d.winningOutcome || challengerChoice == d.winningOutcome);
+        require(!hasWinner, "Duel has a winner, use claimPrize");
+
+        hasReclaimedStake[duelId][msg.sender] = true;
+        uint256 refund = d.wagerAmount;
+
+        if (d.token == address(0)) {
+            (bool sent, ) = payable(msg.sender).call{value: refund}("");
+            require(sent, "ETH reclaim failed");
+        } else {
+            bool success = IERC20(d.token).transfer(msg.sender, refund);
+            require(success, "Token reclaim failed");
+        }
+
+        emit DuelStakeReclaimed(duelId, msg.sender, refund);
+    }
+
     function cancelDuel(uint256 duelId) external {
         Duel storage d = duels[duelId];
         require(d.status == DuelStatus.WAITING_FOR_CHALLENGER, "Duel cannot be cancelled");
