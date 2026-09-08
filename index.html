@@ -4488,7 +4488,7 @@
       }
 
       displayQuestions.forEach((q, idx) => {
-        const isSelected = q.id === selectedDuelQuestionId;
+        const isSelected = String(q.id) === String(selectedDuelQuestionId);
         const isLive = !q.isEnded && Date.now() < getQuestionDeadline(q.id);
         const borderClass = isSelected 
           ? "border-2 border-blue-500 bg-[#16262b] shadow-md shadow-blue-500/10 ring-1 ring-blue-500" 
@@ -4516,7 +4516,7 @@
           : '';
 
         const qHtml = `
-          <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
+          <div onclick="selectDuelQuestion(\'${q.id}\')" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
             ${numBadge}
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between mb-1.5 gap-2">
@@ -4561,7 +4561,7 @@
 
     function selectDuelQuestion(qId) {
       selectedDuelQuestionId = qId;
-      const q = DUEL_QUESTIONS.find(x => x.id === qId) || DUEL_QUESTIONS[0];
+      const q = DUEL_QUESTIONS.find(x => String(x.id) === String(qId)) || DUEL_QUESTIONS[0];
       selectedDuelOption = q ? (q.opt1 || 'GREEN') : 'GREEN';
       renderDuelQuestions();
     }
@@ -4583,7 +4583,7 @@
     }
 
     function updateOptionButtonsUI() {
-      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const q = DUEL_QUESTIONS.find(x => String(x.id) === String(selectedDuelQuestionId)) || DUEL_QUESTIONS[0];
       const container = document.getElementById("duel-options-container");
       const subTitle = document.getElementById("duel-options-subtitle");
       if (!container) return;
@@ -6669,7 +6669,7 @@
     try {
       // Clear legacy cache to ensure latest code-defined questions take precedence
       const version = localStorage.getItem("PVP_QUESTIONS_V");
-      if (version !== "v20m_18") {
+      if (version !== "v20m_19") {
         localStorage.removeItem("PVP_CUSTOM_QUESTIONS");
         localStorage.setItem("PVP_QUESTIONS_V", "v20m_18");
         return;
