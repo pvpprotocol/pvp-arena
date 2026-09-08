@@ -295,7 +295,172 @@
       color: #64748b !important;
     }
   
-  </style>
+  
+    /* ============================================================
+       UNIFIED GRAY OPTIONS & BORDERS DESIGN SYSTEM (CANONICAL)
+       - All options (Navigation, Filters, Tiers, Outcomes): Slate Gray
+       - All borders & boxes: Consistent refined Slate Gray (#334155 / #38495f)
+       - Inactive options: Dark slate background (#131b27), gray border (#334155), light-gray text (#94a3b8)
+       - Hover options: Medium slate background (#1e293b), lighter border (#475569), pure white text (#ffffff)
+       - Active/Selected options: Solid slate (#1e293b), prominent gray border (#94a3b8), pure white text (#ffffff)
+       ============================================================ */
+    :root {
+      --bg-page: #090d14;
+      --card-bg: #131b27;
+      --card-inner: #0e141f;
+      --border-jup: #334155;
+      --border-gray: #334155;
+      --border-gray-light: #475569;
+      --border-gray-highlight: #94a3b8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    /* ALL BOXES & BORDERS: UNIFIED SLATE GRAY */
+    *, *::before, *::after {
+      border-color: #334155;
+    }
+
+    /* Cards, Containers, Modals */
+    .bg-white, .q-card, .duel-card,
+    #createQuestionModal > div > div, .modal-content-box,
+    .bg-slate-50, .bg-[#f8fafc], .bg-[#f1f5f9], .bg-slate-100, .bg-[#0c131d] {
+      background-color: #131b27 !important;
+      border: 1px solid #334155 !important;
+      color: #f8fafc !important;
+    }
+
+    /* Header & Navigation Borders */
+    header.sticky {
+      border-bottom: 1px solid #334155 !important;
+    }
+    aside#jupSidebar, #mobileSidebar {
+      border-right: 1px solid #334155 !important;
+      background-color: #0c131d !important;
+    }
+
+    /* ALL NAVIGATION OPTIONS (Sidebar & Mobile Drawer) */
+    aside .tab-btn, #jupSidebar .tab-btn, #mobileSidebar .tab-btn, .tab-btn {
+      color: #94a3b8 !important;
+      background: #101722 !important;
+      border: 1px solid #334155 !important;
+      transition: all 0.15s ease-in-out !important;
+      text-align: left !important;
+    }
+    aside .tab-btn:hover, #jupSidebar .tab-btn:hover, #mobileSidebar .tab-btn:hover, .tab-btn:hover {
+      color: #ffffff !important;
+      background: #1e293b !important;
+      border-color: #475569 !important;
+    }
+    aside .tab-btn:hover span:not(.badge-tag), #jupSidebar .tab-btn:hover span:not(.badge-tag), #mobileSidebar .tab-btn:hover span:not(.badge-tag) {
+      color: #ffffff !important;
+    }
+    aside .tab-btn.active, #jupSidebar .tab-btn.active, #mobileSidebar .tab-btn.active, .tab-btn.active {
+      background: #1e293b !important;
+      color: #ffffff !important;
+      border: 1px solid #64748b !important;
+      border-left: 4px solid #94a3b8 !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+    }
+    aside .tab-btn.active span:not(.badge-tag), #jupSidebar .tab-btn.active span:not(.badge-tag), #mobileSidebar .tab-btn.active span:not(.badge-tag) {
+      color: #ffffff !important;
+    }
+
+    /* ALL FILTER OPTIONS & TABS (Live/Ended, Crypto/Sports) */
+    .status-tab-btn, .filter-cat-btn, .duel-cat-btn {
+      color: #94a3b8 !important;
+      background: #131b27 !important;
+      border: 1px solid #334155 !important;
+      transition: all 0.15s ease !important;
+    }
+    .status-tab-btn:hover, .filter-cat-btn:hover, .duel-cat-btn:hover {
+      color: #ffffff !important;
+      background: #1e293b !important;
+      border-color: #475569 !important;
+    }
+    .status-tab-btn.active, .filter-cat-btn.active, .duel-cat-btn.active {
+      color: #ffffff !important;
+      background: #1e293b !important;
+      border: 1px solid #94a3b8 !important;
+    }
+
+    /* ALL TIER SELECTION OPTIONS ($0.01, $5, $10, $100, $1000) */
+    .tier-pick-btn {
+      background-color: #131b27 !important;
+      border: 1px solid #334155 !important;
+      color: #94a3b8 !important;
+      transition: all 0.15s ease !important;
+    }
+    .tier-pick-btn:hover {
+      background-color: #1e293b !important;
+      border-color: #475569 !important;
+      color: #ffffff !important;
+    }
+    .tier-pick-btn.active-tier {
+      background-color: #1e293b !important;
+      border: 2px solid #94a3b8 !important;
+      color: #ffffff !important;
+      transform: scale(1.02);
+    }
+
+    /* ALL PREDICTION OUTCOME OPTIONS (YES/NO or GREEN/RED) */
+    #opt-btn-yes, #opt-btn-no {
+      background-color: #131b27 !important;
+      border: 1px solid #334155 !important;
+      color: #94a3b8 !important;
+      transition: all 0.15s ease !important;
+    }
+    #opt-btn-yes:hover, #opt-btn-no:hover {
+      background-color: #1e293b !important;
+      border-color: #475569 !important;
+      color: #ffffff !important;
+    }
+    #opt-btn-yes.active-opt, #opt-btn-no.active-opt {
+      background-color: #1e293b !important;
+      border: 2px solid #94a3b8 !important;
+      color: #ffffff !important;
+      transform: scale(1.02);
+    }
+
+    /* QUESTION SELECTION CARDS (Step 1 Options) */
+    .q-card-default {
+      background: #131b27 !important;
+      border: 1px solid #334155 !important;
+    }
+    .q-card-default:hover {
+      background: #182333 !important;
+      border-color: #475569 !important;
+    }
+    .q-card-selected {
+      background: #1e293b !important;
+      border: 2px solid #94a3b8 !important;
+      box-shadow: none !important;
+    }
+
+    /* STEP BADGES & PILLS */
+    .step-badge, .pill-dark {
+      background-color: #182230 !important;
+      border: 1px solid #334155 !important;
+      color: #cbd5e1 !important;
+    }
+
+    /* FORM INPUTS & DROPDOWNS */
+    input, select, textarea {
+      background-color: #0e141f !important;
+      border: 1px solid #334155 !important;
+      color: #f8fafc !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #64748b !important;
+      box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.25) !important;
+      outline: none !important;
+    }
+    option {
+      background-color: #131b27 !important;
+      color: #f8fafc !important;
+    }
+
+</style>
 
   <script>
 
@@ -424,7 +589,7 @@
 <body class="bg-[#090d14] text-[#f8fafc] min-h-screen antialiased selection:bg-[#c7f284] selection:text-[#090d14] font-sans flex">
 
   <!-- JUPITER FIXED FULL-HEIGHT LEFT SIDEBAR (Desktop) -->
-  <aside id="jupSidebar" class="fixed left-0 top-0 bottom-0 w-64 bg-[#0c131d] border-r border-[#1f2b3e] flex flex-col justify-between z-50 hidden md:flex transition-transform duration-300 select-none">
+  <aside id="jupSidebar" class="fixed left-0 top-0 bottom-0 w-64 bg-[#0c131d] border-r border-[#334155] flex flex-col justify-between z-50 hidden md:flex transition-transform duration-300 select-none">
     <!-- Top Brand & Navigation -->
     <div class="p-4 space-y-6 overflow-y-auto">
       <!-- Logo & Brand Header -->
@@ -435,7 +600,7 @@
         <div>
           <div class="flex items-center gap-1.5">
             <span class="font-black text-lg tracking-wider text-white font-mono">pvphub</span>
-            <span class="text-[9px] px-1.5 py-0.2 rounded font-mono bg-[#182633] text-[#c7f284] border border-[#1f2b3e]">DEX</span>
+            <span class="text-[9px] px-1.5 py-0.2 rounded font-mono bg-[#182633] text-[#c7f284] border border-[#334155]">DEX</span>
           </div>
           <p class="text-[10px] font-mono text-[#94a3b8] flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-[#c7f284] animate-pulse"></span>
@@ -452,19 +617,19 @@
         </button>
         <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🎮</span> 2048 Skill</span>
-          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#334155]">SOON</span>
         </button>
         <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🎯</span> Grand Jackpot</span>
-          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#334155]">SOON</span>
         </button>
         <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🏆</span> Leaderboard</span>
-          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#334155]">SOON</span>
         </button>
         <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>📜</span> History</span>
-          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#334155]">SOON</span>
         </button>
         <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>📖</span> Whitepaper</span>
@@ -476,8 +641,8 @@
     </div>
 
     <!-- Sidebar Bottom Info -->
-    <div class="p-4 border-t border-[#1f2b3e] space-y-2.5 text-xs font-mono">
-      <div class="bg-[#131b27] p-2.5 rounded-xl border border-[#1f2b3e] flex items-center justify-between">
+    <div class="p-4 border-t border-[#334155] space-y-2.5 text-xs font-mono">
+      <div class="bg-[#131b27] p-2.5 rounded-xl border border-[#334155] flex items-center justify-between">
         <span class="text-[#94a3b8] text-[11px]">Stake Asset</span>
         <span class="text-[#c7f284] font-bold text-xs">USDG (1:1)</span>
       </div>
@@ -490,7 +655,7 @@
 
   <!-- MOBILE SIDEBAR DRAWER OVERLAY -->
   <div id="mobileDrawerBackdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
-  <aside id="mobileSidebar" class="fixed left-0 top-0 bottom-0 w-64 bg-[#0c131d] border-r border-[#1f2b3e] flex flex-col justify-between z-50 -translate-x-full transition-transform duration-300 md:hidden select-none">
+  <aside id="mobileSidebar" class="fixed left-0 top-0 bottom-0 w-64 bg-[#0c131d] border-r border-[#334155] flex flex-col justify-between z-50 -translate-x-full transition-transform duration-300 md:hidden select-none">
     <div class="p-4 space-y-6">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -528,10 +693,10 @@
   <div class="md:pl-64 flex-1 flex flex-col min-h-screen bg-[#090d14] w-full">
 
     <!-- TOP HEADER / NAVBAR (STICKY INSIDE MAIN AREA) -->
-    <header class="sticky top-0 z-40 border-b border-[#1f2b3e] bg-[#0c131d]/90 backdrop-blur-xl h-20 px-4 sm:px-8 flex items-center justify-between">
+    <header class="sticky top-0 z-40 border-b border-[#334155] bg-[#0c131d]/90 backdrop-blur-xl h-20 px-4 sm:px-8 flex items-center justify-between">
       <!-- Left: Mobile menu toggle & Current Page Header -->
       <div class="flex items-center gap-4">
-        <button onclick="toggleMobileSidebar()" class="md:hidden p-2.5 rounded-xl bg-[#131b27] border border-[#1f2b3e] text-white cursor-pointer">
+        <button onclick="toggleMobileSidebar()" class="md:hidden p-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-white cursor-pointer">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
         <div>
@@ -544,7 +709,7 @@
 
       <!-- Right: Action CTA & Wallet -->
       <div class="flex items-center gap-3">
-        <button onclick="openCreateQuestionModal()" class="px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold bg-[#131b27] hover:bg-[#182633] text-[#c7f284] border border-[#1f2b3e] hover:border-[#c7f284] transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
+        <button onclick="openCreateQuestionModal()" class="px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold bg-[#131b27] hover:bg-[#182633] text-[#c7f284] border border-[#334155] hover:border-[#c7f284] transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
           <span>+</span>
           <span>Create Market</span>
         </button>
@@ -570,7 +735,7 @@
             <div class="flex flex-wrap items-center gap-2">
               <h3 class="text-base sm:text-lg font-black text-[#f8fafc] font-mono uppercase tracking-wider">pvphub</h3>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">Head to Head</span>
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-[#f1f5f9] text-[#cbd5e1] border border-[#e2e8f0]">5% Creator Fee Cash</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-[#f1f5f9] text-[#cbd5e1] border border-[#334155]">5% Creator Fee Cash</span>
             </div>
             <p class="text-xs sm:text-sm text-neutral-700 font-mono mt-1.5 leading-relaxed">
               Duel PvP with 90% payout to winner & 3% cashback to loser, or launch your own prediction challenge and earn 5% cash from every settled duel pot!
@@ -584,20 +749,20 @@
         </button>
       </div>
 
-      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#e2e8f0] pb-4">
+      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#334155] space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#334155] pb-4">
           <div>
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-[#f8fafc] font-mono text-xs font-bold border border-[#e2e8f0]">STEP 1</span>
+              <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-[#f8fafc] font-mono text-xs font-bold border border-[#334155]">STEP 1</span>
               <h3 class="text-base font-black text-[#f8fafc] font-mono uppercase tracking-wide">Select Binary Duel Question</h3>
             </div>
             <p class="text-xs text-slate-400 font-mono mt-1">Select an active question. Each duel question is available across all 5 stake tiers!</p>
           </div>
-          <span id="active-topics-count-badge" class="text-xs font-mono text-[#f8fafc] font-bold bg-[#f1f5f9] px-3 py-1 rounded-full border border-[#e2e8f0]">2 Active Topics Live</span>
+          <span id="active-topics-count-badge" class="text-xs font-mono text-[#f8fafc] font-bold bg-[#f1f5f9] px-3 py-1 rounded-full border border-[#334155]">2 Active Topics Live</span>
         </div>
 
         <!-- Question Tabs: LIVE vs ENDED -->
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#e2e8f0] pb-3 mb-3">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#334155] pb-3 mb-3">
           <div class="flex items-center gap-2">
             <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-200 text-[#f8fafc] border border-slate-300 shadow-sm">
             <span class="w-2 h-2 rounded-full bg-[#f1f5f9] animate-pulse"></span>
@@ -622,38 +787,38 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-2">
           
           <!-- STEP 2: CHOOSE TIER -->
-          <div class="lg:col-span-7 bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#131b27] space-y-3">
+          <div class="lg:col-span-7 bg-white shadow-sm p-5 rounded-2xl border border-[#334155] bg-[#131b27] space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-[#f8fafc] font-mono text-xs font-bold border border-[#e2e8f0]">STEP 2</span>
+                <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-[#f8fafc] font-mono text-xs font-bold border border-[#334155]">STEP 2</span>
                 <h4 class="text-xs font-bold font-mono text-[#f8fafc] uppercase tracking-wider">Select Stake Tier</h4>
               </div>
-              <span id="selected-tier-payout" class="text-xs font-mono font-bold text-[#f8fafc] bg-[#f1f5f9] px-2.5 py-1 rounded-lg border border-[#e2e8f0]">Winner: +$0.018 USDG</span>
+              <span id="selected-tier-payout" class="text-xs font-mono font-bold text-[#f8fafc] bg-[#f1f5f9] px-2.5 py-1 rounded-lg border border-[#334155]">Winner: +$0.018 USDG</span>
             </div>
             <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDG. Winner takes 90%, 3% auto-cashback, 7% platform fee.</p>
             
             <div class="grid grid-cols-5 gap-2 pt-1">
-              <button onclick="selectDuelTier(0.01)" id="tier-btn-0-01" class="tier-pick-btn p-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-center font-mono transition-all shadow-md shadow-none">
+              <button onclick="selectDuelTier(0.01)" id="tier-btn-0-01" class="tier-pick-btn p-2 rounded-xl border border-[#334155] bg-[#f8fafc] text-center font-mono transition-all shadow-md shadow-none">
                 <span class="block text-[10px] text-neutral-600 font-bold uppercase">Micro</span>
                 <span class="block text-xs font-black text-[#f8fafc] mt-0.5">$0.01</span>
                 <span class="block text-[9px] text-neutral-500 font-medium mt-0.5">+$0.018</span>
               </button>
-              <button onclick="selectDuelTier(5)" id="tier-btn-5" class="tier-pick-btn p-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-center font-mono transition-all shadow-md shadow-none">
+              <button onclick="selectDuelTier(5)" id="tier-btn-5" class="tier-pick-btn p-2 rounded-xl border border-[#334155] bg-[#f8fafc] text-center font-mono transition-all shadow-md shadow-none">
                 <span class="block text-[10px] text-neutral-600 font-bold uppercase">Standard</span>
                 <span class="block text-xs font-black text-[#f8fafc] mt-0.5">$5</span>
                 <span class="block text-[9px] text-neutral-500 font-medium mt-0.5">+$9.00</span>
               </button>
-              <button onclick="selectDuelTier(10)" id="tier-btn-10" class="tier-pick-btn p-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-center font-mono transition-all hover:border-[#e2e8f0]">
+              <button onclick="selectDuelTier(10)" id="tier-btn-10" class="tier-pick-btn p-2 rounded-xl border border-[#334155] bg-[#f8fafc] text-center font-mono transition-all hover:border-[#334155]">
                 <span class="block text-[10px] text-slate-400 font-bold uppercase">Pro</span>
                 <span class="block text-xs font-black text-[#f8fafc] mt-0.5">$10</span>
                 <span class="block text-[9px] text-neutral-500 font-medium mt-0.5">+$18.00</span>
               </button>
-              <button onclick="selectDuelTier(100)" id="tier-btn-100" class="tier-pick-btn p-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-center font-mono transition-all hover:border-[#e2e8f0]">
+              <button onclick="selectDuelTier(100)" id="tier-btn-100" class="tier-pick-btn p-2 rounded-xl border border-[#334155] bg-[#f8fafc] text-center font-mono transition-all hover:border-[#334155]">
                 <span class="block text-[10px] text-slate-400 font-bold uppercase">Elite</span>
                 <span class="block text-xs font-black text-[#f8fafc] mt-0.5">$100</span>
                 <span class="block text-[9px] text-neutral-500 font-medium mt-0.5">+$180</span>
               </button>
-              <button onclick="selectDuelTier(1000)" id="tier-btn-1000" class="tier-pick-btn p-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-center font-mono transition-all hover:border-[#e2e8f0]">
+              <button onclick="selectDuelTier(1000)" id="tier-btn-1000" class="tier-pick-btn p-2 rounded-xl border border-[#334155] bg-[#f8fafc] text-center font-mono transition-all hover:border-[#334155]">
                 <span class="block text-[10px] text-neutral-600 font-bold uppercase">VIP</span>
                 <span class="block text-xs font-black text-[#f8fafc] mt-0.5">$1,000</span>
                 <span class="block text-[9px] text-neutral-500 font-medium mt-0.5">+$1,800</span>
@@ -662,21 +827,21 @@
           </div>
 
           <!-- STEP 3: CHOOSE POSITION (YES or NO - 100% ENGLISH) -->
-          <div class="lg:col-span-5 bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#131b27] space-y-3">
+          <div class="lg:col-span-5 bg-white shadow-sm p-5 rounded-2xl border border-[#334155] bg-[#131b27] space-y-3">
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-[#f8fafc] font-mono text-xs font-bold border border-[#e2e8f0]">STEP 3</span>
+              <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] text-[#f8fafc] font-mono text-xs font-bold border border-[#334155]">STEP 3</span>
               <h4 class="text-xs font-bold font-mono text-[#f8fafc] uppercase tracking-wider">Choose Position</h4>
             </div>
             <p class="text-[11px] text-slate-400 font-mono">Select GREEN or RED. Opponent must take the opposite side to enter.</p>
             
             <div class="grid grid-cols-2 gap-3 pt-1">
-              <button id="opt-btn-yes" onclick="selectDuelOption('YES', false)" class="p-3.5 rounded-xl border border-[#e2e8f0] bg-[#f1f5f9] text-[#cbd5e1] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-none transition-all hover:scale-[1.02]">
+              <button id="opt-btn-yes" onclick="selectDuelOption(YES, false)" class="p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02] cursor-pointer">
                 <span class="text-lg"></span>
                 <span class="text-base font-black tracking-wider">GREEN</span>
                 <span class="text-[10px] font-mono text-neutral-500 font-medium">⚡ Deposit & Start</span>
               </button>
 
-              <button id="opt-btn-no" onclick="selectDuelOption('NO', false)" class="p-3.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-slate-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-[#e2e8f0] hover:text-[#cbd5e1] hover:scale-[1.02]">
+              <button id="opt-btn-no" onclick="selectDuelOption(NO, false)" class="p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-[#475569] hover:text-white cursor-pointer">
                 <span class="text-lg"></span>
                 <span class="text-base font-black tracking-wider">RED</span>
                 <span class="text-[10px] font-mono text-[#cbd5e1] font-medium">⚡ Deposit & Start</span>
@@ -695,8 +860,8 @@
       </div>
       
       <!-- ACTIVE ONCHAIN DUELS LOBBY -->
-      <div class="bg-[#131b27] shadow-sm rounded-3xl border border-[#e2e8f0] overflow-hidden">
-        <div class="p-5 border-b border-[#e2e8f0] flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="bg-[#131b27] shadow-sm rounded-3xl border border-[#334155] overflow-hidden">
+        <div class="p-5 border-b border-[#334155] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider flex items-center gap-2">
               <span>⚔️</span> LIVE PVP DUELS
@@ -704,18 +869,18 @@
             <p class="text-xs text-slate-400">Robinhood Escrow Contract: <a href="https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905" target="_blank" rel="noopener" class="font-mono text-[#cbd5e1] hover:underline">0x11e8...b905 ↗</a></p>
           </div>
           <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
-            <div class="flex items-center bg-black/50 p-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
+            <div class="flex items-center bg-black/50 p-1 rounded-xl border border-[#334155] text-xs font-mono">
               <button type="button" id="filter-duels-all" onclick="filterDuelsCategory('ALL')" class="px-3 py-1.5 rounded-lg font-bold bg-slate-200 text-[#f8fafc] border border-slate-400 transition-all shadow-sm">ALL</button>
               <button type="button" id="filter-duels-crypto" onclick="filterDuelsCategory('CRYPTO')" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 bg-[#131b27] border border-slate-200 hover:bg-slate-50 transition-all">📊 CRYPTO</button>
               <button type="button" id="filter-duels-sports" onclick="filterDuelsCategory('SPORTS')" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 bg-[#131b27] border border-slate-200 hover:bg-slate-50 transition-all">⚽ SPORTS</button>
             </div>
-            <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-[#e2e8f0]">0 Total</span>
+            <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-[#334155]">0 Total</span>
           </div>
         </div>
 
         <!-- 4 DISTINCT DUEL CATEGORY TABS -->
-        <div class="px-5 pt-3 pb-0 bg-[#131b27] border-b border-[#e2e8f0] flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <button id="duel-tab-open" onclick="switchDuelTab('open')" class="px-4 py-3 border-b-2 border-[#e2e8f0] text-[#cbd5e1] font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
+        <div class="px-5 pt-3 pb-0 bg-[#131b27] border-b border-[#334155] flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <button id="duel-tab-open" onclick="switchDuelTab('open')" class="px-4 py-3 border-b-2 border-[#334155] text-[#cbd5e1] font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
             <span>⚔️</span>
             <span>OPEN REQUESTS</span>
             <span id="badge-count-open" class="px-2 py-0.5 rounded-full text-[10px] bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">0</span>
@@ -724,19 +889,19 @@
           <button id="duel-tab-matched" onclick="switchDuelTab('matched')" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-[#cbd5e1] font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
             <span>⚡</span>
             <span>MATCHED (IN PROGRESS)</span>
-            <span id="badge-count-matched" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-[#e2e8f0]">0</span>
+            <span id="badge-count-matched" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-[#334155]">0</span>
           </button>
 
           <button id="duel-tab-completed" onclick="switchDuelTab('completed')" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-[#cbd5e1] font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
             <span>🏆</span>
             <span>COMPLETED & PRIZES</span>
-            <span id="badge-count-completed" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-[#e2e8f0]">0</span>
+            <span id="badge-count-completed" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-[#334155]">0</span>
           </button>
 
           <button id="duel-tab-expired" onclick="switchDuelTab('expired')" class="px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-[#cbd5e1] font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all">
             <span>⌛</span>
             <span>EXPIRED & REFUNDS</span>
-            <span id="badge-count-expired" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-[#e2e8f0]">0</span>
+            <span id="badge-count-expired" class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 border border-[#334155]">0</span>
           </button>
         </div>
 
@@ -758,12 +923,12 @@
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#f1f5f9] blur-3xl pointer-events-none"></div>
       <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
       
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#e2e8f0] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#334155] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
         <span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span>
         🔒 COMING SOON • PHASE 2
       </div>
 
-      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
+      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
         🎮
       </div>
 
@@ -775,7 +940,7 @@
         The onchain anti-cheat 2048 tournament engine is currently undergoing final audits and optimization. Only PvP Duels are open during Phase 1.
       </p>
 
-      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
+      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
         <div class="flex items-center justify-between text-neutral-700">
           <span>Status:</span>
           <span class="text-[#cbd5e1] font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-ping"></span>Under Audit & Development</span>
@@ -813,15 +978,15 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
           
           <!-- TIER 1 () -->
-          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all flex flex-col justify-between space-y-3 hover:border-[#e2e8f0]">
+          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] bg-[#f1f5f9] cursor-pointer transition-all flex flex-col justify-between space-y-3 hover:border-[#334155]">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.0001 TIER <span class="text-[10px] text-[#cbd5e1] font-normal">($1 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
-                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0]">
+                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
                     <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
                     <span id="tier-pool-usdg-gross-1" class="text-white font-mono">$0.00 (0 Tix)</span>
@@ -836,10 +1001,10 @@
               </div>
             </div>
             
-            <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
+            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(1); startNew2048Game(true);" id="buy-btn-usdc-1" class="w-full py-2 px-2 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -851,15 +1016,15 @@
           </div>
 
           <!-- TIER 5 () -->
-          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
+          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] cursor-pointer transition-all flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.0005 TIER <span class="text-[10px] text-[#cbd5e1] font-normal">($5 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
-                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0]">
+                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
                     <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
                     <span id="tier-pool-usdg-gross-5" class="text-white font-mono">$0.00 (0 Tix)</span>
@@ -874,10 +1039,10 @@
               </div>
             </div>
             
-            <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
+            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(5); startNew2048Game(true);" id="buy-btn-usdc-5" class="w-full py-2 px-2 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -889,15 +1054,15 @@
           </div>
 
           <!-- TIER 10 (0) -->
-          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
+          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] cursor-pointer transition-all flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.001 TIER <span class="text-[10px] text-[#cbd5e1] font-normal">($10 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
-                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0]">
+                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
                     <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
                     <span id="tier-pool-usdg-gross-10" class="text-white font-mono">$0.00 (0 Tix)</span>
@@ -912,10 +1077,10 @@
               </div>
             </div>
             
-            <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
+            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(10); startNew2048Game(true);" id="buy-btn-usdc-10" class="w-full py-2 px-2 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -927,15 +1092,15 @@
           </div>
 
           <!-- TIER 100 (00) -->
-          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
+          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] cursor-pointer transition-all flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-white text-base">$0.01 TIER <span class="text-[10px] text-[#cbd5e1] font-normal">($100 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#e2e8f0] text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">ACTIVE</span></div>
+                <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-slate-200">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
-                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0]">
+                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
                     <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
                     <span id="tier-pool-usdg-gross-100" class="text-white font-mono">$0.00 (0 Tix)</span>
@@ -950,10 +1115,10 @@
               </div>
             </div>
             
-            <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
+            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(100); startNew2048Game(true);" id="buy-btn-usdc-100" class="w-full py-2 px-2 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -965,15 +1130,15 @@
           </div>
 
           <!-- TIER 1000 (,000) -->
-          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] cursor-pointer transition-all flex flex-col justify-between space-y-3">
+          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] cursor-pointer transition-all flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between">
                 <span class="font-mono font-black text-[#f8fafc] text-base">$1,000 TIER</span>
-                <span id="tier-tag-1000" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f8fafc] text-[#f8fafc] border border-[#e2e8f0]">ACTIVE</span>
+                <span id="tier-tag-1000" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#f8fafc] text-[#f8fafc] border border-[#334155]">ACTIVE</span>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
                 <!-- USDG POOL -->
-                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0]">
+                <div class="p-1.5 rounded-lg bg-[#f1f5f9] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
                     <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
                     <span id="tier-pool-usdg-gross-1000" class="text-white font-mono">$0.00 (0 Tix)</span>
@@ -988,10 +1153,10 @@
               </div>
             </div>
             
-            <div class="pt-2 border-t border-[#e2e8f0] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#e2e8f0] text-xs font-mono">
+            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
                 <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#e2e8f0]" />
+                <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(1000); startNew2048Game(true);" id="buy-btn-usdc-1000" class="w-full py-2 px-2 rounded-xl bg-[#f8fafc] hover:bg-[#f8fafc] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
@@ -1006,7 +1171,7 @@
       </div>
 
       <!-- PLAYABLE 2048 HERO BOARD (CENTERED & PROMINENT) -->
-      <div class="max-w-2xl mx-auto w-full bg-[#131b27] shadow-sm p-6 rounded-3xl border border-[#e2e8f0] flex flex-col items-center relative shadow-2xl">
+      <div class="max-w-2xl mx-auto w-full bg-[#131b27] shadow-sm p-6 rounded-3xl border border-[#334155] flex flex-col items-center relative shadow-2xl">
         
         <div class="w-full flex items-center justify-between mb-4 flex-wrap gap-2">
           <div>
@@ -1014,21 +1179,21 @@
             <p class="text-xs text-[#cbd5e1] font-mono font-bold">Single High Score (No Accumulation)</p>
           </div>
           <div class="flex items-center gap-2">
-            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] font-mono text-center">
+            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#334155] font-mono text-center">
               <span class="text-[10px] text-slate-400 block">CURRENT SCORE</span>
               <span id="game-score" class="text-lg font-black text-white">0</span>
             </div>
-            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] font-mono text-center">
+            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#334155] font-mono text-center">
               <span class="text-[10px] text-[#cbd5e1] block font-bold">BEST SCORE</span>
               <span id="game-best" class="text-lg font-black text-[#cbd5e1]">0</span>
             </div>
             <!-- ACTIVE TIER BADGE -->
-            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] font-mono text-center">
+            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#334155] font-mono text-center">
               <span class="text-[10px] text-slate-400 block font-bold">SELECTED TIER</span>
               <span id="board-selected-tier-badge" class="text-sm font-black text-[#cbd5e1] block">TIER 1 ($0.0001)</span>
             </div>
             <!-- USER TICKETS INVENTORY BOX -->
-            <div class="px-3 py-1.5 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] font-mono text-center shadow-lg shadow-none">
+            <div class="px-3 py-1.5 rounded-xl bg-[#f1f5f9] border border-[#334155] font-mono text-center shadow-lg shadow-none">
               <span class="text-[10px] text-[#cbd5e1] block font-bold flex items-center justify-center gap-1">🎟️ TIER TICKETS</span>
               <span id="tickets-count" class="text-lg font-black text-[#cbd5e1]">0</span>
             </div>
@@ -1051,11 +1216,11 @@
 
             <!-- QUICK TIER SELECTOR PILLS -->
             <div class="flex flex-wrap items-center justify-center gap-1.5 max-w-xs">
-              <button type="button" onclick="select2048Tier(1)" id="tier-pill-1" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#f1f5f9] text-[#f8fafc] border border-[#e2e8f0] shadow transition-all">Tier 1: $0.0001</button>
-              <button type="button" onclick="select2048Tier(5)" id="tier-pill-5" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#e2e8f0] hover:border-[#e2e8f0] transition-all">Tier 5: $0.0005</button>
-              <button type="button" onclick="select2048Tier(10)" id="tier-pill-10" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#e2e8f0] hover:border-[#e2e8f0] transition-all">Tier 10: $0.001</button>
-              <button type="button" onclick="select2048Tier(100)" id="tier-pill-100" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#e2e8f0] hover:border-[#e2e8f0] transition-all">Tier 100: $0.01</button>
-              <button type="button" onclick="select2048Tier(1000)" id="tier-pill-1000" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-[#f8fafc] border border-[#e2e8f0] hover:border-[#e2e8f0] transition-all">Tier 1000: $0.1</button>
+              <button type="button" onclick="select2048Tier(1)" id="tier-pill-1" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#f1f5f9] text-[#f8fafc] border border-[#334155] shadow transition-all">Tier 1: $0.0001</button>
+              <button type="button" onclick="select2048Tier(5)" id="tier-pill-5" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#334155] hover:border-[#334155] transition-all">Tier 5: $0.0005</button>
+              <button type="button" onclick="select2048Tier(10)" id="tier-pill-10" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#334155] hover:border-[#334155] transition-all">Tier 10: $0.001</button>
+              <button type="button" onclick="select2048Tier(100)" id="tier-pill-100" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#334155] hover:border-[#334155] transition-all">Tier 100: $0.01</button>
+              <button type="button" onclick="select2048Tier(1000)" id="tier-pill-1000" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-[#f8fafc] border border-[#334155] hover:border-[#334155] transition-all">Tier 1000: $0.1</button>
             </div>
 
             <p id="overlay-tier-desc" class="text-xs text-neutral-700 max-w-xs">
@@ -1074,14 +1239,14 @@
               <h3 class="text-2xl font-black text-white font-mono">ROUND COMPLETED</h3>
               <p class="text-xs text-slate-400 mt-1">Single Run High Score Recorded Onchain</p>
             </div>
-            <div class="p-3 rounded-xl bg-[#131b27] border border-[#e2e8f0] font-mono">
+            <div class="p-3 rounded-xl bg-[#131b27] border border-[#334155] font-mono">
               <span class="text-xs text-slate-400">Final Score:</span>
               <span id="overlay-final-score" class="text-2xl font-black text-[#cbd5e1] block">0</span>
             </div>
             
             <!-- ANTI-CHEAT & ONCHAIN SCORE RECORD -->
             <div id="overlay-anticheat-proof" class="w-full max-w-xs">
-              <div class="bg-[#f1f5f9] border border-[#e2e8f0] rounded-xl p-3 text-left">
+              <div class="bg-[#f1f5f9] border border-[#334155] rounded-xl p-3 text-left">
                 <div class="flex items-center justify-between text-xs text-[#cbd5e1] font-bold mb-2">
                   <span>🛡️ ANTI-CHEAT FAIR RUN</span>
                   <span class="text-[10px] text-slate-400 font-mono">Robinhood Chain</span>
@@ -1119,7 +1284,7 @@
       </div>
 
       <!-- LIVE TOP 3 RECORD HOLDERS -->
-      <div class="bg-[#131b27] shadow-sm p-6 rounded-3xl border border-[#e2e8f0] space-y-5 mt-6">
+      <div class="bg-[#131b27] shadow-sm p-6 rounded-3xl border border-[#334155] space-y-5 mt-6">
         <div class="flex items-center justify-between flex-wrap gap-3">
           <div class="flex items-center gap-2">
             <span class="text-xl">🏆</span>
@@ -1129,12 +1294,12 @@
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span id="cycle-countdown-2048" class="text-xs font-mono font-bold text-[#cbd5e1] bg-[#f8fafc] border border-[#e2e8f0] px-3 py-1 rounded-full">⏳ 20M CYCLE: 19m 59s</span>
-            <span class="text-xs font-mono font-bold text-[#cbd5e1] bg-[#f1f5f9] border border-[#e2e8f0] px-3 py-1 rounded-full">⚡ Live Sync Online</span>
+            <span id="cycle-countdown-2048" class="text-xs font-mono font-bold text-[#cbd5e1] bg-[#f8fafc] border border-[#334155] px-3 py-1 rounded-full">⏳ 20M CYCLE: 19m 59s</span>
+            <span class="text-xs font-mono font-bold text-[#cbd5e1] bg-[#f1f5f9] border border-[#334155] px-3 py-1 rounded-full">⚡ Live Sync Online</span>
           </div>
         </div>
         <!-- 2048 WINNER CLAIM BANNER (SHOWN WHEN USER WON 1ST PLACE) -->
-        <div id="banner-claim-2048" class="hidden p-4 rounded-2xl bg-black text-white border-2 border-[#e2e8f0] shadow-xl shadow-none flex items-center justify-between flex-wrap gap-3">
+        <div id="banner-claim-2048" class="hidden p-4 rounded-2xl bg-black text-white border-2 border-[#334155] shadow-xl shadow-none flex items-center justify-between flex-wrap gap-3">
           <div class="flex items-center gap-3">
             <span class="text-3xl">🎉</span>
             <div>
@@ -1148,8 +1313,8 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div id="top3-tier-1" class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+          <div id="top3-tier-1" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-white text-sm">$1 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
                 <span id="top3-prize-usdg-1" class="text-[#cbd5e1]">$0.00 USDG</span>
@@ -1157,7 +1322,7 @@
               </div>
             </div>
             <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#e2e8f0] text-slate-400">
+              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#334155] text-slate-400">
                 <span>🥇 #1 No active record</span>
                 <span class="text-slate-500">0 pts</span>
               </div>
@@ -1170,7 +1335,7 @@
                 <span>0 pts</span>
               </div>
             </div>
-            <div id="my-card-status-1" class="pt-2 border-t border-[#e2e8f0] mt-2">
+            <div id="my-card-status-1" class="pt-2 border-t border-[#334155] mt-2">
               <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
@@ -1184,8 +1349,8 @@
             </div>
           </div>
 
-          <div id="top3-tier-5" class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+          <div id="top3-tier-5" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-white text-sm">$5 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
                 <span id="top3-prize-usdg-5" class="text-[#cbd5e1]">$0.00 USDG</span>
@@ -1193,7 +1358,7 @@
               </div>
             </div>
             <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#e2e8f0] text-slate-400">
+              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#334155] text-slate-400">
                 <span>🥇 #1 No active record</span>
                 <span class="text-slate-500">0 pts</span>
               </div>
@@ -1206,7 +1371,7 @@
                 <span>0 pts</span>
               </div>
             </div>
-            <div id="my-card-status-5" class="pt-2 border-t border-[#e2e8f0] mt-2">
+            <div id="my-card-status-5" class="pt-2 border-t border-[#334155] mt-2">
               <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
@@ -1220,8 +1385,8 @@
             </div>
           </div>
 
-          <div id="top3-tier-10" class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+          <div id="top3-tier-10" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-white text-sm">$10 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
                 <span id="top3-prize-usdg-10" class="text-[#cbd5e1]">$0.00 USDG</span>
@@ -1229,7 +1394,7 @@
               </div>
             </div>
             <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#e2e8f0] text-slate-400">
+              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#334155] text-slate-400">
                 <span>🥇 #1 No active record</span>
                 <span class="text-slate-500">0 pts</span>
               </div>
@@ -1242,7 +1407,7 @@
                 <span>0 pts</span>
               </div>
             </div>
-            <div id="my-card-status-10" class="pt-2 border-t border-[#e2e8f0] mt-2">
+            <div id="my-card-status-10" class="pt-2 border-t border-[#334155] mt-2">
               <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
@@ -1256,8 +1421,8 @@
             </div>
           </div>
 
-          <div id="top3-tier-100" class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+          <div id="top3-tier-100" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-white text-sm">$100 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
                 <span id="top3-prize-usdg-100" class="text-[#cbd5e1]">$0.00 USDG</span>
@@ -1265,7 +1430,7 @@
               </div>
             </div>
             <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#e2e8f0] text-slate-400">
+              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#334155] text-slate-400">
                 <span>🥇 #1 No active record</span>
                 <span class="text-slate-500">0 pts</span>
               </div>
@@ -1278,7 +1443,7 @@
                 <span>0 pts</span>
               </div>
             </div>
-            <div id="my-card-status-100" class="pt-2 border-t border-[#e2e8f0] mt-2">
+            <div id="my-card-status-100" class="pt-2 border-t border-[#334155] mt-2">
               <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
@@ -1292,8 +1457,8 @@
             </div>
           </div>
 
-          <div id="top3-tier-1000" class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+          <div id="top3-tier-1000" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-[#f8fafc] text-sm">$1,000 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
                 <span id="top3-prize-usdg-1000" class="text-[#cbd5e1]">$0.00 USDG</span>
@@ -1301,7 +1466,7 @@
               </div>
             </div>
             <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#e2e8f0] text-slate-400">
+              <div class="flex items-center justify-between bg-[#f1f5f9] p-2 rounded-lg border border-[#334155] text-slate-400">
                 <span>🥇 #1 No active record</span>
                 <span class="text-slate-500">0 pts</span>
               </div>
@@ -1314,7 +1479,7 @@
                 <span>0 pts</span>
               </div>
             </div>
-            <div id="my-card-status-1000" class="pt-2 border-t border-[#e2e8f0] mt-2">
+            <div id="my-card-status-1000" class="pt-2 border-t border-[#334155] mt-2">
               <div class="p-2 rounded-xl bg-[#f1f5f9] border border-slate-200 flex items-center justify-between text-[11px] font-mono">
                 <div class="flex items-center gap-1.5">
                   <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
@@ -1338,16 +1503,16 @@
     <!-- 3. GRAND JACKPOT TAB -->
     <div id="tab-jackpot" class="tab-content hidden space-y-8">
 
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-[#131b27] shadow-sm border-[#e2e8f0] bg-gradient-to-b from-amber-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-[#131b27] shadow-sm border-[#334155] bg-gradient-to-b from-amber-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#f1f5f9] blur-3xl pointer-events-none"></div>
       <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
       
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#e2e8f0] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#334155] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
         <span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span>
         🔒 COMING SOON • PHASE 2
       </div>
 
-      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
+      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
         🎯
       </div>
 
@@ -1359,7 +1524,7 @@
         The multi-tier grand jackpot and target prediction vaults will unlock in Phase 2 once initial duel liquidity milestones are met.
       </p>
 
-      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
+      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
         <div class="flex items-center justify-between text-neutral-700">
           <span>Status:</span>
           <span class="text-[#cbd5e1] font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-ping"></span>Under Audit & Development</span>
@@ -1393,16 +1558,16 @@
         </div>
 
         <div class="flex items-center gap-4">
-          <div class="px-6 py-3.5 rounded-2xl bg-[#131b27]/95 border border-[#e2e8f0] font-mono text-center shadow-lg">
+          <div class="px-6 py-3.5 rounded-2xl bg-[#131b27]/95 border border-[#334155] font-mono text-center shadow-lg">
             <span class="text-[10px] text-[#cbd5e1] block font-black uppercase tracking-wider mb-1.5 text-center">⏳ ROUND ENTRY COUNTDOWN</span>
             <div class="flex items-center justify-center gap-2 font-mono">
-              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#e2e8f0] min-w-[50px]"><span id="jackpot-days" class="text-2xl font-black text-[#cbd5e1]">02</span><span class="text-[8px] text-slate-400 block font-bold">DAYS</span></div>
+              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#334155] min-w-[50px]"><span id="jackpot-days" class="text-2xl font-black text-[#cbd5e1]">02</span><span class="text-[8px] text-slate-400 block font-bold">DAYS</span></div>
               <span class="text-lg font-bold text-[#cbd5e1]">:</span>
-              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#e2e8f0] min-w-[50px]"><span id="jackpot-hours" class="text-2xl font-black text-[#cbd5e1]">14</span><span class="text-[8px] text-slate-400 block font-bold">HRS</span></div>
+              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#334155] min-w-[50px]"><span id="jackpot-hours" class="text-2xl font-black text-[#cbd5e1]">14</span><span class="text-[8px] text-slate-400 block font-bold">HRS</span></div>
               <span class="text-lg font-bold text-[#cbd5e1]">:</span>
-              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#e2e8f0] min-w-[50px]"><span id="jackpot-mins" class="text-2xl font-black text-[#cbd5e1]">35</span><span class="text-[8px] text-slate-400 block font-bold">MIN</span></div>
+              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#334155] min-w-[50px]"><span id="jackpot-mins" class="text-2xl font-black text-[#cbd5e1]">35</span><span class="text-[8px] text-slate-400 block font-bold">MIN</span></div>
               <span class="text-lg font-bold text-[#cbd5e1]">:</span>
-              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#e2e8f0] min-w-[50px]"><span id="jackpot-secs" class="text-2xl font-black text-[#cbd5e1]">18</span><span class="text-[8px] text-slate-400 block font-bold">SEC</span></div>
+              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#334155] min-w-[50px]"><span id="jackpot-secs" class="text-2xl font-black text-[#cbd5e1]">18</span><span class="text-[8px] text-slate-400 block font-bold">SEC</span></div>
             </div>
             <span id="jackpot-timer" class="hidden text-xs text-[#cbd5e1]">02d 14h 35m 18s</span>
           </div>
@@ -1420,9 +1585,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           
           <!-- TIER 1 ($1) -->
-          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex flex-col justify-between hover:border-[#e2e8f0] transition-all space-y-4 shadow-lg">
+          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex flex-col justify-between hover:border-[#334155] transition-all space-y-4 shadow-lg">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+              <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 1 - $1</span>
                 <span class="text-[10px] font-mono text-[#cbd5e1] font-bold">1 USDG</span>
               </div>
@@ -1433,7 +1598,7 @@
               </div>
             </div>
 
-            <div class="space-y-3 pt-2 border-t border-[#e2e8f0]">
+            <div class="space-y-3 pt-2 border-t border-[#334155]">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
                 <div class="flex items-center gap-1 bg-[#131b27] border border-[#cbd5e1] rounded-lg p-0.5">
@@ -1446,15 +1611,15 @@
               <div id="target-inputs-1" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-1-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-1-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-1-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-1-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-1-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
               </div>
 
@@ -1463,9 +1628,9 @@
           </div>
 
           <!-- TIER 2 ($5) -->
-          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex flex-col justify-between hover:border-[#e2e8f0] transition-all space-y-4 shadow-lg">
+          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex flex-col justify-between hover:border-[#334155] transition-all space-y-4 shadow-lg">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+              <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 2 - $5</span>
                 <span class="text-[10px] font-mono text-[#cbd5e1] font-bold">5 USDG</span>
               </div>
@@ -1476,7 +1641,7 @@
               </div>
             </div>
 
-            <div class="space-y-3 pt-2 border-t border-[#e2e8f0]">
+            <div class="space-y-3 pt-2 border-t border-[#334155]">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
                 <div class="flex items-center gap-1 bg-[#131b27] border border-[#cbd5e1] rounded-lg p-0.5">
@@ -1489,15 +1654,15 @@
               <div id="target-inputs-5" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-5-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-5-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-5-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-5-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-5-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-5-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-5-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-5-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
               </div>
 
@@ -1506,9 +1671,9 @@
           </div>
 
           <!-- TIER 3 ($10) -->
-          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex flex-col justify-between hover:border-[#e2e8f0] transition-all space-y-4 shadow-lg">
+          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex flex-col justify-between hover:border-[#334155] transition-all space-y-4 shadow-lg">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+              <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 3 - $10</span>
                 <span class="text-[10px] font-mono text-[#cbd5e1] font-bold">10 USDG</span>
               </div>
@@ -1519,7 +1684,7 @@
               </div>
             </div>
 
-            <div class="space-y-3 pt-2 border-t border-[#e2e8f0]">
+            <div class="space-y-3 pt-2 border-t border-[#334155]">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
                 <div class="flex items-center gap-1 bg-[#131b27] border border-[#cbd5e1] rounded-lg p-0.5">
@@ -1532,15 +1697,15 @@
               <div id="target-inputs-10" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-10-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-10-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-10-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-10-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-10-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-10-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-10-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-10-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
               </div>
 
@@ -1549,9 +1714,9 @@
           </div>
 
           <!-- TIER 4 ($100) -->
-          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex flex-col justify-between hover:border-[#e2e8f0] transition-all space-y-4 shadow-lg">
+          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex flex-col justify-between hover:border-[#334155] transition-all space-y-4 shadow-lg">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+              <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 4 - $100</span>
                 <span class="text-[10px] font-mono text-[#cbd5e1] font-bold">100 USDG</span>
               </div>
@@ -1562,7 +1727,7 @@
               </div>
             </div>
 
-            <div class="space-y-3 pt-2 border-t border-[#e2e8f0]">
+            <div class="space-y-3 pt-2 border-t border-[#334155]">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
                 <div class="flex items-center gap-1 bg-[#131b27] border border-[#cbd5e1] rounded-lg p-0.5">
@@ -1575,15 +1740,15 @@
               <div id="target-inputs-100" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-100-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-100-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-100-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-100-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-100-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-100-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-100-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-100-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
               </div>
 
@@ -1592,9 +1757,9 @@
           </div>
 
           <!-- TIER 5 ($1,000) -->
-          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex flex-col justify-between hover:border-[#e2e8f0] transition-all space-y-4 shadow-lg">
+          <div class="p-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex flex-col justify-between hover:border-[#334155] transition-all space-y-4 shadow-lg">
             <div>
-              <div class="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
+              <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-[#cbd5e1] text-sm">TIER 5 - $1,000</span>
                 <span class="text-[10px] font-mono text-[#cbd5e1] font-bold">1,000.00 USDG</span>
               </div>
@@ -1605,7 +1770,7 @@
               </div>
             </div>
 
-            <div class="space-y-3 pt-2 border-t border-[#e2e8f0]">
+            <div class="space-y-3 pt-2 border-t border-[#334155]">
               <div class="flex items-center justify-between">
                 <span class="text-[10px] font-mono text-slate-400 font-bold">TICKETS (MAX 3):</span>
                 <div class="flex items-center gap-1 bg-[#131b27] border border-[#cbd5e1] rounded-lg p-0.5">
@@ -1618,15 +1783,15 @@
               <div id="target-inputs-1000" class="space-y-2">
                 <div>
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#1):</label>
-                  <input type="text" id="target-input-1000-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1000-1" placeholder="e.g. 2048.50" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-1000-2" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#2):</label>
-                  <input type="text" id="target-input-1000-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1000-2" placeholder="e.g. 2100.00" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
                 <div id="target-row-1000-3" class="hidden">
                   <label class="text-[9px] font-mono text-slate-400 block mb-0.5">TARGET OUTCOME (#3):</label>
-                  <input type="text" id="target-input-1000-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#e2e8f0] focus:outline-none" />
+                  <input type="text" id="target-input-1000-3" placeholder="e.g. 2250.75" class="w-full bg-[#131b27] border border-[#cbd5e1] rounded-xl px-3 py-1.5 text-xs text-[#f8fafc] font-mono focus:border-[#334155] focus:outline-none" />
                 </div>
               </div>
 
@@ -1639,8 +1804,8 @@
 
 
       <!-- LIVE ROUND PREDICTIONS FEED TABLE -->
-      <div class="bg-[#131b27] shadow-sm rounded-3xl border border-[#e2e8f0] overflow-hidden shadow-xl">
-        <div class="p-4 border-b border-[#e2e8f0] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div class="bg-[#131b27] shadow-sm rounded-3xl border border-[#334155] overflow-hidden shadow-xl">
+        <div class="p-4 border-b border-[#334155] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <h4 class="font-bold text-white font-mono text-sm">LIVE ROUND PREDICTIONS FEED</h4>
             <p class="text-xs text-slate-400">Real time submissions recorded for the active round</p>
@@ -1673,16 +1838,16 @@
     <!-- 4. LEADERBOARD TAB -->
     <div id="tab-leaderboard" class="tab-content hidden space-y-6">
 
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-[#131b27] shadow-sm border-[#e2e8f0] bg-gradient-to-b from-purple-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-[#131b27] shadow-sm border-[#334155] bg-gradient-to-b from-purple-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#f1f5f9] blur-3xl pointer-events-none"></div>
       <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
       
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#e2e8f0] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#334155] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
         <span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span>
         🔒 COMING SOON • PHASE 2
       </div>
 
-      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
+      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
         🏆
       </div>
 
@@ -1694,7 +1859,7 @@
         The unified global leaderboard tracking duel masteries, win streaks, and net profit rankings will open soon.
       </p>
 
-      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
+      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
         <div class="flex items-center justify-between text-neutral-700">
           <span>Status:</span>
           <span class="text-[#cbd5e1] font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-ping"></span>Under Audit & Development</span>
@@ -1716,17 +1881,17 @@
   
 <div id="locked-leaderboard-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div onclick="setLeaderboardCategory('duel')" id="lb-cat-duel" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center">
+        <div onclick="setLeaderboardCategory('duel')" id="lb-cat-duel" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] bg-[#f1f5f9] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">⚔️</span>
           <h4 class="font-black text-white font-mono text-sm">1. PVP DUELS</h4>
           <p class="text-xs text-slate-400 mt-1">Wins & Streaks</p>
         </div>
-        <div onclick="setLeaderboardCategory('2048')" id="lb-cat-2048" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
+        <div onclick="setLeaderboardCategory('2048')" id="lb-cat-2048" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎮</span>
           <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
           <p class="text-xs text-slate-400 mt-1">Single High Score Records</p>
         </div>
-        <div onclick="setLeaderboardCategory('jackpot')" id="lb-cat-jackpot" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
+        <div onclick="setLeaderboardCategory('jackpot')" id="lb-cat-jackpot" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎯</span>
           <h4 class="font-black text-white font-mono text-sm">3. GRAND JACKPOT</h4>
           <p class="text-xs text-slate-400 mt-1">Closest Predictions</p>
@@ -1741,8 +1906,8 @@
         <button onclick="setLeaderboardTier(1000)" id="lb-tier-1000" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#131b27] text-neutral-700 hover:bg-[#e2e8f0]">$1,000 Tier Vault</button>
       </div>
 
-      <div class="bg-[#131b27] shadow-sm rounded-3xl border border-[#e2e8f0] overflow-hidden">
-        <div class="p-4 border-b border-[#e2e8f0] flex justify-between items-center">
+      <div class="bg-[#131b27] shadow-sm rounded-3xl border border-[#334155] overflow-hidden">
+        <div class="p-4 border-b border-[#334155] flex justify-between items-center">
           <h4 id="lb-table-title" class="font-bold text-white font-mono text-sm">Top 100 Players , PvP Duels ($1 Tier)</h4>
           <span class="text-xs font-mono text-slate-400">Live 24h Standing</span>
         </div>
@@ -1774,12 +1939,12 @@
       <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#f1f5f9] blur-3xl pointer-events-none"></div>
       <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
       
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#e2e8f0] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f8fafc] border border-[#334155] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
         <span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span>
         🔒 COMING SOON • PHASE 2
       </div>
 
-      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#e2e8f0] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
+      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
         📜
       </div>
 
@@ -1791,7 +1956,7 @@
         Live settlement verification and historical duel logs are temporarily locked while indexing services synchronize.
       </p>
 
-      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#e2e8f0] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
+      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
         <div class="flex items-center justify-between text-neutral-700">
           <span>Status:</span>
           <span class="text-[#cbd5e1] font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-ping"></span>Under Audit & Development</span>
@@ -1813,17 +1978,17 @@
   
 <div id="locked-history-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div onclick="setHistoryCategory('duel')" id="hist-cat-duel" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center">
+        <div onclick="setHistoryCategory('duel')" id="hist-cat-duel" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] bg-[#f1f5f9] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">⚔️</span>
           <h4 class="font-black text-white font-mono text-sm">1. PVP DUELS</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 90% Duel Champions</p>
         </div>
-        <div onclick="setHistoryCategory('2048')" id="hist-cat-2048" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
+        <div onclick="setHistoryCategory('2048')" id="hist-cat-2048" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎮</span>
           <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 80% 24h Top Record Holders</p>
         </div>
-        <div onclick="setHistoryCategory('jackpot')" id="hist-cat-jackpot" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
+        <div onclick="setHistoryCategory('jackpot')" id="hist-cat-jackpot" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎯</span>
           <h4 class="font-black text-white font-mono text-sm">3. GRAND JACKPOT</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 80% 1h Closest Predictions</p>
@@ -1838,8 +2003,8 @@
         <button onclick="setHistoryTier(1000)" id="hist-tier-1000" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#131b27] text-neutral-700 hover:bg-[#e2e8f0]">$1,000 Tier Vault</button>
       </div>
 
-      <div class="bg-[#131b27] shadow-sm rounded-3xl border border-[#e2e8f0] overflow-hidden">
-        <div class="p-4 border-b border-[#e2e8f0] flex justify-between items-center">
+      <div class="bg-[#131b27] shadow-sm rounded-3xl border border-[#334155] overflow-hidden">
+        <div class="p-4 border-b border-[#334155] flex justify-between items-center">
           <h4 id="hist-table-title" class="font-bold text-white font-mono text-sm">Verified Reward Winners , PvP Duels ($1 Tier)</h4>
           <span class="text-xs font-mono text-[#cbd5e1]">Onchain Verified</span>
         </div>
@@ -1867,22 +2032,22 @@
 
     <!-- 6. PROTOCOL DOCS / WHITEPAPER TAB -->
     <div id="tab-docs" data-alias="whitepaper" class="tab-content hidden space-y-6"><a id="whitepaper"></a>
-      <div class="bg-[#131b27] shadow-sm p-8 sm:p-12 rounded-3xl border border-[#e2e8f0] space-y-10">
-        <div class="border-b border-[#e2e8f0] pb-6">
+      <div class="bg-[#131b27] shadow-sm p-8 sm:p-12 rounded-3xl border border-[#334155] space-y-10">
+        <div class="border-b border-[#334155] pb-6">
           <h1 class="text-3xl font-black text-white font-mono">pvphub.fun Whitepaper</h1>
           <div class="mt-4 p-4 rounded-2xl bg-[#f1f5f9] border border-slate-200">
             <h3 class="text-sm font-bold text-[#cbd5e1] font-mono mb-1.5">Core Ecosystem Pillars</h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
-              <div class="p-3 rounded-xl bg-[#131b27] border border-[#e2e8f0]">
+              <div class="p-3 rounded-xl bg-[#131b27] border border-[#334155]">
                 <span class="text-xs font-bold text-[#cbd5e1] font-mono block">1. Prediction</span>
                 <span class="text-[11px] text-slate-400 font-mono mt-1 block">PvP Instant Duel price & outcome speculation with 90% winner share & 3% cashback rebate.</span>
               </div>
-              <div class="p-3 rounded-xl bg-[#131b27] border border-[#e2e8f0]">
+              <div class="p-3 rounded-xl bg-[#131b27] border border-[#334155]">
                 <span class="text-xs font-bold text-[#cbd5e1] font-mono block">2. Skill</span>
                 <span class="text-[11px] text-slate-400 font-mono mt-1 block">Tournament Skill Vaults & competitive daily leaderboards (24H UTC single top score record).</span>
               </div>
-              <div class="p-3 rounded-xl bg-[#131b27] border border-[#e2e8f0]">
+              <div class="p-3 rounded-xl bg-[#131b27] border border-[#334155]">
                 <span class="text-xs font-bold text-[#cbd5e1] font-mono block">3. Chance</span>
                 <span class="text-[11px] text-slate-400 font-mono mt-1 block">Grand Jackpot pools with fair outcome distribution and rollover prize vaults.</span>
               </div>
@@ -1905,7 +2070,7 @@
             <li><strong class="text-white">2%</strong> protocol treasury fee for platform maintenance and buybacks</li>
           </ul>
 
-          <div class="mt-6 pt-4 border-t border-[#e2e8f0]">
+          <div class="mt-6 pt-4 border-t border-[#334155]">
             <h3 class="text-base font-bold text-[#cbd5e1] font-mono mb-3">Core Rules</h3>
             <ol class="list-decimal list-inside text-sm text-neutral-700 space-y-3 pl-2">
             <li class="leading-relaxed">To guarantee strict fairness and equal opportunity for all participants, all challenges must be deployed onchain prior to event kickoff, with the entry window closing immediately at the start to eliminate in-progress betting and prevent live momentum frontrunning.</li>
@@ -1920,7 +2085,7 @@
           </div>
         </div>
 
-        <div class="space-y-4 border-t border-[#e2e8f0] pt-8">
+        <div class="space-y-4 border-t border-[#334155] pt-8">
           <h2 class="text-xl font-bold text-white font-mono">2. skill</h2>
           <p class="text-sm text-neutral-700 leading-relaxed">
             Players compete with each other based on skill. Skill tournaments run in continuous 24 hour cycles ending at 00:00 UTC every day.
@@ -1933,7 +2098,7 @@
           </ul>
         </div>
 
-        <div class="space-y-4 border-t border-[#e2e8f0] pt-8">
+        <div class="space-y-4 border-t border-[#334155] pt-8">
           <h2 class="text-xl font-bold text-white font-mono">3. Grand Jackpot System & Round Lifecycle</h2>
           <p class="text-sm text-neutral-700 leading-relaxed">
             Players test their luck in jackpot pools within designated time windows. When the countdown timer reaches zero, round submissions automatically lock for verifiable settlement.
@@ -1972,15 +2137,15 @@
     <!-- 7. ADMIN PANEL TAB -->
     <div id="tab-admin" class="tab-content hidden space-y-8">
       <!-- ADMIN HEADER BANNER -->
-      <div class="bg-white shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] bg-[#131b27] shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="bg-white shadow-sm p-5 sm:p-6 rounded-3xl border border-[#334155] bg-[#131b27] shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-3xl shrink-0 shadow-lg shadow-none">
+          <div class="w-14 h-14 rounded-2xl bg-[#f8fafc] border border-[#334155] flex items-center justify-center text-3xl shrink-0 shadow-lg shadow-none">
             👑
           </div>
           <div>
             <div class="flex items-center gap-2">
               <h2 class="text-lg sm:text-xl font-black text-[#f8fafc] font-mono uppercase tracking-wider">Protocol Admin & Operator Console</h2>
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#f8fafc] text-[#cbd5e1] border border-[#e2e8f0]">Verified Admin</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#f8fafc] text-[#cbd5e1] border border-[#334155]">Verified Admin</span>
             </div>
             <p class="text-xs text-neutral-700 font-mono mt-1">
               Authorized MetaMask Wallet: <span id="adminConnectedBadge" class="font-bold text-[#f8fafc] font-mono">0x0ce6...0f67</span> | Full Control
@@ -1992,7 +2157,7 @@
           <a href="https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-slate-200 text-xs font-mono text-neutral-800 hover:text-[#cbd5e1] transition-all flex items-center gap-1.5">
             <span>📜</span> Escrow Contract ↗
           </a>
-          <button onclick="refreshAdminDuelsStats()" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-xs font-mono text-[#f8fafc] hover:bg-[#f8fafc] font-bold transition-all flex items-center gap-1.5">
+          <button onclick="refreshAdminDuelsStats()" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-[#334155] text-xs font-mono text-[#f8fafc] hover:bg-[#f8fafc] font-bold transition-all flex items-center gap-1.5">
             <span>🔄</span> Refresh Onchain Stats
           </button>
         </div>
@@ -2000,28 +2165,28 @@
 
       <!-- KEY METRICS ROW -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
+        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
           <div>
             <p class="text-[11px] font-mono text-slate-400">Total Duels Created</p>
             <h4 id="admin-total-duels" class="text-xl font-black font-mono text-white mt-1">Loading...</h4>
           </div>
           <span class="text-2xl">⚔️</span>
         </div>
-        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
+        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
           <div>
             <p class="text-[11px] font-mono text-slate-400">Active Topics / Questions</p>
             <h4 id="admin-total-questions" class="text-xl font-black font-mono text-[#cbd5e1] mt-1">0</h4>
           </div>
           <span class="text-2xl">⚡</span>
         </div>
-        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
+        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
           <div>
             <p class="text-[11px] font-mono text-slate-400">Treasury Fee Share</p>
             <h4 class="text-xl font-black font-mono text-[#cbd5e1] mt-1">7%</h4>
           </div>
           <span class="text-2xl">🏦</span>
         </div>
-        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#e2e8f0] flex items-center justify-between">
+        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
           <div>
             <p class="text-[11px] font-mono text-slate-400">Oracle Settlement</p>
             <h4 class="text-xl font-black font-mono text-[#cbd5e1] mt-1">EIP-712</h4>
@@ -2031,34 +2196,34 @@
       </div>
 
       <!-- SECTION 1: CREATE NEW DUEL QUESTION -->
-      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-5">
-        <div class="border-b border-[#e2e8f0] pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#334155] space-y-5">
+        <div class="border-b border-[#334155] pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <div class="flex items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded-lg bg-[#f8fafc] text-[#cbd5e1] font-mono text-xs font-bold border border-[#e2e8f0]">STEP 1</span>
+              <span class="px-2.5 py-0.5 rounded-lg bg-[#f8fafc] text-[#cbd5e1] font-mono text-xs font-bold border border-[#334155]">STEP 1</span>
               <h3 class="text-base font-black text-[#f8fafc] font-mono uppercase tracking-wide">Publish New Duel Question</h3>
             </div>
             <p class="text-xs text-slate-400 font-mono mt-1">Add a new prediction question to the live Step 1 question list across all 5 tiers.</p>
           </div>
-          <span class="text-xs font-mono text-[#cbd5e1] bg-[#f8fafc] px-3 py-1 rounded-full border border-[#e2e8f0]">Instant Live Feed</span>
+          <span class="text-xs font-mono text-[#cbd5e1] bg-[#f8fafc] px-3 py-1 rounded-full border border-[#334155]">Instant Live Feed</span>
         </div>
 
         <form id="createQuestionForm" onsubmit="handleCreateQuestion(event)" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Question Title / Prompt</label>
-              <input type="text" id="newQTitle" required placeholder="e.g. #18: Will BTC Break $95,000 Before Friday?" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-[#f8fafc] font-mono text-xs focus:border-[#e2e8f0] outline-none">
+              <input type="text" id="newQTitle" required placeholder="e.g. #18: Will BTC Break $95,000 Before Friday?" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
             </div>
             <div>
               <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Category Badge</label>
-              <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, ROBINHOOD ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-[#f8fafc] font-mono text-xs focus:border-[#e2e8f0] outline-none">
+              <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, ROBINHOOD ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Entry Window Duration</label>
-              <select id="newQDuration" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-[#f8fafc] font-mono text-xs focus:border-[#e2e8f0] outline-none">
+              <select id="newQDuration" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
                 <option value="1800">30 Minutes</option>
                 <option value="3600" selected>1 Hour</option>
                 <option value="7200">2 Hours</option>
@@ -2070,22 +2235,22 @@
             <div>
               <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Option A (Label / Subtext)</label>
               <div class="flex gap-2">
-                <input type="text" id="newQOptA" value="GREEN" placeholder="GREEN / YES" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-[#cbd5e1] font-mono text-xs focus:border-[#e2e8f0] outline-none">
-                <input type="text" id="newQOptASub" value="Green Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-neutral-700 font-mono text-xs focus:border-[#e2e8f0] outline-none">
+                <input type="text" id="newQOptA" value="GREEN" placeholder="GREEN / YES" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#cbd5e1] font-mono text-xs focus:border-[#334155] outline-none">
+                <input type="text" id="newQOptASub" value="Green Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-neutral-700 font-mono text-xs focus:border-[#334155] outline-none">
               </div>
             </div>
             <div>
               <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Option B (Label / Subtext)</label>
               <div class="flex gap-2">
-                <input type="text" id="newQOptB" value="RED" placeholder="RED / NO" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-[#cbd5e1] font-mono text-xs focus:border-[#e2e8f0] outline-none">
-                <input type="text" id="newQOptBSub" value="Red Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-neutral-700 font-mono text-xs focus:border-[#e2e8f0] outline-none">
+                <input type="text" id="newQOptB" value="RED" placeholder="RED / NO" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#cbd5e1] font-mono text-xs focus:border-[#334155] outline-none">
+                <input type="text" id="newQOptBSub" value="Red Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-neutral-700 font-mono text-xs focus:border-[#334155] outline-none">
               </div>
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Description / Settlement Note</label>
-            <input type="text" id="newQDesc" placeholder="e.g. 1-Hour Entry Window | Resolves upon 12H Candle Close" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-[#f8fafc] font-mono text-xs focus:border-[#e2e8f0] outline-none">
+            <input type="text" id="newQDesc" placeholder="e.g. 1-Hour Entry Window | Resolves upon 12H Candle Close" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
           </div>
 
           <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
@@ -2098,8 +2263,8 @@
       </div>
 
       <!-- SECTION 2: QUESTIONS REGISTRY MANAGER TABLE -->
-      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e2e8f0] pb-4">
+      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#334155] space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#334155] pb-4">
           <div>
             <h3 class="text-base font-black text-[#f8fafc] font-mono uppercase tracking-wide flex items-center gap-2">
               <span>📋</span> Current Questions Registry
@@ -2107,10 +2272,10 @@
             <p class="text-xs text-slate-400 font-mono mt-1">Manage all live and ended questions. Changes apply immediately.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="exportQuestionsJSON()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-[#e2e8f0] text-xs font-mono text-neutral-700 hover:text-[#f8fafc] transition-all flex items-center gap-1.5">
+            <button onclick="exportQuestionsJSON()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-[#334155] text-xs font-mono text-neutral-700 hover:text-[#f8fafc] transition-all flex items-center gap-1.5">
               <span>📋</span> Copy Questions JSON
             </button>
-            <button onclick="resetQuestionsToDefault()" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-xs font-mono text-[#cbd5e1] hover:bg-[#f8fafc] transition-all">
+            <button onclick="resetQuestionsToDefault()" class="px-3 py-1.5 rounded-xl bg-[#f8fafc] border border-[#334155] text-xs font-mono text-[#cbd5e1] hover:bg-[#f8fafc] transition-all">
               <span>↺</span> Reset to Default
             </button>
           </div>
@@ -2119,7 +2284,7 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left font-mono text-xs">
             <thead>
-              <tr class="text-slate-400 border-b border-[#e2e8f0] pb-2">
+              <tr class="text-slate-400 border-b border-[#334155] pb-2">
                 <th class="py-2.5 px-3">ID</th>
                 <th class="py-2.5 px-3">Title</th>
                 <th class="py-2.5 px-3">Category</th>
@@ -2135,8 +2300,8 @@
       </div>
 
       <!-- SECTION 3: ONCHAIN DUEL INSPECTOR -->
-      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#e2e8f0] space-y-4">
-        <div class="border-b border-[#e2e8f0] pb-4">
+      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#334155] space-y-4">
+        <div class="border-b border-[#334155] pb-4">
           <h3 class="text-base font-black text-[#f8fafc] font-mono uppercase tracking-wide flex items-center gap-2">
             <span>🔍</span> Onchain Duel Inspector (Robinhood Chain)
           </h3>
@@ -2144,13 +2309,13 @@
         </div>
 
         <div class="flex flex-col sm:flex-row items-center gap-3">
-          <input type="number" id="inspectDuelIdInput" placeholder="Enter Duel ID (e.g. 1, 2, 3...)" min="1" class="w-full sm:w-64 px-4 py-2 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-[#f8fafc] font-mono text-xs focus:border-[#e2e8f0] outline-none">
-          <button onclick="inspectOnchainDuel()" class="w-full sm:w-auto px-5 py-2 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] text-[#cbd5e1] font-mono text-xs font-bold hover:bg-[#f1f5f9] transition-all flex items-center justify-center gap-2">
+          <input type="number" id="inspectDuelIdInput" placeholder="Enter Duel ID (e.g. 1, 2, 3...)" min="1" class="w-full sm:w-64 px-4 py-2 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
+          <button onclick="inspectOnchainDuel()" class="w-full sm:w-auto px-5 py-2 rounded-xl bg-[#f1f5f9] border border-[#334155] text-[#cbd5e1] font-mono text-xs font-bold hover:bg-[#f1f5f9] transition-all flex items-center justify-center gap-2">
             <span>🔎</span> Query Contract
           </button>
         </div>
 
-        <div id="duelInspectResult" class="hidden p-4 rounded-2xl bg-[#131b27]/80 border border-[#e2e8f0] font-mono text-xs space-y-2">
+        <div id="duelInspectResult" class="hidden p-4 rounded-2xl bg-[#131b27]/80 border border-[#334155] font-mono text-xs space-y-2">
           <!-- Populated by JavaScript -->
         </div>
       </div>
@@ -2162,7 +2327,7 @@
   </main>
 
     <!-- FOOTER -->
-    <footer class="border-t border-[#1f2b3e] bg-[#0c131d] py-6 text-center text-xs font-mono text-[#94a3b8]">
+    <footer class="border-t border-[#334155] bg-[#0c131d] py-6 text-center text-xs font-mono text-[#94a3b8]">
       <p>pvphub.fun © 2026 • Robinhood Chain</p>
     </footer>
   </div>
@@ -2709,7 +2874,7 @@
         countLabel.innerText = qty === 1 ? "1 Target" : `${qty} Targets`;
       }
 
-      const focusBorder = tier === 1000 ? "focus:border-[#e2e8f0]" : "focus:border-[#e2e8f0]";
+      const focusBorder = tier === 1000 ? "focus:border-[#334155]" : "focus:border-[#334155]";
       
       // Preserve existing values
       const existingValues = [];
@@ -2724,7 +2889,7 @@
         html += `
           <div class="relative">
             <span class="absolute left-2.5 top-2 text-[9px] font-mono text-slate-500 font-bold">#${i}</span>
-            <input type="text" inputmode="decimal" value="${val}" placeholder="Target e.g. 2450.${50 + i * 10}" id="target-input-${tier}-${i}" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#131b27]/90 border border-[#e2e8f0] text-[#f8fafc] font-mono text-xs focus:outline-none ${focusBorder}">
+            <input type="text" inputmode="decimal" value="${val}" placeholder="Target e.g. 2450.${50 + i * 10}" id="target-input-${tier}-${i}" class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#131b27]/90 border border-[#334155] text-[#f8fafc] font-mono text-xs focus:outline-none ${focusBorder}">
           </div>
         `;
       }
@@ -3246,10 +3411,10 @@
         if (badge) {
           if (tix > 0) {
             badge.innerHTML = `🎟️ ${tix} Ticket${tix > 1 ? 's' : ''} Ready`;
-            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#f1f5f9] text-neutral-800 border border-[#e2e8f0] font-bold";
+            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#f1f5f9] text-neutral-800 border border-[#334155] font-bold";
           } else {
             badge.innerText = "0 Tickets";
-            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#e2e8f0] text-slate-500";
+            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#334155] text-slate-500";
           }
         }
       });
@@ -3277,14 +3442,14 @@
           [1, 5, 10, 100, 1000].forEach(t => {
             const count = store[t] || 0;
             if (count > 0) {
-              list.push(`<span class="px-2 py-0.5 rounded-lg bg-[#f1f5f9] text-[#cbd5e1] border border-[#e2e8f0] font-bold">${count}x ${t} Ticket${count > 1 ? 's' : ''}</span>`);
+              list.push(`<span class="px-2 py-0.5 rounded-lg bg-[#f1f5f9] text-[#cbd5e1] border border-[#334155] font-bold">${count}x ${t} Ticket${count > 1 ? 's' : ''}</span>`);
             }
           });
           badgeEl.innerHTML = `<div class="flex items-center gap-1.5 flex-wrap"><span class="text-white font-bold">🎟️ Your Tickets:</span> ${list.join("<span class='text-slate-500'>+</span>")} <span class="text-slate-400 text-[11px] font-normal">(${totalTickets} Total)</span></div>`;
-          badgeEl.className = "text-xs font-mono bg-white/90 border border-[#e2e8f0] px-3.5 py-1.5 rounded-xl shadow-sm";
+          badgeEl.className = "text-xs font-mono bg-white/90 border border-[#334155] px-3.5 py-1.5 rounded-xl shadow-sm";
         } else {
           badgeEl.innerHTML = "🎟️ <span id='tickets-count'>0</span> Tickets (Buy Above)";
-          badgeEl.className = "text-xs font-mono text-slate-400 bg-white border border-[#e2e8f0] px-3 py-1.5 rounded-xl";
+          badgeEl.className = "text-xs font-mono text-slate-400 bg-white border border-[#334155] px-3 py-1.5 rounded-xl";
         }
       }
 
@@ -3293,7 +3458,7 @@
       if (topStartBtn) {
         if (is2048RunActive) {
           topStartBtn.innerText = "↻ RESTART RUN";
-          topStartBtn.className = "p-2 px-3 rounded-xl bg-[#f8fafc] text-neutral-800 hover:bg-[#f8fafc] border border-[#e2e8f0] font-mono text-xs font-bold transition-all";
+          topStartBtn.className = "p-2 px-3 rounded-xl bg-[#f8fafc] text-neutral-800 hover:bg-[#f8fafc] border border-[#334155] font-mono text-xs font-bold transition-all";
           topStartBtn.onclick = function() { startNew2048Game(true); };
         } else if (activeTickets > 0) {
           topStartBtn.innerText = "▶ START TIER $" + selected2048Tier;
@@ -3318,7 +3483,7 @@
         is2048RunActive = false;
         if (startBtn) {
           startBtn.innerHTML = "🔒 ROUND " + cycle.cycleIndex + " ENDED (NO ACTIVE ROUND)";
-          startBtn.className = "w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 font-mono font-bold text-xs border border-[#e2e8f0] cursor-not-allowed flex items-center justify-center gap-1.5";
+          startBtn.className = "w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 font-mono font-bold text-xs border border-[#334155] cursor-not-allowed flex items-center justify-center gap-1.5";
         }
         if (lockOverlay) {
           lockOverlay.classList.remove("hidden");
@@ -3326,7 +3491,7 @@
             <div class="flex flex-col items-center justify-center p-6 text-center space-y-4">
               <span class="text-5xl">🔒</span>
               <div>
-                <div class="inline-block px-3 py-1 rounded-full bg-[#f8fafc] text-[#cbd5e1] border border-[#e2e8f0] text-xs font-mono font-bold mb-2">
+                <div class="inline-block px-3 py-1 rounded-full bg-[#f8fafc] text-[#cbd5e1] border border-[#334155] text-xs font-mono font-bold mb-2">
                   STAGE 1: ROUND ${cycle.cycleIndex} ENDED
                 </div>
                 <h3 class="text-2xl font-black text-white font-mono tracking-wide">NO ACTIVE ROUND</h3>
@@ -3342,7 +3507,7 @@
                   <span class="text-[10px] text-slate-400 font-mono">Host Control: Start new 20-minute tournament round</span>
                 </div>
               ` : `
-                <div class="px-4 py-2 rounded-xl bg-[#131b27] border border-[#e2e8f0] text-slate-400 font-mono text-xs">
+                <div class="px-4 py-2 rounded-xl bg-[#131b27] border border-[#334155] text-slate-400 font-mono text-xs">
                   ⏳ Waiting for host to start Round ${cycle.cycleIndex + 1}...
                 </div>
               `}
@@ -3399,7 +3564,7 @@
                 <button onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-[#f1f5f9] hover:bg-[#f1f5f9] text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all cursor-pointer">
                   ▶ START TIER $${selected2048Tier} ($${unitPrice} USDG)
                 </button>
-                <button onclick="document.getElementById('tier-card-${selected2048Tier}')?.scrollIntoView({behavior:'smooth'})" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-neutral-700 font-mono text-xs border border-[#e2e8f0] transition-all cursor-pointer">
+                <button onclick="document.getElementById('tier-card-${selected2048Tier}')?.scrollIntoView({behavior:'smooth'})" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-neutral-700 font-mono text-xs border border-[#334155] transition-all cursor-pointer">
                   🛒 Buy Tickets in Bulk
                 </button>
               </div>
@@ -3419,8 +3584,8 @@
 
         if (t === tier) {
           if (card) card.className = t >= 1000
-            ? "bg-white shadow-sm p-4 rounded-2xl border-2 border-[#e2e8f0] bg-[#f8fafc] cursor-pointer transition-all space-y-3"
-            : "bg-white shadow-sm p-4 rounded-2xl border-2 border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all space-y-3";
+            ? "bg-white shadow-sm p-4 rounded-2xl border-2 border-[#334155] bg-[#f8fafc] cursor-pointer transition-all space-y-3"
+            : "bg-white shadow-sm p-4 rounded-2xl border-2 border-[#334155] bg-[#f1f5f9] cursor-pointer transition-all space-y-3";
           if (tag) {
             tag.innerText = "ACTIVE TIER";
             tag.className = t >= 1000
@@ -3429,19 +3594,19 @@
           }
           if (top3Card) {
             top3Card.className = t >= 1000
-              ? "p-4 rounded-2xl bg-white/90 border-2 border-[#e2e8f0] space-y-3 shadow-lg shadow-none"
-              : "p-4 rounded-2xl bg-white/90 border-2 border-[#e2e8f0] space-y-3 shadow-lg shadow-none";
+              ? "p-4 rounded-2xl bg-white/90 border-2 border-[#334155] space-y-3 shadow-lg shadow-none"
+              : "p-4 rounded-2xl bg-white/90 border-2 border-[#334155] space-y-3 shadow-lg shadow-none";
           }
         } else {
           if (card) card.className = t >= 1000
-            ? "bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] hover:border-[#e2e8f0] cursor-pointer transition-all space-y-3"
-            : "bg-white shadow-sm p-4 rounded-2xl border border-[#e2e8f0] hover:border-[#e2e8f0] bg-white cursor-pointer transition-all space-y-3";
+            ? "bg-white shadow-sm p-4 rounded-2xl border border-[#334155] bg-[#f8fafc] hover:border-[#334155] cursor-pointer transition-all space-y-3"
+            : "bg-white shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] bg-white cursor-pointer transition-all space-y-3";
           if (tag) {
             tag.innerText = "SELECT";
             tag.className = "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#e2e8f0] text-slate-400";
           }
           if (top3Card) {
-            top3Card.className = "p-4 rounded-2xl bg-white border border-[#e2e8f0] space-y-3";
+            top3Card.className = "p-4 rounded-2xl bg-white border border-[#334155] space-y-3";
           }
         }
       });
@@ -3620,9 +3785,9 @@
         const el = document.getElementById('lb-cat-' + c);
         if (el) {
           if (c === cat) {
-            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center';
+            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#334155] bg-[#f1f5f9] cursor-pointer transition-all text-center';
           } else {
-            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center';
+            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center';
           }
         }
       });
@@ -3657,7 +3822,7 @@
           const cInfo = get2048CycleInfo();
           const selectedRound = window.selectedLb2048Round !== undefined ? window.selectedLb2048Round : cInfo.cycleIndex;
           const isRoundActive = selectedRound === cInfo.cycleIndex;
-          title.innerHTML = "Top 100 Players , 2048 Skill ($" + curLbTier + " Tier) , Round #" + (selectedRound + 1) + (isRoundActive ? " <span class=\"text-neutral-800 text-xs px-2 py-0.5 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] ml-2\">● ACTIVE</span>" : " <span class=\"text-slate-400 text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] ml-2\">ENDED</span>");
+          title.innerHTML = "Top 100 Players , 2048 Skill ($" + curLbTier + " Tier) , Round #" + (selectedRound + 1) + (isRoundActive ? " <span class=\"text-neutral-800 text-xs px-2 py-0.5 rounded-full bg-[#f1f5f9] border border-[#334155] ml-2\">● ACTIVE</span>" : " <span class=\"text-slate-400 text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] ml-2\">ENDED</span>");
         } else {
           title.innerText = "Top 100 Players , " + catNames[curLbCat] + " ($" + curLbTier + " Tier)";
         }
@@ -3733,7 +3898,7 @@
           <td class="p-3.5 font-mono text-[#cbd5e1]">${entry.wallet}</td>
           <td class="p-3.5 text-white font-bold">${entry.metric}</td>
           <td class="p-3.5 text-[#cbd5e1] font-bold">${entry.won}</td>
-          <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] bg-[#f1f5f9] text-[#cbd5e1] border border-[#e2e8f0]">VERIFIED</span></td>
+          <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] bg-[#f1f5f9] text-[#cbd5e1] border border-[#334155]">VERIFIED</span></td>
         `;
         tbody.appendChild(tr);
       });
@@ -3749,9 +3914,9 @@
         const el = document.getElementById('hist-cat-' + c);
         if (el) {
           if (c === cat) {
-            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] bg-[#f1f5f9] cursor-pointer transition-all text-center';
+            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#334155] bg-[#f1f5f9] cursor-pointer transition-all text-center';
           } else {
-            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#e2e8f0] hover:border-[#cbd5e1] cursor-pointer transition-all text-center';
+            el.className = 'bg-white shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center';
           }
         }
       });
@@ -4008,7 +4173,7 @@
       if (liveBtn && endedBtn) {
         if (tab === 'live') {
           liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#1f2b3e] text-[#c7f284] border border-[#c7f284] shadow-sm";
-          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#131b27] text-[#94a3b8] border border-[#1f2b3e] hover:bg-[#1a2638] hover:text-white";
+          endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#131b27] text-[#94a3b8] border border-[#334155] hover:bg-[#1a2638] hover:text-white";
         } else {
           endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200";
           liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-black text-white shadow-sm";
@@ -4118,9 +4283,9 @@
         const isLive = !q.isEnded && Date.now() < getQuestionDeadline(q.id);
         const borderClass = isSelected 
           ? "border-2 border-[#c7f284] bg-[#16262b] shadow-md shadow-blue-500/10 ring-1 ring-blue-500" 
-          : "border border-[#1f2b3e] bg-[#131b27] hover:border-[#38bdf8]/50 hover:shadow-sm";
+          : "border border-[#334155] bg-[#131b27] hover:border-[#38bdf8]/50 hover:shadow-sm";
         const dotClass = isSelected ? "bg-slate-700" : (isLive ? "bg-slate-400" : "bg-slate-300");
-        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#f1f5f9] text-[#f8fafc] font-black shadow-md shadow-none ' : 'bg-[#f1f5f9] text-neutral-700 font-bold border border-[#e2e8f0] group-hover:border-[#e2e8f0]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
+        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#f1f5f9] text-[#f8fafc] font-black shadow-md shadow-none ' : 'bg-[#f1f5f9] text-neutral-700 font-bold border border-[#334155] group-hover:border-[#334155]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
         
         const qDeadline = getQuestionDeadline(q.id);
         const timeObj = formatRemainingTime(qDeadline);
@@ -4128,10 +4293,10 @@
 
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-neutral-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
+          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#f1f5f9] border border-[#334155] text-neutral-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
 
         const winnerBadge = (isQuestionEnded && q.winningOption)
-          ? `<div class="mt-2 text-[10px] font-mono bg-[#f1f5f9] border border-[#e2e8f0] text-[#cbd5e1] px-2 py-1 rounded-lg flex items-center justify-between">
+          ? `<div class="mt-2 text-[10px] font-mono bg-[#f1f5f9] border border-[#334155] text-[#cbd5e1] px-2 py-1 rounded-lg flex items-center justify-between">
                <span>🏆 Settled Result: <strong>${q.winningOption}</strong></span>
                <span class="text-slate-400">RESOLVED</span>
              </div>`
@@ -4147,18 +4312,18 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between mb-1">
                 <span class="text-[11px] font-mono font-bold text-slate-400 tracking-wide">(Sep 7, 2026)</span>
-                ${isSelected ? '<span class="text-[10px] font-mono font-bold text-[#cbd5e1] uppercase tracking-wide bg-[#f1f5f9] px-2 py-0.5 rounded-full border border-[#e2e8f0]">Selected</span>' : ''}
+                ${isSelected ? '<span class="text-[10px] font-mono font-bold text-[#cbd5e1] uppercase tracking-wide bg-[#f1f5f9] px-2 py-0.5 rounded-full border border-[#334155]">Selected</span>' : ''}
               </div>
               <h5 class="text-xs font-bold text-white font-mono leading-snug">${q.title}</h5>
               
               <div class="mt-2.5 space-y-1.5">
                 <!-- 1 HOUR ENTRY WINDOW -->
-                <div class="p-2.5 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-between gap-2 shadow-inner">
+                <div class="p-2.5 rounded-xl bg-[#f1f5f9] border border-[#334155] flex items-center justify-between gap-2 shadow-inner">
                   <div class="flex items-center gap-1.5 font-mono text-xs text-[#cbd5e1] font-bold">
                     <span class="w-2 h-2 rounded-full ${isLive ? 'bg-[#f1f5f9] animate-ping' : 'bg-slate-500'}"></span>
                     <span>⏱️ ${q.deadlineDesc ? ("Entry Window (" + q.deadlineDesc.replace(/ Entry Window/i, "") + ")") : "Entry Window"}: <span id="q-entry-remaining-${q.id}" class="text-white font-black tracking-wide">${timeObj.text}</span></span>
                   </div>
-                  ${isLive ? '<span class="text-[10px] font-mono text-[#cbd5e1] font-bold bg-[#f1f5f9] px-2 py-0.5 rounded-full border border-[#e2e8f0]">ENTRY OPEN</span>' : '<span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">ENTRY CLOSED</span>'}
+                  ${isLive ? '<span class="text-[10px] font-mono text-[#cbd5e1] font-bold bg-[#f1f5f9] px-2 py-0.5 rounded-full border border-[#334155]">ENTRY OPEN</span>' : '<span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">ENTRY CLOSED</span>'}
                 </div>
 
                 <!-- EVENT & VARIABLE SETTLEMENT TARGET -->
@@ -4167,7 +4332,7 @@
                     <span class="w-1.5 h-1.5 rounded-full bg-[#f1f5f9] animate-pulse"></span>
                     <span>⏳ ${q.settlementLabel || (q.title && q.title.toLowerCase().includes("candle") ? "Candle Close" : (q.category === "sports" ? "Match End" : (q.category === "economy" ? "Report Release" : "Event Settlement")))}: <span id="q-candle-remaining-${q.id}" class="text-[#f8fafc] font-bold">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
                   </div>
-                  <span class="text-[10px] font-mono text-[#cbd5e1] bg-[#f1f5f9] px-2 py-0.5 rounded-full border border-[#e2e8f0]">${q.targetDesc || formatTargetTime(q.settlementTime || getQuestionSettlementTime(q.id))}</span>
+                  <span class="text-[10px] font-mono text-[#cbd5e1] bg-[#f1f5f9] px-2 py-0.5 rounded-full border border-[#334155]">${q.targetDesc || formatTargetTime(q.settlementTime || getQuestionSettlementTime(q.id))}</span>
                 </div>
               </div>
 
@@ -4192,13 +4357,13 @@
       selectedDuelTier = tier;
       const tiers = [0.01, 5, 10, 100, 1000];
       tiers.forEach(t => {
-        const btnId = t === 0.01 ? "tier-btn-0-01" : `tier-btn-${t}`;
+        const btnId = t === 0.01 ? "tier-btn-0-01" : ("tier-btn-" + t);
         const btn = document.getElementById(btnId);
         if (!btn) return;
         if (t === tier) {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-[#c7f284] bg-[#182633] text-[#c7f284] text-center font-mono font-bold transition-all shadow-md shadow-[#c7f284]/15 cursor-pointer scale-[1.02]";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white text-center font-mono font-bold transition-all shadow-md cursor-pointer scale-[1.02]";
         } else {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-[#1f2b3e] bg-[#131b27] hover:border-[#2e3e58] hover:bg-[#182333] text-slate-300 text-center font-mono font-medium transition-all cursor-pointer";
+          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-[#334155] bg-[#131b27] hover:border-[#475569] hover:bg-[#1e293b] hover:text-white text-[#94a3b8] text-center font-mono transition-all cursor-pointer";
         }
       });
       updateDuelSummary();
@@ -4244,10 +4409,14 @@
       if (!btnYes || !btnNo) return;
 
       if (selectedDuelOption === 'YES') {
-        btnYes.className = "p-3.5 rounded-xl border-2 border-[#c7f284] bg-[#162923] text-[#c7f284] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-[#c7f284]/15 transition-all cursor-pointer scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border border-[#1f2b3e] bg-[#131b27] text-slate-400 hover:border-[#f87171]/50 hover:text-[#f87171] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        btnYes.className = "p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]";
+        btnNo.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] hover:border-[#475569] hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border border-[#1f2b3e] bg-[#131b27] text-slate-400 hover:border-[#c7f284]/50 hover:text-[#c7f284] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        btnYes.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] hover:border-[#475569] hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        btnNo.className = "p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]";
+      }
+    } else {
+        btnYes.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-slate-400 hover:border-[#c7f284]/50 hover:text-[#c7f284] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
         btnNo.className = "p-3.5 rounded-xl border-2 border-[#f87171] bg-[#29161a] text-[#f87171] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-[#f87171]/15 transition-all cursor-pointer scale-[1.02]";
       }
     }
@@ -5368,7 +5537,7 @@
       const yourLabel = (currentDuelTab === 'open' || currentDuelTab === 'expired') ? 'Your Request' : 'Your Match';
       const isVip = safeTier >= 1000;
       const tierBadgeClass = isVip 
-        ? "bg-[#f8fafc] text-black border-[#e2e8f0]" 
+        ? "bg-[#f8fafc] text-black border-[#334155]" 
         : "bg-[#f1f5f9] text-neutral-800 border-slate-200";
 
       const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
@@ -5381,15 +5550,15 @@
 
       let statusBadge = "";
       let actionSection = "";
-      let cardBgClass = "bg-white border-[#e2e8f0]";
+      let cardBgClass = "bg-white border-[#334155]";
       let userRoleBadge = "";
 
       // 1. OPEN TAB
       if (category === "open") {
         if (isCreator) {
           cardBgClass = "bg-white border border-slate-300 shadow-md";
-          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#f8fafc] border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> ⚡ YOUR REQUEST</span>`;
-          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-[#f1f5f9] text-[#cbd5e1] font-bold border border-[#e2e8f0] text-xs flex items-center gap-2">WAITING OPPONENT</span>`;
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#f8fafc] border border-[#334155] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> ⚡ YOUR REQUEST</span>`;
+          statusBadge = `<span class="px-3 py-1.5 rounded-xl bg-[#f1f5f9] text-[#cbd5e1] font-bold border border-[#334155] text-xs flex items-center gap-2">WAITING OPPONENT</span>`;
           actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
@@ -5397,7 +5566,7 @@
             </div>
           `;
         } else {
-          cardBgClass = "bg-white border-[#e2e8f0]";
+          cardBgClass = "bg-white border-[#334155]";
           actionSection = `
             <button onclick="acceptDuel('${duelData.id}', ${safeTier})" class="px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-black text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-1.5 cursor-pointer">
               ⚔️ ACCEPT DUEL #${dispNum}: TAKE [${requiredOpponentOption}] (${safeTier} USDG)
@@ -5408,13 +5577,13 @@
       // 2. MATCHED / IN PROGRESS TAB
       else if (category === "matched") {
         if (isParticipant) {
-          cardBgClass = "bg-[#f8fafc] border-[#e2e8f0] shadow-[0_0_20px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/30";
-          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#cbd5e1] border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> ⚡ YOUR MATCH</span>`;
+          cardBgClass = "bg-[#f8fafc] border-[#334155] shadow-[0_0_20px_rgba(99,102,241,0.15)] ring-1 ring-indigo-500/30";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#cbd5e1] border border-[#334155] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> ⚡ YOUR MATCH</span>`;
         } else {
-          cardBgClass = "bg-white border-[#e2e8f0] opacity-80";
+          cardBgClass = "bg-white border-[#334155] opacity-80";
         }
 
-        statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-bold border border-[#e2e8f0] text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span> WAITING OUTCOME (PvP BATTLE)</span>`;
+        statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-bold border border-[#334155] text-xs flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#f8fafc] animate-pulse"></span> WAITING OUTCOME (PvP BATTLE)</span>`;
 
         if (isParticipant) {
           actionSection = `
@@ -5428,7 +5597,7 @@
         } else {
           actionSection = `
             <div class="flex items-center gap-2">
-              <span class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 font-mono text-xs border border-[#e2e8f0]">🔒 PvP LOCKED</span>
+              <span class="px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-400 font-mono text-xs border border-[#334155]">🔒 PvP LOCKED</span>
               ${statusBadge}
             </div>
           `;
@@ -5483,16 +5652,16 @@
         const isNoWinnerMatch = duelData.isNoWinner || duelData.isDraw || (!duelData.winner && !duelData.loser && duelData.status === 'completed');
 
         if (isNoWinnerMatch) {
-          cardBgClass = "bg-[#f8fafc] border-[#e2e8f0] shadow-[0_0_20px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/30";
-          userRoleBadge = isParticipant ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#f8fafc] border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc]"></span> ⚖️ NO WINNER (100% REFUND)</span>` : "";
+          cardBgClass = "bg-[#f8fafc] border-[#334155] shadow-[0_0_20px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/30";
+          userRoleBadge = isParticipant ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#f8fafc] border border-[#334155] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc]"></span> ⚖️ NO WINNER (100% REFUND)</span>` : "";
         } else if (isWinner) {
-          cardBgClass = "bg-[#f1f5f9] border-[#e2e8f0] shadow-[0_0_20px_rgba(0,0,0,0.05)] ring-1 ring-slate-300";
-          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f1f5f9] animate-pulse"></span> 🏆 WIN</span>`;
+          cardBgClass = "bg-[#f1f5f9] border-[#334155] shadow-[0_0_20px_rgba(0,0,0,0.05)] ring-1 ring-slate-300";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f1f5f9] text-[#cbd5e1] border border-[#334155] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f1f5f9] animate-pulse"></span> 🏆 WIN</span>`;
         } else if (isLoser) {
-          cardBgClass = "bg-[#f8fafc] border-[#e2e8f0] shadow-[0_0_20px_rgba(244,63,94,0.2)] ring-1 ring-rose-500/40";
-          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#cbd5e1] border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> ❌ LOSE</span>`;
+          cardBgClass = "bg-[#f8fafc] border-[#334155] shadow-[0_0_20px_rgba(244,63,94,0.2)] ring-1 ring-rose-500/40";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#cbd5e1] border border-[#334155] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> ❌ LOSE</span>`;
         } else {
-          cardBgClass = "bg-white border-[#e2e8f0]";
+          cardBgClass = "bg-white border-[#334155]";
           userRoleBadge = "";
         }
 
@@ -5503,7 +5672,7 @@
             if (duelData.claimed || duelData.refundClaimed) {
               actionSection = `
                 <div class="flex items-center gap-2">
-                  <span class="px-3.5 py-2 rounded-xl bg-[#f8fafc] text-[#f8fafc] font-mono text-xs font-bold border border-[#e2e8f0] flex items-center gap-1">✅ 100% REFUNDED (+${safeTier} USDG)</span>
+                  <span class="px-3.5 py-2 rounded-xl bg-[#f8fafc] text-[#f8fafc] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">✅ 100% REFUNDED (+${safeTier} USDG)</span>
                 </div>
               `;
             } else {
@@ -5517,14 +5686,14 @@
             }
           } else {
             actionSection = `
-              <span class="px-3 py-1.5 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-mono text-xs border border-[#e2e8f0]">⚖️ DRAW (100% REFUNDED)</span>
+              <span class="px-3 py-1.5 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-mono text-xs border border-[#334155]">⚖️ DRAW (100% REFUNDED)</span>
             `;
           }
         } else if (isWinner) {
           if (duelData.claimed) {
             actionSection = `
               <div class="flex items-center gap-2">
-                <span class="px-3.5 py-2 rounded-xl bg-[#f1f5f9] text-[#cbd5e1] font-mono text-xs font-bold border border-[#e2e8f0] flex items-center gap-1">✅ PRIZE CLAIMED (+${safePayout} USDG)</span>
+                <span class="px-3.5 py-2 rounded-xl bg-[#f1f5f9] text-[#cbd5e1] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">✅ PRIZE CLAIMED (+${safePayout} USDG)</span>
               </div>
             `;
           } else {
@@ -5540,7 +5709,7 @@
           if (duelData.cashbackClaimed) {
             actionSection = `
               <div class="flex items-center gap-2">
-                <span class="px-3 py-1.5 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-mono text-xs font-bold border border-[#e2e8f0] flex items-center gap-1">
+                <span class="px-3 py-1.5 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">
                   ✅ 3% CASHBACK CLAIMED
                 </span>
               </div>
@@ -5562,9 +5731,9 @@
       // 4. EXPIRED & REFUNDS TAB
       else if (category === "expired") {
         if (isCreator) {
-          cardBgClass = "bg-[#f8fafc] border-[#e2e8f0] shadow-[0_0_20px_rgba(245,158,11,0.12)] ring-1 ring-amber-500/30";
-          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#f8fafc] border border-[#e2e8f0] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> 💰 YOUR DEPOSIT</span>`;
-          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-bold border border-[#e2e8f0] text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
+          cardBgClass = "bg-[#f8fafc] border-[#334155] shadow-[0_0_20px_rgba(245,158,11,0.12)] ring-1 ring-amber-500/30";
+          userRoleBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#f8fafc] text-[#f8fafc] border border-[#334155] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#f8fafc] animate-pulse"></span> 💰 YOUR DEPOSIT</span>`;
+          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-bold border border-[#334155] text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
           actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
@@ -5574,12 +5743,12 @@
             </div>
           `;
         } else {
-          cardBgClass = "bg-white border-[#e2e8f0] opacity-50";
-          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-bold border border-[#e2e8f0] text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
+          cardBgClass = "bg-white border-[#334155] opacity-50";
+          statusBadge = `<span class="px-3.5 py-2 rounded-xl bg-[#f8fafc] text-[#cbd5e1] font-bold border border-[#334155] text-xs flex items-center gap-1.5">⌛ EXPIRED</span>`;
           actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
-              <span class="px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-[#e2e8f0] text-xs font-bold font-mono">UNMATCHED / EXPIRED</span>
+              <span class="px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-[#334155] text-xs font-bold font-mono">UNMATCHED / EXPIRED</span>
             </div>
           `;
         }
@@ -5622,10 +5791,10 @@
 
         completedDetailsHtml = `
           <div class="text-xs font-mono text-neutral-700 mt-1 flex items-center gap-2 flex-wrap">
-            <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0] text-[#cbd5e1] font-bold flex items-center gap-1.5">
+            <span class="px-2.5 py-1 rounded-lg bg-[#f1f5f9] border border-[#334155] text-[#cbd5e1] font-bold flex items-center gap-1.5">
               🏆 WIN: <span class="text-white font-extrabold">${winLabel}</span> [<span class="text-[#cbd5e1] font-black">${winnerOption}</span>]
             </span>
-            <span class="px-2.5 py-1 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-[#cbd5e1] font-bold flex items-center gap-1.5">
+            <span class="px-2.5 py-1 rounded-lg bg-[#f8fafc] border border-[#334155] text-[#cbd5e1] font-bold flex items-center gap-1.5">
               ❌ LOSE: <span class="text-white font-extrabold">${loseLabel}</span> [<span class="text-[#cbd5e1] font-black">${loserOption}</span>]
             </span>
             <span class="text-slate-500">•</span>
@@ -5655,13 +5824,13 @@
       const cardHtml = `
         <div id="duel-row-${duelData.id}" class="p-4 rounded-2xl border ${cardBgClass} transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-[#131b27] border border-[#e2e8f0] flex flex-col items-center justify-center shrink-0">
+            <div class="w-12 h-12 rounded-xl bg-[#131b27] border border-[#334155] flex flex-col items-center justify-center shrink-0">
               <span class="text-[10px] text-slate-400 font-mono uppercase font-bold">TIER</span>
               <span class="text-sm font-black font-mono text-[#cbd5e1]">$${safeTier}</span>
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-0.5 rounded-lg bg-[#f1f5f9] text-[#cbd5e1] border border-[#e2e8f0] text-[11px] font-mono font-black tracking-wider flex items-center gap-1 shadow-sm">⚔️ DUEL #${dispNum}</span>
+                <span class="px-2.5 py-0.5 rounded-lg bg-[#f1f5f9] text-[#cbd5e1] border border-[#334155] text-[11px] font-mono font-black tracking-wider flex items-center gap-1 shadow-sm">⚔️ DUEL #${dispNum}</span>
                 <span class="text-xs font-mono font-bold text-[#f8fafc]">${questionText}</span>
                 ${userRoleBadge}
               </div>
@@ -6303,7 +6472,7 @@
         <td class="py-3 px-3 text-white font-medium max-w-xs truncate">${q.title}</td>
         <td class="py-3 px-3 text-[#cbd5e1]">${q.category || 'GENERAL'}</td>
         <td class="py-3 px-3">
-          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isEnded ? 'bg-slate-700/50 text-slate-400 border border-slate-600/30' : 'bg-[#f1f5f9] text-[#cbd5e1] border border-[#e2e8f0]'}">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isEnded ? 'bg-slate-700/50 text-slate-400 border border-slate-600/30' : 'bg-[#f1f5f9] text-[#cbd5e1] border border-[#334155]'}">
             ${isEnded ? 'ENDED' : 'LIVE'}
           </span>
         </td>
@@ -6545,7 +6714,7 @@ window.handleCreateQuestion = async function(e) {
       const statusText = statusMap[d.status] || ("Unknown (" + d.status + ")");
 
       resBox.innerHTML = `
-        <div class="border-b border-[#e2e8f0] pb-2 flex items-center justify-between">
+        <div class="border-b border-[#334155] pb-2 flex items-center justify-between">
           <span class="font-bold text-white text-sm">⚔️ Duel #${d.duelId.toString()}</span>
           <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#f1f5f9] text-[#cbd5e1]">${statusText}</span>
         </div>
@@ -6749,14 +6918,14 @@ window.handleCreateQuestion = async function(e) {
       const isOwner = currentWallet.toLowerCase() === "0xd8c09b380e1d8120aac2188653b68f1209ee883c".toLowerCase();
 
       if (cycle.isEnded) {
-        el.className = "text-xs font-mono font-bold text-neutral-800 bg-[#f8fafc] border border-[#e2e8f0] px-3 py-1 rounded-full flex items-center gap-2";
+        el.className = "text-xs font-mono font-bold text-neutral-800 bg-[#f8fafc] border border-[#334155] px-3 py-1 rounded-full flex items-center gap-2";
         let htmlContent = "<span>🔒 ROUND " + cycle.cycleIndex + " ENDED • AWAITING HOST</span>";
         if (isOwner) {
           htmlContent += '<button onclick="startNext2048Round()" class="ml-2 px-2 py-0.5 rounded bg-[#f1f5f9] hover:bg-[#f1f5f9] text-[#f8fafc] text-[10px] font-black cursor-pointer shadow">🚀 START ROUND ' + (cycle.cycleIndex + 1) + '</button>';
         }
         el.innerHTML = htmlContent;
       } else {
-        el.className = "text-xs font-mono font-bold text-neutral-800 bg-[#f8fafc] border border-[#e2e8f0] px-3 py-1 rounded-full";
+        el.className = "text-xs font-mono font-bold text-neutral-800 bg-[#f8fafc] border border-[#334155] px-3 py-1 rounded-full";
         el.innerText = "⏳ ROUND " + cycle.cycleIndex + ": " + cycle.formatted;
       }
     }
@@ -7126,8 +7295,8 @@ window.handleCreateQuestion = async function(e) {
                 
                 if (rank === 1) {
                   row.className = isMe
-                    ? "p-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] shadow-sm space-y-1.5"
-                    : "p-2.5 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0] space-y-1.5";
+                    ? "p-2.5 rounded-xl bg-[#f8fafc] border border-[#334155] shadow-sm space-y-1.5"
+                    : "p-2.5 rounded-xl bg-[#f1f5f9] border border-[#334155] space-y-1.5";
                   row.innerHTML = `
                     <div class="flex items-center justify-between">
                       <span class="font-bold ${isMe ? 'text-[#f8fafc]' : 'text-[#cbd5e1]'}">${medal} #1 ${displayWallet}</span>
@@ -7144,7 +7313,7 @@ window.handleCreateQuestion = async function(e) {
                   `;
                 } else {
                   row.className = isMe
-                    ? "flex items-center justify-between p-1.5 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-neutral-800 text-[11px]"
+                    ? "flex items-center justify-between p-1.5 rounded-lg bg-[#f8fafc] border border-[#334155] text-neutral-800 text-[11px]"
                     : "flex items-center justify-between p-1.5 rounded-lg bg-[#f1f5f9] border border-white/5 text-slate-400 text-[11px]";
                   row.innerHTML = `
                     <span>${medal} #${rank} ${displayWallet}</span>
@@ -7407,7 +7576,7 @@ window.handleCreateQuestion = async function(e) {
         <!-- 1. Category Selection Tabs (Zero-Typing) -->
         <div>
           <label class="text-slate-400 text-[11px] block font-bold uppercase tracking-wider mb-2">Select Category</label>
-          <div class="flex items-center bg-[#131b27]/90 p-1 rounded-xl border border-[#e2e8f0] gap-1 font-mono text-xs">
+          <div class="flex items-center bg-[#131b27]/90 p-1 rounded-xl border border-[#334155] gap-1 font-mono text-xs">
             <button type="button" id="catBtnCrypto" onclick="selectMarketCategory('CRYPTO')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-slate-200 text-[#f8fafc] border border-slate-400 shadow-sm">
               <span>📊</span>
               <span>Crypto Market</span>
@@ -7420,12 +7589,12 @@ window.handleCreateQuestion = async function(e) {
         </div>
 
         <!-- Sports DNB Rule Box (Visible when SPORTS is chosen) -->
-        <div id="sportsDnbNotice" class="hidden p-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#f8fafc]">
+        <div id="sportsDnbNotice" class="hidden p-2.5 rounded-xl bg-[#f8fafc] border border-[#334155] text-[#f8fafc]">
           <p class="font-bold flex items-center gap-1.5 text-[11px]"><span>⚽</span> Draw No Bet Rule:</p>
           <p class="text-[10px] text-[#cbd5e1] mt-0.5 leading-relaxed">Option 1 is Team A and Option 2 is Team B. In the event of a Full-Time Draw, the contest is void and 100% of collateral is refunded to both players with zero fee deduction.</p>
         </div>
 
-        <div id="cryptoVerificationPanel" class="space-y-3 p-3 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
+        <div id="cryptoVerificationPanel" class="space-y-3 p-3 rounded-xl bg-[#f1f5f9] border border-[#334155]">
           <div class="p-2.5 rounded-xl bg-[#f1f5f9] border border-slate-200 text-xs text-[#cbd5e1] font-mono flex items-center gap-2">
             <span class="text-[#cbd5e1]">🛡️</span>
             <span>Strictly based on Coinbase candle close.</span>
@@ -7434,7 +7603,7 @@ window.handleCreateQuestion = async function(e) {
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Select Whitelisted Token</label>
-              <select id="cryptoTokenSelect" onchange="handleCryptoTokenChange(this.value)" class="w-full bg-[#131b27] border border-[#e2e8f0] rounded-lg px-2.5 py-1.5 text-[#f8fafc] text-xs focus:outline-none focus:border-[#e2e8f0]">
+              <select id="cryptoTokenSelect" onchange="handleCryptoTokenChange(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]">
                 <option value="BTC" selected>₿ Bitcoin (BTC)</option>
                 <option value="ETH">⟠ Ethereum (ETH)</option>
                 <option value="SOL">◎ Solana (SOL)</option>
@@ -7444,7 +7613,7 @@ window.handleCreateQuestion = async function(e) {
             </div>
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Timeframe</label>
-              <select id="cryptoTimeframeSelect" onchange="handleCryptoTimeframeChange(this.value)" class="w-full bg-[#131b27] border border-[#e2e8f0] rounded-lg px-2.5 py-1.5 text-[#cbd5e1] text-xs font-semibold focus:outline-none focus:border-[#e2e8f0]">
+              <select id="cryptoTimeframeSelect" onchange="handleCryptoTimeframeChange(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#cbd5e1] text-xs font-semibold focus:outline-none focus:border-[#334155]">
                 <option value="12h" selected>12h</option>
                 <option value="daily">24h</option>
               </select>
@@ -7454,7 +7623,7 @@ window.handleCreateQuestion = async function(e) {
         </div>
 
         <!-- Sports Specific Verification & League Selector -->
-        <div id="sportsVerificationPanel" class="hidden space-y-3 p-3 rounded-xl bg-[#f1f5f9] border border-[#e2e8f0]">
+        <div id="sportsVerificationPanel" class="hidden space-y-3 p-3 rounded-xl bg-[#f1f5f9] border border-[#334155]">
           <div class="flex items-center justify-between">
             <span class="text-[11px] font-bold text-[#cbd5e1] flex items-center gap-1.5">
               <span>🛡️</span> Sports Oracle & Fixture Verification
@@ -7469,7 +7638,7 @@ window.handleCreateQuestion = async function(e) {
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Select League</label>
-              <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-[#131b27] border border-[#e2e8f0] rounded-lg px-2.5 py-1.5 text-[#f8fafc] text-xs focus:outline-none focus:border-[#e2e8f0]">
+              <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]">
                 <option value="FOOTBALL_UCL" selected>⚽ Football: UEFA Champions League</option>
                 <option value="FOOTBALL_EPL">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Football: English Premier League</option>
                 <option value="FOOTBALL_LALIGA">🇪🇸 Football: Spain La Liga</option>
@@ -7481,14 +7650,14 @@ window.handleCreateQuestion = async function(e) {
             </div>
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Verified Official Fixture</label>
-              <select id="sportsFixtureSelect" onchange="handleFixtureSelect(this.value)" class="w-full bg-[#131b27] border border-[#e2e8f0] rounded-lg px-2.5 py-1.5 text-[#cbd5e1] text-xs font-semibold focus:outline-none focus:border-[#e2e8f0]">
+              <select id="sportsFixtureSelect" onchange="handleFixtureSelect(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#cbd5e1] text-xs font-semibold focus:outline-none focus:border-[#334155]">
                 <!-- Populated dynamically -->
               </select>
             </div>
           </div>
 
           <!-- Anti-Fake Badge -->
-          <div id="sportsValidationBadge" class="p-2 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0] text-[#cbd5e1] flex items-center justify-between text-[10px]">
+          <div id="sportsValidationBadge" class="p-2 rounded-lg bg-[#f1f5f9] border border-[#334155] text-[#cbd5e1] flex items-center justify-between text-[10px]">
             <span id="sportsValidationText" class="font-bold flex items-center gap-1.5">
               <span>✅</span> Official Match Verified in Sports Calendar
             </span>
@@ -7709,7 +7878,7 @@ window.handleCreateQuestion = async function(e) {
         if (displayRes) displayRes.innerText = found.res;
 
         if (badge) {
-          badge.className = "p-2 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0] text-neutral-800 flex items-center justify-between text-[10px]";
+          badge.className = "p-2 rounded-lg bg-[#f1f5f9] border border-[#334155] text-neutral-800 flex items-center justify-between text-[10px]";
         }
         if (badgeText) {
           badgeText.innerHTML = "<span>✅</span> Official Match Verified in Sports Calendar";
@@ -7724,7 +7893,7 @@ window.handleCreateQuestion = async function(e) {
       } else {
         selectedSportsFixture = null;
         if (badge) {
-          badge.className = "p-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] text-neutral-800 flex items-center justify-between text-[10px]";
+          badge.className = "p-2 rounded-lg bg-[#f8fafc] border border-[#334155] text-neutral-800 flex items-center justify-between text-[10px]";
         }
         if (badgeText) {
           badgeText.innerHTML = "<span>⚠️</span> UNVERIFIED / FAKE MATCH DETECTED";
@@ -7823,7 +7992,7 @@ window.handleCreateQuestion = async function(e) {
       try {
         btn.disabled = true;
         btn.innerHTML = '<span class="animate-spin">⏳</span> Submitting to Robinhood Chain...';
-        statusBox.classList.remove("hidden", "bg-[#f8fafc]", "border-[#e2e8f0]", "text-neutral-800");
+        statusBox.classList.remove("hidden", "bg-[#f8fafc]", "border-[#334155]", "text-neutral-800");
         statusBox.classList.add("bg-[#f1f5f9]", "border", "border-slate-200", "text-neutral-800");
         statusBox.innerText = "Please confirm the transaction in your wallet. (You pay gas fee directly - Anti-Spam policy)";
 
@@ -7903,7 +8072,7 @@ window.handleCreateQuestion = async function(e) {
         await tx.wait();
 
         statusBox.classList.remove("bg-[#f1f5f9]", "border-slate-200", "text-neutral-800");
-        statusBox.classList.add("bg-[#f1f5f9]", "border-[#e2e8f0]", "text-neutral-800");
+        statusBox.classList.add("bg-[#f1f5f9]", "border-[#334155]", "text-neutral-800");
         statusBox.innerText = "✅ Market created successfully! You are now the official Creator and earn 5% on all duels.";
 
         setTimeout(() => {
@@ -7914,7 +8083,7 @@ window.handleCreateQuestion = async function(e) {
       } catch (err) {
         console.error("Error creating market:", err);
         statusBox.classList.remove("hidden", "bg-[#f1f5f9]", "border-slate-200", "text-neutral-800");
-        statusBox.classList.add("bg-[#f8fafc]", "border", "border-[#e2e8f0]", "text-neutral-800");
+        statusBox.classList.add("bg-[#f8fafc]", "border", "border-[#334155]", "text-neutral-800");
         statusBox.innerText = "Transaction failed: " + (err.reason || err.message || "Rejected");
         btn.disabled = false;
         btn.innerHTML = "<span>🚀</span><span>Deploy Market Onchain</span>";
