@@ -4234,7 +4234,7 @@
         qNum: 1,
         isOnchain: true,
         category: "SPORTS",
-        title: "برنده بازی بارسلون و چلسی چه تیمی است؟ (Barcelona vs Chelsea)",
+        title: "⚽ Barcelona vs Chelsea (Full-Time Match Result)",
         desc: "24-Hour Entry Window | Official UEFA / International Fixture",
         deadlineDesc: "24-Hour Entry Window",
         targetDesc: "Settlement: Full-Time Result",
@@ -4242,9 +4242,10 @@
         settlementTime: Date.now() + 90000000,
         winningOption: null,
         isEnded: false,
-        isThreeWay: false,
-        opt1: "برد بارسلون",
-        opt2: "برد چلسی",
+        isThreeWay: true,
+        opt1: "Barcelona",
+        opt2: "Draw",
+        opt3: "Chelsea",
         desc: "Official Match Fixture | Robinhood Mainnet",
         resolutionSource: "Official Match Result / ESPN",
         contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
@@ -4367,7 +4368,7 @@
         qNum: 7,
         isOnchain: true,
         category: "SPORTS",
-        title: "برنده بازی لس‌آنجلس لیکرز و بوستون سلتیکس چه تیمی است؟ (Lakers vs Celtics)",
+        title: "🏀 Los Angeles Lakers vs Boston Celtics (NBA Winner)",
         desc: "Official NBA Match | Final Score Result",
         deadlineDesc: "18-Hour Entry Window",
         targetDesc: "Settlement: Final Score",
@@ -4376,8 +4377,8 @@
         winningOption: null,
         isEnded: false,
         isThreeWay: false,
-        opt1: "برد لس‌آنجلس لیکرز",
-        opt2: "برد بوستون سلتیکس",
+        opt1: "LA Lakers",
+        opt2: "Boston Celtics",
         resolutionSource: "Official NBA / ESPN",
         contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
@@ -4387,7 +4388,7 @@
     ];
     let selectedDuelQuestionId = 101;
     let selectedDuelTier = 0.01;
-    let selectedDuelOption = "برد بارسلون";
+    let selectedDuelOption = "Barcelona";
     let activeQuestionTab = "live";
 
 
@@ -4636,9 +4637,9 @@
       let options = [];
       if (q.isThreeWay) {
         options = [
-          { key: q.opt1 || "برد بارسلون", label: q.opt1 || "برد بارسلون", sub: "Choice 1", hoverBorder: "hover:border-[#22c55e]" },
-          { key: q.opt2 || "مساوی", label: q.opt2 || "مساوی", sub: "Choice 2", hoverBorder: "hover:border-[#38bdf8]" },
-          { key: q.opt3 || "برد چلسی", label: q.opt3 || "برد چلسی", sub: "Choice 3", hoverBorder: "hover:border-[#ef4444]" }
+          { key: q.opt1 || "Barcelona", label: q.opt1 || "Barcelona", sub: "Choice 1", hoverBorder: "hover:border-[#22c55e]" },
+          { key: q.opt2 || "Draw", label: q.opt2 || "Draw", sub: "Choice 2", hoverBorder: "hover:border-[#38bdf8]" },
+          { key: q.opt3 || "Chelsea", label: q.opt3 || "Chelsea", sub: "Choice 3", hoverBorder: "hover:border-[#ef4444]" }
         ];
         container.className = "grid grid-cols-3 gap-2.5 pt-1";
       } else {
@@ -6141,7 +6142,7 @@
 
       let oppositeOption = "NO";
       if (q && q.isThreeWay) {
-        oppositeOption = selectedDuelOption === (q.opt1 || "برد بارسلون") ? (q.opt3 || "برد چلسی") : (q.opt1 || "برد بارسلون");
+        oppositeOption = selectedDuelOption === (q.opt1 || "Barcelona") ? (q.opt3 || "Chelsea") : (q.opt1 || "Barcelona");
       } else {
         oppositeOption = (selectedDuelOption === (q.opt1 || "GREEN") || selectedDuelOption === "YES") ? (q.opt2 || "RED") : (q.opt1 || "GREEN");
       }
@@ -6220,8 +6221,8 @@
         showToast("⏳ Confirm createDuelToken in your Wallet...", "info");
         let creatorChoiceNum = 1;
         if (q && q.isThreeWay) {
-          if (selectedDuelOption === (q.opt2 || "مساوی")) creatorChoiceNum = 2;
-          else if (selectedDuelOption === (q.opt3 || "برد چلسی")) creatorChoiceNum = 3;
+          if (selectedDuelOption === (q.opt2 || "Draw")) creatorChoiceNum = 2;
+          else if (selectedDuelOption === (q.opt3 || "Chelsea")) creatorChoiceNum = 3;
           else creatorChoiceNum = 1;
         } else {
           if (selectedDuelOption === (q.opt2 || "RED") || selectedDuelOption === "NO" || selectedDuelOption === "RED") creatorChoiceNum = 2;
