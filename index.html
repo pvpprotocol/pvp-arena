@@ -4258,7 +4258,7 @@
         qNum: 2,
         isOnchain: true,
         category: "CRYPTO 12H",
-        title: "Bitcoin 12H Candle Close: GREEN or RED?",
+        title: "₿ Bitcoin (BTC) 12H Candle Close: GREEN or RED?",
         desc: "12-Hour Entry Window | Closes at UTC (Coinbase 12H Candle)",
         deadlineDesc: "12-Hour Entry Window",
         targetDesc: "Settlement: 12H Close",
@@ -4279,6 +4279,94 @@
         id: 103,
         qNum: 3,
         isOnchain: true,
+        category: "CRYPTO 12H",
+        title: "◎ Solana (SOL) 12H Candle Close: GREEN or RED?",
+        desc: "12-Hour Entry Window | Closes at UTC (Coinbase SOL-USD)",
+        deadlineDesc: "12-Hour Entry Window",
+        targetDesc: "Settlement: 12H Close",
+        deadline: Date.now() + 43200000,
+        settlementTime: Date.now() + 43200000,
+        winningOption: null,
+        isEnded: false,
+        isThreeWay: false,
+        opt1: "GREEN",
+        opt2: "RED",
+        resolutionSource: "Coinbase SOL-USD 12H Candle",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 43200000; }
+      },
+      {
+        id: 104,
+        qNum: 4,
+        isOnchain: true,
+        category: "CRYPTO 12H",
+        title: "⚡ Hyperliquid (HYPE) 12H Candle Close: GREEN or RED?",
+        desc: "12-Hour Entry Window | Closes at UTC (Hyperliquid HYPE-USD)",
+        deadlineDesc: "12-Hour Entry Window",
+        targetDesc: "Settlement: 12H Close",
+        deadline: Date.now() + 43200000,
+        settlementTime: Date.now() + 43200000,
+        winningOption: null,
+        isEnded: false,
+        isThreeWay: false,
+        opt1: "GREEN",
+        opt2: "RED",
+        resolutionSource: "Hyperliquid HYPE-USD 12H Candle",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 43200000; }
+      },
+      {
+        id: 105,
+        qNum: 5,
+        isOnchain: true,
+        category: "CRYPTO 12H",
+        title: "🔶 Binance (BNB) 12H Candle Close: GREEN or RED?",
+        desc: "12-Hour Entry Window | Closes at UTC (Binance BNB-USDT)",
+        deadlineDesc: "12-Hour Entry Window",
+        targetDesc: "Settlement: 12H Close",
+        deadline: Date.now() + 43200000,
+        settlementTime: Date.now() + 43200000,
+        winningOption: null,
+        isEnded: false,
+        isThreeWay: false,
+        opt1: "GREEN",
+        opt2: "RED",
+        resolutionSource: "Binance BNB-USDT 12H Candle",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 43200000; }
+      },
+      {
+        id: 106,
+        qNum: 6,
+        isOnchain: true,
+        category: "CRYPTO 12H",
+        title: "⟠ Ethereum (ETH) 12H Candle Close: GREEN or RED?",
+        desc: "12-Hour Entry Window | Closes at UTC (Coinbase ETH-USD)",
+        deadlineDesc: "12-Hour Entry Window",
+        targetDesc: "Settlement: 12H Close",
+        deadline: Date.now() + 43200000,
+        settlementTime: Date.now() + 43200000,
+        winningOption: null,
+        isEnded: false,
+        isThreeWay: false,
+        opt1: "GREEN",
+        opt2: "RED",
+        resolutionSource: "Coinbase ETH-USD 12H Candle",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 43200000; }
+      },
+      {
+        id: 107,
+        qNum: 7,
+        isOnchain: true,
         category: "SPORTS",
         title: "برنده بازی لس‌آنجلس لیکرز و بوستون سلتیکس چه تیمی است؟ (Lakers vs Celtics)",
         desc: "Official NBA Match | Final Score Result",
@@ -4296,29 +4384,6 @@
         explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         allowedTiers: [0.01, 5, 10, 100, 1000],
         getDeadline: function() { return Date.now() + 64800000; }
-      },
-      {
-        id: 104,
-        qNum: 4,
-        isOnchain: true,
-        category: "SPORTS",
-        title: "برنده بازی رئال مادرید و منچسترسیتی چه تیمی است؟ (Real Madrid vs Man City)",
-        desc: "Official UEFA Champions League | Full-Time Result",
-        deadlineDesc: "24-Hour Entry Window",
-        targetDesc: "Settlement: Full-Time Result",
-        deadline: Date.now() + 86400000,
-        settlementTime: Date.now() + 90000000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: true,
-        opt1: "برد رئال مادرید",
-        opt2: "مساوی",
-        opt3: "برد منچسترسیتی",
-        resolutionSource: "Official UEFA / ESPN",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 86400000; }
       }
     ];
     let selectedDuelQuestionId = 101;
@@ -4402,6 +4467,33 @@
       };
     }
 
+    
+    function getQuestionAssetBadge(q) {
+      const t = ((q.title || "") + " " + (q.category || "")).toUpperCase();
+      if (t.includes("BTC") || t.includes("BITCOIN") || t.includes("₿")) {
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#f7931a]/15 text-[#f7931a] border border-[#f7931a]/30 text-[10px] font-mono font-bold tracking-tight">₿ BTC</span>';
+      }
+      if (t.includes("ETH") || t.includes("ETHEREUM") || t.includes("⟠")) {
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#627eea]/15 text-[#a5b4fc] border border-[#627eea]/30 text-[10px] font-mono font-bold tracking-tight">⟠ ETH</span>';
+      }
+      if (t.includes("SOL") || t.includes("SOLANA") || t.includes("◎")) {
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#14f195]/15 text-[#14f195] border border-[#14f195]/30 text-[10px] font-mono font-bold tracking-tight">◎ SOL</span>';
+      }
+      if (t.includes("BNB") || t.includes("BINANCE") || t.includes("🔶")) {
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#f3ba2f]/15 text-[#f3ba2f] border border-[#f3ba2f]/30 text-[10px] font-mono font-bold tracking-tight">🔶 BNB</span>';
+      }
+      if (t.includes("HYPE") || t.includes("HYPERLIQUID") || t.includes("⚡")) {
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#00f2fe]/15 text-[#38bdf8] border border-[#00f2fe]/30 text-[10px] font-mono font-bold tracking-tight">⚡ HYPE</span>';
+      }
+      if (q.category === "SPORTS" || t.includes("SPORTS")) {
+        if (t.includes("NBA") || t.includes("LAKERS") || t.includes("CELTICS") || t.includes("بسکتبال")) {
+          return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[10px] font-mono font-bold tracking-tight">🏀 NBA</span>';
+        }
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold tracking-tight">⚽ FOOTBALL</span>';
+      }
+      return '';
+    }
+
     function renderDuelQuestions() {
       // Badges calculation
       const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && Date.now() < getQuestionDeadline(item.id));
@@ -4475,8 +4567,11 @@
           <div onclick="selectDuelQuestion(${q.id})" class="p-4 rounded-2xl border ${borderClass} cursor-pointer transition-all flex items-start gap-3.5 group">
             ${numBadge}
             <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-[11px] font-mono font-bold text-slate-400 tracking-wide">(Sep 7, 2026)</span>
+              <div class="flex items-center justify-between mb-1.5 gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  ${getQuestionAssetBadge(q)}
+                  <span class="text-[10px] font-mono font-bold text-slate-400 tracking-wide bg-[#182230] px-2 py-0.5 rounded-md border border-[#334155]">${q.category || "CRYPTO"}</span>
+                </div>
                 ${isSelected ? '<span class="text-[10px] font-mono font-bold text-[#cbd5e1] uppercase tracking-wide bg-[#182230] px-2 py-0.5 rounded-full border border-[#334155]">Selected</span>' : ''}
               </div>
               <h5 class="text-xs font-bold text-white font-mono leading-snug">${q.title}</h5>
@@ -7780,8 +7875,8 @@ window.handleCreateQuestion = async function(e) {
                 <option value="BTC" selected>₿ Bitcoin (BTC)</option>
                 <option value="ETH">⟠ Ethereum (ETH)</option>
                 <option value="SOL">◎ Solana (SOL)</option>
-                <option value="BNB"> BNB (BNB)</option>
-                <option value="HYPE">💧 Hyperliquid (HYPE)</option>
+                <option value="BNB">🔶 Binance (BNB)</option>
+                <option value="HYPE">⚡ Hyperliquid (HYPE)</option>
               </select>
             </div>
             <div>
@@ -7900,11 +7995,11 @@ window.handleCreateQuestion = async function(e) {
 
     
     const WHITELISTED_CRYPTO_TOKENS = {
-      BTC: { name: "Bitcoin", symbol: "BTC", pair: "BTC-USD", exchange: "Coinbase BTC-USD" },
-      ETH: { name: "Ethereum", symbol: "ETH", pair: "ETH-USD", exchange: "Coinbase ETH-USD" },
-      SOL: { name: "Solana", symbol: "SOL", pair: "SOL-USD", exchange: "Coinbase SOL-USD" },
-      BNB: { name: "BNB", symbol: "BNB", pair: "BNB-USDT", exchange: "Binance BNB-USDT" },
-      HYPE: { name: "Hyperliquid", symbol: "HYPE", pair: "HYPE-USD", exchange: "Hyperliquid HYPE-USD" }
+      BTC: { name: "Bitcoin", symbol: "BTC", icon: "₿", pair: "BTC-USD", exchange: "Coinbase BTC-USD", badgeClass: "bg-[#f7931a]/15 text-[#f7931a] border-[#f7931a]/30" },
+      ETH: { name: "Ethereum", symbol: "ETH", icon: "⟠", pair: "ETH-USD", exchange: "Coinbase ETH-USD", badgeClass: "bg-[#627eea]/15 text-[#a5b4fc] border-[#627eea]/30" },
+      SOL: { name: "Solana", symbol: "SOL", icon: "◎", pair: "SOL-USD", exchange: "Coinbase SOL-USD", badgeClass: "bg-[#14f195]/15 text-[#14f195] border-[#14f195]/30" },
+      BNB: { name: "Binance", symbol: "BNB", icon: "🔶", pair: "BNB-USDT", exchange: "Binance BNB-USDT", badgeClass: "bg-[#f3ba2f]/15 text-[#f3ba2f] border-[#f3ba2f]/30" },
+      HYPE: { name: "Hyperliquid", symbol: "HYPE", icon: "⚡", pair: "HYPE-USD", exchange: "Hyperliquid HYPE-USD", badgeClass: "bg-[#00f2fe]/15 text-[#38bdf8] border-[#00f2fe]/30" }
     };
 
     function updateCryptoMarketInputs() {
@@ -7935,14 +8030,15 @@ window.handleCreateQuestion = async function(e) {
       const y = startDate.getUTCFullYear();
 
       let titleStr, resStr;
+      const tokenIcon = token.icon ? (token.icon + " ") : "";
       if (is12h) {
         const sh = String(startDate.getUTCHours()).padStart(2, "0") + ":00";
         const eh = String(endDate.getUTCHours()).padStart(2, "0") + ":00";
-        titleStr = `${token.name} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close: GREEN or RED?`;
-        resStr = `Coinbase ${token.pair} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close`;
+        titleStr = `${tokenIcon}${token.name} (${token.symbol}) 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close: GREEN or RED?`;
+        resStr = `${token.exchange} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close`;
       } else {
-        titleStr = `${token.name} 24h Candle (${m} ${d}, ${y} UTC) Close: GREEN or RED?`;
-        resStr = `Coinbase ${token.pair} 24h Candle (${m} ${d}, ${y} UTC) Close`;
+        titleStr = `${tokenIcon}${token.name} (${token.symbol}) 24h Candle (${m} ${d}, ${y} UTC) Close: GREEN or RED?`;
+        resStr = `${token.exchange} 24h Candle (${m} ${d}, ${y} UTC) Close`;
       }
 
       if (titleInput) titleInput.value = titleStr;
