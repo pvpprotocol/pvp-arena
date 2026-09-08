@@ -942,9 +942,9 @@
           </div>
           <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <div class="flex items-center bg-black/50 p-1 rounded-xl border border-[#334155] text-xs font-mono">
-              <button type="button" id="filter-duels-all" onclick="filterDuelsCategory('ALL')" class="px-3 py-1.5 rounded-lg font-bold bg-slate-200 text-[#f8fafc] border border-slate-400 transition-all shadow-sm">ALL</button>
-              <button type="button" id="filter-duels-crypto" onclick="filterDuelsCategory('CRYPTO')" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 bg-[#131b27] border border-[#334155] hover:bg-slate-50 transition-all">📊 CRYPTO</button>
-              <button type="button" id="filter-duels-sports" onclick="filterDuelsCategory('SPORTS')" class="px-3 py-1.5 rounded-lg font-medium text-slate-600 bg-[#131b27] border border-[#334155] hover:bg-slate-50 transition-all">⚽ SPORTS</button>
+              <button type="button" id="filter-duels-all" onclick="filterDuelsCategory('ALL')" class="filter-cat-btn active px-3 py-1.5 rounded-lg font-bold transition-all shadow-sm cursor-pointer">ALL</button>
+              <button type="button" id="filter-duels-crypto" onclick="filterDuelsCategory('CRYPTO')" class="filter-cat-btn px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer">📊 CRYPTO</button>
+              <button type="button" id="filter-duels-sports" onclick="filterDuelsCategory('SPORTS')" class="filter-cat-btn px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer">⚽ SPORTS</button>
             </div>
             <span id="duels-count-badge" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">0 Total</span>
           </div>
@@ -4670,9 +4670,9 @@
         const btn = document.getElementById(`filter-duels-${c.toLowerCase()}`);
         if (!btn) return;
         if (c === cat) {
-          btn.className = "px-3 py-1.5 rounded-lg font-bold bg-[#1a2638] text-[#f8fafc] border border-slate-400 transition-all shadow-sm";
+          btn.className = "filter-cat-btn active px-3 py-1.5 rounded-lg font-bold transition-all shadow-sm cursor-pointer";
         } else {
-          btn.className = "px-3 py-1.5 rounded-lg font-medium text-slate-600 bg-white border border-[#334155] hover:bg-slate-50 transition-all";
+          btn.className = "filter-cat-btn px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer";
         }
       });
       renderAllDuels();
@@ -4685,9 +4685,9 @@
         const btn = document.getElementById(`duel-tab-${t}`);
         if (!btn) return;
         if (t === tab) {
-          btn.className = "px-4 py-3 border-b-2 border-slate-500 text-black font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+          btn.className = "px-4 py-3 border-b-2 border-slate-400 text-white font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer";
         } else {
-          btn.className = "px-4 py-3 border-b-2 border-transparent text-[#64748b] hover:text-black font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all";
+          btn.className = "px-4 py-3 border-b-2 border-transparent text-slate-400 hover:text-white font-mono font-bold text-xs flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer";
         }
       });
       renderAllDuels();
@@ -7646,7 +7646,7 @@ window.handleCreateQuestion = async function(e) {
               <span>📊</span>
               <span>Crypto Market</span>
             </button>
-            <button type="button" id="catBtnSports" onclick="selectMarketCategory('SPORTS')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#131b27] text-slate-600 border border-[#334155] hover:bg-slate-50">
+            <button type="button" id="catBtnSports" onclick="selectMarketCategory('SPORTS')" class="flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#131b27] text-slate-600 border border-[#334155] hover:bg-[#1e293b] hover:text-white">
               <span>⚽</span>
               <span>Sports Arenas</span>
             </button>
@@ -7872,7 +7872,7 @@ window.handleCreateQuestion = async function(e) {
           btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#1a2638] text-[#f8fafc] border border-slate-400";
         }
         if (btnSports) {
-          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-neutral-800 border border-transparent";
+          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white bg-[#131b27] border border-[#334155] hover:bg-[#1e293b]";
         }
         if (notice) notice.classList.add("hidden");
         if (sportsPanel) sportsPanel.classList.add("hidden");
@@ -7888,7 +7888,7 @@ window.handleCreateQuestion = async function(e) {
           btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#1a2638] text-[#f8fafc] border border-slate-400";
         }
         if (btnCrypto) {
-          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-neutral-800 border border-transparent";
+          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white bg-[#131b27] border border-[#334155] hover:bg-[#1e293b]";
         }
         if (notice) notice.classList.remove("hidden");
         if (sportsPanel) sportsPanel.classList.remove("hidden");
