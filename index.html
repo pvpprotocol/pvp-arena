@@ -946,13 +946,13 @@
             
             
             <div id="duel-options-container" class="grid grid-cols-2 gap-3 pt-1">
-              <button id="opt-btn-yes" onclick="selectDuelOption(YES, false)" class="p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02] cursor-pointer">
+              <button id="opt-btn-yes" onclick="selectDuelOption('GREEN', false)" class="p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02] cursor-pointer">
                 <span class="text-lg"></span>
                 <span class="text-base font-black tracking-wider">GREEN</span>
                 <span class="text-[10px] font-mono text-neutral-500 font-medium">⚡ Deposit & Start</span>
               </button>
 
-              <button id="opt-btn-no" onclick="selectDuelOption(NO, false)" class="p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-[#475569] hover:text-white cursor-pointer">
+              <button id="opt-btn-no" onclick="selectDuelOption('RED', false)" class="p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-[#475569] hover:text-white cursor-pointer">
                 <span class="text-lg"></span>
                 <span class="text-base font-black tracking-wider">RED</span>
                 <span class="text-[10px] font-mono text-[#cbd5e1] font-medium">⚡ Deposit & Start</span>
@@ -4341,7 +4341,7 @@
         getDeadline: function() { return Date.now() + 43200000; }
       }
     ];
-    let selectedDuelQuestionId = 101;
+    let selectedDuelQuestionId = 102;
     let selectedDuelTier = 0.01;
     let selectedDuelOption = "GREEN";
     let activeQuestionTab = "live";
@@ -4561,7 +4561,8 @@
 
     function selectDuelQuestion(qId) {
       selectedDuelQuestionId = qId;
-      selectedDuelOption = 'YES';
+      const q = DUEL_QUESTIONS.find(x => x.id === qId) || DUEL_QUESTIONS[0];
+      selectedDuelOption = q ? (q.opt1 || 'GREEN') : 'GREEN';
       renderDuelQuestions();
     }
 
@@ -6630,6 +6631,12 @@
     window.reclaimExpiredDeposit = reclaimExpiredDeposit;
     window.resolveDuelOutcome = resolveDuelOutcome;
     window.renderDuelQuestions = renderDuelQuestions;
+    window.selectDuelOption = selectDuelOption;
+    window.selectDuelQuestion = selectDuelQuestion;
+    window.selectDuelTier = selectDuelTier;
+    window.updateOptionButtonsUI = updateOptionButtonsUI;
+    window.YES = "GREEN";
+    window.NO = "RED";
 
   // ── ADMIN PANEL LOGIC & ACCESS CONTROL ──
   const AUTHORIZED_ADMINS = [
