@@ -169,7 +169,27 @@
       box-shadow: 0 0 0 3px rgba(199, 242, 132, 0.2) !important;
       outline: none !important;
     }
-</style>
+
+    /* Left Sidebar Navigation Styles */
+    aside .tab-btn {
+      color: #94a3b8 !important;
+      border: 1px solid transparent !important;
+      background: #0e141f !important;
+      text-align: left !important;
+    }
+    aside .tab-btn:hover {
+      color: #ffffff !important;
+      background: #1f2b3e !important;
+      border-color: #2a3a52 !important;
+    }
+    aside .tab-btn.active {
+      background: #1c2838 !important;
+      color: #c7f284 !important;
+      border: 1px solid #c7f284 !important;
+      box-shadow: 0 0 12px rgba(199, 242, 132, 0.15) !important;
+    }
+
+  </style>
 
   <script>
 
@@ -243,29 +263,7 @@
       </div>
 
       <!-- MAIN NAVIGATION TABS -->
-      <nav class="flex overflow-x-auto max-w-full items-center gap-1 bg-white/95 p-1.5 rounded-2xl border border-[#e2e8f0]">
-        <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all bg-black text-white shadow-sm flex items-center gap-2">
-          <span>⚔️</span> PvP Duels
-        </button>
-        <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2">
-          <span>🎮</span> 2048 Skill <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#f8fafc] text-black border border-[#e2e8f0]">SOON</span>
-        </button>
-        <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2">
-          <span>🎯</span> Grand Jackpot <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#f8fafc] text-black border border-[#e2e8f0]">SOON</span>
-        </button>
-        <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2">
-          <span>🏆</span> Leaderboard <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#f8fafc] text-black border border-[#e2e8f0]">SOON</span>
-        </button>
-        <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2">
-          <span>📜</span> History <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#f8fafc] text-black border border-[#e2e8f0]">SOON</span>
-        </button>
-        <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-700 hover:text-black flex items-center gap-2 bg-[#f1f5f9] border border-[#e2e8f0] hover:border-[#e2e8f0]">
-          <span>📜</span> Whitepaper
-        </button>
-        <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all text-neutral-800 bg-[#f8fafc] border border-[#e2e8f0] hover:bg-[#f8fafc] items-center gap-2 shadow-sm shadow-none">
-          <span>👑</span> Admin Panel
-        </button>
-      </nav>
+      <!-- Top Header Nav Moved To Left Sidebar -->
 
       <!-- WALLET & QUICK METRICS -->
       <div class="flex items-center gap-3">
@@ -284,7 +282,51 @@
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+  
+  <!-- MAIN CONTAINER WITH LEFT SIDEBAR LAYOUT -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col md:flex-row gap-6">
+    
+    <!-- LEFT SIDEBAR NAVIGATION -->
+    <aside class="w-full md:w-64 shrink-0 space-y-4">
+      <div class="bg-[#131b27] p-3 rounded-2xl border border-[#1f2b3e] shadow-lg sticky top-24">
+        <div class="px-3 py-2 text-[11px] font-mono font-bold text-[#94a3b8] uppercase tracking-wider border-b border-[#1f2b3e] mb-2 flex items-center justify-between">
+          <span>NAVIGATION</span>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-[#1f2b3e] text-[#c7f284]">HUB</span>
+        </div>
+        <nav class="flex flex-col gap-1.5">
+          <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
+            <span class="flex items-center gap-2.5"><span>⚔️</span> PvP Duels</span>
+            <span class="w-2 h-2 rounded-full bg-[#c7f284] animate-pulse"></span>
+          </button>
+          <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
+            <span class="flex items-center gap-2.5"><span>🎮</span> 2048 Skill</span>
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1f2b3e] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          </button>
+          <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
+            <span class="flex items-center gap-2.5"><span>🎯</span> Grand Jackpot</span>
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1f2b3e] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          </button>
+          <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
+            <span class="flex items-center gap-2.5"><span>🏆</span> Leaderboard</span>
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1f2b3e] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          </button>
+          <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
+            <span class="flex items-center gap-2.5"><span>📜</span> History</span>
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1f2b3e] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+          </button>
+          <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
+            <span class="flex items-center gap-2.5"><span>📜</span> Whitepaper</span>
+          </button>
+          <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
+            <span class="flex items-center gap-2.5"><span>👑</span> Admin Panel</span>
+          </button>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 w-full space-y-8">
+
 
     <!-- 1. PVP DUELS TAB -->
     <div id="tab-duel" class="tab-content block space-y-8">
@@ -1887,6 +1929,9 @@
   </main>
 
   <!-- FOOTER -->
+  </main>
+  </div>
+
   <footer class="border-t border-[#e2e8f0] bg-[#05070d] py-6 text-center text-xs font-mono text-slate-500">
     <p>pvphub.fun © 2026 • Robinhood Chain</p>
   </footer>
