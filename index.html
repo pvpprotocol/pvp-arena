@@ -481,9 +481,14 @@
       color: #94a3b8 !important;
       transition: all 0.15s ease !important;
     }
-    #opt-btn-yes:hover, #opt-btn-no:hover {
-      background-color: #1e293b !important;
-      border-color: #475569 !important;
+    #opt-btn-yes:hover {
+      background-color: #14241d !important;
+      border: 1px solid #22c55e !important;
+      color: #ffffff !important;
+    }
+    #opt-btn-no:hover {
+      background-color: #241419 !important;
+      border: 1px solid #ef4444 !important;
       color: #ffffff !important;
     }
     #opt-btn-yes.active-opt, #opt-btn-no.active-opt {
@@ -872,7 +877,6 @@
                 <span class="px-2.5 py-1 rounded-lg bg-[#182230] text-[#cbd5e1] font-mono text-xs font-bold border border-[#334155]">STEP 2</span>
                 <h4 class="text-xs font-bold font-mono text-[#f8fafc] uppercase tracking-wider">Select Stake Tier</h4>
               </div>
-              <span id="selected-tier-payout" class="text-xs font-mono font-bold text-[#cbd5e1] bg-[#182230] px-2.5 py-1 rounded-lg border border-[#334155]">Winner: +$0.018 USDG</span>
             </div>
             <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDG. Winner takes 90%, 3% auto-cashback, 7% platform fee.</p>
             
@@ -4449,7 +4453,7 @@
       if (btnYes) {
         btnYes.setAttribute("onclick", "selectDuelOption('YES', false)");
         btnYes.innerHTML = `
-          <span class="text-base font-black tracking-wider text-[#f8fafc]">YES</span>
+          <span class="text-base font-black tracking-wider text-[#f8fafc]">${q.optALabel || 'YES'}</span>
           <span class="text-[10px] font-mono text-[#cbd5e1] font-medium">${q.optASub || 'Affirmative'}</span>
         `;
       }
@@ -4457,7 +4461,7 @@
       if (btnNo) {
         btnNo.setAttribute("onclick", "selectDuelOption('NO', false)");
         btnNo.innerHTML = `
-          <span class="text-base font-black tracking-wider text-[#f8fafc]">NO</span>
+          <span class="text-base font-black tracking-wider text-[#f8fafc]">${q.optBLabel || 'NO'}</span>
           <span class="text-[10px] font-mono text-neutral-500 font-medium">${q.optBSub || 'Negative'}</span>
         `;
       }
@@ -4482,9 +4486,9 @@
 
       if (selectedDuelOption === 'YES') {
         btnYes.className = "p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]";
-        btnNo.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] hover:border-[#475569] hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        btnNo.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] hover:border-[#ef4444] hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
       } else {
-        btnYes.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] hover:border-[#475569] hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        btnYes.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] hover:border-[#22c55e] hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
         btnNo.className = "p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]";
       }
     } else {
