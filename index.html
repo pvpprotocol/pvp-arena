@@ -7873,63 +7873,61 @@ window.handleCreateQuestion = async function(e) {
             <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">Official Calendar</span>
           </div>
 
+          <!-- Select League -->
+          <div>
+            <label class="text-slate-400 text-[10px] block mb-1">Select League</label>
+            <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-2 text-[#f8fafc] text-xs focus:outline-none focus:border-cyan-500/50">
+              <option value="FOOTBALL_EPL" selected>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Football: English Premier League</option>
+              <option value="FOOTBALL_LALIGA">🇪🇸 Football: Spain La Liga</option>
+              <option value="FOOTBALL_BUNDESLIGA">🇩🇪 Football: Germany Bundesliga</option>
+              <option value="FOOTBALL_SERIE_A">🇮🇹 Football: Italy Serie A</option>
+              <option value="FOOTBALL_LIGUE_1">🇫🇷 Football: France Ligue 1</option>
+              <option value="NBA">🏀 Basketball: USA NBA</option>
+            </select>
+          </div>
 
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div>
-              <label class="text-slate-400 text-[10px] block mb-1">Select League</label>
-              <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-2 text-[#f8fafc] text-xs focus:outline-none focus:border-cyan-500/50">
-                <option value="FOOTBALL_EPL" selected>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Football: English Premier League</option>
-                <option value="FOOTBALL_LALIGA">🇪🇸 Football: Spain La Liga</option>
-                <option value="FOOTBALL_BUNDESLIGA">🇩🇪 Football: Germany Bundesliga</option>
-                <option value="FOOTBALL_SERIE_A">🇮🇹 Football: Italy Serie A</option>
-                <option value="FOOTBALL_LIGUE_1">🇫🇷 Football: France Ligue 1</option>
-                <option value="NBA">🏀 Basketball: USA NBA</option>
-              </select>
-            </div>
-
-            <!-- Team Search Autocomplete -->
+          <!-- Search Fixture or Team Input -->
+          <div class="relative">
+            <label class="text-slate-400 text-[10px] block mb-1">Search Fixture or Team</label>
             <div class="relative">
-              <label class="text-slate-400 text-[10px] block mb-1">Search Team (e.g. type "B")</label>
-              <div class="relative">
-                <input type="text" id="sportsTeamSearchInput" oninput="handleSportsTeamSearch(this.value)" onfocus="handleSportsTeamSearch(this.value)" placeholder="Type team name..." class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-2 text-[#f8fafc] text-xs focus:outline-none focus:border-cyan-500/50 placeholder:text-slate-500" autocomplete="off" />
-                <span class="absolute right-2.5 top-2.5 text-slate-400 text-xs pointer-events-none">🔍</span>
-              </div>
-              <!-- Autocomplete Dropdown List -->
-              <div id="sportsTeamSuggestions" class="hidden absolute left-0 right-0 top-full mt-1 bg-[#0f172a] border border-[#334155] rounded-lg shadow-2xl z-50 max-h-48 overflow-y-auto divide-y divide-[#1e293b]"></div>
+              <input type="text" id="sportsFixtureSearchInput" oninput="renderSportsWeeklyFixtures(this.value)" placeholder="Search team (e.g. Arsenal, Chelsea, Liverpool)..." class="w-full bg-[#131b27] border border-[#334155] rounded-lg pl-8 pr-2.5 py-2 text-[#f8fafc] text-xs focus:outline-none focus:border-cyan-500/50 placeholder:text-slate-500" autocomplete="off" />
+              <span class="absolute left-2.5 top-2.5 text-slate-400 text-xs pointer-events-none">🔍</span>
             </div>
           </div>
 
-          <!-- Detected Match Card (Auto-detects Round, Teams & Schedule) -->
-          <div id="sportsDetectedMatchCard" class="p-3 rounded-xl bg-[#131b27] border border-[#334155] flex flex-col gap-2.5">
+          <!-- Chronological Weekly Fixtures List -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-slate-400 text-[10px] font-medium">Weekly Fixtures (Chronological Order)</span>
+              <span id="sportsFixturesCountBadge" class="text-[9px] text-cyan-400 font-mono font-bold bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">5 Matches</span>
+            </div>
+            <div id="sportsWeeklyFixturesList" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+              <!-- Rendered dynamically in chronological order -->
+            </div>
+          </div>
+
+          <!-- Selected Fixture Summary Card -->
+          <div id="sportsDetectedMatchCard" class="p-2.5 rounded-xl bg-[#131b27] border border-cyan-500/40 flex flex-col gap-2">
             <div class="flex items-center justify-between text-[11px]">
               <div class="flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="sportsDetectedRoundLabel" class="font-mono font-bold text-cyan-300">Auto-Detected Fixture</span>
+                <span id="sportsDetectedRoundLabel" class="font-mono font-bold text-cyan-300">Selected Match</span>
               </div>
-              <span id="sportsMatchKickoffBadge" class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 font-mono">Official Calendar</span>
+              <span id="sportsMatchKickoffBadge" class="px-2 py-0.5 rounded text-[9px] font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 font-mono">Official Fixture</span>
             </div>
             
-            <div class="flex items-center justify-between py-2 px-3 rounded-lg bg-[#0f172a] border border-[#1e293b]">
+            <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-[#0f172a] border border-[#1e293b]">
               <div class="flex items-center gap-2">
                 <span id="sportsHomeTeamName" class="text-xs font-bold text-emerald-400">Team A</span>
-                <span class="text-[10px] text-slate-500 font-bold px-1 py-0.5 bg-slate-800 rounded">VS</span>
+                <span class="text-[9px] text-slate-500 font-bold px-1 py-0.5 bg-slate-800 rounded">VS</span>
                 <span id="sportsAwayTeamName" class="text-xs font-bold text-rose-400">Team B</span>
               </div>
-              <span id="sportsMatchStatusBadge" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono font-bold">Verified Match</span>
+              <span id="sportsMatchStatusBadge" class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono font-bold">Verified Match</span>
             </div>
 
             <div class="text-[10px] text-slate-400 flex items-center justify-between">
-              <div>📅 Kickoff / Entry Closes: <span id="sportsMatchKickoffTime" class="text-slate-200 font-medium font-mono">In ~5h</span></div>
+              <div>📅 Kickoff / Entry Closes: <span id="sportsMatchKickoffTime" class="text-slate-200 font-medium font-mono">Select a match above</span></div>
             </div>
-          </div>
-
-          <!-- All Fixtures Dropdown -->
-          <div>
-            <label class="text-slate-400 text-[10px] block mb-1">Or Select From All League Fixtures</label>
-            <select id="sportsFixtureSelect" onchange="handleFixtureSelect(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#cbd5e1] text-xs font-semibold focus:outline-none focus:border-[#334155]">
-              <!-- Populated dynamically -->
-            </select>
           </div>
         </div>
 
@@ -7995,112 +7993,80 @@ window.handleCreateQuestion = async function(e) {
 
     let selectedSportsFixture = null;
 
-    function handleSportsLeagueChange(leagueKey) {
-      const roundLabel = document.getElementById("sportsActiveRoundLabel");
-      if (roundLabel && ACTIVE_LEAGUE_ROUNDS[leagueKey]) {
-        roundLabel.innerText = ACTIVE_LEAGUE_ROUNDS[leagueKey];
-      }
-      const fixtureSelect = document.getElementById("sportsFixtureSelect");
-      const searchInput = document.getElementById("sportsTeamSearchInput");
-      const suggestions = document.getElementById("sportsTeamSuggestions");
-      const fixtures = VERIFIED_SPORTS_FIXTURES[leagueKey] || [];
+    // Render fixtures for active league in strict chronological order with live search
+    function renderSportsWeeklyFixtures(searchQuery = "") {
+      const leagueSelect = document.getElementById("sportsLeagueSelect");
+      const leagueKey = leagueSelect ? leagueSelect.value : "FOOTBALL_EPL";
+      let fixtures = (VERIFIED_SPORTS_FIXTURES[leagueKey] || []).slice();
 
-      if (searchInput) searchInput.value = "";
-      if (suggestions) {
-        suggestions.classList.add("hidden");
-        suggestions.innerHTML = "";
+      // Sort strictly in chronological order by kickoffOffsetHours
+      fixtures.sort((a, b) => (a.kickoffOffsetHours || 0) - (b.kickoffOffsetHours || 0));
+
+      const query = (searchQuery || "").trim().toLowerCase();
+      if (query) {
+        fixtures = fixtures.filter(f => 
+          f.teamA.toLowerCase().includes(query) || 
+          f.teamB.toLowerCase().includes(query) ||
+          f.title.toLowerCase().includes(query) ||
+          (f.matchDay && f.matchDay.toLowerCase().includes(query))
+        );
       }
 
-      if (!fixtureSelect) return;
-      fixtureSelect.innerHTML = "";
+      const countBadge = document.getElementById("sportsFixturesCountBadge");
+      if (countBadge) {
+        countBadge.innerText = fixtures.length + " Matches";
+      }
+
+      const listContainer = document.getElementById("sportsWeeklyFixturesList");
+      if (!listContainer) return;
+
+      if (fixtures.length === 0) {
+        listContainer.innerHTML = '<div class="p-3 text-center text-xs text-slate-400 bg-[#131b27] rounded-xl border border-[#334155]">No fixtures found matching "' + searchQuery + '"</div>';
+        return;
+      }
+
+      listContainer.innerHTML = "";
       fixtures.forEach((f) => {
-        const opt = document.createElement("option");
-        opt.value = f.id;
-        opt.text = `${f.matchDay} • ${f.teamA} vs ${f.teamB}`;
-        fixtureSelect.appendChild(opt);
+        const isSelected = selectedSportsFixture && selectedSportsFixture.id === f.id;
+        const card = document.createElement("div");
+        card.className = "p-2.5 rounded-xl cursor-pointer transition-all border flex flex-col gap-1.5 " + 
+          (isSelected ? "bg-[#132338] border-cyan-400 shadow-[0_0_12px_rgba(56,189,248,0.25)]" : "bg-[#131b27] border-[#334155] hover:border-cyan-400/50 hover:bg-[#1a2536]");
+        card.onclick = () => {
+          handleFixtureSelect(f.id);
+        };
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between text-[10px]">
+            <span class="text-slate-400 font-mono flex items-center gap-1">📅 ${f.matchDay} • ${f.matchTime}</span>
+            <span class="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold ${isSelected ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-slate-800 text-slate-400'}">In ~${f.kickoffOffsetHours}h</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white">${f.teamA}</span>
+              <span class="text-[9px] text-slate-500 font-bold px-1 py-0.5 bg-[#0f172a] rounded">VS</span>
+              <span class="text-xs font-bold text-white">${f.teamB}</span>
+            </div>
+            <span class="text-[10px] font-bold ${isSelected ? 'text-cyan-400' : 'text-slate-500'}">${isSelected ? '✓ Selected' : 'Select →'}</span>
+          </div>
+        `;
+        listContainer.appendChild(card);
       });
+    }
+
+    function handleSportsLeagueChange(leagueKey) {
+      const searchInput = document.getElementById("sportsFixtureSearchInput");
+      if (searchInput) searchInput.value = "";
+
+      const fixtures = (VERIFIED_SPORTS_FIXTURES[leagueKey] || []).slice();
+      fixtures.sort((a, b) => (a.kickoffOffsetHours || 0) - (b.kickoffOffsetHours || 0));
 
       if (fixtures.length > 0) {
         handleFixtureSelect(fixtures[0].id);
+      } else {
+        selectedSportsFixture = null;
+        renderSportsWeeklyFixtures("");
       }
     }
-
-    function handleSportsTeamSearch(val) {
-      const leagueSelect = document.getElementById("sportsLeagueSelect");
-      const leagueKey = leagueSelect ? leagueSelect.value : "FOOTBALL_EPL";
-      const fixtures = VERIFIED_SPORTS_FIXTURES[leagueKey] || [];
-      const container = document.getElementById("sportsTeamSuggestions");
-      if (!container) return;
-
-      const query = (val || "").trim().toLowerCase();
-      if (!query) {
-        container.classList.add("hidden");
-        container.innerHTML = "";
-        return;
-      }
-
-      const matches = [];
-      fixtures.forEach(f => {
-        if (f.teamA.toLowerCase().includes(query)) {
-          matches.push({ matchedTeam: f.teamA, opponentTeam: f.teamB, role: "Home", fixture: f });
-        }
-        if (f.teamB.toLowerCase().includes(query)) {
-          matches.push({ matchedTeam: f.teamB, opponentTeam: f.teamA, role: "Away", fixture: f });
-        }
-      });
-
-      if (matches.length === 0) {
-        container.innerHTML = `<div class="p-2.5 text-[11px] text-slate-400">No teams found matching "${val}" in this league.</div>`;
-        container.classList.remove("hidden");
-        return;
-      }
-
-      container.innerHTML = "";
-      matches.forEach(m => {
-        const row = document.createElement("div");
-        row.className = "px-3 py-2.5 cursor-pointer hover:bg-[#1e293b] flex items-center justify-between text-xs transition-colors";
-        row.innerHTML = `
-          <div class="flex flex-col">
-            <div class="flex items-center gap-1.5">
-              <span class="font-bold text-white text-xs">${m.matchedTeam}</span>
-              <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400">${m.role}</span>
-            </div>
-            <span class="text-[10px] text-slate-400">Opponent: <b class="text-rose-400">${m.opponentTeam}</b> • ${m.fixture.round || "Active Matchweek"} (${m.fixture.matchDay})</span>
-          </div>
-          <span class="text-[10px] text-cyan-400 font-bold bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">Auto-Pair Opponent →</span>
-        `;
-        row.onclick = () => {
-          selectSportsTeamAndMatch(m);
-        };
-        container.appendChild(row);
-      });
-      container.classList.remove("hidden");
-    }
-
-    function selectSportsTeamAndMatch(matchObj) {
-      const searchInput = document.getElementById("sportsTeamSearchInput");
-      const suggestions = document.getElementById("sportsTeamSuggestions");
-      if (searchInput) searchInput.value = matchObj.matchedTeam;
-      if (suggestions) {
-        suggestions.classList.add("hidden");
-        suggestions.innerHTML = "";
-      }
-
-      const fixtureSelect = document.getElementById("sportsFixtureSelect");
-      if (fixtureSelect) {
-        fixtureSelect.value = matchObj.fixture.id;
-      }
-      handleFixtureSelect(matchObj.fixture.id);
-    }
-
-    // Hide suggestions when clicking outside
-    document.addEventListener("click", function(e) {
-      const suggestions = document.getElementById("sportsTeamSuggestions");
-      const searchInput = document.getElementById("sportsTeamSearchInput");
-      if (suggestions && searchInput && !suggestions.contains(e.target) && e.target !== searchInput) {
-        suggestions.classList.add("hidden");
-      }
-    });
 
     function handleFixtureSelect(fixtureId) {
       let found = null;
@@ -8116,7 +8082,6 @@ window.handleCreateQuestion = async function(e) {
       const homeEl = document.getElementById("sportsHomeTeamName");
       const awayEl = document.getElementById("sportsAwayTeamName");
       const kickoffTimeEl = document.getElementById("sportsMatchKickoffTime");
-      const oracleEl = document.getElementById("sportsMatchOracleName");
       const kickoffBadge = document.getElementById("sportsMatchKickoffBadge");
 
       if (found) {
@@ -8127,10 +8092,9 @@ window.handleCreateQuestion = async function(e) {
         if (homeEl) homeEl.innerText = found.teamA;
         if (awayEl) awayEl.innerText = found.teamB;
         if (kickoffTimeEl) kickoffTimeEl.innerText = `${found.matchDay} • ${found.matchTime} (in ~${found.kickoffOffsetHours}h)`;
-        if (oracleEl) oracleEl.innerText = found.res;
         if (kickoffBadge) kickoffBadge.innerText = `Kickoff in ~${found.kickoffOffsetHours}h`;
         const roundBadge = document.getElementById("sportsDetectedRoundLabel");
-        if (roundBadge) roundBadge.innerText = (found.round ? found.round + " • " : "") + found.teamA + " vs " + found.teamB;
+        if (roundBadge) roundBadge.innerText = found.teamA + " vs " + found.teamB;
 
         const displayTitle = document.getElementById("displayQTitle");
         const displayRes = document.getElementById("displayQResolution");
@@ -8141,8 +8105,16 @@ window.handleCreateQuestion = async function(e) {
           btn.disabled = false;
           btn.classList.remove("opacity-50", "cursor-not-allowed");
         }
+
+        const searchInput = document.getElementById("sportsFixtureSearchInput");
+        renderSportsWeeklyFixtures(searchInput ? searchInput.value : "");
       }
     }
+
+    // Attach to window
+    window.renderSportsWeeklyFixtures = renderSportsWeeklyFixtures;
+    window.handleSportsLeagueChange = handleSportsLeagueChange;
+    window.handleFixtureSelect = handleFixtureSelect;
 
     function applyTimingPreset(preset) {
       const titleInput = document.getElementById("newQTitle");
