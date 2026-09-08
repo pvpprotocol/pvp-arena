@@ -943,7 +943,7 @@
               <span class="px-2.5 py-1 rounded-lg bg-[#182230] text-[#cbd5e1] font-mono text-xs font-bold border border-[#334155]">STEP 3</span>
               <h4 class="text-xs font-bold font-mono text-[#f8fafc] uppercase tracking-wider">Choose Position</h4>
             </div>
-            <p class="text-[11px] text-slate-400 font-mono">Select GREEN or RED. Opponent must take the opposite side to enter.</p>
+            <p id="duel-options-subtitle" class="text-[11px] text-slate-400 font-mono">Select predicted outcome. Opponent must choose a different outcome to enter.</p>
             
             <div id="duel-options-container" class="grid grid-cols-2 gap-3 pt-1">
               <button id="opt-btn-yes" onclick="selectDuelOption(YES, false)" class="p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02] cursor-pointer">
@@ -4390,10 +4390,7 @@
     let selectedDuelOption = "برد بارسلون";
     let activeQuestionTab = "live";
 
-    let selectedDuelQuestionId = 2;
-    let selectedDuelTier = 0.01;
-    let selectedDuelOption = 'YES';
-    let activeQuestionTab = 'live'; // 'live' or 'ended'
+
 
     window.switchQuestionTab = function(tab) {
       activeQuestionTab = tab;
@@ -4631,7 +4628,18 @@
     function updateOptionButtonsUI() {
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
       const container = document.getElementById("duel-options-container");
+      const subTitle = document.getElementById("duel-options-subtitle");
       if (!container) return;
+
+      if (subTitle) {
+        if (q.isThreeWay) {
+          subTitle.textContent = "Select predicted outcome (Win / Draw / Win). Opponent must choose a different outcome.";
+        } else if (q.category === "SPORTS" || (q.opt1 && q.opt1 !== "GREEN" && q.opt1 !== "YES")) {
+          subTitle.textContent = "Select the winning team. Opponent must back the opposing team.";
+        } else {
+          subTitle.textContent = "Select GREEN or RED candle close. Opponent must take the opposite side to enter.";
+        }
+      }
 
       let options = [];
       if (q.isThreeWay) {
@@ -6139,7 +6147,12 @@
       const btn = document.getElementById("create-duel-btn");
       if (btn) btn.disabled = true;
 
-      const oppositeOption = selectedDuelOption === 'YES' ? 'NO' : 'YES';
+      let oppositeOption = "NO";
+      if (q && q.isThreeWay) {
+        oppositeOption = selectedDuelOption === (q.opt1 || "برد بارسلون") ? (q.opt3 || "برد چلسی") : (q.opt1 || "برد بارسلون");
+      } else {
+        oppositeOption = (selectedDuelOption === (q.opt1 || "GREEN") || selectedDuelOption === "YES") ? (q.opt2 || "RED") : (q.opt1 || "GREEN");
+      }
 
       let txHash = "";
       let onchainDuelId = null;
@@ -6213,7 +6226,15 @@
         }
 
         showToast("⏳ Confirm createDuelToken in your Wallet...", "info");
-        const creatorChoiceNum = selectedDuelOption === 'YES' ? 1 : 2;
+        let creatorChoiceNum = 1;
+        if (q && q.isThreeWay) {
+          if (selectedDuelOption === (q.opt2 || "مساوی")) creatorChoiceNum = 2;
+          else if (selectedDuelOption === (q.opt3 || "برد چلسی")) creatorChoiceNum = 3;
+          else creatorChoiceNum = 1;
+        } else {
+          if (selectedDuelOption === (q.opt2 || "RED") || selectedDuelOption === "NO" || selectedDuelOption === "RED") creatorChoiceNum = 2;
+          else creatorChoiceNum = 1;
+        }
         // Generous lobby window (3600s / 1 hour) so duels never fail with 'Duel expired' while matching
         let durationSec = 3600;
         let targetCandleClose = Date.now() + 900000;
