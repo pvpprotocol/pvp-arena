@@ -102,7 +102,27 @@
       color: #ffffff !important; border: 1px solid #475569 !important; box-shadow: 0 0 10px rgba(255, 255, 255, 0.05) !important;
     }
 
-    /* PREMIUM ACCENT CTA BUTTON (Connect Wallet, Create Duel) (Connect Wallet, Create Market, Create Duel) */
+    
+    /* MATTE BLACK CTA BUTTONS (Create Challenge, Create Duel) */
+    #createChallengeBtn, #create-duel-btn, #btnSubmitQuestion, .btn-matte-black {
+      background: #0b0f15 !important;
+      color: #f8fafc !important;
+      border: 1px solid #283548 !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    #createChallengeBtn:hover, #create-duel-btn:hover, #btnSubmitQuestion:hover, .btn-matte-black:hover {
+      background: #141b26 !important;
+      border-color: #475569 !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7) !important;
+      transform: translateY(-1px);
+    }
+    #createChallengeBtn *, #create-duel-btn *, #btnSubmitQuestion *, .btn-matte-black * {
+      color: #ffffff !important;
+    }
+
+    /* PREMIUM ACCENT CTA BUTTON */
     #walletBtn, #deployMarketBtn, #createDuelBtn, .btn-primary, .btn-jup-lime, .btn-accent {
       background: #1e293b !important;
       color: #f8fafc !important;
@@ -768,10 +788,10 @@
             </p>
           </div>
         </div>
-        <button onclick="openCreateQuestionModal()" class="w-full md:w-auto px-6 py-3 rounded-xl font-mono text-xs font-bold bg-black text-white hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 shadow-sm shrink-0 uppercase tracking-wider">
+        <button id="createChallengeBtn" onclick="openCreateQuestionModal()" class="w-full md:w-auto px-6 py-3 rounded-xl font-mono text-xs font-bold btn-matte-black flex items-center justify-center gap-2 shrink-0 uppercase tracking-wider cursor-pointer">
           <span>✨</span>
           <span>+ Create Challenge</span>
-          <span class="ml-1 text-[10px] px-2 py-0.5 rounded bg-black/20 text-[#f8fafc] font-extrabold">5% CASH</span>
+          <span class="ml-1 text-[10px] px-2 py-0.5 rounded bg-white/10 text-[#f8fafc] font-extrabold border border-white/10">5% CASH</span>
         </button>
       </div>
 
@@ -878,7 +898,7 @@
 
         <!-- SUMMARY & CREATE BUTTON -->
         <div class="mt-6 flex justify-center">
-          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl bg-black text-white hover:from-cyan-400 hover:to-blue-500 text-[#f8fafc] font-extrabold font-mono text-sm shadow-xl shadow-none transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl btn-matte-black font-extrabold font-mono text-sm transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
             <span>⚔️</span> CREATE PVP DUEL
           </button>
         </div>
@@ -7692,7 +7712,7 @@ window.handleCreateQuestion = async function(e) {
 
         <div id="createQStatus" class="hidden text-[11px] p-2.5 rounded-xl"></div>
 
-        <button onclick="submitNewQuestionOnchain()" id="btnSubmitQuestion" class="w-full mt-2 py-3 rounded-xl font-bold text-xs bg-black text-white text-slate-950 hover:brightness-110 transition-all shadow-lg shadow-none flex items-center justify-center gap-2">
+        <button onclick="submitNewQuestionOnchain()" id="btnSubmitQuestion" class="w-full mt-2 py-3.5 rounded-xl font-bold text-xs btn-matte-black flex items-center justify-center gap-2 cursor-pointer">
           <span>🚀</span>
           <span>Deploy Market Onchain</span>
         </button>
