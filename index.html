@@ -16,7 +16,7 @@
     /* ============================================================
        JUPITER (jup.ag) SIGNATURE COSMIC DARK & LIME DESIGN SYSTEM
        - Cosmic Obsidian Canvas (#090d14)
-       - Jupiter Lime (#c7f284) Signature Primary Accent & Action Buttons
+       - Royal Blue (#2563eb) Signature Primary Accent & Action Buttons
        - Solar Amber (#fba43a) Secondary Accent & Warm Highlights
        - Sleek Glassmorphism Dark Slate Cards (#131b27)
        - Electric Coral (#f87171) for NO / Down outcomes
@@ -27,8 +27,8 @@
       --card-bg: #131b27;
       --card-inner: #0e141f;
       --border-jup: #1f2b3e;
-      --jup-lime: #c7f284;
-      --jup-lime-hover: #d9f99d;
+      --accent-blue: #2563eb;
+      --accent-blue-hover: #1d4ed8;
       --jup-amber: #fba43a;
       --jup-coral: #f87171;
       --text-main: #f8fafc;
@@ -99,27 +99,26 @@
     }
     .tab-btn.active, #btn-tab-duel.active {
       background: #1a2638 !important;
-      color: #c7f284 !important;
-      border: 1px solid #c7f284 !important;
-      box-shadow: 0 0 12px rgba(199, 242, 132, 0.2) !important;
+      color: #ffffff !important; border: 1px solid #3b82f6 !important; box-shadow: 0 0 12px rgba(59, 130, 246, 0.2) !important;
     }
 
-    /* THE ICONIC JUPITER LIME CTA BUTTON (Connect Wallet, Create Market, Create Duel) */
-    #walletBtn, #deployMarketBtn, #createDuelBtn, .btn-primary, .btn-jup-lime {
-      background: #c7f284 !important;
-      color: #080b11 !important;
-      border: 1px solid #c7f284 !important;
-      font-weight: 800 !important;
-      box-shadow: 0 0 20px rgba(199, 242, 132, 0.25) !important;
+    /* PREMIUM ACCENT CTA BUTTON (Connect Wallet, Create Duel) (Connect Wallet, Create Market, Create Duel) */
+    #walletBtn, #deployMarketBtn, #createDuelBtn, .btn-primary, .btn-jup-lime, .btn-accent {
+      background: #2563eb !important;
+      color: #ffffff !important;
+      border: 1px solid #3b82f6 !important;
+      font-weight: 700 !important;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
-    #walletBtn:hover, #deployMarketBtn:hover, #createDuelBtn:hover, .btn-primary:hover, .btn-jup-lime:hover {
-      background: #d9f99d !important;
-      box-shadow: 0 0 30px rgba(199, 242, 132, 0.45) !important;
-      transform: translateY(-1px) scale(1.01);
+    #walletBtn:hover, #deployMarketBtn:hover, #createDuelBtn:hover, .btn-primary:hover, .btn-jup-lime:hover, .btn-accent:hover {
+      background: #1d4ed8 !important;
+      border-color: #60a5fa !important;
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
+      transform: translateY(-1px);
     }
-    #walletBtn *, #deployMarketBtn *, #createDuelBtn *, .btn-primary *, .btn-jup-lime * {
-      color: #080b11 !important;
+    #walletBtn *, #deployMarketBtn *, #createDuelBtn *, .btn-primary *, .btn-jup-lime *, .btn-accent * {
+      color: #ffffff !important;
     }
 
     /* Text Colors overrides for high readability */
@@ -135,9 +134,9 @@
 
     /* Badges with Jupiter accents */
     .badge-live {
-      background: rgba(199, 242, 132, 0.12) !important;
-      color: #c7f284 !important;
-      border: 1px solid rgba(199, 242, 132, 0.3) !important;
+      background: rgba(37, 99, 235, 0.15) !important;
+      color: #60a5fa !important;
+      border: 1px solid rgba(59, 130, 246, 0.3) !important;
     }
     .badge-crypto {
       background: rgba(96, 165, 250, 0.12) !important;
@@ -152,7 +151,7 @@
 
     /* Jupiter Payout Highlight */
     .text-payout {
-      color: #c7f284 !important;
+      color: #60a5fa !important;
       font-weight: 800;
     }
 
@@ -165,8 +164,8 @@
       transition: all 0.15s ease;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: #c7f284 !important;
-      box-shadow: 0 0 0 3px rgba(199, 242, 132, 0.2) !important;
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
       outline: none !important;
     }
 
@@ -208,7 +207,7 @@
        - Cards & Containers: Glassy Dark Slate (#131b27)
        - Primary Titles & Numbers: Pure Crisp White (#ffffff / #f8fafc)
        - Subtitles, Labels & Descriptions: Soft Whitish-Gray (#cbd5e1 / #94a3b8)
-       - Action CTA: Jupiter Lime (#c7f284)
+       - Action CTA: Royal Blue (#2563eb)
        ============================================================ */
 
     body {
@@ -261,16 +260,16 @@
     /* Step numbers (Step 1, Step 2, Step 3) */
     .step-badge {
       background-color: #1a2638 !important;
-      border: 1px solid #2d3d54 !important;
-      color: #c7f284 !important;
+      border: 1px solid #1e3a8a !important;
+      color: #60a5fa !important;
       font-weight: 800;
     }
 
     /* Question cards */
     .q-card-selected {
-      border: 2px solid #c7f284 !important;
-      background: #182633 !important;
-      box-shadow: 0 0 16px rgba(199, 242, 132, 0.15) !important;
+      border: 2px solid #3b82f6 !important;
+      background: #132238 !important;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.2) !important;
     }
     .q-card-default {
       border: 1px solid #1f2b3e !important;
@@ -374,10 +373,13 @@
     aside .tab-btn.active span:not(.badge-tag), #jupSidebar .tab-btn.active span:not(.badge-tag), #mobileSidebar .tab-btn.active span:not(.badge-tag) {
       color: #ffffff !important;
     }
-    aside .badge-tag, #jupSidebar .badge-tag, #mobileSidebar .badge-tag {
-      border: none !important;
-      background: transparent !important;
-      color: #64748b !important;
+    aside .badge-tag, #jupSidebar .badge-tag, #mobileSidebar .badge-tag, .badge-tag {
+      border: 1px solid rgba(59, 130, 246, 0.3) !important;
+      background: rgba(30, 58, 138, 0.25) !important;
+      color: #93c5fd !important;
+      font-weight: 600 !important;
+      border-radius: 6px !important;
+      padding: 1px 6px !important;
     }
 
     /* ALL FILTER OPTIONS & TABS (Live/Ended, Crypto/Sports) */
@@ -446,9 +448,9 @@
       border-color: #475569 !important;
     }
     .q-card-selected {
-      background: #1e293b !important;
-      border: 2px solid #94a3b8 !important;
-      box-shadow: none !important;
+      border: 2px solid #3b82f6 !important;
+      background: #132238 !important;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.2) !important;
     }
 
     /* STEP BADGES & PILLS */
@@ -465,8 +467,8 @@
       color: #f8fafc !important;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: #64748b !important;
-      box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.25) !important;
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
       outline: none !important;
     }
     option {
@@ -527,10 +529,10 @@
         document.querySelectorAll(".tab-btn").forEach(function(btn) {
           btn.classList.remove("active");
           btn.classList.remove("border-l-4");
-          btn.classList.remove("border-[#c7f284]");
+          btn.classList.remove("border-blue-500");
           btn.classList.remove("bg-[#182633]");
           btn.classList.remove("text-white");
-          btn.classList.remove("text-[#c7f284]");
+          btn.classList.remove("text-blue-400");
           btn.classList.add("text-[#94a3b8]");
         });
 
@@ -618,7 +620,7 @@
     }
   </script>
 </head>
-<body class="bg-[#090d14] text-[#f8fafc] min-h-screen antialiased selection:bg-[#c7f284] selection:text-[#090d14] font-sans flex">
+<body class="bg-[#090d14] text-[#f8fafc] min-h-screen antialiased selection:bg-blue-500 selection:text-[#090d14] font-sans flex">
 
   <!-- JUPITER FIXED FULL-HEIGHT LEFT SIDEBAR (Desktop) -->
   <aside id="jupSidebar" class="fixed left-0 top-0 bottom-0 w-64 bg-[#0c131d] border-r border-[#334155] flex flex-col justify-between z-50 hidden md:flex transition-transform duration-300 select-none">
@@ -626,16 +628,16 @@
     <div class="p-4 space-y-6 overflow-y-auto">
       <!-- Logo & Brand Header -->
       <div class="flex items-center gap-3 cursor-pointer px-2 py-1 hover:opacity-90 transition-opacity" onclick="switchTab('duel')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-[#c7f284] flex items-center justify-center shadow-lg ring-1 ring-white/20 shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-blue-400 flex items-center justify-center shadow-lg ring-1 ring-white/20 shrink-0">
           <span class="text-xl">⚔️</span>
         </div>
         <div>
           <div class="flex items-center gap-1.5">
             <span class="font-black text-lg tracking-wider text-white font-mono">pvphub</span>
-            <span class="text-[9px] px-1.5 py-0.2 rounded font-mono text-[#c7f284]">DEX</span>
+            <span class="text-[9px] px-1.5 py-0.2 rounded font-mono text-blue-400">DEX</span>
           </div>
           <p class="text-[10px] font-mono text-[#94a3b8] flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#c7f284] animate-pulse"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
             Robinhood Chain
           </p>
         </div>
@@ -645,7 +647,7 @@
       <nav class="space-y-1.5">
         <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-white">
           <span class="flex items-center gap-3 text-sm"><span>⚔️</span> PvP Duels</span>
-          <span class="w-2 h-2 rounded-full bg-[#c7f284] animate-pulse"></span>
+          <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
         </button>
         <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🎯</span> Grand Jackpot</span>
@@ -687,7 +689,7 @@
     <div class="p-4 space-y-6">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-[#c7f284] flex items-center justify-center">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center">
             <span>⚔️</span>
           </div>
           <span class="font-black text-lg text-white font-mono">pvphub</span>
@@ -695,7 +697,7 @@
         <button onclick="toggleMobileSidebar()" class="p-2 text-slate-400 hover:text-white text-lg">✕</button>
       </div>
       <nav class="space-y-1.5">
-        <button onclick="switchTab('duel')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#c7f284] bg-[#182633]">
+        <button onclick="switchTab('duel')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-blue-400 bg-[#182633]">
           <span class="flex items-center gap-3"><span>⚔️</span> PvP Duels</span>
         </button>
         <button onclick="switchTab('jackpot')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
@@ -738,8 +740,8 @@
       <!-- Right: Action CTA & Wallet -->
       <div class="flex items-center gap-3">
 
-        <button onclick="connectWallet()" id="walletBtn" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold bg-[#c7f284] text-[#090d14] hover:brightness-105 transition-all shadow-md flex items-center gap-2 cursor-pointer">
-          <span id="walletDot" class="w-2 h-2 rounded-full bg-[#090d14]"></span>
+        <button onclick="connectWallet()" id="walletBtn" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold bg-[#2563eb] text-white hover:bg-[#1d4ed8] transition-all shadow-md shadow-blue-500/20 flex items-center gap-2 cursor-pointer border border-[#3b82f6]">
+          <span id="walletDot" class="w-2 h-2 rounded-full bg-white"></span>
           <span id="walletBtnText">Connect Wallet</span>
         </button>
       </div>
@@ -4190,7 +4192,7 @@
       const endedBtn = document.getElementById("q-tab-ended-btn");
       if (liveBtn && endedBtn) {
         if (tab === 'live') {
-          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#1f2b3e] text-[#c7f284] border border-[#c7f284] shadow-sm";
+          liveBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#1f2b3e] text-blue-400 border border-blue-500 shadow-sm";
           endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-[#131b27] text-[#94a3b8] border border-[#334155] hover:bg-[#1a2638] hover:text-white";
         } else {
           endedBtn.className = "px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 bg-slate-100 text-slate-600 border border-[#334155] hover:bg-slate-200";
@@ -4300,7 +4302,7 @@
         const isSelected = q.id === selectedDuelQuestionId;
         const isLive = !q.isEnded && Date.now() < getQuestionDeadline(q.id);
         const borderClass = isSelected 
-          ? "border-2 border-[#c7f284] bg-[#16262b] shadow-md shadow-blue-500/10 ring-1 ring-blue-500" 
+          ? "border-2 border-blue-500 bg-[#16262b] shadow-md shadow-blue-500/10 ring-1 ring-blue-500" 
           : "border border-[#334155] bg-[#131b27] hover:border-[#38bdf8]/50 hover:shadow-sm";
         const dotClass = isSelected ? "bg-slate-700" : (isLive ? "bg-slate-400" : "bg-slate-300");
         const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#182230] text-[#f8fafc] font-black shadow-md shadow-none ' : 'bg-[#182230] text-neutral-700 font-bold border border-[#334155] group-hover:border-[#334155]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
@@ -4434,7 +4436,7 @@
         btnNo.className = "p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]";
       }
     } else {
-        btnYes.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-slate-400 hover:border-[#c7f284]/50 hover:text-[#c7f284] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+        btnYes.className = "p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-slate-400 hover:border-blue-500/50 hover:text-blue-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
         btnNo.className = "p-3.5 rounded-xl border-2 border-[#f87171] bg-[#29161a] text-[#f87171] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-[#f87171]/15 transition-all cursor-pointer scale-[1.02]";
       }
     }
