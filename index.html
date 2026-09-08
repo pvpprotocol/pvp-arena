@@ -468,10 +468,11 @@
       color: #ffffff !important;
     }
     .tier-pick-btn.active-tier {
-      background-color: #1e293b !important;
-      border: 2px solid #94a3b8 !important;
+      background-color: #16262b !important;
+      border: 2px solid #38bdf8 !important;
       color: #ffffff !important;
-      transform: scale(1.02);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.35) !important;
+      transform: scale(1.04);
     }
 
     /* ALL PREDICTION OUTCOME OPTIONS (YES/NO or GREEN/RED) */
@@ -4556,6 +4557,7 @@
         grid.insertAdjacentHTML("beforeend", qHtml);
       });
       updateOptionButtonsUI();
+      selectDuelTier(0.01);
       updateDuelSummary();
     }
 
@@ -4574,13 +4576,16 @@
         const btn = document.getElementById(btnId);
         if (!btn) return;
         if (t === tier) {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white text-center font-mono font-bold transition-all shadow-md cursor-pointer scale-[1.02]";
+          btn.classList.add("active-tier");
+          btn.className = "tier-pick-btn active-tier p-2 rounded-xl border-2 border-[#38bdf8] bg-[#16262b] text-white text-center font-mono font-bold transition-all shadow-md cursor-pointer scale-[1.04]";
         } else {
-          btn.className = "tier-pick-btn p-2.5 rounded-xl border border-[#334155] bg-[#131b27] hover:border-[#475569] hover:bg-[#1e293b] hover:text-white text-[#94a3b8] text-center font-mono transition-all cursor-pointer";
+          btn.classList.remove("active-tier");
+          btn.className = "tier-pick-btn p-2 rounded-xl border border-[#334155] bg-[#131b27] hover:border-[#475569] hover:bg-[#1e293b] hover:text-white text-[#94a3b8] text-center font-mono transition-all cursor-pointer";
         }
       });
       updateDuelSummary();
     }
+    window.selectDuelTier = selectDuelTier;
 
     function updateOptionButtonsUI() {
       const q = DUEL_QUESTIONS.find(x => String(x.id) === String(selectedDuelQuestionId)) || DUEL_QUESTIONS[0];
@@ -8166,6 +8171,48 @@ window.handleCreateQuestion = async function(e) {
       }
     }
   
+    
+    function selectMarketCategory(category) {
+      const catInput = document.getElementById("newQCategory");
+      if (catInput) catInput.value = category;
+
+      const btnCrypto = document.getElementById("catBtnCrypto");
+      const btnSports = document.getElementById("catBtnSports");
+      const cryptoPanel = document.getElementById("cryptoVerificationPanel");
+      const sportsPanel = document.getElementById("sportsVerificationPanel");
+
+      if (category === "SPORTS") {
+        if (btnSports) {
+          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#1e293b] text-white border-2 border-[#38bdf8] shadow-md";
+        }
+        if (btnCrypto) {
+          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#131b27] text-slate-400 border border-[#334155] hover:bg-[#1e293b] hover:text-white";
+        }
+        if (cryptoPanel) cryptoPanel.classList.add("hidden");
+        if (sportsPanel) sportsPanel.classList.remove("hidden");
+
+        const leagueSelect = document.getElementById("sportsLeagueSelect");
+        if (leagueSelect && typeof handleSportsLeagueChange === "function") {
+          handleSportsLeagueChange(leagueSelect.value || "EPL");
+        }
+      } else {
+        if (btnCrypto) {
+          btnCrypto.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#1e293b] text-white border-2 border-[#38bdf8] shadow-md";
+        }
+        if (btnSports) {
+          btnSports.className = "flex-1 py-2.5 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-[#131b27] text-slate-400 border border-[#334155] hover:bg-[#1e293b] hover:text-white";
+        }
+        if (cryptoPanel) cryptoPanel.classList.remove("hidden");
+        if (sportsPanel) sportsPanel.classList.add("hidden");
+
+        const tokenSelect = document.getElementById("cryptoTokenSelect");
+        if (tokenSelect && typeof handleCryptoTokenChange === "function") {
+          handleCryptoTokenChange(tokenSelect.value || "BTC");
+        }
+      }
+    }
+    window.selectMarketCategory = selectMarketCategory;
+
     function openCreateQuestionModal() {
       const modal = document.getElementById("createQuestionModal");
       if (modal) {
