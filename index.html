@@ -2165,22 +2165,35 @@
 
         <div class="space-y-4">
           <h2 class="text-xl font-bold text-white font-mono">PvP Prediction</h2>
-          <p class="text-sm text-neutral-700 leading-relaxed">
-            <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk to reward ratio (for example at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In pvphub, the winner earns 90% net profit directly, and the loser receives 3% rebate cashback to preserve liquidity and enable immediate reentry. Furthermore, pvphub operates as a completely permissionless protocol where any user can design and deploy custom prediction challenges directly onchain via the <strong class="text-white">+ Create Challenge</strong> portal, earning an automatic 5% cash reward from the total pot of every settled duel, routed instantly onchain to the creator's wallet at the moment of match settlement.
+          <p class="text-sm text-slate-300 leading-relaxed">
+            <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk-to-reward ratio (for example, at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In pvphub, the winner earns 90% net profit directly, and the loser receives 3% rebate cashback to preserve liquidity and enable immediate reentry. Furthermore, pvphub operates as a completely permissionless protocol where any user can design and deploy custom prediction challenges directly onchain via the <strong class="text-white">+ Create Challenge</strong> portal. Whenever a duel on that challenge is matched and concludes with a definitive winner, an automatic 5% cash reward from the total pot is routed instantly onchain to the creator's wallet at the moment of match settlement. In the event of a tie, void match, or no-winner outcome, zero creator or protocol fees are deducted and 100% of principal is returned to participants.
           </p>
-          <p class="text-sm text-neutral-700 leading-relaxed">
+          <p class="text-sm text-slate-300 leading-relaxed">
             Two participants lock equal collateral into the canonical escrow smart contract. Upon verified outcome resolution, funds are automatically distributed as follows:
           </p>
-          <ul class="list-disc list-inside text-sm text-neutral-700 space-y-2 pl-2">
-            <li><strong class="text-white">90%</strong> allocated directly to the verified winner (Net Profit Payout)</li>
-            <li><strong class="text-white">5%</strong> Question Creator Fee transferred directly and in cash to the market creator's wallet for every settled duel</li>
-            <li><strong class="text-white">3%</strong> rebate cashback returned to the loser wallet to preserve liquidity and enable immediate reentry</li>
-            <li><strong class="text-white">2%</strong> protocol treasury fee for platform maintenance and buybacks</li>
-          </ul>
+          <div class="p-4 rounded-2xl bg-[#182230] border border-[#334155] space-y-3">
+            <h4 class="text-xs font-bold font-mono text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🏆</span> A. Settlement With a Verified Winner:
+            </h4>
+            <ul class="list-disc list-inside text-sm text-slate-300 space-y-1.5 pl-2">
+              <li><strong class="text-white">90%</strong> allocated directly to the verified winner (Net Profit Payout: 1.8x original stake)</li>
+              <li><strong class="text-white">5%</strong> Question Creator Fee transferred directly in cash to the market creator's wallet (strictly conditioned upon a verified match winner)</li>
+              <li><strong class="text-white">3%</strong> rebate cashback returned to the loser's wallet to preserve liquidity and enable immediate reentry</li>
+              <li><strong class="text-white">2%</strong> protocol treasury fee for platform maintenance and ecosystem buybacks</li>
+            </ul>
+            <h4 class="text-xs font-bold font-mono text-amber-400 uppercase tracking-wider pt-2 border-t border-[#334155] flex items-center gap-1.5">
+              <span>⚖️</span> B. Settlement With No Winner (Tie / Void / Unpicked Outcome):
+            </h4>
+            <ul class="list-disc list-inside text-sm text-slate-300 space-y-1.5 pl-2">
+              <li><strong class="text-white">100%</strong> of the deposited stake is fully reclaimable by both participants via the <strong class="text-white">RECLAIM</strong> action with zero fee deductions</li>
+              <li><strong class="text-white">0%</strong> Question Creator Fee (no creator fee is charged when a duel has no winner)</li>
+              <li><strong class="text-white">0%</strong> protocol treasury fee (no platform fee is deducted on unpicked/void outcomes)</li>
+            </ul>
+          </div>
 
           <div class="mt-6 pt-4 border-t border-[#334155]">
             <h3 class="text-base font-bold text-[#cbd5e1] font-mono mb-3">Core Rules</h3>
-            <ol class="list-decimal list-inside text-sm text-neutral-700 space-y-3 pl-2">
+            <ol class="list-decimal list-inside text-sm text-slate-300 space-y-3 pl-2">
             <li class="leading-relaxed">To guarantee strict fairness and equal opportunity for all participants, all challenges must be deployed onchain prior to event kickoff, with the entry window closing immediately at the start to eliminate in-progress betting and prevent live momentum frontrunning.</li>
             <li class="leading-relaxed">Once an opponent joins and the duel is matched, the contest remains active until the official resolution is finalized, and immediately upon outcome confirmation, it transitions to the completed state for prize settlement.</li>
             <li class="leading-relaxed">Once an opponent enters and the competition officially begins, unilateral cancellation or withdrawal is strictly prohibited, and locked assets remain secured within the smart contract until the official result is recorded.</li>
@@ -2195,10 +2208,10 @@
 
         <div class="space-y-4 border-t border-[#334155] pt-8">
           <h2 class="text-xl font-bold text-white font-mono">2. Chance (Grand Jackpot System & Round Lifecycle)</h2>
-          <p class="text-sm text-neutral-700 leading-relaxed">
+          <p class="text-sm text-slate-300 leading-relaxed">
             Players test their luck in jackpot pools within designated time windows. When the countdown timer reaches zero, round submissions automatically lock for verifiable settlement.
           </p>
-          <ul class="list-disc list-inside text-sm text-neutral-700 space-y-2 pl-2">
+          <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
             <li><strong class="text-white">Fixed Entry Countdown:</strong> Participants have a defined time window to enter each tier before the round timer expires.</li>
             <li><strong class="text-white">Correct Prediction Reward:</strong> The reward is distributed to any participant who provides the correct outcome prediction for the round.</li>
             <li><strong class="text-white">Prize Pool Rollover (Unclaimed Vaults):</strong> If no participant provides a correct prediction, 100% of the vault's USD value is preserved and carried over to boost the next jackpot round.</li>
@@ -2210,10 +2223,10 @@
 
         <div class="space-y-4 border-t border-[#334155] pt-8">
           <h2 class="text-xl font-bold text-white font-mono">3. Skill (2048 Tournament Skill Vaults)</h2>
-          <p class="text-sm text-neutral-700 leading-relaxed">
+          <p class="text-sm text-slate-300 leading-relaxed">
             Players compete with each other based on skill. Skill tournaments run in continuous 24 hour cycles ending at 00:00 UTC every day.
           </p>
-          <ul class="list-disc list-inside text-sm text-neutral-700 space-y-2 pl-2">
+          <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
             <li><strong class="text-white">Single High Score Record (No Accumulation):</strong> Scores from multiple games are never summed together. Only a player highest single run record qualifies.</li>
             <li><strong class="text-white">Unlimited Ticket Purchases:</strong> Players may buy as many tickets as desired to improve their top record.</li>
             <li><strong class="text-white">SPECIAL $PVP PERK: 2X TICKETS BONUS:</strong> Buy tickets using the native $PVP token and get 2x tickets per 1 ticket fee!</li>
@@ -2255,7 +2268,7 @@
               <h2 class="text-lg sm:text-xl font-black text-[#f8fafc] font-mono uppercase tracking-wider">Protocol Admin & Operator Console</h2>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">Verified Admin</span>
             </div>
-            <p class="text-xs text-neutral-700 font-mono mt-1">
+            <p class="text-xs text-slate-300 font-mono mt-1">
               Authorized MetaMask Wallet: <span id="adminConnectedBadge" class="font-bold text-[#f8fafc] font-mono">0x0ce6...0f67</span> | Full Control
             </p>
           </div>
@@ -2319,18 +2332,18 @@
         <form id="createQuestionForm" onsubmit="handleCreateQuestion(event)" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Question Title / Prompt</label>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Question Title / Prompt</label>
               <input type="text" id="newQTitle" required placeholder="e.g. #18: Will BTC Break $95,000 Before Friday?" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
             </div>
             <div>
-              <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Category Badge</label>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Category Badge</label>
               <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, ROBINHOOD ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Entry Window Duration</label>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Entry Window Duration</label>
               <select id="newQDuration" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
                 <option value="1800">30 Minutes</option>
                 <option value="3600" selected>1 Hour</option>
@@ -2341,23 +2354,23 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Option A (Label / Subtext)</label>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Option A (Label / Subtext)</label>
               <div class="flex gap-2">
                 <input type="text" id="newQOptA" value="GREEN" placeholder="GREEN / YES" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#cbd5e1] font-mono text-xs focus:border-[#334155] outline-none">
-                <input type="text" id="newQOptASub" value="Green Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-neutral-700 font-mono text-xs focus:border-[#334155] outline-none">
+                <input type="text" id="newQOptASub" value="Green Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-slate-300 font-mono text-xs focus:border-[#334155] outline-none">
               </div>
             </div>
             <div>
-              <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Option B (Label / Subtext)</label>
+              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Option B (Label / Subtext)</label>
               <div class="flex gap-2">
                 <input type="text" id="newQOptB" value="RED" placeholder="RED / NO" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#cbd5e1] font-mono text-xs focus:border-[#334155] outline-none">
-                <input type="text" id="newQOptBSub" value="Red Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-neutral-700 font-mono text-xs focus:border-[#334155] outline-none">
+                <input type="text" id="newQOptBSub" value="Red Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-slate-300 font-mono text-xs focus:border-[#334155] outline-none">
               </div>
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-mono text-neutral-700 font-bold mb-1">Description / Settlement Note</label>
+            <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Description / Settlement Note</label>
             <input type="text" id="newQDesc" placeholder="e.g. 1-Hour Entry Window | Resolves upon 12H Candle Close" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
           </div>
 
@@ -2380,7 +2393,7 @@
             <p class="text-xs text-slate-400 font-mono mt-1">Manage all live and ended questions. Changes apply immediately.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="exportQuestionsJSON()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-[#334155] text-xs font-mono text-neutral-700 hover:text-[#f8fafc] transition-all flex items-center gap-1.5">
+            <button onclick="exportQuestionsJSON()" class="px-3 py-1.5 rounded-xl bg-slate-800 border border-[#334155] text-xs font-mono text-slate-300 hover:text-[#f8fafc] transition-all flex items-center gap-1.5">
               <span>📋</span> Copy Questions JSON
             </button>
             <button onclick="resetQuestionsToDefault()" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-[#cbd5e1] hover:bg-[#182230] transition-all">
