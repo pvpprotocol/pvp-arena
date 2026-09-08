@@ -856,10 +856,10 @@
             </p>
           </div>
         </div>
-        <button id="createChallengeBtn" onclick="openCreateQuestionModal()" class="w-full md:w-auto px-6 py-3 rounded-xl font-mono text-xs font-bold btn-matte-black flex items-center justify-center gap-2 shrink-0 uppercase tracking-wider cursor-pointer">
-          <span>✨</span>
-          <span>+ Create Challenge</span>
-          <span class="ml-1 text-[10px] px-2 py-0.5 rounded bg-white/10 text-[#f8fafc] font-extrabold border border-white/10">5% CASH</span>
+        <button id="referralHubBtn" onclick="openReferralModal()" class="w-full md:w-auto px-6 py-3 rounded-xl font-mono text-xs font-bold btn-matte-black flex items-center justify-center gap-2 shrink-0 uppercase tracking-wider cursor-pointer border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]">
+          <span>🤝</span>
+          <span>Referral Hub</span>
+          <span class="ml-1 text-[10px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-extrabold border border-sky-400/30">5% CASH</span>
         </button>
       </div>
 
@@ -2167,7 +2167,7 @@
         <div class="space-y-4">
           <h2 class="text-xl font-bold text-white font-mono">PvP Prediction</h2>
           <p class="text-sm text-slate-300 leading-relaxed">
-            <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk-to-reward ratio (for example, at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In pvphub, the winner earns 90% net profit directly, and the loser receives 3% rebate cashback to preserve liquidity and enable immediate reentry. Furthermore, pvphub operates as a completely permissionless protocol where any user can design and deploy custom prediction challenges directly onchain via the <strong class="text-white">+ Create Challenge</strong> portal. Whenever a duel on that challenge is matched and concludes with a definitive winner, an automatic 5% cash reward from the total pot is routed instantly onchain to the creator's wallet at the moment of match settlement. In the event of a tie, void match, or no-winner outcome, zero creator or protocol fees are deducted and 100% of principal is returned to participants.
+            <strong class="text-white">Risk to Reward Analysis:</strong> In traditional betting models, participants face an unfavorable risk-to-reward ratio (for example, at 1.3x odds, a player risks 100% of capital for only 30% profit, while the loser forfeits 100%). In pvphub, the winner earns 90% net profit directly, and the loser receives 3% rebate cashback to preserve liquidity and enable immediate reentry. Furthermore, pvphub features a built-in onchain referral architecture where any user can invite traders and duelists using their unique referral link. Whenever a duel concludes with a verified match winner involving a referred participant, an automatic 5% cash reward from the total pot is routed instantly onchain to the referrer's wallet at the moment of match settlement. In the event of a tie, void match, or no-winner outcome, zero referral or protocol fees are deducted and 100% of principal is returned to participants.
           </p>
           <p class="text-sm text-slate-300 leading-relaxed">
             Two participants lock equal collateral into the canonical escrow smart contract. Upon verified outcome resolution, funds are automatically distributed as follows:
@@ -8328,7 +8328,93 @@ window.handleCreateQuestion = async function(e) {
         btn.innerHTML = "<span>🚀</span><span>Deploy Market Onchain</span>";
       }
     }
-  </script>
+  
+    // ================= ONCHAIN REFERRAL HUB SCRIPTS =================
+    window.openReferralModal = function() {
+      const modal = document.getElementById("referralModal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        updateReferralLinkInput();
+      }
+    };
+
+    window.closeReferralModal = function() {
+      const modal = document.getElementById("referralModal");
+      if (modal) modal.classList.add("hidden");
+    };
+
+    function updateReferralLinkInput() {
+      const input = document.getElementById("referralLinkInput");
+      const addr = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
+      if (input) {
+        if (addr) {
+          input.value = "https://pvphub.fun/?ref=" + addr;
+        } else {
+          input.value = "https://pvphub.fun/?ref=connect-wallet";
+        }
+      }
+    }
+    window.updateReferralLinkInput = updateReferralLinkInput;
+
+    window.copyReferralLink = function() {
+      const input = document.getElementById("referralLinkInput");
+      const btn = document.getElementById("copyRefBtn");
+      const addr = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
+      
+      if (!addr) {
+        if (typeof showToast === 'function') {
+          showToast("⚠️ Please connect your wallet first to generate your referral link!", "warning");
+        } else {
+          alert("Please connect your wallet first!");
+        }
+        return;
+      }
+
+      if (input) {
+        input.select();
+        navigator.clipboard.writeText(input.value).then(() => {
+          if (btn) {
+            btn.innerText = "Copied! ✅";
+            btn.classList.add("text-emerald-400");
+            setTimeout(() => {
+              btn.innerText = "Copy";
+              btn.classList.remove("text-emerald-400");
+            }, 2000);
+          }
+          if (typeof showToast === 'function') {
+            showToast("✅ Referral link copied to clipboard!", "success");
+          }
+        }).catch(() => {
+          prompt("Copy your referral link:", input.value);
+        });
+      }
+    };
+
+    window.shareReferralTwitter = function() {
+      const addr = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
+      const link = addr ? ("https://pvphub.fun/?ref=" + addr) : "https://pvphub.fun/";
+      const text = encodeURIComponent("⚔️ Duel 1v1 on @pvphub with 90% winner payout and 3% cashback rebate! Join the arena:");
+      window.open("https://twitter.com/intent/tweet?text=" + text + "&url=" + encodeURIComponent(link), "_blank");
+    };
+
+    window.shareReferralTelegram = function() {
+      const addr = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
+      const link = addr ? ("https://pvphub.fun/?ref=" + addr) : "https://pvphub.fun/";
+      const text = encodeURIComponent("⚔️ Duel 1v1 on pvphub.fun with 90% winner payout and 3% cashback rebate!");
+      window.open("https://t.me/share/url?url=" + encodeURIComponent(link) + "&text=" + text, "_blank");
+    };
+
+    // Capture referral query parameter
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const refParam = urlParams.get('ref');
+      if (refParam && refParam.startsWith('0x') && refParam.length === 42) {
+        localStorage.setItem("PVP_REFERRER", refParam);
+        console.log("Saved referrer:", refParam);
+      }
+    } catch(e) {}
+    
+</script>
 </body>
   
 </html>
