@@ -4230,32 +4230,8 @@
 
     const DUEL_QUESTIONS = [
       {
-        id: 101,
-        qNum: 1,
-        isOnchain: true,
-        category: "SPORTS",
-        title: "⚽ Barcelona vs Chelsea (Full-Time Match Result)",
-        desc: "24-Hour Entry Window | Official UEFA / International Fixture",
-        deadlineDesc: "24-Hour Entry Window",
-        targetDesc: "Settlement: Full-Time Result",
-        deadline: Date.now() + 86400000,
-        settlementTime: Date.now() + 90000000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: true,
-        opt1: "Barcelona",
-        opt2: "Draw",
-        opt3: "Chelsea",
-        desc: "Official Match Fixture | Robinhood Mainnet",
-        resolutionSource: "Official Match Result / ESPN",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 86400000; }
-      },
-      {
         id: 102,
-        qNum: 2,
+        qNum: 1,
         isOnchain: true,
         category: "CRYPTO 12H",
         title: "₿ Bitcoin (BTC) 12H Candle Close: GREEN or RED?",
@@ -4270,6 +4246,28 @@
         opt1: "GREEN",
         opt2: "RED",
         resolutionSource: "Coinbase BTC-USD 12H Candle",
+        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
+        allowedTiers: [0.01, 5, 10, 100, 1000],
+        getDeadline: function() { return Date.now() + 43200000; }
+      },
+      {
+        id: 106,
+        qNum: 2,
+        isOnchain: true,
+        category: "CRYPTO 12H",
+        title: "⟠ Ethereum (ETH) 12H Candle Close: GREEN or RED?",
+        desc: "12-Hour Entry Window | Closes at UTC (Coinbase ETH-USD)",
+        deadlineDesc: "12-Hour Entry Window",
+        targetDesc: "Settlement: 12H Close",
+        deadline: Date.now() + 43200000,
+        settlementTime: Date.now() + 43200000,
+        winningOption: null,
+        isEnded: false,
+        isThreeWay: false,
+        opt1: "GREEN",
+        opt2: "RED",
+        resolutionSource: "Coinbase ETH-USD 12H Candle",
         contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         allowedTiers: [0.01, 5, 10, 100, 1000],
@@ -4298,30 +4296,8 @@
         getDeadline: function() { return Date.now() + 43200000; }
       },
       {
-        id: 104,
-        qNum: 4,
-        isOnchain: true,
-        category: "CRYPTO 12H",
-        title: "⚡ Hyperliquid (HYPE) 12H Candle Close: GREEN or RED?",
-        desc: "12-Hour Entry Window | Closes at UTC (Hyperliquid HYPE-USD)",
-        deadlineDesc: "12-Hour Entry Window",
-        targetDesc: "Settlement: 12H Close",
-        deadline: Date.now() + 43200000,
-        settlementTime: Date.now() + 43200000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: false,
-        opt1: "GREEN",
-        opt2: "RED",
-        resolutionSource: "Hyperliquid HYPE-USD 12H Candle",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 43200000; }
-      },
-      {
         id: 105,
-        qNum: 5,
+        qNum: 4,
         isOnchain: true,
         category: "CRYPTO 12H",
         title: "🔶 Binance (BNB) 12H Candle Close: GREEN or RED?",
@@ -4342,12 +4318,12 @@
         getDeadline: function() { return Date.now() + 43200000; }
       },
       {
-        id: 106,
-        qNum: 6,
+        id: 104,
+        qNum: 5,
         isOnchain: true,
         category: "CRYPTO 12H",
-        title: "⟠ Ethereum (ETH) 12H Candle Close: GREEN or RED?",
-        desc: "12-Hour Entry Window | Closes at UTC (Coinbase ETH-USD)",
+        title: "⚡ Hyperliquid (HYPE) 12H Candle Close: GREEN or RED?",
+        desc: "12-Hour Entry Window | Closes at UTC (Hyperliquid HYPE-USD)",
         deadlineDesc: "12-Hour Entry Window",
         targetDesc: "Settlement: 12H Close",
         deadline: Date.now() + 43200000,
@@ -4357,38 +4333,16 @@
         isThreeWay: false,
         opt1: "GREEN",
         opt2: "RED",
-        resolutionSource: "Coinbase ETH-USD 12H Candle",
+        resolutionSource: "Hyperliquid HYPE-USD 12H Candle",
         contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         allowedTiers: [0.01, 5, 10, 100, 1000],
         getDeadline: function() { return Date.now() + 43200000; }
-      },
-      {
-        id: 107,
-        qNum: 7,
-        isOnchain: true,
-        category: "SPORTS",
-        title: "🏀 Los Angeles Lakers vs Boston Celtics (NBA Winner)",
-        desc: "Official NBA Match | Final Score Result",
-        deadlineDesc: "18-Hour Entry Window",
-        targetDesc: "Settlement: Final Score",
-        deadline: Date.now() + 64800000,
-        settlementTime: Date.now() + 68400000,
-        winningOption: null,
-        isEnded: false,
-        isThreeWay: false,
-        opt1: "LA Lakers",
-        opt2: "Boston Celtics",
-        resolutionSource: "Official NBA / ESPN",
-        contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
-        allowedTiers: [0.01, 5, 10, 100, 1000],
-        getDeadline: function() { return Date.now() + 64800000; }
       }
     ];
     let selectedDuelQuestionId = 101;
     let selectedDuelTier = 0.01;
-    let selectedDuelOption = "Barcelona";
+    let selectedDuelOption = "GREEN";
     let activeQuestionTab = "live";
 
 
