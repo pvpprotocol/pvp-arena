@@ -298,8 +298,11 @@
 
     window.switchTab = function(tabId) {
       try {
+        if (!tabId) tabId = "duel";
         if (tabId === "whitepaper") tabId = "docs";
         const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"];
+        
+        // Hide all views, display selected view
         tabs.forEach(function(t) {
           const el = document.getElementById("tab-" + t);
           if (el) {
@@ -313,18 +316,58 @@
           }
         });
 
+        // Update active class on all nav buttons (sidebar & mobile)
         document.querySelectorAll(".tab-btn").forEach(function(btn) {
           btn.classList.remove("active");
+          btn.classList.remove("border-l-4");
+          btn.classList.remove("border-[#c7f284]");
+          btn.classList.remove("bg-[#182633]");
+          btn.classList.remove("text-[#c7f284]");
         });
 
-        const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab='" + tabId + "']");
-        activeBtns.forEach(function(b) { b.classList.add("active"); });
+        const activeBtns = document.querySelectorAll("#btn-tab-" + tabId + ", [data-tab="" + tabId + ""]");
+        activeBtns.forEach(function(b) { 
+          b.classList.add("active"); 
+          b.classList.add("border-l-4");
+          b.classList.add("border-[#c7f284]");
+          b.classList.add("bg-[#182633]");
+          b.classList.add("text-[#c7f284]");
+        });
 
+        // Update page title & topbar breadcrumb
+        const titles = {
+          "duel": { title: "PvP Duels Arena", icon: "⚔️", sub: "1v1 Binary Prediction Duels" },
+          "vault2048": { title: "2048 Skill Challenge", icon: "🎮", sub: "Proof of Play & Daily Rewards" },
+          "jackpot": { title: "Grand Jackpot", icon: "🎯", sub: "Verifiable Weekly Prize Pool" },
+          "leaderboard": { title: "Hall of Fame", icon: "🏆", sub: "Top Traders & Volume Rank" },
+          "history": { title: "Duel History", icon: "📜", sub: "Settled Trades & Claimable Rewards" },
+          "docs": { title: "Protocol Documentation", icon: "📖", sub: "Smart Contracts & Verification" },
+          "admin": { title: "Admin Portal", icon: "👑", sub: "Contract Administration" }
+        };
+        const currentMeta = titles[tabId] || titles["duel"];
+        const topTitleEl = document.getElementById("currentViewTitle");
+        const topSubEl = document.getElementById("currentViewSub");
+        if (topTitleEl) topTitleEl.innerHTML = `<span class="mr-2">${currentMeta.icon}</span>${currentMeta.title}`;
+        if (topSubEl) topSubEl.textContent = currentMeta.sub;
+        document.title = `${currentMeta.icon} ${currentMeta.title} | pvphub.fun`;
+
+        // Update URL hash without reload
+        if (window.location.hash !== "#" + tabId) {
+          history.replaceState(null, null, "#" + tabId);
+        }
+
+        // Close mobile drawer if open
+        const mobileDrawer = document.getElementById("sidebarDrawer");
+        if (mobileDrawer && !mobileDrawer.classList.contains("hidden")) {
+          mobileDrawer.classList.add("hidden");
+        }
+
+        // Trigger tab-specific initialization
         if (tabId === "vault2048") { 
-    if (typeof update2048TicketsUI === "function") update2048TicketsUI(); 
-    if (typeof syncInitial2048History === "function") syncInitial2048History();
-    if (typeof window.render2048 === "function") window.render2048(); 
-  }
+          if (typeof update2048TicketsUI === "function") update2048TicketsUI(); 
+          if (typeof syncInitial2048History === "function") syncInitial2048History();
+          if (typeof window.render2048 === "function") window.render2048(); 
+        }
         if (tabId === "jackpot") {
           if (typeof window.renderJackpotSubmissions === "function") window.renderJackpotSubmissions();
           if (typeof window.updateJackpotMetrics === "function") window.updateJackpotMetrics();
@@ -337,95 +380,174 @@
         console.error("switchTab err:", e);
       }
     };
+
+    // Auto-load route from hash
+    window.addEventListener("DOMContentLoaded", function() {
+      const hash = window.location.hash.replace("#", "");
+      if (hash && ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"].includes(hash)) {
+        window.switchTab(hash);
+      }
+    });
+    window.addEventListener("hashchange", function() {
+      const hash = window.location.hash.replace("#", "");
+      if (hash && ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"].includes(hash)) {
+        window.switchTab(hash);
+      }
+    });
   </script>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+<script>
+    function toggleMobileSidebar() {
+      const drawer = document.getElementById("mobileSidebar");
+      const backdrop = document.getElementById("mobileDrawerBackdrop");
+      if (!drawer || !backdrop) return;
+      if (drawer.classList.contains("-translate-x-full")) {
+        drawer.classList.remove("-translate-x-full");
+        backdrop.classList.remove("hidden");
+      } else {
+        drawer.classList.add("-translate-x-full");
+        backdrop.classList.add("hidden");
+      }
+    }
+  </script>
 </head>
-<body class="bg-[#090d14] text-[#f8fafc] min-h-screen antialiased selection:bg-[#c7f284] selection:text-[#f8fafc] font-sans flex flex-col">
+<body class="bg-[#090d14] text-[#f8fafc] min-h-screen antialiased selection:bg-[#c7f284] selection:text-[#090d14] font-sans flex">
 
-  <!-- TOP HEADER / NAVBAR -->
-  <header class="sticky top-0 z-50 border-b border-[#e2e8f0] bg-[#05070d]/90 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      
-      <!-- LOGO & BRAND -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('duel')">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-none ring-1 ring-white/20">
-          <span class="text-2xl font-black text-white">⚔️</span>
+  <!-- JUPITER FIXED FULL-HEIGHT LEFT SIDEBAR (Desktop) -->
+  <aside id="jupSidebar" class="fixed left-0 top-0 bottom-0 w-64 bg-[#0c131d] border-r border-[#1f2b3e] flex flex-col justify-between z-50 hidden md:flex transition-transform duration-300 select-none">
+    <!-- Top Brand & Navigation -->
+    <div class="p-4 space-y-6 overflow-y-auto">
+      <!-- Logo & Brand Header -->
+      <div class="flex items-center gap-3 cursor-pointer px-2 py-1 hover:opacity-90 transition-opacity" onclick="switchTab('duel')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-[#c7f284] flex items-center justify-center shadow-lg ring-1 ring-white/20 shrink-0">
+          <span class="text-xl">⚔️</span>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="font-black text-xl tracking-wider text-white font-mono">pvphub.fun</span>
-            
+          <div class="flex items-center gap-1.5">
+            <span class="font-black text-lg tracking-wider text-white font-mono">pvphub</span>
+            <span class="text-[9px] px-1.5 py-0.2 rounded font-mono bg-[#182633] text-[#c7f284] border border-[#1f2b3e]">DEX</span>
           </div>
-          <p class="text-[11px] font-medium text-slate-400">Canonical Decentralized Hub</p>
+          <p class="text-[10px] font-mono text-[#94a3b8] flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#c7f284] animate-pulse"></span>
+            Robinhood Chain
+          </p>
         </div>
       </div>
 
-      <!-- MAIN NAVIGATION TABS -->
-      <!-- Top Header Nav Moved To Left Sidebar -->
+      <!-- Left Navigation Menu Items -->
+      <nav class="space-y-1.5">
+        <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer border-l-4 border-[#c7f284] bg-[#182633] text-[#c7f284]">
+          <span class="flex items-center gap-3 text-sm"><span>⚔️</span> PvP Duels</span>
+          <span class="w-2 h-2 rounded-full bg-[#c7f284] animate-pulse"></span>
+        </button>
+        <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+          <span class="flex items-center gap-3 text-sm"><span>🎮</span> 2048 Skill</span>
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+        </button>
+        <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+          <span class="flex items-center gap-3 text-sm"><span>🎯</span> Grand Jackpot</span>
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+        </button>
+        <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+          <span class="flex items-center gap-3 text-sm"><span>🏆</span> Leaderboard</span>
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+        </button>
+        <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+          <span class="flex items-center gap-3 text-sm"><span>📜</span> History</span>
+          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#131b27] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
+        </button>
+        <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+          <span class="flex items-center gap-3 text-sm"><span>📖</span> Whitepaper</span>
+        </button>
+        <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#cbd5e1] hover:bg-[#131b27] hover:text-white">
+          <span class="flex items-center gap-3 text-sm"><span>👑</span> Admin Panel</span>
+        </button>
+      </nav>
+    </div>
 
-      <!-- WALLET & QUICK METRICS -->
+    <!-- Sidebar Bottom Info -->
+    <div class="p-4 border-t border-[#1f2b3e] space-y-2.5 text-xs font-mono">
+      <div class="bg-[#131b27] p-2.5 rounded-xl border border-[#1f2b3e] flex items-center justify-between">
+        <span class="text-[#94a3b8] text-[11px]">Stake Asset</span>
+        <span class="text-[#c7f284] font-bold text-xs">USDG (1:1)</span>
+      </div>
+      <div class="flex items-center justify-between text-[11px] text-[#94a3b8] px-1">
+        <span>Network:</span>
+        <span class="text-white font-bold">Robinhood</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MOBILE SIDEBAR DRAWER OVERLAY -->
+  <div id="mobileDrawerBackdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden md:hidden" onclick="toggleMobileSidebar()"></div>
+  <aside id="mobileSidebar" class="fixed left-0 top-0 bottom-0 w-64 bg-[#0c131d] border-r border-[#1f2b3e] flex flex-col justify-between z-50 -translate-x-full transition-transform duration-300 md:hidden select-none">
+    <div class="p-4 space-y-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-[#c7f284] flex items-center justify-center">
+            <span>⚔️</span>
+          </div>
+          <span class="font-black text-lg text-white font-mono">pvphub</span>
+        </div>
+        <button onclick="toggleMobileSidebar()" class="p-2 text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+      <nav class="space-y-1.5">
+        <button onclick="switchTab('duel')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#c7f284] bg-[#182633]">
+          <span class="flex items-center gap-3"><span>⚔️</span> PvP Duels</span>
+        </button>
+        <button onclick="switchTab('vault2048')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+          <span class="flex items-center gap-3"><span>🎮</span> 2048 Skill</span>
+        </button>
+        <button onclick="switchTab('jackpot')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+          <span class="flex items-center gap-3"><span>🎯</span> Grand Jackpot</span>
+        </button>
+        <button onclick="switchTab('leaderboard')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+          <span class="flex items-center gap-3"><span>🏆</span> Leaderboard</span>
+        </button>
+        <button onclick="switchTab('history')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+          <span class="flex items-center gap-3"><span>📜</span> History</span>
+        </button>
+        <button onclick="switchTab('docs')" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#cbd5e1]">
+          <span class="flex items-center gap-3"><span>📖</span> Whitepaper</span>
+        </button>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT WRAPPER (ANCHORED TO RIGHT OF FIXED SIDEBAR: md:pl-64) -->
+  <div class="md:pl-64 flex-1 flex flex-col min-h-screen bg-[#090d14] w-full">
+
+    <!-- TOP HEADER / NAVBAR (STICKY INSIDE MAIN AREA) -->
+    <header class="sticky top-0 z-40 border-b border-[#1f2b3e] bg-[#0c131d]/90 backdrop-blur-xl h-20 px-4 sm:px-8 flex items-center justify-between">
+      <!-- Left: Mobile menu toggle & Current Page Header -->
+      <div class="flex items-center gap-4">
+        <button onclick="toggleMobileSidebar()" class="md:hidden p-2.5 rounded-xl bg-[#131b27] border border-[#1f2b3e] text-white cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <div>
+          <h1 id="currentViewTitle" class="text-base sm:text-lg font-black text-white font-mono flex items-center">
+            <span class="mr-2">⚔️</span>PvP Duels Arena
+          </h1>
+          <p id="currentViewSub" class="text-[11px] text-[#94a3b8] font-mono hidden sm:block">1v1 Binary Prediction Duels</p>
+        </div>
+      </div>
+
+      <!-- Right: Action CTA & Wallet -->
       <div class="flex items-center gap-3">
-        
-        
-        <!-- PERMISSIONLESS CREATE QUESTION BUTTON -->
-        
-  
-        <button onclick="connectWallet()" id="walletBtn" class="px-4 py-2 rounded-xl font-mono text-xs font-bold bg-black text-white hover:bg-neutral-800 transition-all shadow-sm flex items-center gap-2">
-          <span id="walletDot" class="w-2 h-2 rounded-full bg-[#131b27]"></span>
+        <button onclick="openCreateQuestionModal()" class="px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold bg-[#131b27] hover:bg-[#182633] text-[#c7f284] border border-[#1f2b3e] hover:border-[#c7f284] transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
+          <span>+</span>
+          <span>Create Market</span>
+        </button>
+        <button onclick="connectWallet()" id="walletBtn" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold bg-[#c7f284] text-[#090d14] hover:brightness-105 transition-all shadow-md flex items-center gap-2 cursor-pointer">
+          <span id="walletDot" class="w-2 h-2 rounded-full bg-[#090d14]"></span>
           <span id="walletBtnText">Connect Wallet</span>
         </button>
       </div>
+    </header>
 
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  
-  <!-- MAIN CONTAINER WITH LEFT SIDEBAR LAYOUT -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col md:flex-row gap-6">
-    
-    <!-- LEFT SIDEBAR NAVIGATION -->
-    <aside class="w-full md:w-64 shrink-0 space-y-4">
-      <div class="bg-[#131b27] p-3 rounded-2xl border border-[#1f2b3e] shadow-lg sticky top-24">
-        <div class="px-3 py-2 text-[11px] font-mono font-bold text-[#94a3b8] uppercase tracking-wider border-b border-[#1f2b3e] mb-2 flex items-center justify-between">
-          <span>NAVIGATION</span>
-          <span class="text-[9px] px-1.5 py-0.5 rounded bg-[#1f2b3e] text-[#c7f284]">HUB</span>
-        </div>
-        <nav class="flex flex-col gap-1.5">
-          <button onclick="switchTab('duel')" id="btn-tab-duel" class="tab-btn active w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
-            <span class="flex items-center gap-2.5"><span>⚔️</span> PvP Duels</span>
-            <span class="w-2 h-2 rounded-full bg-[#c7f284] animate-pulse"></span>
-          </button>
-          <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
-            <span class="flex items-center gap-2.5"><span>🎮</span> 2048 Skill</span>
-            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1f2b3e] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
-          </button>
-          <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
-            <span class="flex items-center gap-2.5"><span>🎯</span> Grand Jackpot</span>
-            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1f2b3e] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
-          </button>
-          <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
-            <span class="flex items-center gap-2.5"><span>🏆</span> Leaderboard</span>
-            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1f2b3e] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
-          </button>
-          <button onclick="switchTab('history')" id="btn-tab-history" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
-            <span class="flex items-center gap-2.5"><span>📜</span> History</span>
-            <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#1f2b3e] text-[#c7f284] border border-[#1f2b3e]">SOON</span>
-          </button>
-          <button onclick="switchTab('docs')" id="btn-tab-docs" data-tab="docs" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
-            <span class="flex items-center gap-2.5"><span>📜</span> Whitepaper</span>
-          </button>
-          <button onclick="switchTab('admin')" id="btn-tab-admin" class="tab-btn hidden w-full px-3.5 py-2.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between">
-            <span class="flex items-center gap-2.5"><span>👑</span> Admin Panel</span>
-          </button>
-        </nav>
-      </div>
-    </aside>
-
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 w-full space-y-8">
-
+    <!-- MAIN PAGE CONTAINER -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8">
 
     <!-- 1. PVP DUELS TAB -->
     <div id="tab-duel" class="tab-content block space-y-8">
@@ -2029,11 +2151,12 @@
 
   <!-- FOOTER -->
   </main>
-  </div>
 
-  <footer class="border-t border-[#e2e8f0] bg-[#05070d] py-6 text-center text-xs font-mono text-slate-500">
-    <p>pvphub.fun © 2026 • Robinhood Chain</p>
-  </footer>
+    <!-- FOOTER -->
+    <footer class="border-t border-[#1f2b3e] bg-[#0c131d] py-6 text-center text-xs font-mono text-[#94a3b8]">
+      <p>pvphub.fun © 2026 • Robinhood Chain</p>
+    </footer>
+  </div>
 
   <!-- INTERACTIVE JAVASCRIPT -->
   <script>
