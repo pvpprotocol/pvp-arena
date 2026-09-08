@@ -2199,7 +2199,7 @@
             <li class="leading-relaxed">Once an opponent enters and the competition officially begins, unilateral cancellation or withdrawal is strictly prohibited, and locked assets remain secured within the smart contract until the official result is recorded.</li>
             <li class="leading-relaxed">Upon expiration of the designated entry deadline, any request that has not been matched with an opponent automatically expires, and 100% of the deposited stake is refunded to the creator with zero platform fees.</li>
             <li class="leading-relaxed">Prior to an opponent joining the contest, the creator may voluntarily cancel their request at any time and reclaim their full deposit without fee deduction or penalty.</li>
-                        <li class="leading-relaxed">In all contests featuring more than two potential outcomes, such as football matches with win, draw, or loss possibilities, the verified winner is the participant who selected the correct outcome. If neither participant selected the correct outcome, the contest concludes with no winner, and 100% of their deposited funds are fully refunded without fee deduction.</li>
+                        <li class="leading-relaxed">In sports contests, Option 1 is Team A and Option 2 is Team B. In the event of a Full-Time Draw, the contest is void and 100% of collateral is refunded to both players with zero fee deduction.</li>
             <li class="leading-relaxed">In the event of delay, outage, or unavailability of oracle reference data at the scheduled time, a 6-hour resolution grace period is initiated; if no verified data is obtained upon completion of this 6-hour window, the contest undergoes an emergency cancellation and all funds are refunded to both participants.</li>
           </ol>
           </div>
@@ -4242,10 +4242,10 @@
         settlementTime: Date.now() + 90000000,
         winningOption: null,
         isEnded: false,
-        isThreeWay: true,
+        isThreeWay: false,
         opt1: "برد بارسلون",
-        opt2: "مساوی",
-        opt3: "برد چلسی",
+        opt2: "برد چلسی",
+        desc: "Option 1: Barcelona | Option 2: Chelsea | Full-Time Draw = Void (100% Refund)",
         resolutionSource: "Official Match Result / ESPN",
         contract: "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
         explorerTx: "https://explorer.mainnet.chain.robinhood.com/address/0x11e8c3a1501bd597874cb62d6ea84b90b27fb905",
@@ -4633,9 +4633,9 @@
 
       if (subTitle) {
         if (q.isThreeWay) {
-          subTitle.textContent = "Select predicted outcome (Win / Draw / Win). Opponent must choose a different outcome.";
+          subTitle.textContent = "Option 1 is Team A and Option 2 is Team B. In the event of a Full-Time Draw, the contest is void and 100% of collateral is refunded to both players with zero fee deduction.";
         } else if (q.category === "SPORTS" || (q.opt1 && q.opt1 !== "GREEN" && q.opt1 !== "YES")) {
-          subTitle.textContent = "Select the winning team. Opponent must back the opposing team.";
+          subTitle.textContent = "Option 1 is Team A and Option 2 is Team B. In the event of a Full-Time Draw, the contest is void and 100% of collateral is refunded to both players with zero fee deduction.";
         } else {
           subTitle.textContent = "Select GREEN or RED candle close. Opponent must take the opposite side to enter.";
         }
