@@ -7863,8 +7863,7 @@ window.handleCreateQuestion = async function(e) {
             <div>
               <label class="text-slate-400 text-[10px] block mb-1">Select League</label>
               <select id="sportsLeagueSelect" onchange="handleSportsLeagueChange(this.value)" class="w-full bg-[#131b27] border border-[#334155] rounded-lg px-2.5 py-1.5 text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]">
-                <option value="FOOTBALL_UCL" selected>⚽ Football: UEFA Champions League</option>
-                <option value="FOOTBALL_EPL">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Football: English Premier League</option>
+                <option value="FOOTBALL_EPL" selected>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Football: English Premier League</option>
                 <option value="FOOTBALL_LALIGA">🇪🇸 Football: Spain La Liga</option>
                 <option value="FOOTBALL_BUNDESLIGA">🇩🇪 Football: Germany Bundesliga</option>
                 <option value="FOOTBALL_SERIE_A">🇮🇹 Football: Italy Serie A</option>
@@ -7904,11 +7903,6 @@ window.handleCreateQuestion = async function(e) {
     
     // Official Verified Fixtures Database (Football & USA NBA Only)
     const VERIFIED_SPORTS_FIXTURES = {
-      FOOTBALL_UCL: [
-        { id: "ucl-1", title: "Real Madrid vs Manchester City (Full-Time)", teamA: "Real Madrid", teamB: "Manchester City", kickoffOffsetHours: 4, res: "Official UEFA Champions League / ESPN (Full-Time)" },
-        { id: "ucl-2", title: "Bayern Munich vs Arsenal (Full-Time)", teamA: "Bayern Munich", teamB: "Arsenal", kickoffOffsetHours: 6, res: "Official UEFA Champions League / ESPN (Full-Time)" },
-        { id: "ucl-3", title: "Paris Saint-Germain vs Barcelona (Full-Time)", teamA: "Paris Saint-Germain", teamB: "Barcelona", kickoffOffsetHours: 24, res: "Official UEFA Champions League / ESPN (Full-Time)" }
-      ],
       FOOTBALL_EPL: [
         { id: "epl-1", title: "Arsenal vs Chelsea (Full-Time)", teamA: "Arsenal", teamB: "Chelsea", kickoffOffsetHours: 5, res: "Official Premier League / ESPN (Full-Time)" },
         { id: "epl-2", title: "Liverpool vs Manchester United (Full-Time)", teamA: "Liverpool", teamB: "Manchester United", kickoffOffsetHours: 8, res: "Official Premier League / ESPN (Full-Time)" },
@@ -8047,7 +8041,7 @@ window.handleCreateQuestion = async function(e) {
         if (notice) notice.classList.remove("hidden");
         if (sportsPanel) sportsPanel.classList.remove("hidden");
         if (cryptoPanel) cryptoPanel.classList.add("hidden");
-        handleSportsLeagueChange("FOOTBALL_UCL");
+        handleSportsLeagueChange("FOOTBALL_EPL");
       }
     }
 
