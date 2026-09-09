@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
  * @title PvPGrandJackpot
- * @notice Verifiable Onchain Grand Jackpot Vaults with strict 2-ticket wallet cap,
- *         90% winner distribution, 10% protocol fee, and 100% rollover on no-winner rounds.
+ * @notice Verifiable Onchain Grand Jackpot with explicit Question ID, Target Predictions,
+ *         strict 2-ticket wallet cap, 90% winner distribution, 10% protocol fee, and 100% rollover.
  */
 contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
     using ECDSA for bytes32;
@@ -30,22 +30,25 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         bool isSettled;
     }
 
-    // roundId => tier => RoundTier
-    mapping(uint256 => mapping(uint256 => RoundTier)) public roundTiers;
-    // roundId => tier => userAddress => ticketCount (Strict max 2)
+    // questionId => tier => RoundTier
+    mapping(uint256 => mapping(uint256 => RoundTier)) public questionTiers;
+    // questionId => tier => userAddress => ticketCount (Strict max 2)
     mapping(uint256 => mapping(uint256 => mapping(address => uint256))) public userTickets;
-    // roundId => tier => ticketId => TicketData
+
+    // Ticket structure storing exact Question ID, player, and numeric prediction
     struct Ticket {
         address player;
-        uint256 targetPrediction; // target outcome scaled to 2 decimals (e.g. 2450.50 -> 245050)
+        uint256 questionId;
+        uint256 targetPrediction; // e.g. 77564 or 7756400 (scaled to 2 decimals)
         uint256 timestamp;
     }
-    mapping(uint256 => mapping(uint256 => Ticket[])) internal tierTickets;
+    // questionId => tier => Ticket[]
+    mapping(uint256 => mapping(uint256 => Ticket[])) internal questionTickets;
 
-    uint256 public currentRoundId;
+    uint256 public currentQuestionId = 1;
 
-        event TicketsPurchased(
-        uint256 indexed roundId,
+    event TicketsPurchased(
+        uint256 indexed questionId,
         uint256 indexed tier,
         address indexed player,
         uint256 ticketCount,
@@ -54,7 +57,7 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
     );
 
     event TicketPurchased(
-        uint256 indexed roundId,
+        uint256 indexed questionId,
         uint256 indexed tier,
         address indexed player,
         uint256 ticketNumber,
@@ -62,7 +65,7 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
     );
 
     event RoundSettled(
-        uint256 indexed roundId,
+        uint256 indexed questionId,
         uint256 indexed tier,
         uint256 actualOutcome,
         uint256 winnerCount,
@@ -82,44 +85,49 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         usdgToken = IERC20(_usdgToken);
         treasury = _treasury;
         oracleSigner = _oracleSigner;
-        currentRoundId = 1;
+        currentQuestionId = 1;
     }
 
     /**
-     * @notice Purchase jackpot ticket (Max 2 tickets per wallet per tier)
-     * @param tier Price tier (1, 5, 10, 100, 1000)
-     * @param targetPrediction Predicted outcome value
-     */
-        /**
-     * @notice Purchase multiple jackpot tickets in a single transparent onchain transaction
+     * @notice Purchase jackpot tickets for a specific Question ID, Tier, and explicit Predictions
+     * @param questionId Unique identifier of the question (e.g. 1 for BTC Daily Candle)
      * @param tier Dollar tier of the ticket (1, 5, 10, 100, 1000)
-     * @param targetPredictions Array of target predictions (1 or 2 tickets per wallet)
+     * @param targetPredictions Array of target predictions (e.g. [77564]) - strictly 1 or 2 tickets
      */
-    function buyTickets(uint256 tier, uint256[] calldata targetPredictions) external nonReentrant {
+    function buyTickets(
+        uint256 questionId,
+        uint256 tier,
+        uint256[] calldata targetPredictions
+    ) external nonReentrant {
         uint256 qty = targetPredictions.length;
         require(qty > 0 && qty <= MAX_TICKETS_PER_WALLET, "Must buy 1 or 2 tickets");
         require(tier > 0, "Invalid tier");
-        require(userTickets[currentRoundId][tier][msg.sender] + qty <= MAX_TICKETS_PER_WALLET, "Max 2 tickets per wallet reached");
+        require(questionId > 0, "Invalid questionId");
+        require(
+            userTickets[questionId][tier][msg.sender] + qty <= MAX_TICKETS_PER_WALLET,
+            "Max 2 tickets per wallet reached for this question and tier"
+        );
 
         uint256 totalCostWei = (tier * qty) * 1e6; // USDG is 6 decimals
         require(usdgToken.transferFrom(msg.sender, address(this), totalCostWei), "USDG transfer failed");
 
-        userTickets[currentRoundId][tier][msg.sender] += qty;
+        userTickets[questionId][tier][msg.sender] += qty;
 
-        RoundTier storage rTier = roundTiers[currentRoundId][tier];
+        RoundTier storage rTier = questionTiers[questionId][tier];
         rTier.ticketPrice = tier * 1e6;
         rTier.totalVault += totalCostWei;
 
         for (uint256 i = 0; i < qty; i++) {
             rTier.totalTickets += 1;
-            tierTickets[currentRoundId][tier].push(Ticket({
+            questionTickets[questionId][tier].push(Ticket({
                 player: msg.sender,
+                questionId: questionId,
                 targetPrediction: targetPredictions[i],
                 timestamp: block.timestamp
             }));
 
             emit TicketPurchased(
-                currentRoundId,
+                questionId,
                 tier,
                 msg.sender,
                 rTier.totalTickets,
@@ -128,7 +136,7 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         }
 
         emit TicketsPurchased(
-            currentRoundId,
+            questionId,
             tier,
             msg.sender,
             qty,
@@ -138,76 +146,76 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
     }
 
     /**
-     * @notice Single ticket purchase backwards-compatibility
+     * @notice Single ticket helper
      */
-    function buyTicket(uint256 tier, uint256 targetPrediction) external nonReentrant {
+    function buyTicket(
+        uint256 questionId,
+        uint256 tier,
+        uint256 targetPrediction
+    ) external nonReentrant {
         uint256[] memory preds = new uint256[](1);
         preds[0] = targetPrediction;
-        _buyTicketsInternal(tier, preds);
-    }
-
-    function _buyTicketsInternal(uint256 tier, uint256[] memory targetPredictions) internal {
-        uint256 qty = targetPredictions.length;
-        require(qty > 0 && qty <= MAX_TICKETS_PER_WALLET, "Must buy 1 or 2 tickets");
+        
         require(tier > 0, "Invalid tier");
-        require(userTickets[currentRoundId][tier][msg.sender] + qty <= MAX_TICKETS_PER_WALLET, "Max 2 tickets per wallet reached");
+        require(questionId > 0, "Invalid questionId");
+        require(
+            userTickets[questionId][tier][msg.sender] + 1 <= MAX_TICKETS_PER_WALLET,
+            "Max 2 tickets per wallet reached"
+        );
 
-        uint256 totalCostWei = (tier * qty) * 1e6;
+        uint256 totalCostWei = tier * 1e6;
         require(usdgToken.transferFrom(msg.sender, address(this), totalCostWei), "USDG transfer failed");
 
-        userTickets[currentRoundId][tier][msg.sender] += qty;
+        userTickets[questionId][tier][msg.sender] += 1;
 
-        RoundTier storage rTier = roundTiers[currentRoundId][tier];
+        RoundTier storage rTier = questionTiers[questionId][tier];
         rTier.ticketPrice = tier * 1e6;
         rTier.totalVault += totalCostWei;
+        rTier.totalTickets += 1;
 
-        for (uint256 i = 0; i < qty; i++) {
-            rTier.totalTickets += 1;
-            tierTickets[currentRoundId][tier].push(Ticket({
-                player: msg.sender,
-                targetPrediction: targetPredictions[i],
-                timestamp: block.timestamp
-            }));
+        questionTickets[questionId][tier].push(Ticket({
+            player: msg.sender,
+            questionId: questionId,
+            targetPrediction: targetPrediction,
+            timestamp: block.timestamp
+        }));
 
-            emit TicketPurchased(
-                currentRoundId,
-                tier,
-                msg.sender,
-                rTier.totalTickets,
-                targetPredictions[i]
-            );
-        }
-
-        emit TicketsPurchased(
-            currentRoundId,
+        emit TicketPurchased(
+            questionId,
             tier,
             msg.sender,
-            qty,
+            rTier.totalTickets,
+            targetPrediction
+        );
+
+        emit TicketsPurchased(
+            questionId,
+            tier,
+            msg.sender,
+            1,
             totalCostWei,
-            targetPredictions
+            preds
         );
     }
 
     /**
-     * @notice Settle a jackpot round tier with oracle proof
-     *         90% distributed equally among exact winners.
-     *         If no exact winner, 100% rolls over to the next round.
+     * @notice Settle jackpot for a question and tier
+     *         90% to exact winners. If no exact winner, 100% rolls over to next questionId.
      */
-    function settleRoundTier(
-        uint256 roundId,
+    function settleJackpot(
+        uint256 questionId,
         uint256 tier,
         uint256 actualOutcome,
         address[] calldata winners,
         bytes calldata signature
     ) external nonReentrant {
-        RoundTier storage rTier = roundTiers[roundId][tier];
-        require(!rTier.isSettled, "Round tier already settled");
+        RoundTier storage rTier = questionTiers[questionId][tier];
+        require(!rTier.isSettled, "Already settled");
 
-        // Verify EIP-712 proof
         bytes32 structHash = keccak256(
             abi.encode(
-                keccak256("SettleJackpot(uint256 roundId,uint256 tier,uint256 actualOutcome,address[] winners)"),
-                roundId,
+                keccak256("SettleJackpot(uint256 questionId,uint256 tier,uint256 actualOutcome,address[] winners)"),
+                questionId,
                 tier,
                 actualOutcome,
                 keccak256(abi.encodePacked(winners))
@@ -224,24 +232,27 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
             uint256 netPayout = (vault * WINNER_PERCENT) / 100;
             uint256 protocolFee = vault - netPayout;
 
-            // Pay protocol fee
             if (protocolFee > 0 && treasury != address(0)) {
                 require(usdgToken.transfer(treasury, protocolFee), "Treasury transfer failed");
             }
 
-            // Split 90% equally among all verified winners
             uint256 perWinnerPayout = netPayout / winners.length;
             for (uint256 i = 0; i < winners.length; i++) {
                 require(usdgToken.transfer(winners[i], perWinnerPayout), "Winner transfer failed");
             }
 
-            emit RoundSettled(roundId, tier, actualOutcome, winners.length, netPayout, protocolFee, 0);
+            emit RoundSettled(questionId, tier, actualOutcome, winners.length, netPayout, protocolFee, 0);
         } else {
-            // 100% Rollover to next round
-            uint256 nextRoundId = roundId + 1;
-            roundTiers[nextRoundId][tier].totalVault += vault;
-            emit RoundSettled(roundId, tier, actualOutcome, 0, 0, 0, vault);
+            // 100% Rollover to next questionId
+            uint256 nextQId = questionId + 1;
+            questionTiers[nextQId][tier].totalVault += vault;
+            emit RoundSettled(questionId, tier, actualOutcome, 0, 0, 0, vault);
         }
+    }
+
+    function setCurrentQuestionId(uint256 _newId) external onlyOwner {
+        require(_newId > 0, "Invalid id");
+        currentQuestionId = _newId;
     }
 
     function setTreasury(address _treasury) external onlyOwner {
@@ -254,7 +265,7 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         oracleSigner = _signer;
     }
 
-    function startNextRound() external onlyOwner {
-        currentRoundId += 1;
+    function getTickets(uint256 questionId, uint256 tier) external view returns (Ticket[] memory) {
+        return questionTickets[questionId][tier];
     }
 }
