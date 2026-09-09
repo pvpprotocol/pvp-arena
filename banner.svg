@@ -33,8 +33,8 @@
   <!-- Geometric Accent Lines -->
   <path d="M 0 100 L 250 100 L 320 170 L 580 170" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-opacity="0.6" />
   <circle cx="580" cy="170" r="4" fill="#14F195" />
-  <path d="M 900 350 L 1150 350 L 1220 420 L 1500 420" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-opacity="0.6" />
-  <circle cx="900" cy="350" r="4" fill="#9945FF" />
+  <path d="M 900 380 L 1150 380 L 1220 440 L 1500 440" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-opacity="0.6" />
+  <circle cx="900" cy="380" r="4" fill="#9945FF" />
 
   <!-- Left Side: Brand & Subtitle -->
   <g transform="translate(100, 60)">
@@ -80,10 +80,10 @@
     ENTER THE ARENA: <tspan fill="#14F195">HTTPS://PVPHUB.FUN</tspan>
   </text>
 
-  <!-- Right Side: Live Duel Card -->
-  <g transform="translate(930, 45)">
+  <!-- Right Side: Live Duel Card (Cleaned without bottom oracle box) -->
+  <g transform="translate(930, 95)">
     <!-- Card Base -->
-    <rect x="0" y="0" width="470" height="410" rx="28" fill="#131c27" stroke="#1f2b3e" stroke-width="2" />
+    <rect x="0" y="0" width="470" height="300" rx="26" fill="#131c27" stroke="#1f2b3e" stroke-width="2" />
     
     <!-- Match Header -->
     <rect x="25" y="25" width="420" height="52" rx="12" fill="#0e141f" stroke="#1e293b" stroke-width="1" />
@@ -117,15 +117,6 @@
       <text x="255" y="104" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#94A3B8">ODDS: 1.90x</text>
       <rect x="255" y="118" width="135" height="24" rx="4" fill="#f87171" fill-opacity="0.2" />
       <text x="283" y="134" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#f87171">MATCHED</text>
-    </g>
-
-    <!-- Resolution Footer -->
-    <g transform="translate(25, 300)">
-      <rect x="0" y="0" width="420" height="75" rx="14" fill="#0b1019" stroke="#1e293b" stroke-width="1" />
-      <text x="22" y="30" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#64748B">ORACLE FEED &amp; RESOLUTION</text>
-      <text x="22" y="56" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#F8FAFC">Pyth Network High-Frequency Candle</text>
-      <circle cx="390" cy="38" r="8" fill="#14F195" fill-opacity="0.2" />
-      <circle cx="390" cy="38" r="4" fill="#14F195" />
     </g>
   </g>
 </svg>
