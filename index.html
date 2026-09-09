@@ -3608,7 +3608,7 @@
         const poolEl = document.getElementById("jackpot-pool-" + tier);
         const partEl = document.getElementById("jackpot-players-" + tier);
 
-        if (prizeEl) prizeEl.innerText = "$" + winnerPrize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+        if (prizeEl) prizeEl.innerText = "$" + winnerPrize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         if (poolEl) poolEl.innerText = "$" + totalPool.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
         if (partEl) partEl.innerText = totalTickets.toLocaleString() + " tickets";
       });
