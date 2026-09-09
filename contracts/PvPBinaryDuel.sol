@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 /**
  * @title PvPBinaryDuel
  * @notice P2P Binary Prediction Duels (YES/NO) with Cryptographic Oracle Settlement
- * @dev Settles binary duels via EIP-712 oracle proofs with 90% winner, 3% cashback, 7% treasury.
+ * @dev Settles binary duels via EIP-712 oracle proofs with 1.9x winner payout (95% total pool), 3% cashback (1.5% total pool), and 1% protocol treasury fee.
  */
 
 interface IERC20 {
@@ -308,10 +308,10 @@ contract PvPBinaryDuel {
         }
 
         uint256 totalPool = d.wagerAmount * 2;
-        // Tokenomics: 90% winner, 3% cashback to loser, 7% treasury
-        uint256 winnerPayout = (totalPool * 90) / 100;
-        uint256 cashbackAmount = (totalPool * 3) / 100;
-        uint256 treasuryFee = totalPool - winnerPayout - cashbackAmount; // 7%
+        // Tokenomics: 1.9x net payout to winner (95% of 2x total pool), 3% cashback on stake (1.5% of total pool), 1% treasury fee (remaining pool)
+        uint256 winnerPayout = (totalPool * 95) / 100;
+        uint256 cashbackAmount = (totalPool * 15) / 1000;
+        uint256 treasuryFee = totalPool - winnerPayout - cashbackAmount;
 
         if (d.token == address(0)) {
             // Payout in native ETH
