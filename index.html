@@ -1762,7 +1762,7 @@
                 </div>
               </div>
 
-              <button onclick="buyJackpotTicket(1)" id="btn-jackpot-1" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all text-center cursor-pointer">CONFIRM & BUY TICKET ($1)</button>
+              <button onclick="buyJackpotTicket(1)" id="btn-jackpot-1" disabled class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 font-mono font-bold text-xs text-center cursor-not-allowed">🔒 ENTRY PAUSED (WAITING FOR ADMIN)</button>
             </div>
           </div>
 
@@ -1830,7 +1830,7 @@
                 </div>
               </div>
 
-              <button onclick="buyJackpotTicket(5)" id="btn-jackpot-5" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all text-center cursor-pointer">CONFIRM & BUY TICKET ($5)</button>
+              <button onclick="buyJackpotTicket(5)" id="btn-jackpot-5" disabled class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 font-mono font-bold text-xs text-center cursor-not-allowed">🔒 ENTRY PAUSED (WAITING FOR ADMIN)</button>
             </div>
           </div>
 
@@ -1898,7 +1898,7 @@
                 </div>
               </div>
 
-              <button onclick="buyJackpotTicket(10)" id="btn-jackpot-10" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all text-center cursor-pointer">CONFIRM & BUY TICKET ($10)</button>
+              <button onclick="buyJackpotTicket(10)" id="btn-jackpot-10" disabled class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 font-mono font-bold text-xs text-center cursor-not-allowed">🔒 ENTRY PAUSED (WAITING FOR ADMIN)</button>
             </div>
           </div>
 
@@ -1966,7 +1966,7 @@
                 </div>
               </div>
 
-              <button onclick="buyJackpotTicket(100)" id="btn-jackpot-100" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all text-center cursor-pointer">CONFIRM & BUY TICKET ($100)</button>
+              <button onclick="buyJackpotTicket(100)" id="btn-jackpot-100" disabled class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 font-mono font-bold text-xs text-center cursor-not-allowed">🔒 ENTRY PAUSED (WAITING FOR ADMIN)</button>
             </div>
           </div>
 
@@ -2034,7 +2034,7 @@
                 </div>
               </div>
 
-              <button onclick="buyJackpotTicket(1000)" id="btn-jackpot-1000" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all text-center cursor-pointer">CONFIRM & BUY TICKET ($1,000)</button>
+              <button onclick="buyJackpotTicket(1000)" id="btn-jackpot-1000" disabled class="w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 font-mono font-bold text-xs text-center cursor-not-allowed">🔒 ENTRY PAUSED (WAITING FOR ADMIN)</button>
             </div>
           </div>
 
@@ -3110,6 +3110,8 @@
 
     // Duplicate duel functions removed
     // GRAND JACKPOT MULTI-MATCH & MULTI-EVENT LOGIC
+    window.jackpotEntriesPaused = true; // Admin lock: entries paused until explicit command
+
     let activeJackpotCategory = "crypto"; // "crypto" | "sports"
     let activeJackpotEventId = "crypto-eth";
 
@@ -3328,9 +3330,15 @@
       
       const btn1 = document.getElementById("btn-jackpot-" + tier);
       if (btn1) {
-        btn1.disabled = false;
-        btn1.className = "w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all text-center cursor-pointer";
-        btn1.innerText = `CONFIRM & BUY ${newQty} ${label} ($${formattedCost})`;
+        if (window.jackpotEntriesPaused) {
+          btn1.disabled = true;
+          btn1.className = "w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 font-mono font-bold text-xs cursor-not-allowed text-center";
+          btn1.innerText = "🔒 ENTRY PAUSED (WAITING FOR ADMIN)";
+        } else {
+          btn1.disabled = false;
+          btn1.className = "w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-mono font-bold text-xs shadow-md shadow-blue-600/30 active:scale-95 transition-all text-center cursor-pointer";
+          btn1.innerText = `CONFIRM & BUY ${newQty} ${label} (${formattedCost})`;
+        }
       }
       const btn2 = document.getElementById("jackpot-btn-" + tier);
       if (btn2) {
@@ -3430,12 +3438,17 @@
           }
         }
 
-        // Enforce strict button locking when round is not active
+        // Enforce strict button locking when round is not active or paused by admin
         const allTiers = [1, 5, 10, 100, 1000];
         allTiers.forEach(t => {
           const btn = document.getElementById("btn-jackpot-" + t);
           if (!btn) return;
-          if (isAfterEnd) {
+          if (window.jackpotEntriesPaused) {
+            btn.disabled = true;
+            btn.classList.remove("bg-blue-600", "hover:bg-blue-500", "cursor-pointer");
+            btn.classList.add("bg-slate-800", "text-slate-500", "border-slate-700", "cursor-not-allowed");
+            btn.innerText = "🔒 ENTRY PAUSED (WAITING FOR ADMIN)";
+          } else if (isAfterEnd) {
             btn.disabled = true;
             btn.classList.remove("bg-blue-600", "hover:bg-blue-500", "cursor-pointer");
             btn.classList.add("bg-slate-800", "text-slate-500", "border-slate-700", "cursor-not-allowed");
@@ -3459,6 +3472,7 @@
     }
 
         function isJackpotEntryWindowOpen() {
+      if (window.jackpotEntriesPaused) return { open: false, reason: "PAUSED" };
       const status = localStorage.getItem("grand_jackpot_round_status");
       if (status === "ended") return { open: false, reason: "ENDED" };
       const startTime = Number(localStorage.getItem("grand_jackpot_round_start") || (Date.now() - 3600000));
@@ -3477,7 +3491,9 @@
     function openJackpotConfirmation(tier) {
       const windowStatus = isJackpotEntryWindowOpen();
       if (!windowStatus.open) {
-        if (windowStatus.reason === "NOT_STARTED") {
+        if (windowStatus.reason === "PAUSED") {
+          showToast("Jackpot entries are paused by admin. Waiting for official start!", "warning");
+        } else if (windowStatus.reason === "NOT_STARTED") {
           showToast("Jackpot round has not started yet! Entries open soon.", "warning");
         } else {
           showToast("Jackpot entry window has ended! No more entries allowed for this round.", "error");
