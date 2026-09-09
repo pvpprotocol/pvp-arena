@@ -34,6 +34,10 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
     mapping(uint256 => mapping(uint256 => RoundTier)) public questionTiers;
     // questionId => tier => userAddress => ticketCount (Strict max 2)
     mapping(uint256 => mapping(uint256 => mapping(address => uint256))) public userTickets;
+    // questionId => userAddress => activeTier (Strictly ONE tier per wallet per round)
+    mapping(uint256 => mapping(address => uint256)) public userActiveTier;
+    // questionId => userAddress => totalTickets (Strict max 2 across wallet)
+    mapping(uint256 => mapping(address => uint256)) public userTotalTickets;
 
     // Ticket structure storing exact Question ID, player, and numeric prediction
     struct Ticket {
@@ -103,14 +107,20 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         require(qty > 0 && qty <= MAX_TICKETS_PER_WALLET, "Must buy 1 or 2 tickets");
         require(tier > 0, "Invalid tier");
         require(questionId > 0, "Invalid questionId");
+        uint256 activeTier = userActiveTier[questionId][msg.sender];
+        require(activeTier == 0 || activeTier == tier, "Wallet locked to another tier for this round");
         require(
-            userTickets[questionId][tier][msg.sender] + qty <= MAX_TICKETS_PER_WALLET,
-            "Max 2 tickets per wallet reached for this question and tier"
+            userTotalTickets[questionId][msg.sender] + qty <= MAX_TICKETS_PER_WALLET,
+            "Max 2 tickets per wallet reached for this round"
         );
 
         uint256 totalCostWei = (tier * qty) * 1e6; // USDG is 6 decimals
         require(usdgToken.transferFrom(msg.sender, address(this), totalCostWei), "USDG transfer failed");
 
+        if (activeTier == 0) {
+            userActiveTier[questionId][msg.sender] = tier;
+        }
+        userTotalTickets[questionId][msg.sender] += qty;
         userTickets[questionId][tier][msg.sender] += qty;
 
         RoundTier storage rTier = questionTiers[questionId][tier];
@@ -158,14 +168,20 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         
         require(tier > 0, "Invalid tier");
         require(questionId > 0, "Invalid questionId");
+        uint256 activeTier = userActiveTier[questionId][msg.sender];
+        require(activeTier == 0 || activeTier == tier, "Wallet locked to another tier for this round");
         require(
-            userTickets[questionId][tier][msg.sender] + 1 <= MAX_TICKETS_PER_WALLET,
-            "Max 2 tickets per wallet reached"
+            userTotalTickets[questionId][msg.sender] + 1 <= MAX_TICKETS_PER_WALLET,
+            "Max 2 tickets per wallet reached for this round"
         );
 
         uint256 totalCostWei = tier * 1e6;
         require(usdgToken.transferFrom(msg.sender, address(this), totalCostWei), "USDG transfer failed");
 
+        if (activeTier == 0) {
+            userActiveTier[questionId][msg.sender] = tier;
+        }
+        userTotalTickets[questionId][msg.sender] += 1;
         userTickets[questionId][tier][msg.sender] += 1;
 
         RoundTier storage rTier = questionTiers[questionId][tier];
