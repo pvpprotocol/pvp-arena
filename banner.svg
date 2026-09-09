@@ -48,9 +48,8 @@
     pvphub<tspan fill="#14F195">.fun</tspan>
   </text>
 
-  <!-- DIRECTLY REPLACING OLD SUBTITLE / TAGLINE: DUEL • JACKPOT • SKILL -->
+  <!-- Subtitle: DUEL • JACKPOT • SKILL -->
   <g transform="translate(100, 185)">
-    <!-- Pill Badge Background for DUEL • JACKPOT • SKILL -->
     <rect x="0" y="0" width="460" height="46" rx="12" fill="#0d1522" stroke="#1e293b" stroke-width="1.5"/>
     <text x="25" y="31" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" font-weight="900" letter-spacing="2">
       <tspan fill="#14F195">DUEL</tspan>
@@ -76,17 +75,14 @@
     <text x="412" y="55" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="500" fill="#64748B">100% Non-Custodial</text>
   </g>
 
-  <!-- Domain CTA - ZERO ROBINHOOD REFERENCE -->
-  <g transform="translate(100, 390)">
-    <rect x="0" y="0" width="370" height="42" rx="10" fill="#14F195" fill-opacity="0.12" stroke="#14F195" stroke-width="1"/>
-    <text x="20" y="27" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" letter-spacing="1">
-      ENTER THE ARENA: <tspan fill="#14F195">HTTPS://PVPHUB.FUN</tspan>
-    </text>
-  </g>
+  <!-- Bottom Left Website Link: NO BORDER / NO RECTANGLE, EXACT TEXT PRESERVED -->
+  <text x="100" y="415" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" letter-spacing="1">
+    ENTER THE ARENA: <tspan fill="#14F195">HTTPS://PVPHUB.FUN</tspan>
+  </text>
 
   <!-- Right Side: Live Duel Card -->
   <g transform="translate(930, 45)">
-    <!-- Glow behind card -->
+    <!-- Card Base -->
     <rect x="0" y="0" width="470" height="410" rx="28" fill="#131c27" stroke="#1f2b3e" stroke-width="2" />
     
     <!-- Match Header -->
