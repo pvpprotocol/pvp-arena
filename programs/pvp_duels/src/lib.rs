@@ -143,8 +143,10 @@ pub mod pvp_duels {
         };
 
         let total_pot = duel.stake_amount.checked_mul(2).unwrap();
-        let fee_amount = total_pot.checked_mul(PLATFORM_FEE_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap();
-        let winner_prize = total_pot.checked_sub(fee_amount).unwrap(); // 95%
+        let winner_prize = total_pot.checked_mul(WINNER_PRIZE_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 90%
+        let referral_amount = total_pot.checked_mul(REFERRAL_REWARD_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 5%
+        let cashback_amount = total_pot.checked_mul(LOSER_CASHBACK_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 3%
+        let treasury_amount = total_pot.checked_mul(PROTOCOL_TREASURY_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 2%
 
         let question_bytes = duel.question_id.to_le_bytes();
         let index_bytes = duel.duel_index.to_le_bytes();
