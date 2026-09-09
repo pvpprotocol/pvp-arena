@@ -1689,6 +1689,23 @@
       </div>
 
                   
+      
+      <!-- GRAND JACKPOT CATEGORY SELECTOR (CRYPTO & SPORTS) -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[#131b27] border border-[#334155] shadow-lg">
+        <div class="flex items-center gap-2 p-1 rounded-xl bg-[#0f172a] border border-[#334155]">
+          <button id="jackpot-cat-crypto" onclick="switchJackpotCategory('crypto')" class="px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-sm">
+            <span>⚡</span><span>CRYPTO</span>
+          </button>
+          <button id="jackpot-cat-sports" onclick="switchJackpotCategory('sports')" class="px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent">
+            <span>⚽</span><span>SPORTS</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-950/20 border border-amber-500/30 font-mono text-xs text-amber-300">
+          <span class="text-amber-400 font-bold">🎯 TARGET OUTCOME:</span>
+          <span id="jackpot-active-target-desc" class="font-bold text-white">ETH 12H Candle Close Price (USD)</span>
+        </div>
+      </div>
+
       <!-- JACKPOT TIERS CARDS (ONLINE LIVE REWARD & PARTICIPANTS CALCULATION) -->
       <div>
         <div class="flex items-center justify-between mb-3">
@@ -3110,6 +3127,58 @@
 
     // Duplicate duel functions removed
     // GRAND JACKPOT LOGIC
+    let activeJackpotCategory = "crypto"; // "crypto" | "sports"
+    const jackpotCategoryConfigs = {
+      crypto: {
+        name: "CRYPTO",
+        targetDesc: "ETH 12H Candle Close Price (USD)",
+        placeholder: "e.g. 2495.50",
+        defaultTarget: "2495.50"
+      },
+      sports: {
+        name: "SPORTS",
+        targetDesc: "Real Madrid vs Man City (Exact Score e.g. 2-1)",
+        placeholder: "e.g. 2-1 or 3-2",
+        defaultTarget: "2-1"
+      }
+    };
+
+    window.switchJackpotCategory = function(cat) {
+      activeJackpotCategory = cat;
+      const cryptoBtn = document.getElementById("jackpot-cat-crypto");
+      const sportsBtn = document.getElementById("jackpot-cat-sports");
+      const targetDesc = document.getElementById("jackpot-active-target-desc");
+
+      if (cat === "crypto") {
+        if (cryptoBtn) {
+          cryptoBtn.className = "px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-sm";
+        }
+        if (sportsBtn) {
+          sportsBtn.className = "px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent";
+        }
+      } else {
+        if (sportsBtn) {
+          sportsBtn.className = "px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm";
+        }
+        if (cryptoBtn) {
+          cryptoBtn.className = "px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent";
+        }
+      }
+
+      const conf = jackpotCategoryConfigs[cat] || jackpotCategoryConfigs.crypto;
+      if (targetDesc) targetDesc.innerText = conf.targetDesc;
+
+      // Update placeholders in all tier target inputs
+      [1, 5, 10, 100, 1000].forEach(tier => {
+        for (let i = 1; i <= 3; i++) {
+          const input = document.getElementById("target-input-" + tier + "-" + i);
+          if (input) {
+            input.placeholder = conf.placeholder;
+          }
+        }
+      });
+    };
+
     let jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
     let jackpotSelectedQty = { 1: 1, 5: 1, 10: 1, 100: 1, 1000: 1 };
     let jackpotTierStats = {
