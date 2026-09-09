@@ -1647,18 +1647,33 @@
         </div>
 
         <div class="flex items-center gap-4">
-          <div class="px-6 py-3.5 rounded-2xl bg-[#131b27]/95 border border-[#334155] font-mono text-center shadow-lg">
-            <span class="text-[10px] text-[#cbd5e1] block font-black uppercase tracking-wider mb-1.5 text-center">⏳ ROUND ENTRY COUNTDOWN</span>
+          <div class="px-6 py-3.5 rounded-2xl bg-gradient-to-b from-[#181d28] to-[#121620] border border-amber-500/40 font-mono text-center shadow-[0_0_25px_rgba(245,158,11,0.18)] relative overflow-hidden group">
+            <div class="absolute -top-12 -right-12 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <span class="text-[10px] text-amber-400 block font-black uppercase tracking-wider mb-2 text-center flex items-center justify-center gap-1.5">
+              <span class="inline-block animate-pulse">⏳</span> ROUND ENTRY COUNTDOWN
+            </span>
             <div class="flex items-center justify-center gap-2 font-mono">
-              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#334155] min-w-[50px]"><span id="jackpot-days" class="text-2xl font-black text-[#cbd5e1]">02</span><span class="text-[8px] text-slate-400 block font-bold">DAYS</span></div>
-              <span class="text-lg font-bold text-[#cbd5e1]">:</span>
-              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#334155] min-w-[50px]"><span id="jackpot-hours" class="text-2xl font-black text-[#cbd5e1]">14</span><span class="text-[8px] text-slate-400 block font-bold">HRS</span></div>
-              <span class="text-lg font-bold text-[#cbd5e1]">:</span>
-              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#334155] min-w-[50px]"><span id="jackpot-mins" class="text-2xl font-black text-[#cbd5e1]">35</span><span class="text-[8px] text-slate-400 block font-bold">MIN</span></div>
-              <span class="text-lg font-bold text-[#cbd5e1]">:</span>
-              <div class="text-center px-2 py-1 rounded-lg bg-[#131b27] border border-[#334155] min-w-[50px]"><span id="jackpot-secs" class="text-2xl font-black text-[#cbd5e1]">18</span><span class="text-[8px] text-slate-400 block font-bold">SEC</span></div>
+              <div class="text-center px-2.5 py-1 rounded-xl bg-amber-950/30 border border-amber-500/30 min-w-[52px] shadow-inner shadow-black/40">
+                <span id="jackpot-days" class="text-2xl font-black text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.45)]">02</span>
+                <span class="text-[8px] text-amber-300/80 block font-bold tracking-wider">DAYS</span>
+              </div>
+              <span class="text-lg font-black text-amber-400 animate-pulse">:</span>
+              <div class="text-center px-2.5 py-1 rounded-xl bg-amber-950/30 border border-amber-500/30 min-w-[52px] shadow-inner shadow-black/40">
+                <span id="jackpot-hours" class="text-2xl font-black text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.45)]">14</span>
+                <span class="text-[8px] text-amber-300/80 block font-bold tracking-wider">HRS</span>
+              </div>
+              <span class="text-lg font-black text-amber-400 animate-pulse">:</span>
+              <div class="text-center px-2.5 py-1 rounded-xl bg-amber-950/30 border border-amber-500/30 min-w-[52px] shadow-inner shadow-black/40">
+                <span id="jackpot-mins" class="text-2xl font-black text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.45)]">35</span>
+                <span class="text-[8px] text-amber-300/80 block font-bold tracking-wider">MIN</span>
+              </div>
+              <span class="text-lg font-black text-amber-400 animate-pulse">:</span>
+              <div class="text-center px-2.5 py-1 rounded-xl bg-amber-950/30 border border-amber-500/30 min-w-[52px] shadow-inner shadow-black/40">
+                <span id="jackpot-secs" class="text-2xl font-black text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.45)]">18</span>
+                <span class="text-[8px] text-amber-300/80 block font-bold tracking-wider">SEC</span>
+              </div>
             </div>
-            <span id="jackpot-timer" class="hidden text-xs text-[#cbd5e1]">02d 14h 35m 18s</span>
+            <span id="jackpot-timer" class="hidden text-xs text-amber-400">02d 14h 35m 18s</span>
           </div>
         </div>
       </div>
@@ -2493,6 +2508,7 @@
           if (tabId === "jackpot") {
             if (typeof renderJackpotSubmissions === "function") renderJackpotSubmissions();
             if (typeof updateJackpotMetrics === "function") updateJackpotMetrics();
+            if (typeof updateJackpotTimer === "function") updateJackpotTimer();
           }
           if (tabId === "leaderboard" && typeof updateLeaderboardUI === "function") updateLeaderboardUI();
           if (tabId === "history" && typeof updateHistoryUI === "function") updateHistoryUI();
@@ -3141,17 +3157,25 @@
 
     let liveSubmissions = [];
 
+    let jackpotTimerInterval = null;
     function updateJackpotTimer() {
       const daysEl = document.getElementById("jackpot-days");
       const hoursEl = document.getElementById("jackpot-hours");
       const minsEl = document.getElementById("jackpot-mins");
       const secsEl = document.getElementById("jackpot-secs");
-      
-      const targetTime = Date.now() + (2 * 86400000) + (14 * 3600000) + (35 * 60000);
+
+      // Persistent countdown target (stored in localStorage or initialized to 2d 14h 35m 18s)
+      let storedTarget = localStorage.getItem("grand_jackpot_round_deadline");
+      if (!storedTarget || isNaN(Number(storedTarget)) || Number(storedTarget) <= Date.now()) {
+        storedTarget = Date.now() + (2 * 86400000) + (14 * 3600000) + (35 * 60000) + (18 * 1000);
+        localStorage.setItem("grand_jackpot_round_deadline", storedTarget.toString());
+      } else {
+        storedTarget = Number(storedTarget);
+      }
       
       function tick() {
         const now = Date.now();
-        const diff = Math.max(0, targetTime - now);
+        const diff = Math.max(0, storedTarget - now);
         
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -3163,8 +3187,11 @@
         if (minsEl) minsEl.innerText = String(m).padStart(2, "0");
         if (secsEl) secsEl.innerText = String(s).padStart(2, "0");
       }
+      
       tick();
-      setInterval(tick, 1000);
+      if (!jackpotTimerInterval) {
+        jackpotTimerInterval = setInterval(tick, 1000);
+      }
     }
 
     async function submitJackpot(tier) {
