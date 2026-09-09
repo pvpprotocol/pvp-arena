@@ -8,13 +8,13 @@
       <stop offset="0%" stop-color="#0e1726" />
       <stop offset="100%" stop-color="#070c14" />
     </linearGradient>
-    <linearGradient id="bladeLeftGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#9945FF" />
+    <linearGradient id="bladeRightGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#14F195" />
       <stop offset="50%" stop-color="#e2e8f0" />
       <stop offset="100%" stop-color="#ffffff" />
     </linearGradient>
-    <linearGradient id="bladeRightGrad" x1="100%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="#14F195" />
+    <linearGradient id="bladeLeftGrad" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#9945FF" />
       <stop offset="50%" stop-color="#e2e8f0" />
       <stop offset="100%" stop-color="#ffffff" />
     </linearGradient>
@@ -23,37 +23,31 @@
     </filter>
   </defs>
 
-  <!-- Squircle Border with Solana Gradient (Purple to Emerald) -->
+  <!-- Squircle Border with Solana Gradient (#9945FF to #14F195) -->
   <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#solDappBorder)" filter="url(#dappShadow)" />
 
-  <!-- Inner Dark Panel -->
+  <!-- Inner Dark Obsidian Panel (#0c121d) -->
   <rect x="28" y="28" width="456" height="456" rx="96" fill="url(#solDappBg)" />
 
   <!-- Crossed Swords (Upward Pointing, High Contrast & Clean) -->
   <g transform="translate(0, 0)">
     <!-- Ambient Center Glow -->
-    <circle cx="256" cy="256" r="140" fill="#14F195" opacity="0.1" />
+    <circle cx="256" cy="256" r="140" fill="#14F195" opacity="0.12" />
 
     <!-- Left Sword: Blade goes to Top-Right -->
-    <!-- Blade -->
     <path d="M152 360 L356 156 L376 176 L172 380 Z" fill="url(#bladeRightGrad)" />
-    <!-- Sharp Tip -->
     <polygon points="356,156 404,128 376,176" fill="#ffffff" />
     <polygon points="364,162 396,136 378,170" fill="#14F195" />
 
     <!-- Right Sword: Blade goes to Top-Left -->
-    <!-- Blade -->
     <path d="M360 360 L156 156 L136 176 L340 380 Z" fill="url(#bladeLeftGrad)" />
-    <!-- Sharp Tip -->
     <polygon points="156,156 108,128 136,176" fill="#ffffff" />
     <polygon points="148,162 116,136 134,170" fill="#9945FF" />
 
     <!-- Guards & Hilts at Bottom -->
-    <!-- Guard Left Sword -->
     <line x1="126" y1="334" x2="198" y2="406" stroke="#ffffff" stroke-width="14" stroke-linecap="round" />
     <circle cx="114" cy="418" r="16" fill="#14F195" stroke="#ffffff" stroke-width="4" />
 
-    <!-- Guard Right Sword -->
     <line x1="386" y1="334" x2="314" y2="406" stroke="#ffffff" stroke-width="14" stroke-linecap="round" />
     <circle cx="398" cy="418" r="16" fill="#9945FF" stroke="#ffffff" stroke-width="4" />
 
