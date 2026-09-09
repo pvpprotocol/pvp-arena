@@ -3050,14 +3050,14 @@
       const qtyEl = document.getElementById("jackpot-qty-" + tier);
       if (qtyEl) qtyEl.innerText = newQty;
 
-      // Update button label and total price (e.g., 3 x $10 = $30.00)
-      const totalCost = (tier * newQty).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      // Update button label and total price (e.g., 2 x $10 = $20, no .00 decimals)
+      const formattedCost = (tier * newQty).toLocaleString("en-US");
       const label = newQty === 1 ? "TICKET" : "TICKETS";
       
       const btn1 = document.getElementById("btn-jackpot-" + tier);
-      if (btn1) btn1.innerText = `CONFIRM & BUY ${newQty} ${label} (${totalCost})`;
+      if (btn1) btn1.innerText = `CONFIRM & BUY ${newQty} ${label} (${formattedCost})`;
       const btn2 = document.getElementById("jackpot-btn-" + tier);
-      if (btn2) btn2.innerText = `CONFIRM & BUY ${newQty} ${label} (${totalCost})`;
+      if (btn2) btn2.innerText = `CONFIRM & BUY ${newQty} ${label} (${formattedCost})`;
 
       // Show/Hide target prediction inputs dynamically
       const row2 = document.getElementById(`target-row-${tier}-2`);
@@ -3169,7 +3169,9 @@
         targets.push(val);
       }
 
-      const totalCost = (tier * qty).toFixed(2);
+      const totalCostNum = tier * qty;
+      const totalCost = totalCostNum.toString();
+      const formattedTotalCost = totalCostNum.toLocaleString("en-US");
       const questionId = 1; // Question #1
       const questionTitle = "Bitcoin Daily Candle Close Target";
 
@@ -3194,7 +3196,7 @@
       if (modalQTitle) modalQTitle.innerText = questionTitle;
       if (modalTier) modalTier.innerText = tier === 1000 ? "$1,000 Tier" : `$${tier} Tier`;
       if (modalQty) modalQty.innerText = `${qty} Ticket${qty > 1 ? 's' : ''}`;
-      if (modalTotal) modalTotal.innerText = `$${totalCost} USDG`;
+      if (modalTotal) modalTotal.innerText = `${formattedTotalCost} USDG`;
 
       if (modalList) {
         modalList.innerHTML = targets.map((t, idx) => `
@@ -3311,7 +3313,8 @@
         const tr = document.createElement("tr");
         tr.className = "hover:bg-[#182230] transition-all";
         const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `$${s.tier} Tier`;
-        const totalPaid = s.totalCost ? `($${s.totalCost} USDG)` : `($${s.tier}.00 USDG)`;
+        const costVal = Number(s.totalCost || (s.tier * (s.qty || 1)));
+        const totalPaid = `(${costVal.toLocaleString("en-US")} USDG)`;
         const shortTx = s.tx ? (s.tx.length > 14 ? s.tx.slice(0, 8) + "..." + s.tx.slice(-6) : s.tx) : "0x...";
         const txUrl = s.tx ? `https://robinhood.superscan.network/tx/${s.tx}` : "https://robinhood.superscan.network";
         const countBadge = s.qty ? `${s.qty} Ticket${s.qty > 1 ? 's' : ''}` : (s.ticketNum || '1 Ticket');
