@@ -39,6 +39,11 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
     // questionId => userAddress => totalTickets (Strict max 2 across wallet)
     mapping(uint256 => mapping(address => uint256)) public userTotalTickets;
 
+    // questionId => tier => winnerAddress => claimable amount
+    mapping(uint256 => mapping(uint256 => mapping(address => uint256))) public claimablePrizes;
+    // questionId => tier => winnerAddress => whether claimed
+    mapping(uint256 => mapping(uint256 => mapping(address => bool))) public hasClaimedPrize;
+
     // Ticket structure storing exact Question ID, player, and numeric prediction
     struct Ticket {
         address player;
@@ -66,6 +71,13 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         address indexed player,
         uint256 ticketNumber,
         uint256 targetPrediction
+    );
+
+    event PrizeClaimed(
+        uint256 indexed questionId,
+        uint256 indexed tier,
+        address indexed winner,
+        uint256 amount
     );
 
     event RoundSettled(
@@ -254,7 +266,7 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
 
             uint256 perWinnerPayout = netPayout / winners.length;
             for (uint256 i = 0; i < winners.length; i++) {
-                require(usdgToken.transfer(winners[i], perWinnerPayout), "Winner transfer failed");
+                claimablePrizes[questionId][tier][winners[i]] += perWinnerPayout;
             }
 
             emit RoundSettled(questionId, tier, actualOutcome, winners.length, netPayout, protocolFee, 0);
@@ -264,6 +276,32 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
             questionTiers[nextQId][tier].totalVault += vault;
             emit RoundSettled(questionId, tier, actualOutcome, 0, 0, 0, vault);
         }
+    }
+
+    /**
+     * @notice Claim prize for winning a jackpot round
+     * @param questionId Unique identifier of the round
+     * @param tier Dollar tier won
+     */
+    function claimJackpotPrize(uint256 questionId, uint256 tier) external nonReentrant {
+        uint256 amount = claimablePrizes[questionId][tier][msg.sender];
+        require(amount > 0, "No claimable prize");
+        require(!hasClaimedPrize[questionId][tier][msg.sender], "Prize already claimed");
+
+        hasClaimedPrize[questionId][tier][msg.sender] = true;
+        claimablePrizes[questionId][tier][msg.sender] = 0;
+
+        require(usdgToken.transfer(msg.sender, amount), "Prize transfer failed");
+
+        emit PrizeClaimed(questionId, tier, msg.sender, amount);
+    }
+
+    /**
+     * @notice Check claimable prize for a specific player
+     */
+    function getClaimablePrize(uint256 questionId, uint256 tier, address player) external view returns (uint256) {
+        if (hasClaimedPrize[questionId][tier][player]) return 0;
+        return claimablePrizes[questionId][tier][player];
     }
 
     function setCurrentQuestionId(uint256 _newId) external onlyOwner {
