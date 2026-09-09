@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "programs/pvp_duels",
+    "programs/grand_jackpot",
+]
+resolver = "2"
+
+[profile.release]
+overflow-checks = true
+lto = "fat"
+codegen-units = 1
+opt-level = 3
