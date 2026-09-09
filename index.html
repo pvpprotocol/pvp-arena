@@ -1920,11 +1920,11 @@
           <table class="w-full text-left text-xs font-mono">
             <thead class="bg-[#131b27] text-slate-400 border-b border-white/5 uppercase">
               <tr>
-                <th class="p-3.5">Tier Level</th>
-                <th class="p-3.5">Time</th>
-                <th class="p-3.5">Player Wallet</th>
+                <th class="p-3.5">Tier & Stake</th>
+                <th class="p-3.5 text-center">Tickets Bought</th>
                 <th class="p-3.5">Exact Predicted Target</th>
-                <th class="p-3.5 text-center">Ticket Number</th>
+                <th class="p-3.5">Player Wallet</th>
+                <th class="p-3.5">Time</th>
                 <th class="p-3.5 text-right">Onchain Tx</th>
               </tr>
             </thead>
@@ -3190,16 +3190,15 @@
       const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "Not Connected";
 
       // Add onchain verified submission records
-      targets.forEach((targetVal, idx) => {
-        const currentTicket = startingTicketNum + idx;
-        liveSubmissions.unshift({
-          tier: tier,
-          wallet: shortAddr,
-          target: "$" + parseFloat(targetVal).toLocaleString("en-US", { minimumFractionDigits: 2 }),
-          ticketNum: `Ticket ${currentTicket}/2`,
-          tx: txHash,
-          time: "Just now"
-        });
+      liveSubmissions.unshift({
+        tier: tier,
+        qty: qty,
+        totalCost: totalCost,
+        wallet: shortAddr,
+        target: targets.map(t => "$" + parseFloat(t).toLocaleString("en-US", { minimumFractionDigits: 2 })).join(" | "),
+        ticketNum: `${qty} Ticket${qty > 1 ? 's' : ''} (T${startingTicketNum}${qty > 1 ? '-T' + (startingTicketNum + 1) : ''})`,
+        tx: txHash,
+        time: "Just now"
       });
 
       try {
@@ -3239,15 +3238,24 @@
         const tr = document.createElement("tr");
         tr.className = "hover:bg-[#182230] transition-all";
         const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `$${s.tier} Tier`;
+        const totalPaid = s.totalCost ? `($${s.totalCost} USDG)` : `($${s.tier}.00 USDG)`;
         const shortTx = s.tx ? (s.tx.length > 14 ? s.tx.slice(0, 8) + "..." + s.tx.slice(-6) : s.tx) : "0x...";
         const txUrl = s.tx ? `https://robinhood.superscan.network/tx/${s.tx}` : "https://robinhood.superscan.network";
+        const countBadge = s.qty ? `${s.qty} Ticket${s.qty > 1 ? 's' : ''}` : (s.ticketNum || '1 Ticket');
         tr.innerHTML = `
-          <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-amber-400 font-black' : 'text-[#cbd5e1]'}">${tierDisplay}</td>
-          <td class="p-3.5 text-slate-400">${s.time}</td>
+          <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-amber-400 font-black' : 'text-[#cbd5e1]'}">
+            <div class="flex items-center gap-1.5">
+              <span>${tierDisplay}</span>
+              <span class="text-[10px] text-slate-400 font-normal">${totalPaid}</span>
+            </div>
+          </td>
+          <td class="p-3.5 text-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500/10 text-amber-400 border border-amber-500/20">${countBadge}</span>
+          </td>
+          <td class="p-3.5 text-emerald-400 font-bold">${s.target}</td>
           <td class="p-3.5 font-bold text-white">${s.wallet}</td>
-          <td class="p-3.5 text-[#cbd5e1] font-bold">${s.target}</td>
-          <td class="p-3.5 text-center font-bold text-neutral-700">${s.ticketNum}</td>
-          <td class="p-3.5 text-right"><a href="${txUrl}" target="_blank" class="text-[#cbd5e1] hover:underline font-mono text-xs">${shortTx} ↗</a></td>
+          <td class="p-3.5 text-slate-400 text-[11px]">${s.time}</td>
+          <td class="p-3.5 text-right"><a href="${txUrl}" target="_blank" class="text-amber-400 hover:underline font-mono text-xs">${shortTx} ↗</a></td>
         `;
         tbody.appendChild(tr);
       });
