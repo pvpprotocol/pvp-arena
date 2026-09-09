@@ -1920,6 +1920,7 @@
           <table class="w-full text-left text-xs font-mono">
             <thead class="bg-[#131b27] text-slate-400 border-b border-white/5 uppercase">
               <tr>
+                <th class="p-3.5 text-center">Question ID</th>
                 <th class="p-3.5">Tier & Stake</th>
                 <th class="p-3.5 text-center">Tickets Bought</th>
                 <th class="p-3.5">Exact Predicted Target</th>
@@ -3126,12 +3127,12 @@
       }
     }
 
-    async function submitJackpot(tier) {
+    // State for active jackpot confirmation
+    let pendingJackpotData = null;
+
+    function openJackpotConfirmation(tier) {
       if (!isConnected) {
-        await connectWallet();
-      }
-      if (!isConnected) {
-        showToast("Please connect your wallet first", "warning");
+        connectWallet();
         return;
       }
 
@@ -3148,21 +3149,85 @@
         const input = document.getElementById(`target-input-${tier}-${i}`);
         let val = input ? input.value.trim() : "";
         if (!val) {
-          const baseEstimate = 2450.00 + (Math.random() * 20 - 10) + (i * 2.5);
-          val = baseEstimate.toFixed(2);
-          if (input) input.value = val;
+          showToast(`Please enter an exact prediction for Ticket #${i}`, "warning");
+          if (input) input.focus();
+          return;
         }
         targets.push(val);
       }
 
       const totalCost = (tier * qty).toFixed(2);
+      const questionId = 1; // Question #1
+      const questionTitle = "Bitcoin Daily Candle Close Target";
+
+      pendingJackpotData = {
+        tier: tier,
+        qty: qty,
+        targets: targets,
+        totalCost: totalCost,
+        questionId: questionId,
+        questionTitle: questionTitle
+      };
+
+      // Populate Modal Fields
+      const modalQId = document.getElementById("modal-q-id");
+      const modalQTitle = document.getElementById("modal-q-title");
+      const modalTier = document.getElementById("modal-tier-display");
+      const modalQty = document.getElementById("modal-qty-display");
+      const modalTotal = document.getElementById("modal-total-cost");
+      const modalList = document.getElementById("modal-predictions-list");
+
+      if (modalQId) modalQId.innerText = `#${questionId} (Sequential)`;
+      if (modalQTitle) modalQTitle.innerText = questionTitle;
+      if (modalTier) modalTier.innerText = tier === 1000 ? "$1,000 Tier" : `$${tier} Tier`;
+      if (modalQty) modalQty.innerText = `${qty} Ticket${qty > 1 ? 's' : ''}`;
+      if (modalTotal) modalTotal.innerText = `$${totalCost} USDG`;
+
+      if (modalList) {
+        modalList.innerHTML = targets.map((t, idx) => `
+          <div class="flex items-center justify-between text-xs bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 font-mono">
+            <span class="text-slate-400 font-bold">Ticket #${idx + 1}:</span>
+            <span class="text-amber-400 font-black text-sm">$${parseFloat(t).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+          </div>
+        `).join("");
+      }
+
+      const modal = document.getElementById("jackpotConfirmModal");
+      if (modal) {
+        modal.classList.remove("hidden");
+      }
+    }
+
+    function closeJackpotModal() {
+      const modal = document.getElementById("jackpotConfirmModal");
+      if (modal) {
+        modal.classList.add("hidden");
+      }
+      pendingJackpotData = null;
+    }
+
+    async function confirmAndBroadcastJackpot() {
+      if (!pendingJackpotData) return;
+      const { tier, qty, targets, totalCost, questionId, questionTitle } = pendingJackpotData;
+
+      const confirmBtn = document.getElementById("btn-confirm-jackpot-tx");
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<span class="animate-spin">⏳</span> Signing Onchain...';
+      }
+
       let txHash = "";
       try {
-        txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
-        showToast(`✅ Step 1 Signed & Step 2 USDG Transferred: ${txHash.slice(0, 10)}...`, "success");
+        const purpose = `Jackpot Q#${questionId} Tier $${tier} Target: ${targets.join(',')}`;
+        txHash = await executeOnchainPayment(totalCost, "USDG", purpose);
+        showToast(`✅ Onchain Tx Broadcasted: ${txHash.slice(0, 10)}...`, "success");
       } catch (err) {
         console.error(err);
         showToast("❌ Transaction rejected or failed in wallet.", "error");
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '<span>Confirm & Sign Tx</span><span>⚡</span>';
+        }
         return;
       }
 
@@ -3170,7 +3235,6 @@
       jackpotUserTickets[tier] = (jackpotUserTickets[tier] || 0) + qty;
       jackpotTierStats[tier].tickets = (jackpotTierStats[tier].tickets || 0) + qty;
 
-      // Save persistent state
       try {
         localStorage.setItem("pvp_jackpot_user_tickets", JSON.stringify(jackpotUserTickets));
         localStorage.setItem("pvp_jackpot_tier_stats", JSON.stringify(jackpotTierStats));
@@ -3178,19 +3242,11 @@
 
       updateJackpotMetrics();
 
-      const tNum = jackpotUserTickets[tier];
-      const badge = document.getElementById("jackpot-tickets-" + tier);
-      if (badge) {
-        badge.innerText = `${tNum}/2 Tickets`;
-        badge.className = tNum === 2 
-          ? "text-[10px] font-mono text-neutral-800 font-black" 
-          : "text-[10px] font-mono text-neutral-800 font-bold";
-      }
+      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "0x000...0000";
 
-      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "Not Connected";
-
-      // Add onchain verified submission records
+      // Add verified submission with Question ID and exact targets
       liveSubmissions.unshift({
+        questionId: questionId,
         tier: tier,
         qty: qty,
         totalCost: totalCost,
@@ -3206,12 +3262,16 @@
       } catch (e) {}
 
       renderJackpotSubmissions();
-      
-      // Reset qty selector to remaining safe allowance
       changeJackpotTicketQty(tier, 0);
 
+      closeJackpotModal();
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<span>Confirm & Sign Tx</span><span>⚡</span>';
+      }
+
       const targetsStr = targets.map(t => "$" + t).join(", ");
-      showToast(`🎉 Recorded onchain & frontend! ${qty}x ${tier}.00 USDG Ticket(s). Targets: ${targetsStr}`, "success");
+      showToast(`🎉 Recorded in Block! Question #${questionId} • Tier $${tier} • Targets: ${targetsStr}`, "success");
     }
 
     function renderJackpotSubmissions() {
@@ -3243,6 +3303,9 @@
         const txUrl = s.tx ? `https://robinhood.superscan.network/tx/${s.tx}` : "https://robinhood.superscan.network";
         const countBadge = s.qty ? `${s.qty} Ticket${s.qty > 1 ? 's' : ''}` : (s.ticketNum || '1 Ticket');
         tr.innerHTML = `
+          <td class="p-3.5 text-center">
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono font-black bg-blue-500/10 text-blue-400 border border-blue-500/20">#${s.questionId || 1}</span>
+          </td>
           <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-amber-400 font-black' : 'text-[#cbd5e1]'}">
             <div class="flex items-center gap-1.5">
               <span>${tierDisplay}</span>
@@ -8193,6 +8256,75 @@ window.handleCreateQuestion = async function(e) {
     } catch(e) {}
     
 </script>
+
+  <!-- ================= JACKPOT ONCHAIN CONFIRMATION MODAL ================= -->
+  <div id="jackpotConfirmModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
+    <div class="bg-[#131b27] border border-amber-500/40 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-[0_0_50px_rgba(245,158,11,0.2)] relative text-left font-mono space-y-5">
+      <button onclick="closeJackpotModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg font-bold cursor-pointer transition-colors">✕</button>
+
+      <div class="flex items-center gap-3 border-b border-white/10 pb-4">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-xl shadow-inner">
+          🎯
+        </div>
+        <div>
+          <h3 class="text-base font-black text-white uppercase tracking-wider">Confirm Onchain Prediction</h3>
+          <p class="text-[11px] text-amber-400 font-bold">Robinhood Chain (Chain ID: 4663) • Verifiable Block Event</p>
+        </div>
+      </div>
+
+      <!-- QUESTION SUMMARY -->
+      <div class="p-3.5 rounded-2xl bg-[#182230] border border-white/5 space-y-1.5">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">Question Identifier:</span>
+          <span id="modal-q-id" class="font-bold text-amber-400 font-mono bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">#1 (Sequential)</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">Target Asset / Question:</span>
+          <span id="modal-q-title" class="font-bold text-white text-right">Bitcoin Daily Candle Close Target</span>
+        </div>
+      </div>
+
+      <!-- TICKET & PREDICTION BREAKDOWN -->
+      <div class="p-4 rounded-2xl bg-gradient-to-b from-[#161f2e] to-[#121824] border border-white/10 space-y-3">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400">Selected Pool Tier:</span>
+          <span id="modal-tier-display" class="font-black text-amber-400">$5 Tier</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400">Tickets Count (Max 2):</span>
+          <span id="modal-qty-display" class="font-bold text-white bg-slate-800 px-2 py-0.5 rounded">1 Ticket</span>
+        </div>
+        <div class="border-t border-white/5 pt-2">
+          <span class="text-[11px] text-slate-400 block mb-1">Exact Prediction(s) to Encode in Block:</span>
+          <div id="modal-predictions-list" class="space-y-1.5">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+        <div class="border-t border-white/10 pt-2 flex justify-between items-center text-sm font-bold">
+          <span class="text-slate-300">Total USDG Stake:</span>
+          <span id="modal-total-cost" class="text-emerald-400 font-black text-base">$5.00 USDG</span>
+        </div>
+      </div>
+
+      <!-- BLOCKCHAIN AUDIT NOTE -->
+      <div class="p-3 rounded-xl bg-amber-950/20 border border-amber-500/20 flex items-start gap-2 text-[11px] text-slate-300 leading-relaxed">
+        <span class="text-amber-400 text-sm">🔒</span>
+        <span>This transaction will permanently bind your wallet address, <strong>Question #1</strong>, Tier, and exact numerical target to the Robinhood Chain smart contract.</span>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="grid grid-cols-2 gap-3 pt-1">
+        <button onclick="closeJackpotModal()" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-colors cursor-pointer">
+          Cancel & Edit
+        </button>
+        <button id="btn-confirm-jackpot-tx" onclick="confirmAndBroadcastJackpot()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-1.5">
+          <span>Confirm & Sign Tx</span>
+          <span>⚡</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
   
 </html>
