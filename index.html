@@ -2199,7 +2199,7 @@
               <span>🏆</span> A. Settlement With a Verified Winner:
             </h4>
             <ul class="list-disc list-inside text-sm text-slate-300 space-y-1.5 pl-2">
-              <li><strong class="text-white">90%</strong> allocated directly to the verified winner (Net Profit Payout: 1.8x original stake)</li>
+              <li><strong class="text-white">90%</strong> allocated directly to the verified winner (Net Profit Payout: 1.9x original stake)</li>
               <li><strong class="text-white">5%</strong> Referral Reward transferred directly in cash to the referrer's wallet (strictly conditioned upon a verified match winner)</li>
               <li><strong class="text-white">3%</strong> rebate cashback returned to the loser's wallet to preserve liquidity and enable immediate reentry</li>
               <li><strong class="text-white">2%</strong> protocol treasury fee for platform maintenance and ecosystem buybacks</li>
@@ -4002,12 +4002,12 @@
           };
         });
       } else if (curLbCat === "duel") {
-        const poolInfo = { netPrize: curLbTier * 1.8 };
+        const poolInfo = { netPrize: curLbTier * 1.9 };
         leaderboardData = [
           {
             wallet: (myWallet && (myWallet.toLowerCase() === "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6")) ? "You (0x7290...67d6)" : "0x7290...67d6",
             metric: "1 Win (100% Win Rate)",
-            won: "$" + (1.80 * (parseInt(curLbTier) || 1)).toFixed(2) + " USDG (Net)"
+            won: "$" + (1.90 * (parseInt(curLbTier) || 1)).toFixed(2) + " USDG (Net)"
           },
           {
             wallet: (myWallet && (myWallet.toLowerCase() === "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67")) ? "You (0x0ce6...0f67)" : "0x0ce6...0f67",
@@ -4717,7 +4717,7 @@
           }
           // Ensure valid tier and payout
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
-          if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.8).toFixed(2);
+          if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.9).toFixed(2);
         }
         localStorage.setItem('pvp_active_duels_store_v20', JSON.stringify(store));
       } catch(e) {}
@@ -5703,7 +5703,7 @@
 
       const dispNum = getDuelDisplayNumber(duelData);
       const safeTier = (duelData.tier !== undefined && duelData.tier !== null) ? Number(duelData.tier) : 1;
-      const safePayout = duelData.payout ? duelData.payout : (safeTier * 1.8).toFixed(2);
+      const safePayout = duelData.payout ? duelData.payout : (safeTier * 1.9).toFixed(2);
       let rawQText = duelData.questionText || "Will BTC Daily Candle Close GREEN?";
       const qIdx = rawQText.indexOf("?");
       const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
@@ -6302,7 +6302,7 @@
         status: "open",
         deadline: getQuestionDeadline(q.id),
         createTxHash: txHash || "",
-        payout: (selectedDuelTier * 1.8).toFixed(2),
+        payout: (selectedDuelTier * 1.9).toFixed(2),
         cashback: (selectedDuelTier * 0.03).toFixed(2),
         createdAt: Date.now()
       };
@@ -6363,7 +6363,7 @@
           id: duelId, 
           tier: tier, 
           deadline: getQuestionDeadline(q.id),
-          payout: (tier * 1.8).toFixed(2), 
+          payout: (tier * 1.9).toFixed(2), 
           cashback: (tier * 0.03).toFixed(2), 
           deadline: getQuestionDeadline(q.id),
         createdAt: Date.now() 
