@@ -1663,7 +1663,7 @@
         <div class="flex items-center gap-4">
           <div class="px-6 py-3.5 rounded-2xl bg-gradient-to-b from-[#181d28] to-[#121620] border border-amber-500/40 font-mono text-center shadow-[0_0_25px_rgba(245,158,11,0.18)] relative overflow-hidden group">
             <div class="absolute -top-12 -right-12 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
-            <span class="text-[10px] text-amber-400 block font-black uppercase tracking-wider mb-2 text-center flex items-center justify-center gap-1.5">
+            <span id="jackpot-countdown-title" class="text-[10px] text-amber-400 block font-black uppercase tracking-wider mb-2 text-center flex items-center justify-center gap-1.5">
               <span class="inline-block animate-pulse">⏳</span> ROUND ENTRY COUNTDOWN
             </span>
             <div class="flex items-center justify-center gap-2 font-mono">
@@ -3225,9 +3225,13 @@
       const secsEl = document.getElementById("jackpot-secs");
 
       let storedTarget = localStorage.getItem("grand_jackpot_round_deadline");
-      if (!storedTarget || isNaN(Number(storedTarget)) || Number(storedTarget) <= Date.now()) {
+      const storedRoundStatus = localStorage.getItem("grand_jackpot_round_status"); // "active" or "ended"
+
+      if (!storedTarget || isNaN(Number(storedTarget))) {
+        // Initial setup for current round
         storedTarget = Date.now() + (2 * 86400000) + (14 * 3600000) + (35 * 60000) + (18 * 1000);
         localStorage.setItem("grand_jackpot_round_deadline", storedTarget.toString());
+        localStorage.setItem("grand_jackpot_round_status", "active");
       } else {
         storedTarget = Number(storedTarget);
       }
@@ -3249,6 +3253,22 @@
         if (hoursEl) hoursEl.innerText = String(h).padStart(2, "0");
         if (minsEl) minsEl.innerText = String(m).padStart(2, "0");
         if (secsEl) secsEl.innerText = String(s).padStart(2, "0");
+
+        const countdownBanner = document.getElementById("jackpot-countdown-title");
+        if (isAfterEnd) {
+          localStorage.setItem("grand_jackpot_round_status", "ended");
+          if (countdownBanner) {
+            countdownBanner.innerHTML = '<span class="inline-block text-rose-500">🔒</span> ROUND ENDED • WAITING FOR ADMIN';
+          }
+        } else if (isBeforeStart) {
+          if (countdownBanner) {
+            countdownBanner.innerHTML = '<span class="inline-block text-amber-400">⏳</span> ROUND STARTS SOON';
+          }
+        } else {
+          if (countdownBanner) {
+            countdownBanner.innerHTML = '<span class="inline-block animate-pulse">⏳</span> ROUND ENTRY COUNTDOWN';
+          }
+        }
 
         // Enforce strict button locking when round is not active
         const allTiers = [1, 5, 10, 100, 1000];
@@ -3276,11 +3296,16 @@
     }
 
         function isJackpotEntryWindowOpen() {
+      const status = localStorage.getItem("grand_jackpot_round_status");
+      if (status === "ended") return { open: false, reason: "ENDED" };
       const startTime = Number(localStorage.getItem("grand_jackpot_round_start") || (Date.now() - 3600000));
       const endTime = Number(localStorage.getItem("grand_jackpot_round_deadline") || (Date.now() + 86400000));
       const now = Date.now();
       if (now < startTime) return { open: false, reason: "NOT_STARTED" };
-      if (now > endTime) return { open: false, reason: "ENDED" };
+      if (now > endTime) {
+        localStorage.setItem("grand_jackpot_round_status", "ended");
+        return { open: false, reason: "ENDED" };
+      }
       return { open: true };
     }
 
