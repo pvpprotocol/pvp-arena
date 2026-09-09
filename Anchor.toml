@@ -5,18 +5,18 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-pvp_duels = "PvPDueLs11111111111111111111111111111111111"
-grand_jackpot = "GrndJckPt111111111111111111111111111111111"
+pvp_duels = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39"
+grand_jackpot = "BXjFmivvTKHRm7J6Fnv7HmbsghAodCH2oaiRGJtDhohA"
 
 [programs.devnet]
-pvp_duels = "PvPDueLs11111111111111111111111111111111111"
-grand_jackpot = "GrndJckPt111111111111111111111111111111111"
+pvp_duels = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39"
+grand_jackpot = "BXjFmivvTKHRm7J6Fnv7HmbsghAodCH2oaiRGJtDhohA"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
