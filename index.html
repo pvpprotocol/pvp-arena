@@ -3118,32 +3118,32 @@
         {
           id: "crypto-eth",
           title: "ETH 12H Candle Close",
-          sub: "Candle Close 00:00 UTC",
-          targetDesc: "ETH 12H Candle Close Price (USD) • 00:00 UTC",
+          sub: "کلوز کندل براساس کوین‌بیس (Coinbase)",
+          targetDesc: "کلوز کندل براساس کوین‌بیس (Coinbase)",
           placeholder: "e.g. 2495.50",
           defaultTarget: "2495.50",
           endTime: Date.UTC(2026, 8, 10, 0, 0, 0),
-          badge: "⚡ ETH (UTC)"
+          badge: "⚡ COINBASE (UTC)"
         },
         {
           id: "crypto-btc",
           title: "BTC 24H Candle Close",
-          sub: "Candle Close 00:00 UTC",
-          targetDesc: "BTC 24H Candle Close Price (USD) • 00:00 UTC",
+          sub: "کلوز کندل براساس کوین‌بیس (Coinbase)",
+          targetDesc: "کلوز کندل براساس کوین‌بیس (Coinbase)",
           placeholder: "e.g. 57400.00",
           defaultTarget: "57400.00",
           endTime: Date.UTC(2026, 8, 10, 0, 0, 0),
-          badge: "⚡ BTC (UTC)"
+          badge: "⚡ COINBASE (UTC)"
         },
         {
           id: "crypto-sol",
           title: "SOL 12H Candle Close",
-          sub: "Candle Close 00:00 UTC",
-          targetDesc: "SOL 12H Candle Close Price (USD) • 00:00 UTC",
+          sub: "کلوز کندل براساس کوین‌بیس (Coinbase)",
+          targetDesc: "کلوز کندل براساس کوین‌بیس (Coinbase)",
           placeholder: "e.g. 132.50",
           defaultTarget: "132.50",
           endTime: Date.UTC(2026, 8, 10, 0, 0, 0),
-          badge: "⚡ SOL (UTC)"
+          badge: "⚡ COINBASE (UTC)"
         }
       ],
       sports: [
@@ -3190,7 +3190,7 @@
       if (targetDesc) targetDesc.innerText = ev.targetDesc;
 
       const selectedLabel = document.getElementById("jackpot-selected-event-label");
-      if (selectedLabel) selectedLabel.innerText = "Active: " + ev.title;
+      if (selectedLabel) selectedLabel.innerText = "Active: " + ev.title + " • " + ev.sub;
 
       // Update timer target to match event deadline
       localStorage.setItem("grand_jackpot_round_target_" + ev.id, String(ev.endTime));
