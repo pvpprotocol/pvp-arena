@@ -44,6 +44,15 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
 
     uint256 public currentRoundId;
 
+        event TicketsPurchased(
+        uint256 indexed roundId,
+        uint256 indexed tier,
+        address indexed player,
+        uint256 ticketCount,
+        uint256 totalCostWei,
+        uint256[] predictions
+    );
+
     event TicketPurchased(
         uint256 indexed roundId,
         uint256 indexed tier,
@@ -81,32 +90,101 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
      * @param tier Price tier (1, 5, 10, 100, 1000)
      * @param targetPrediction Predicted outcome value
      */
-    function buyTicket(uint256 tier, uint256 targetPrediction) external nonReentrant {
+        /**
+     * @notice Purchase multiple jackpot tickets in a single transparent onchain transaction
+     * @param tier Dollar tier of the ticket (1, 5, 10, 100, 1000)
+     * @param targetPredictions Array of target predictions (1 or 2 tickets per wallet)
+     */
+    function buyTickets(uint256 tier, uint256[] calldata targetPredictions) external nonReentrant {
+        uint256 qty = targetPredictions.length;
+        require(qty > 0 && qty <= MAX_TICKETS_PER_WALLET, "Must buy 1 or 2 tickets");
         require(tier > 0, "Invalid tier");
-        require(userTickets[currentRoundId][tier][msg.sender] < MAX_TICKETS_PER_WALLET, "Max 2 tickets per wallet reached");
+        require(userTickets[currentRoundId][tier][msg.sender] + qty <= MAX_TICKETS_PER_WALLET, "Max 2 tickets per wallet reached");
 
-        uint256 ticketPriceWei = tier * 1e6; // USDG is 6 decimals
-        require(usdgToken.transferFrom(msg.sender, address(this), ticketPriceWei), "USDG transfer failed");
+        uint256 totalCostWei = (tier * qty) * 1e6; // USDG is 6 decimals
+        require(usdgToken.transferFrom(msg.sender, address(this), totalCostWei), "USDG transfer failed");
 
-        userTickets[currentRoundId][tier][msg.sender] += 1;
-        
+        userTickets[currentRoundId][tier][msg.sender] += qty;
+
         RoundTier storage rTier = roundTiers[currentRoundId][tier];
-        rTier.ticketPrice = ticketPriceWei;
-        rTier.totalVault += ticketPriceWei;
-        rTier.totalTickets += 1;
+        rTier.ticketPrice = tier * 1e6;
+        rTier.totalVault += totalCostWei;
 
-        tierTickets[currentRoundId][tier].push(Ticket({
-            player: msg.sender,
-            targetPrediction: targetPrediction,
-            timestamp: block.timestamp
-        }));
+        for (uint256 i = 0; i < qty; i++) {
+            rTier.totalTickets += 1;
+            tierTickets[currentRoundId][tier].push(Ticket({
+                player: msg.sender,
+                targetPrediction: targetPredictions[i],
+                timestamp: block.timestamp
+            }));
 
-        emit TicketPurchased(
+            emit TicketPurchased(
+                currentRoundId,
+                tier,
+                msg.sender,
+                rTier.totalTickets,
+                targetPredictions[i]
+            );
+        }
+
+        emit TicketsPurchased(
             currentRoundId,
             tier,
             msg.sender,
-            rTier.totalTickets,
-            targetPrediction
+            qty,
+            totalCostWei,
+            targetPredictions
+        );
+    }
+
+    /**
+     * @notice Single ticket purchase backwards-compatibility
+     */
+    function buyTicket(uint256 tier, uint256 targetPrediction) external nonReentrant {
+        uint256[] memory preds = new uint256[](1);
+        preds[0] = targetPrediction;
+        _buyTicketsInternal(tier, preds);
+    }
+
+    function _buyTicketsInternal(uint256 tier, uint256[] memory targetPredictions) internal {
+        uint256 qty = targetPredictions.length;
+        require(qty > 0 && qty <= MAX_TICKETS_PER_WALLET, "Must buy 1 or 2 tickets");
+        require(tier > 0, "Invalid tier");
+        require(userTickets[currentRoundId][tier][msg.sender] + qty <= MAX_TICKETS_PER_WALLET, "Max 2 tickets per wallet reached");
+
+        uint256 totalCostWei = (tier * qty) * 1e6;
+        require(usdgToken.transferFrom(msg.sender, address(this), totalCostWei), "USDG transfer failed");
+
+        userTickets[currentRoundId][tier][msg.sender] += qty;
+
+        RoundTier storage rTier = roundTiers[currentRoundId][tier];
+        rTier.ticketPrice = tier * 1e6;
+        rTier.totalVault += totalCostWei;
+
+        for (uint256 i = 0; i < qty; i++) {
+            rTier.totalTickets += 1;
+            tierTickets[currentRoundId][tier].push(Ticket({
+                player: msg.sender,
+                targetPrediction: targetPredictions[i],
+                timestamp: block.timestamp
+            }));
+
+            emit TicketPurchased(
+                currentRoundId,
+                tier,
+                msg.sender,
+                rTier.totalTickets,
+                targetPredictions[i]
+            );
+        }
+
+        emit TicketsPurchased(
+            currentRoundId,
+            tier,
+            msg.sender,
+            qty,
+            totalCostWei,
+            targetPredictions
         );
     }
 
