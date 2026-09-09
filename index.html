@@ -1691,18 +1691,33 @@
                   
       
       <!-- GRAND JACKPOT CATEGORY SELECTOR (CRYPTO & SPORTS) -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[#131b27] border border-[#334155] shadow-lg">
-        <div class="flex items-center gap-2 p-1 rounded-xl bg-[#0f172a] border border-[#334155]">
-          <button id="jackpot-cat-crypto" onclick="switchJackpotCategory('crypto')" class="px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-sm">
-            <span>⚡</span><span>CRYPTO</span>
-          </button>
-          <button id="jackpot-cat-sports" onclick="switchJackpotCategory('sports')" class="px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent">
-            <span>⚽</span><span>SPORTS</span>
-          </button>
+      <div class="flex flex-col gap-3 p-4 rounded-2xl bg-[#131b27] border border-[#334155] shadow-lg">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-2 p-1 rounded-xl bg-[#0f172a] border border-[#334155]">
+            <button id="jackpot-cat-crypto" onclick="switchJackpotCategory('crypto')" class="px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-sm">
+              <span>⚡</span><span>CRYPTO</span>
+            </button>
+            <button id="jackpot-cat-sports" onclick="switchJackpotCategory('sports')" class="px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent">
+              <span>⚽</span><span>SPORTS</span>
+            </button>
+          </div>
+          <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-950/20 border border-amber-500/30 font-mono text-xs text-amber-300">
+            <span class="text-amber-400 font-bold">🎯 TARGET OUTCOME:</span>
+            <span id="jackpot-active-target-desc" class="font-bold text-white">ETH 12H Candle Close Price (USD)</span>
+          </div>
         </div>
-        <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-950/20 border border-amber-500/30 font-mono text-xs text-amber-300">
-          <span class="text-amber-400 font-bold">🎯 TARGET OUTCOME:</span>
-          <span id="jackpot-active-target-desc" class="font-bold text-white">ETH 12H Candle Close Price (USD)</span>
+
+        <!-- MULTI-EVENT & MULTI-MATCH SELECTOR -->
+        <div class="pt-3 border-t border-[#334155]/60 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ACTIVE EVENTS & MATCHES (CHOOSE EVENT)
+            </span>
+            <span id="jackpot-selected-event-label" class="text-[11px] font-mono text-blue-400 font-bold"></span>
+          </div>
+          <div id="jackpot-events-container" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <!-- Dynamically populated matches & events -->
+          </div>
         </div>
       </div>
 
@@ -3126,30 +3141,152 @@
     }
 
     // Duplicate duel functions removed
-    // GRAND JACKPOT LOGIC
+    // GRAND JACKPOT MULTI-MATCH & MULTI-EVENT LOGIC
     let activeJackpotCategory = "crypto"; // "crypto" | "sports"
-    const jackpotCategoryConfigs = {
-      crypto: {
-        name: "CRYPTO",
-        targetDesc: "ETH 12H Candle Close Price (USD)",
-        placeholder: "e.g. 2495.50",
-        defaultTarget: "2495.50"
-      },
-      sports: {
-        name: "SPORTS",
-        targetDesc: "Napoli vs Arsenal (Exact Score e.g. 1-2)",
-        placeholder: "e.g. 1-2 or 2-1",
-        defaultTarget: "1-2"
-      }
+    let activeJackpotEventId = "crypto-eth";
+
+    const jackpotCategoryEvents = {
+      crypto: [
+        {
+          id: "crypto-eth",
+          title: "ETH 12H Candle Close",
+          sub: "Ethereum Price Prediction",
+          targetDesc: "ETH 12H Candle Close Price (USD)",
+          placeholder: "e.g. 2495.50",
+          defaultTarget: "2495.50",
+          endTime: Date.UTC(2026, 8, 10, 0, 0, 0),
+          badge: "⚡ ETH POOL"
+        },
+        {
+          id: "crypto-btc",
+          title: "BTC 24H Candle Close",
+          sub: "Bitcoin Target Price",
+          targetDesc: "BTC 24H Candle Close Price (USD)",
+          placeholder: "e.g. 57400.00",
+          defaultTarget: "57400.00",
+          endTime: Date.UTC(2026, 8, 10, 0, 0, 0),
+          badge: "⚡ BTC POOL"
+        },
+        {
+          id: "crypto-sol",
+          title: "SOL 12H Candle Close",
+          sub: "Solana Target Price",
+          targetDesc: "SOL 12H Candle Close Price (USD)",
+          placeholder: "e.g. 132.50",
+          defaultTarget: "132.50",
+          endTime: Date.UTC(2026, 8, 9, 23, 0, 0),
+          badge: "⚡ SOL POOL"
+        }
+      ],
+      sports: [
+        {
+          id: "sports-arsenal",
+          title: "Napoli vs Arsenal",
+          sub: "Champions League • Kickoff 20:00 UTC",
+          targetDesc: "Napoli vs Arsenal (Exact Score e.g. 1-2)",
+          placeholder: "e.g. 1-2 or 2-1",
+          defaultTarget: "1-2",
+          endTime: Date.UTC(2026, 8, 9, 20, 0, 0),
+          badge: "⚽ UEFA CL"
+        },
+        {
+          id: "sports-realmadrid",
+          title: "Real Madrid vs Real Sociedad",
+          sub: "La Liga • Kickoff 21:00 UTC",
+          targetDesc: "Real Madrid vs Sociedad (Exact Score e.g. 3-1)",
+          placeholder: "e.g. 3-1 or 2-0",
+          defaultTarget: "3-1",
+          endTime: Date.UTC(2026, 8, 9, 21, 0, 0),
+          badge: "⚽ LA LIGA"
+        },
+        {
+          id: "sports-brazil",
+          title: "Brazil vs Paraguay",
+          sub: "World Cup Qualifiers • Kickoff 00:30 UTC",
+          targetDesc: "Brazil vs Paraguay (Exact Score e.g. 2-0)",
+          placeholder: "e.g. 2-0 or 1-1",
+          defaultTarget: "2-0",
+          endTime: Date.UTC(2026, 8, 10, 0, 30, 0),
+          badge: "⚽ CONMEBOL"
+        }
+      ]
     };
+
+    window.selectJackpotEvent = function(eventId) {
+      activeJackpotEventId = eventId;
+      const allEvents = jackpotCategoryEvents[activeJackpotCategory] || [];
+      const ev = allEvents.find(e => e.id === eventId) || allEvents[0];
+      if (!ev) return;
+
+      const targetDesc = document.getElementById("jackpot-active-target-desc");
+      if (targetDesc) targetDesc.innerText = ev.targetDesc;
+
+      const selectedLabel = document.getElementById("jackpot-selected-event-label");
+      if (selectedLabel) selectedLabel.innerText = "Active: " + ev.title;
+
+      // Update timer target to match event deadline
+      localStorage.setItem("grand_jackpot_round_target_" + ev.id, String(ev.endTime));
+      localStorage.setItem("grand_jackpot_round_target", String(ev.endTime));
+      localStorage.setItem("grand_jackpot_round_start", String(Date.now() - 3600000));
+      localStorage.removeItem("grand_jackpot_round_status");
+
+      // Update inputs placeholders
+      [1, 5, 10, 100, 1000].forEach(tier => {
+        for (let i = 1; i <= 3; i++) {
+          const input = document.getElementById("target-input-" + tier + "-" + i);
+          if (input) {
+            input.placeholder = ev.placeholder;
+          }
+        }
+      });
+
+      renderJackpotEventsList();
+    };
+
+    function renderJackpotEventsList() {
+      const container = document.getElementById("jackpot-events-container");
+      if (!container) return;
+      const events = jackpotCategoryEvents[activeJackpotCategory] || [];
+      
+      let html = "";
+      events.forEach(ev => {
+        const isSelected = (ev.id === activeJackpotEventId);
+        const activeClass = isSelected
+          ? "border-blue-500 bg-blue-500/20 shadow-md shadow-blue-500/10 text-white"
+          : "border-[#334155] bg-[#0f172a]/80 text-slate-300 hover:border-slate-500 hover:text-white";
+
+        const now = Date.now();
+        const diff = Math.max(0, ev.endTime - now);
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const timeStr = diff <= 0 ? "LOCKED" : (h + "h " + m + "m left");
+        const statusBadge = diff <= 0 
+          ? '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">LOCKED</span>'
+          : '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">⏳ ' + timeStr + '</span>';
+
+        html += `
+          <div onclick="selectJackpotEvent('${ev.id}')" class="p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between gap-1.5 ${activeClass}">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-bold text-amber-400">${ev.badge}</span>
+              ${statusBadge}
+            </div>
+            <div>
+              <div class="font-bold text-xs tracking-tight text-white">${ev.title}</div>
+              <div class="text-[10px] font-mono text-slate-400 truncate">${ev.sub}</div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
 
     window.switchJackpotCategory = function(cat) {
       activeJackpotCategory = cat;
       const cryptoBtn = document.getElementById("jackpot-cat-crypto");
       const sportsBtn = document.getElementById("jackpot-cat-sports");
-      const targetDesc = document.getElementById("jackpot-active-target-desc");
 
       if (cat === "crypto") {
+        activeJackpotEventId = "crypto-eth";
         if (cryptoBtn) {
           cryptoBtn.className = "px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-sm";
         }
@@ -3157,6 +3294,7 @@
           sportsBtn.className = "px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent";
         }
       } else {
+        activeJackpotEventId = "sports-arsenal";
         if (sportsBtn) {
           sportsBtn.className = "px-4 py-2 rounded-lg text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm";
         }
@@ -3165,18 +3303,7 @@
         }
       }
 
-      const conf = jackpotCategoryConfigs[cat] || jackpotCategoryConfigs.crypto;
-      if (targetDesc) targetDesc.innerText = conf.targetDesc;
-
-      // Update placeholders in all tier target inputs
-      [1, 5, 10, 100, 1000].forEach(tier => {
-        for (let i = 1; i <= 3; i++) {
-          const input = document.getElementById("target-input-" + tier + "-" + i);
-          if (input) {
-            input.placeholder = conf.placeholder;
-          }
-        }
-      });
+      selectJackpotEvent(activeJackpotEventId);
     };
 
     let jackpotUserTickets = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
