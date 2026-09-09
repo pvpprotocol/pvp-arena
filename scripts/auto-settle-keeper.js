@@ -1,9 +1,9 @@
-// Automated Oracle & Settlement Keeper for PvP Arena (Robinhood Chain)
+// Automated Oracle & Settlement Keeper for PvP Arena (Solana)
 // Evaluates Coinbase BTC-USD daily candle close and executes on-chain settlement on QuestionRegistry.
 
 const ethers = require("ethers");
 
-const RPC_URL = process.env.ROBINHOOD_RPC || "https://rpc.mainnet.chain.robinhood.com";
+const RPC_URL = process.env.SOLANA_RPC || "https://rpc.mainnet.chain.solana.com";
 const REGISTRY_ADDRESS = process.env.QUESTION_REGISTRY_ADDRESS || "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5";
 const PRIVATE_KEY = process.env.ORACLE_PRIVATE_KEY || process.env.DEPLOYER_PRIVATE_KEY;
 const NTFY_TOPIC = process.env.NTFY_TOPIC || "pvp-arena-rh-duels-v3";
@@ -55,7 +55,7 @@ async function runOracleSettlement() {
   const provider = getProvider(RPC_URL);
   const block = await provider.getBlock("latest");
   const currentBlockTime = block.timestamp;
-  console.log("Latest Robinhood Block:", block.number, "Timestamp:", currentBlockTime);
+  console.log("Latest Solana Block:", block.number, "Timestamp:", currentBlockTime);
 
   let signer;
   if (PRIVATE_KEY) {
