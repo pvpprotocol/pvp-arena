@@ -3062,100 +3062,32 @@
       await submitJackpot(tier);
     }
 
-    async function submitJackpot(tier) {
-      if (!isConnected) {
-        await connectWallet();
-      }
-      if (!isConnected) {
-        showToast("Please connect your wallet first", "warning");
-        return;
-      }
-
-      const qty = jackpotSelectedQty[tier] || 1;
-      const currentUsed = jackpotUserTickets[tier] || 0;
-
-      if (currentUsed + qty > 2) {
-        showToast(`Maximum 2/2 tickets per wallet! Already used ${currentUsed}/2.`, "warning");
-        return;
-      }
-
-      const targets = [];
-      for (let i = 1; i <= qty; i++) {
-        const input = document.getElementById(`target-input-${tier}-${i}`);
-        let val = input ? input.value.trim() : "";
-        if (!val) {
-          const baseEstimate = 2450.00 + (Math.random() * 20 - 10) + (i * 2.5);
-          val = baseEstimate.toFixed(2);
-          if (input) input.value = val;
-        }
-        targets.push(val);
-      }
-
-      const totalCost = (tier * qty).toFixed(2);
-      let txHash = "";
-      try {
-        txHash = await executeOnchainPayment(totalCost, "USDG", `${qty}x Jackpot Ticket(s) Tier ${tier}`);
-        showToast(`✅ Step 1 Signed & Step 2 USDG Transferred: ${txHash.slice(0, 10)}...`, "success");
-      } catch (err) {
-        console.error(err);
-        showToast("❌ Transaction rejected or failed in wallet.", "error");
-        return;
-      }
-
-      const startingTicketNum = jackpotUserTickets[tier] + 1;
-      jackpotUserTickets[tier] += qty;
-      jackpotTierStats[tier].tickets += qty;
-      updateJackpotMetrics();
-
-      const tNum = jackpotUserTickets[tier];
-      const badge = document.getElementById("jackpot-tickets-" + tier);
-      if (badge) {
-        badge.innerText = `${tNum}/2 Tickets`;
-        badge.className = tNum === 2 
-          ? "text-[10px] font-mono text-neutral-800 font-black" 
-          : (tier === 1000 ? "text-[10px] font-mono text-neutral-800 font-bold" : "text-[10px] font-mono text-neutral-800 font-bold");
-      }
-
-      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "Not Connected";
-      txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
-      const shortTx = txHash.slice(0, 6) + "..." + txHash.slice(-4);
-
-      // Add live submissions for each ticket
-      targets.forEach((targetVal, idx) => {
-        const currentTicket = startingTicketNum + idx;
-        liveSubmissions.unshift({
-          tier: tier,
-          wallet: shortAddr,
-          target: targetVal,
-          ticketNum: `${currentTicket}/2`,
-          tx: shortTx,
-          time: "Just now"
-        });
-      });
-
-      renderJackpotSubmissions();
-      showToast(`🎉 Successfully submitted ${qty}x ${tier}.00 Jackpot Ticket(s)! Targets: ${targetsStr}`, "success");
-    }
-
-    function updateJackpotMetrics() {
-      [1, 5, 10, 100, 1000].forEach(tier => {
-        const stats = jackpotTierStats[tier];
-        if (!stats) return;
-        const totalTickets = stats.tickets;
-        const totalPool = totalTickets * tier;
-        const winnerPrize = totalPool * 0.90;
-
-        const prizeEl = document.getElementById("jackpot-prize-" + tier);
-        const poolEl = document.getElementById("jackpot-pool-" + tier);
-        const partEl = document.getElementById("jackpot-participants-" + tier);
-
-        if (prizeEl) prizeEl.innerText = "$" + winnerPrize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
-        if (poolEl) poolEl.innerText = "$" + totalPool.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
-        if (partEl) partEl.innerText = totalTickets.toLocaleString() + " tickets";
-      });
-    }
-
+    // Load persisted onchain/local submissions & ticket states
     let liveSubmissions = [];
+    try {
+      const storedSubs = localStorage.getItem("pvp_jackpot_submissions");
+      if (storedSubs) liveSubmissions = JSON.parse(storedSubs);
+    } catch (e) {
+      console.warn("Error parsing stored jackpot submissions:", e);
+    }
+
+    try {
+      const storedTickets = localStorage.getItem("pvp_jackpot_user_tickets");
+      if (storedTickets) {
+        const parsed = JSON.parse(storedTickets);
+        Object.keys(parsed).forEach(k => { jackpotUserTickets[k] = parsed[k]; });
+      }
+    } catch (e) {}
+
+    try {
+      const storedStats = localStorage.getItem("pvp_jackpot_tier_stats");
+      if (storedStats) {
+        const parsedStats = JSON.parse(storedStats);
+        Object.keys(parsedStats).forEach(k => { 
+          if (jackpotTierStats[k]) jackpotTierStats[k].tickets = parsedStats[k].tickets; 
+        });
+      }
+    } catch (e) {}
 
     let jackpotTimerInterval = null;
     function updateJackpotTimer() {
@@ -3206,19 +3138,21 @@
       const qty = jackpotSelectedQty[tier] || 1;
       const currentUsed = jackpotUserTickets[tier] || 0;
 
-      if (currentUsed + qty > 3) {
-        showToast(`Maximum 3/3 tickets per wallet! Already used ${currentUsed}/3.`, "warning");
+      if (currentUsed + qty > 2) {
+        showToast(`Maximum 2/2 tickets per wallet! Already used ${currentUsed}/2.`, "warning");
         return;
       }
 
-      const input = document.getElementById("target-input-" + tier);
-      let val = input ? input.value.trim() : "";
-      
-      if (!val) {
-        const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
-        val = baseEstimate.toFixed(2);
-        if (input) input.value = val;
-        showToast(`Auto-populated benchmark: ${val}`, "info");
+      const targets = [];
+      for (let i = 1; i <= qty; i++) {
+        const input = document.getElementById(`target-input-${tier}-${i}`);
+        let val = input ? input.value.trim() : "";
+        if (!val) {
+          const baseEstimate = 2450.00 + (Math.random() * 20 - 10) + (i * 2.5);
+          val = baseEstimate.toFixed(2);
+          if (input) input.value = val;
+        }
+        targets.push(val);
       }
 
       const totalCost = (tier * qty).toFixed(2);
@@ -3232,37 +3166,53 @@
         return;
       }
 
-      jackpotUserTickets[tier] += qty;
-      jackpotTierStats[tier].tickets += qty;
+      const startingTicketNum = (jackpotUserTickets[tier] || 0) + 1;
+      jackpotUserTickets[tier] = (jackpotUserTickets[tier] || 0) + qty;
+      jackpotTierStats[tier].tickets = (jackpotTierStats[tier].tickets || 0) + qty;
+
+      // Save persistent state
+      try {
+        localStorage.setItem("pvp_jackpot_user_tickets", JSON.stringify(jackpotUserTickets));
+        localStorage.setItem("pvp_jackpot_tier_stats", JSON.stringify(jackpotTierStats));
+      } catch (e) {}
+
       updateJackpotMetrics();
 
       const tNum = jackpotUserTickets[tier];
       const badge = document.getElementById("jackpot-tickets-" + tier);
       if (badge) {
         badge.innerText = `${tNum}/2 Tickets`;
-        badge.className = tNum === 3 
+        badge.className = tNum === 2 
           ? "text-[10px] font-mono text-neutral-800 font-black" 
           : "text-[10px] font-mono text-neutral-800 font-bold";
       }
 
       const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "Not Connected";
-      /* txHash already obtained from executeOnchainPayment */
 
-      liveSubmissions.unshift({
-        time: "Just now",
-        tier: tier,
-        wallet: shortAddr,
-        target: "$" + parseFloat(val).toLocaleString("en-US", { minimumFractionDigits: 2 }),
-        ticketNum: `${qty} Ticket${qty > 1 ? 's' : ''} (${tNum}/3)`,
-        tx: txHash
+      // Add onchain verified submission records
+      targets.forEach((targetVal, idx) => {
+        const currentTicket = startingTicketNum + idx;
+        liveSubmissions.unshift({
+          tier: tier,
+          wallet: shortAddr,
+          target: "$" + parseFloat(targetVal).toLocaleString("en-US", { minimumFractionDigits: 2 }),
+          ticketNum: `Ticket ${currentTicket}/2`,
+          tx: txHash,
+          time: "Just now"
+        });
       });
+
+      try {
+        localStorage.setItem("pvp_jackpot_submissions", JSON.stringify(liveSubmissions));
+      } catch (e) {}
 
       renderJackpotSubmissions();
       
-      // Update qty stepper to safe remaining
+      // Reset qty selector to remaining safe allowance
       changeJackpotTicketQty(tier, 0);
 
-      showToast(`🎉 ${qty} Ticket(s) Entered in ${tier} Jackpot Round! Target: ${val}`, "info");
+      const targetsStr = targets.map(t => "$" + t).join(", ");
+      showToast(`🎉 Recorded onchain & frontend! ${qty}x ${tier}.00 USDG Ticket(s). Targets: ${targetsStr}`, "success");
     }
 
     function renderJackpotSubmissions() {
@@ -3277,7 +3227,7 @@
               <div class="flex flex-col items-center justify-center gap-2">
                 <span class="text-2xl">🎯</span>
                 <span class="text-xs font-bold text-neutral-700">No predictions recorded yet</span>
-                <span class="text-[10px] text-slate-500">Be the first player to submit a prediction in this round ($1, $5, $10, $100, $1,000 Tiers)!</span>
+                <span class="text-[10px] text-slate-500">Be the first player to submit an onchain prediction in this round ($1, $5, $10, $100, $1,000 Tiers)!</span>
               </div>
             </td>
           </tr>
@@ -3288,98 +3238,37 @@
       liveSubmissions.forEach(s => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-[#182230] transition-all";
-        const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `${s.tier} Tier`;
+        const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : `$${s.tier} Tier`;
+        const shortTx = s.tx ? (s.tx.length > 14 ? s.tx.slice(0, 8) + "..." + s.tx.slice(-6) : s.tx) : "0x...";
+        const txUrl = s.tx ? `https://robinhood.superscan.network/tx/${s.tx}` : "https://robinhood.superscan.network";
         tr.innerHTML = `
-          <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-neutral-800' : 'text-[#cbd5e1]'}">${tierDisplay}</td>
+          <td class="p-3.5 font-bold ${s.tier === 1000 ? 'text-amber-400 font-black' : 'text-[#cbd5e1]'}">${tierDisplay}</td>
           <td class="p-3.5 text-slate-400">${s.time}</td>
           <td class="p-3.5 font-bold text-white">${s.wallet}</td>
           <td class="p-3.5 text-[#cbd5e1] font-bold">${s.target}</td>
           <td class="p-3.5 text-center font-bold text-neutral-700">${s.ticketNum}</td>
-          <td class="p-3.5 text-right"><a href="https://robinhood.superscan.network" target="_blank" class="text-[#cbd5e1] hover:underline">${s.tx}</a></td>
+          <td class="p-3.5 text-right"><a href="${txUrl}" target="_blank" class="text-[#cbd5e1] hover:underline font-mono text-xs">${shortTx} ↗</a></td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function updateJackpotDynamicUI() {
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const pCount = jackpotTierStats[t] ? jackpotTierStats[t].tickets : 0;
-        const poolSize = pCount * t;
-        const netReward = poolSize * 0.9;
+    function updateJackpotMetrics() {
+      [1, 5, 10, 100, 1000].forEach(tier => {
+        const stats = jackpotTierStats[tier];
+        if (!stats) return;
+        const totalTickets = stats.tickets || 0;
+        const totalPool = totalTickets * tier;
+        const winnerPrize = totalPool * 0.90;
 
-        const partEl = document.getElementById("jackpot-participants-" + t);
-        if (partEl) partEl.innerText = pCount + " tickets";
+        const prizeEl = document.getElementById("jackpot-prize-" + tier);
+        const poolEl = document.getElementById("jackpot-pool-" + tier);
+        const partEl = document.getElementById("jackpot-participants-" + tier);
 
-        const poolEl = document.getElementById("jackpot-pool-" + t);
-        if (poolEl) poolEl.innerText = "$" + poolSize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
-
-        const rewEl = document.getElementById("jackpot-reward-" + t);
-        if (rewEl) rewEl.innerText = "$" + netReward.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+        if (prizeEl) prizeEl.innerText = "$" + winnerPrize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+        if (poolEl) poolEl.innerText = "$" + totalPool.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+        if (partEl) partEl.innerText = totalTickets.toLocaleString() + " tickets";
       });
-    }
-
-    async function submitJackpot(tier) {
-      if (!isConnected) {
-        await connectWallet();
-      }
-      if (!isConnected) {
-        showToast("Please connect your wallet first", "warning");
-        return;
-      }
-
-      const input = document.getElementById("target-input-" + tier);
-      let val = input ? input.value.trim() : "";
-      
-      if (!val) {
-        const baseEstimate = 2450.00 + (Math.random() * 20 - 10);
-        val = baseEstimate.toFixed(2);
-        if (input) input.value = val;
-        showToast(`Auto-populated benchmark: ${val}`, "info");
-      }
-
-      if (jackpotUserTickets[tier] >= 2) {
-        showToast(`Maximum 2/2 tickets already used for ${tier} round!`, "warning");
-        return;
-      }
-
-      showToast(`⚡ Sign verification for ${tier}.00 Jackpot Ticket (Target ${val})...`, "info");
-
-      try {
-        const sig = await requestSafeSignature(`pvphub.fun: Jackpot Ticket ${tier}.00 USDG\nTarget: ${val}\nWallet: ${userAddress}\nNonce: ${Date.now()}`);
-        showToast(`✅ Signature Confirmed: ${sig.slice(0, 10)}...`, "info");
-      } catch (err) {
-        showToast("❌ Signature cancelled.", "error");
-        return;
-      }
-
-      jackpotUserTickets[tier]++;
-      jackpotTierStats[tier].tickets++;
-      updateJackpotMetrics();
-
-      const tNum = jackpotUserTickets[tier];
-
-      const badge = document.getElementById("jackpot-tickets-" + tier);
-      if (badge) {
-        badge.innerText = `${tNum}/3 Tickets`;
-        badge.className = tNum === 3 
-          ? "text-[10px] font-mono text-neutral-800 font-black" 
-          : "text-[10px] font-mono text-neutral-800 font-bold";
-      }
-
-      const shortAddr = userAddress ? (userAddress.slice(0, 6) + "..." + userAddress.slice(-4)) : "Not Connected";
-      let txHash = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
-
-      liveSubmissions.unshift({
-        time: "Just Now",
-        tier: tier,
-        wallet: shortAddr,
-        target: "$" + Number(val).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-        ticketNum: `Ticket ${tNum}/2`,
-        tx: txHash
-      });
-
-      renderJackpotSubmissions();
-      showToast(`✅ Ticket ${tNum}/2 Purchased! Target ${val} locked for ${tier} Jackpot.`, "success");
     }
 
     // 2048 SKILL VAULT & TOURNAMENT ENGINE
