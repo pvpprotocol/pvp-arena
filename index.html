@@ -675,6 +675,7 @@
     });
   </script>
   
+  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.8/lib/index.iife.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script>
     function toggleMobileSidebar() {
@@ -708,7 +709,7 @@
             <span class="text-[9px] px-1.5 py-0.2 rounded font-mono text-blue-400">DEX</span>
           </div>
           <p class="text-[10px] font-mono text-[#94a3b8] flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span> Robinhood Chain
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50"></span> Solana Network
           </p>
         </div>
       </div>
@@ -927,7 +928,7 @@
                 <h4 class="text-xs font-bold font-mono text-[#f8fafc] uppercase tracking-wider">Select Stake Tier</h4>
               </div>
             </div>
-            <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDG. Winner takes 90%, 3% auto-cashback, 7% platform fee.</p>
+            <p class="text-[11px] text-slate-400 font-mono">Select entry stake in USDC. Winner takes 90%, 3% auto-cashback, 7% platform fee.</p>
             
             <div class="grid grid-cols-5 gap-2 pt-1">
               <button onclick="selectDuelTier(0.01)" id="tier-btn-0-01" class="tier-pick-btn p-2 rounded-xl border border-[#334155] bg-[#182230] text-center font-mono transition-all shadow-md shadow-none">
@@ -1117,15 +1118,15 @@
                 <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDG POOL -->
+                <!-- USDC POOL -->
                 <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
+                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
                     <span id="tier-pool-usdg-gross-1" class="text-white font-mono">$0.00 (0 Tix)</span>
                   </div>
                   <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
                     <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-1" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDG</span>
+                    <span id="tier-pool-usdg-prize-1" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
                   </div>
                 </div>
 
@@ -1140,7 +1141,7 @@
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(1); startNew2048Game(true);" id="buy-btn-usdc-1" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="cost-usdc-1">0.0001</span> USDG)
+                  BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="cost-usdc-1">0.0001</span> USDC)
                 </button>
                 
               </div>
@@ -1155,15 +1156,15 @@
                 <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDG POOL -->
+                <!-- USDC POOL -->
                 <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
+                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
                     <span id="tier-pool-usdg-gross-5" class="text-white font-mono">$0.00 (0 Tix)</span>
                   </div>
                   <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
                     <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-5" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDG</span>
+                    <span id="tier-pool-usdg-prize-5" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
                   </div>
                 </div>
 
@@ -1178,7 +1179,7 @@
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(5); startNew2048Game(true);" id="buy-btn-usdc-5" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="cost-usdc-5">0.0005</span> USDG)
+                  BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="cost-usdc-5">0.0005</span> USDC)
                 </button>
                 
               </div>
@@ -1193,15 +1194,15 @@
                 <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDG POOL -->
+                <!-- USDC POOL -->
                 <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
+                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
                     <span id="tier-pool-usdg-gross-10" class="text-white font-mono">$0.00 (0 Tix)</span>
                   </div>
                   <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
                     <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-10" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDG</span>
+                    <span id="tier-pool-usdg-prize-10" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
                   </div>
                 </div>
 
@@ -1216,7 +1217,7 @@
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(10); startNew2048Game(true);" id="buy-btn-usdc-10" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="cost-usdc-10">0.001</span> USDG)
+                  BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="cost-usdc-10">0.001</span> USDC)
                 </button>
                 
               </div>
@@ -1231,15 +1232,15 @@
                 <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">ACTIVE</span></div>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDG POOL -->
+                <!-- USDC POOL -->
                 <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
+                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
                     <span id="tier-pool-usdg-gross-100" class="text-white font-mono">$0.00 (0 Tix)</span>
                   </div>
                   <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
                     <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-100" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDG</span>
+                    <span id="tier-pool-usdg-prize-100" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
                   </div>
                 </div>
 
@@ -1254,7 +1255,7 @@
               </div>
               <div class="flex flex-col gap-1.5">
                 <button onclick="select2048Tier(100); startNew2048Game(true);" id="buy-btn-usdc-100" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="cost-usdc-100">0.01</span> USDG)
+                  BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="cost-usdc-100">0.01</span> USDC)
                 </button>
                 
               </div>
@@ -1269,15 +1270,15 @@
                 <span id="tier-tag-1000" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#f8fafc] border border-[#334155]">ACTIVE</span>
               </div>
               <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDG POOL -->
+                <!-- USDC POOL -->
                 <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
                   <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDG Pool:</span>
+                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
                     <span id="tier-pool-usdg-gross-1000" class="text-white font-mono">$0.00 (0 Tix)</span>
                   </div>
                   <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
                     <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-1000" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDG</span>
+                    <span id="tier-pool-usdg-prize-1000" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
                   </div>
                 </div>
 
@@ -1356,11 +1357,11 @@
             </div>
 
             <p id="overlay-tier-desc" class="text-xs text-neutral-700 max-w-xs">
-              Playing in <b class="text-[#cbd5e1] font-mono">Tier 1</b>. Entry cost is <b class="text-[#cbd5e1] font-mono">$0.0001 USDG</b> which goes directly into Tier 1 Prize Pool.
+              Playing in <b class="text-[#cbd5e1] font-mono">Tier 1</b>. Entry cost is <b class="text-[#cbd5e1] font-mono">$0.0001 USDC</b> which goes directly into Tier 1 Prize Pool.
             </p>
 
             <button id="overlay-start-btn" onclick="startNew2048Game(true)" class="w-full max-w-xs py-2.5 px-4 rounded-xl bg-black text-white hover:bg-neutral-800 text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all flex items-center justify-center gap-2">
-              ▶ START TIER 1 ($0.0001 USDG)
+              ▶ START TIER 1 ($0.0001 USDC)
             </button>
           </div>
 
@@ -1449,7 +1450,7 @@
             <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-white text-sm">$1 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-1" class="text-[#cbd5e1]">$0.00 USDG</span>
+                <span id="top3-prize-usdg-1" class="text-[#cbd5e1]">$0.00 USDC</span>
                 
               </div>
             </div>
@@ -1485,7 +1486,7 @@
             <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-white text-sm">$5 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-5" class="text-[#cbd5e1]">$0.00 USDG</span>
+                <span id="top3-prize-usdg-5" class="text-[#cbd5e1]">$0.00 USDC</span>
                 
               </div>
             </div>
@@ -1521,7 +1522,7 @@
             <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-white text-sm">$10 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-10" class="text-[#cbd5e1]">$0.00 USDG</span>
+                <span id="top3-prize-usdg-10" class="text-[#cbd5e1]">$0.00 USDC</span>
                 
               </div>
             </div>
@@ -1557,7 +1558,7 @@
             <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-white text-sm">$100 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-100" class="text-[#cbd5e1]">$0.00 USDG</span>
+                <span id="top3-prize-usdg-100" class="text-[#cbd5e1]">$0.00 USDC</span>
                 
               </div>
             </div>
@@ -1593,7 +1594,7 @@
             <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
               <span class="font-mono font-black text-[#f8fafc] text-sm">$1,000 TIER</span>
               <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-1000" class="text-[#cbd5e1]">$0.00 USDG</span>
+                <span id="top3-prize-usdg-1000" class="text-[#cbd5e1]">$0.00 USDC</span>
                 
               </div>
             </div>
@@ -1704,7 +1705,7 @@
             <div>
               <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 1</span>
-                <span class="text-sm font-mono text-[#cbd5e1] font-bold">1 USDG</span>
+                <span class="text-sm font-mono text-[#cbd5e1] font-bold">1 USDC</span>
               </div>
               <!-- LIVE REWARD CONTAINER (TIER 1) -->
               <div class="mt-3 space-y-2 font-mono text-xs">
@@ -1721,14 +1722,14 @@
                   </div>
                   <div class="flex items-baseline justify-between">
                     <span class="text-lg font-black text-amber-400 font-mono tracking-tight drop-shadow-[0_0_8px_rgba(251,191,36,0.35)]" id="jackpot-reward-1">$1,116.00</span>
-                    <span class="text-[11px] text-amber-300/80 font-bold">USDG</span>
+                    <span class="text-[11px] text-amber-300/80 font-bold">USDC</span>
                   </div>
                 </div>
 
                 <div class="space-y-1 text-[11px] px-0.5">
                   <div class="flex justify-between text-slate-400">
                     <span>Total Vault:</span>
-                    <span class="text-white font-bold" id="jackpot-pool-1">$1,240.00 USDG</span>
+                    <span class="text-white font-bold" id="jackpot-pool-1">$1,240.00 USDC</span>
                   </div>
                   <div class="flex justify-between text-slate-400">
                     <span>Active Tickets:</span>
@@ -1772,7 +1773,7 @@
             <div>
               <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 2</span>
-                <span class="text-sm font-mono text-[#cbd5e1] font-bold">5 USDG</span>
+                <span class="text-sm font-mono text-[#cbd5e1] font-bold">5 USDC</span>
               </div>
               <!-- LIVE REWARD CONTAINER (TIER 5) -->
               <div class="mt-3 space-y-2 font-mono text-xs">
@@ -1789,14 +1790,14 @@
                   </div>
                   <div class="flex items-baseline justify-between">
                     <span class="text-lg font-black text-amber-400 font-mono tracking-tight drop-shadow-[0_0_8px_rgba(251,191,36,0.35)]" id="jackpot-reward-5">$4,365.00</span>
-                    <span class="text-[11px] text-amber-300/80 font-bold">USDG</span>
+                    <span class="text-[11px] text-amber-300/80 font-bold">USDC</span>
                   </div>
                 </div>
 
                 <div class="space-y-1 text-[11px] px-0.5">
                   <div class="flex justify-between text-slate-400">
                     <span>Total Vault:</span>
-                    <span class="text-white font-bold" id="jackpot-pool-5">$4,850.00 USDG</span>
+                    <span class="text-white font-bold" id="jackpot-pool-5">$4,850.00 USDC</span>
                   </div>
                   <div class="flex justify-between text-slate-400">
                     <span>Active Tickets:</span>
@@ -1840,7 +1841,7 @@
             <div>
               <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 3</span>
-                <span class="text-sm font-mono text-[#cbd5e1] font-bold">10 USDG</span>
+                <span class="text-sm font-mono text-[#cbd5e1] font-bold">10 USDC</span>
               </div>
               <!-- LIVE REWARD CONTAINER (TIER 10) -->
               <div class="mt-3 space-y-2 font-mono text-xs">
@@ -1857,14 +1858,14 @@
                   </div>
                   <div class="flex items-baseline justify-between">
                     <span class="text-lg font-black text-amber-400 font-mono tracking-tight drop-shadow-[0_0_8px_rgba(251,191,36,0.35)]" id="jackpot-reward-10">$8,280.00</span>
-                    <span class="text-[11px] text-amber-300/80 font-bold">USDG</span>
+                    <span class="text-[11px] text-amber-300/80 font-bold">USDC</span>
                   </div>
                 </div>
 
                 <div class="space-y-1 text-[11px] px-0.5">
                   <div class="flex justify-between text-slate-400">
                     <span>Total Vault:</span>
-                    <span class="text-white font-bold" id="jackpot-pool-10">$9,200.00 USDG</span>
+                    <span class="text-white font-bold" id="jackpot-pool-10">$9,200.00 USDC</span>
                   </div>
                   <div class="flex justify-between text-slate-400">
                     <span>Active Tickets:</span>
@@ -1908,7 +1909,7 @@
             <div>
               <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 4</span>
-                <span class="text-sm font-mono text-[#cbd5e1] font-bold">100 USDG</span>
+                <span class="text-sm font-mono text-[#cbd5e1] font-bold">100 USDC</span>
               </div>
               <!-- LIVE REWARD CONTAINER (TIER 100) -->
               <div class="mt-3 space-y-2 font-mono text-xs">
@@ -1925,14 +1926,14 @@
                   </div>
                   <div class="flex items-baseline justify-between">
                     <span class="text-lg font-black text-amber-400 font-mono tracking-tight drop-shadow-[0_0_8px_rgba(251,191,36,0.35)]" id="jackpot-reward-100">$22,050.00</span>
-                    <span class="text-[11px] text-amber-300/80 font-bold">USDG</span>
+                    <span class="text-[11px] text-amber-300/80 font-bold">USDC</span>
                   </div>
                 </div>
 
                 <div class="space-y-1 text-[11px] px-0.5">
                   <div class="flex justify-between text-slate-400">
                     <span>Total Vault:</span>
-                    <span class="text-white font-bold" id="jackpot-pool-100">$24,500.00 USDG</span>
+                    <span class="text-white font-bold" id="jackpot-pool-100">$24,500.00 USDC</span>
                   </div>
                   <div class="flex justify-between text-slate-400">
                     <span>Active Tickets:</span>
@@ -1976,7 +1977,7 @@
             <div>
               <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
                 <span class="font-mono font-black text-white text-sm">TIER 5</span>
-                <span class="text-sm font-mono text-[#cbd5e1] font-bold">1,000 USDG</span>
+                <span class="text-sm font-mono text-[#cbd5e1] font-bold">1,000 USDC</span>
               </div>
               <!-- LIVE REWARD CONTAINER (TIER 1000) -->
               <div class="mt-3 space-y-2 font-mono text-xs">
@@ -1993,14 +1994,14 @@
                   </div>
                   <div class="flex items-baseline justify-between">
                     <span class="text-lg font-black text-amber-400 font-mono tracking-tight drop-shadow-[0_0_8px_rgba(251,191,36,0.35)]" id="jackpot-reward-1000">$76,500.00</span>
-                    <span class="text-[11px] text-amber-300/80 font-bold">USDG</span>
+                    <span class="text-[11px] text-amber-300/80 font-bold">USDC</span>
                   </div>
                 </div>
 
                 <div class="space-y-1 text-[11px] px-0.5">
                   <div class="flex justify-between text-slate-400">
                     <span>Total Vault:</span>
-                    <span class="text-white font-bold" id="jackpot-pool-1000">$85,000.00 USDG</span>
+                    <span class="text-white font-bold" id="jackpot-pool-1000">$85,000.00 USDC</span>
                   </div>
                   <div class="flex justify-between text-slate-400">
                     <span>Active Tickets:</span>
@@ -2809,6 +2810,14 @@
       return null;
     }
 
+    function getSolanaProvider() {
+      if (window.phantom && window.phantom.solana && window.phantom.solana.isPhantom) return window.phantom.solana;
+      if (window.solflare && window.solflare.isSolflare) return window.solflare;
+      if (window.backpack && window.backpack.isBackpack) return window.backpack;
+      if (window.solana) return window.solana;
+      return null;
+    }
+
     async function connectWallet() {
       const btnText = document.getElementById("walletBtnText");
       const dot = document.getElementById("walletDot");
@@ -2818,18 +2827,43 @@
         userAddress = null;
         try { localStorage.removeItem("pvp_last_active_wallet"); } catch(e){}
         if (btnText) btnText.innerText = "Connect Wallet";
-        if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50";
-        showToast("Wallet Disconnected", "info");
-        if (typeof renderAllDuels === 'function') renderAllDuels();
-        if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
-        if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50";
+        showToast("Solana Wallet Disconnected", "info");
+        if (typeof renderAllDuels === "function") renderAllDuels();
+        if (typeof update2048TicketsUI === "function") update2048TicketsUI();
+        if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
         return;
       }
 
-      const provider = getInjectedProvider();
+      const provider = getSolanaProvider();
       if (!provider) {
-        showToast("⚠️ No EVM wallet detected! Please install or open in any EVM Web3 wallet (Rabby, MetaMask, Trust, OKX, etc.)", "warning");
+        showToast("⚠️ No Solana wallet detected! Please install Phantom, Solflare, or Backpack.", "warning");
         return;
+      }
+
+      try {
+        if (btnText) btnText.innerText = "Connecting...";
+        const resp = await provider.connect();
+        const pubkey = (resp && resp.publicKey) ? resp.publicKey.toString() : provider.publicKey.toString();
+        if (pubkey) {
+          userAddress = pubkey;
+          isConnected = true;
+          try { localStorage.setItem("pvp_last_active_wallet", userAddress); } catch(e){}
+          const shortAddr = userAddress.slice(0, 4) + "..." + userAddress.slice(-4);
+          if (btnText) btnText.innerText = shortAddr;
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
+          showToast("Connected: " + shortAddr + " (Solana)", "success");
+
+          if (typeof renderAllDuels === "function") renderAllDuels();
+          if (typeof update2048TicketsUI === "function") update2048TicketsUI();
+          if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
+          if (typeof updateLeaderboardUI === "function") updateLeaderboardUI();
+          if (typeof fetchSolanaUsdcBalance === "function") fetchSolanaUsdcBalance(userAddress);
+        }
+      } catch(err) {
+        console.error("Solana wallet connect error:", err);
+        if (btnText) btnText.innerText = "Connect Wallet";
+        showToast("Connection rejected or failed: " + (err.message || err), "error");
       }
 
       try {
@@ -2961,11 +2995,11 @@
 
     
     // ONCHAIN TRANSACTION EXECUTOR (ROBINHOOD CHAIN)
-    var USDG_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDG on Robinhood Chain
+    var USDC_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDC on Robinhood Chain
     var PVP_TOKEN_ADDRESS = "0x5c5cEAE38eED5178b567fc8d779E38c19f473bA3"; // Native $PVP token
     var ESCROW_CONTRACT = "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905";
 
-        async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDG", purpose = "Game Entry", customRecipient = null) {
+        async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDC", purpose = "Game Entry", customRecipient = null) {
       const provider = getInjectedProvider() || window.ethereum;
       if (!provider) {
         showToast("⚠️ Web3 wallet (MetaMask / Rabby / etc.) is required to play.", "error");
@@ -2987,10 +3021,10 @@
 
       const targetRecipient = (customRecipient && customRecipient.startsWith("0x")) ? customRecipient : ESCROW_CONTRACT;
       const cleanRecipient = targetRecipient.replace("0x", "").toLowerCase().padStart(64, "0");
-      let tokenContract = USDG_TOKEN_ADDRESS;
+      let tokenContract = USDC_TOKEN_ADDRESS;
       let cleanAmount = "";
       let tokenDecimals = 6;
-      let tokenSymbol = "USDG";
+      let tokenSymbol = "USDC";
 
       if (paymentMethod === "PVP") {
         tokenContract = PVP_TOKEN_ADDRESS;
@@ -3001,8 +3035,8 @@
         const pvpUnits = BigInt(tokensNeeded) * (10n ** 18n);
         cleanAmount = pvpUnits.toString(16).padStart(64, "0");
       } else {
-        tokenContract = USDG_TOKEN_ADDRESS;
-        tokenSymbol = "USDG";
+        tokenContract = USDC_TOKEN_ADDRESS;
+        tokenSymbol = "USDC";
         tokenDecimals = 6;
         const usdgUnits = BigInt(Math.round(parseFloat(totalCostUSD) * 1000000));
         cleanAmount = usdgUnits.toString(16).padStart(64, "0");
@@ -3546,7 +3580,7 @@
       if (modalQTitle) modalQTitle.innerText = questionTitle;
       if (modalTier) modalTier.innerText = tier === 1000 ? "$1,000 Tier" : ("$" + tier + " Tier");
       if (modalQty) modalQty.innerText = qty + (qty > 1 ? " Tickets" : " Ticket");
-      if (modalTotal) modalTotal.innerText = formattedTotalCost + " USDG";
+      if (modalTotal) modalTotal.innerText = formattedTotalCost + " USDC";
 
       if (modalList) {
         modalList.innerHTML = targets.map((t, idx) => `
@@ -3585,7 +3619,7 @@
       try {
         const purpose = `Jackpot Q#${questionId} Tier $${tier} Target: ${targets.join(',')}`;
         if (typeof executeOnchainPayment === "function") {
-          txHash = await executeOnchainPayment(totalCost, "USDG", purpose);
+          txHash = await executeOnchainPayment(totalCost, "USDC", purpose);
         } else {
           txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
         }
@@ -3689,7 +3723,7 @@
         const costVal = Number(myWinningSub.totalCost || (myWinningSub.tier * (myWinningSub.qty || 1)));
         const prizeShare = myWinningSub.prizePayout || ((costVal * 90) / 100);
         if (titleEl) titleEl.innerText = "Exact Target Match for #" + (myWinningSub.questionId || 1) + "!";
-        if (descEl) descEl.innerText = "Your 90% vault share is ready to withdraw (" + prizeShare.toLocaleString("en-US") + " USDG).";
+        if (descEl) descEl.innerText = "Your 90% vault share is ready to withdraw (" + prizeShare.toLocaleString("en-US") + " USDC).";
         const btn = document.getElementById("btn-claim-jackpot-banner");
         if (btn) {
           btn.onclick = () => claimJackpotPrize(myWinningSub.questionId || 1, myWinningSub.tier);
@@ -3753,7 +3787,7 @@
         tr.className = "hover:bg-[#182230] transition-all";
         const tierDisplay = s.tier === 1000 ? "$1,000 Tier" : (`$${s.tier} Tier`);
         const costVal = Number(s.totalCost || (s.tier * (s.qty || 1)));
-        const totalPaid = `(${costVal.toLocaleString("en-US")} USDG)`;
+        const totalPaid = `(${costVal.toLocaleString("en-US")} USDC)`;
         const shortTx = s.tx ? (s.tx.length > 14 ? s.tx.slice(0, 8) + "..." + s.tx.slice(-6) : s.tx) : "0x...";
         const txUrl = s.tx ? `https://robinhood.superscan.network/tx/${s.tx}` : "https://robinhood.superscan.network";
         const countBadge = s.qty ? `${s.qty} Ticket${s.qty > 1 ? 's' : ''}` : (s.ticketNum || '1 Ticket');
@@ -3814,7 +3848,7 @@
         const partEl = document.getElementById("jackpot-players-" + tier);
 
         if (prizeEl) prizeEl.innerText = "$" + winnerPrize.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        if (poolEl) poolEl.innerText = "$" + totalPool.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDG";
+        if (poolEl) poolEl.innerText = "$" + totalPool.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " USDC";
         if (partEl) partEl.innerText = totalTickets.toLocaleString() + " tickets";
       });
     }
@@ -4006,7 +4040,7 @@
           startBtn.className = "w-full py-2.5 rounded-xl bg-black text-white hover:bg-neutral-800 text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all flex items-center justify-center gap-1.5";
         } else {
           const unitPrice = (selected2048Tier / 10000).toFixed(4);
-          startBtn.innerHTML = "▶ BUY TICKET & START ($" + unitPrice + " USDG)";
+          startBtn.innerHTML = "▶ BUY TICKET & START ($" + unitPrice + " USDC)";
           startBtn.className = "w-full py-2.5 rounded-xl bg-[#182230] hover:bg-[#182230] text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all flex items-center justify-center gap-1.5";
         }
       }
@@ -4043,7 +4077,7 @@
         } else {
           topStartBtn.innerText = "🎟️ BUY TICKET"; topStartBtn.className = "p-2 px-3 rounded-xl bg-[#182230] hover:bg-[#182230] text-black font-mono text-xs font-bold transition-all active:scale-95";
           topStartBtn.className = "p-2 px-3 rounded-xl bg-[#182230] text-neutral-800 hover:bg-[#182230] border border-[#334155] font-mono text-xs font-bold transition-all";
-          topStartBtn.onclick = function() { buy2048Ticket(selected2048Tier, "USDG"); };
+          topStartBtn.onclick = function() { buy2048Ticket(selected2048Tier, "USDC"); };
         }
       }
 
@@ -4134,11 +4168,11 @@
               <span class="text-4xl">🔒</span>
               <div>
                 <h3 class="text-xl font-black text-white font-mono">SELECTED: TIER $${selected2048Tier}</h3>
-                <p class="text-xs text-neutral-700 max-w-xs mt-1">You have 0 tickets in inventory for Tier $${selected2048Tier}. Click below to pay entry ($${unitPrice} USDG on Robinhood Chain) and unlock the board.</p>
+                <p class="text-xs text-neutral-700 max-w-xs mt-1">You have 0 tickets in inventory for Tier $${selected2048Tier}. Click below to pay entry ($${unitPrice} USDC on Robinhood Chain) and unlock the board.</p>
               </div>
               <div class="flex flex-col sm:flex-row items-center gap-2.5">
                 <button onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-[#182230] hover:bg-[#182230] text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all cursor-pointer">
-                  ▶ START TIER $${selected2048Tier} ($${unitPrice} USDG)
+                  ▶ START TIER $${selected2048Tier} ($${unitPrice} USDC)
                 </button>
                 <button onclick="document.getElementById('tier-card-${selected2048Tier}')?.scrollIntoView({behavior:'smooth'})" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-neutral-700 font-mono text-xs border border-[#334155] transition-all cursor-pointer">
                   🛒 Buy Tickets in Bulk
@@ -4246,7 +4280,7 @@
     function updatePriceDisplayBadges() {
       const priceBadge = document.getElementById("live-native-price-badge");
       if (priceBadge) {
-        priceBadge.innerHTML = "1 $PVP ≈ $" + (liveNativeTokenPriceUSD < 0.01 ? liveNativeTokenPriceUSD.toFixed(4) : liveNativeTokenPriceUSD.toFixed(3)) + " USDG";
+        priceBadge.innerHTML = "1 $PVP ≈ $" + (liveNativeTokenPriceUSD < 0.01 ? liveNativeTokenPriceUSD.toFixed(4) : liveNativeTokenPriceUSD.toFixed(3)) + " USDC";
       }
       const syncDot = document.getElementById("price-sync-indicator");
       if (syncDot) {
@@ -4296,7 +4330,7 @@
 
       if (buyBtnUsdc) {
         const ticketWord = qty === 1 ? "TICKET" : "TICKETS";
-        buyBtnUsdc.innerHTML = "BUY <span id='lbl-qty-usdc-" + tier + "'>" + qty + "</span> " + ticketWord + " ($<span id='cost-usdc-" + tier + "'>" + totalCost + "</span> USDG)";
+        buyBtnUsdc.innerHTML = "BUY <span id='lbl-qty-usdc-" + tier + "'>" + qty + "</span> " + ticketWord + " ($<span id='cost-usdc-" + tier + "'>" + totalCost + "</span> USDC)";
       }
       if (buyBtnPvp) {
         buyBtnPvp.innerHTML = "BUY NATIVE ($<span id='cost-pvp-" + tier + "'>" + totalCost + "</span> • " + formattedTokens + " $PVP • <span id='attempts-pvp-" + tier + "'>" + pvpAttempts + "</span> TIX 🔥 2X)";
@@ -4429,7 +4463,7 @@
           return {
             wallet: isMe ? "You (" + s.wallet + ")" : s.wallet,
             metric: s.score.toLocaleString() + " pts",
-            won: idx === 0 ? ("$" + ((poolInfo.usdgNetPrize !== undefined ? poolInfo.usdgNetPrize : poolInfo.netPrize) || 0).toFixed(2) + " USDG (80% Net)") : "$0.00"
+            won: idx === 0 ? ("$" + ((poolInfo.usdgNetPrize !== undefined ? poolInfo.usdgNetPrize : poolInfo.netPrize) || 0).toFixed(2) + " USDC (80% Net)") : "$0.00"
           };
         });
       } else if (curLbCat === "duel") {
@@ -4438,12 +4472,12 @@
           {
             wallet: (myWallet && (myWallet.toLowerCase() === "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6")) ? "You (0x7290...67d6)" : "0x7290...67d6",
             metric: "1 Win (100% Win Rate)",
-            won: "$" + (1.90 * (parseInt(curLbTier) || 1)).toFixed(2) + " USDG (Net)"
+            won: "$" + (1.90 * (parseInt(curLbTier) || 1)).toFixed(2) + " USDC (Net)"
           },
           {
             wallet: (myWallet && (myWallet.toLowerCase() === "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67")) ? "You (0x0ce6...0f67)" : "0x0ce6...0f67",
             metric: "1 Match (Cashback Tier)",
-            won: "$" + (0.06 * (parseInt(curLbTier) || 1)).toFixed(2) + " USDG (Cashback)"
+            won: "$" + (0.06 * (parseInt(curLbTier) || 1)).toFixed(2) + " USDC (Cashback)"
           }
         ];
       } else {
@@ -5406,7 +5440,7 @@
                     createdAt: Date.now() - (55002000 - parseInt(log.blockNumber, 16)) * 2000,
                     deadline: getQuestionDeadline(qIdAssigned),
                     expiresAt: exactOnchainDeadlineMs,
-                    tokenType: isUsdg ? "USDG" : "ETH",
+                    tokenType: isUsdg ? "USDC" : "ETH",
                     tokenAddress: token,
                     onChain: true
                   };
@@ -5835,11 +5869,11 @@
           duelData.cashbackClaimedAt = duelData.cashbackClaimedAt || Date.now();
           duelData.refundClaimed = true;
           if (isPrize === 'refund' || duelData.isNoWinner || duelData.isDraw) {
-            showToast(`⚖️ 100% REFUND SETTLED! +${payoutOrAmount} USDG returned onchain with 0% fee! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+            showToast(`⚖️ 100% REFUND SETTLED! +${payoutOrAmount} USDC returned onchain with 0% fee! Tx: ${tx.hash.slice(0, 10)}...`, "success");
           } else if (isPrize) {
-            showToast(`🎉 WINNER PRIZE & CASHBACK SETTLED! +${payoutOrAmount} USDG sent onchain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+            showToast(`🎉 WINNER PRIZE & CASHBACK SETTLED! +${payoutOrAmount} USDC sent onchain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
           } else {
-            showToast(`💸 CASHBACK & PRIZE SETTLED! +${payoutOrAmount} USDG sent onchain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
+            showToast(`💸 CASHBACK & PRIZE SETTLED! +${payoutOrAmount} USDC sent onchain! Tx: ${tx.hash.slice(0, 10)}...`, "success");
           }
           duelData.status = "completed";
           duelData.settledTx = tx.hash;
@@ -6182,7 +6216,7 @@
           cardBgClass = "bg-white border-[#334155]";
           actionSection = `
             <button onclick="acceptDuel('${duelData.id}', ${safeTier})" class="px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-black text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-1.5 cursor-pointer">
-              ⚔️ ACCEPT DUEL #${dispNum}: TAKE [${requiredOpponentOption}] (${safeTier} USDG)
+              ⚔️ ACCEPT DUEL #${dispNum}: TAKE [${requiredOpponentOption}] (${safeTier} USDC)
             </button>
           `;
         }
@@ -6289,14 +6323,14 @@
             if (duelData.reclaimed || duelData.refundClaimed || duelData.claimed) {
               actionSection = `
                 <div class="flex items-center gap-2">
-                  <span class="px-3.5 py-2 rounded-xl bg-[#182230] text-[#f8fafc] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">✅ 100% RECLAIMED (+${safeTier} USDG)</span>
+                  <span class="px-3.5 py-2 rounded-xl bg-[#182230] text-[#f8fafc] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">✅ 100% RECLAIMED (+${safeTier} USDC)</span>
                 </div>
               `;
             } else {
               actionSection = `
                 <div class="flex items-center gap-2">
                   <button onclick="reclaimDuelStake('${duelData.id}', ${safeTier})" class="px-4 py-2 rounded-xl bg-black text-white hover:brightness-110 text-[#f8fafc] font-extrabold text-xs shadow-md shadow-none flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer">
-                    🔄 RECLAIM (+${safeTier} USDG)
+                    🔄 RECLAIM (+${safeTier} USDC)
                   </button>
                 </div>
               `;
@@ -6310,14 +6344,14 @@
           if (duelData.claimed) {
             actionSection = `
               <div class="flex items-center gap-2">
-                <span class="px-3.5 py-2 rounded-xl bg-[#182230] text-[#cbd5e1] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">✅ PRIZE CLAIMED (+${safePayout} USDG)</span>
+                <span class="px-3.5 py-2 rounded-xl bg-[#182230] text-[#cbd5e1] font-mono text-xs font-bold border border-[#334155] flex items-center gap-1">✅ PRIZE CLAIMED (+${safePayout} USDC)</span>
               </div>
             `;
           } else {
             actionSection = `
               <div class="flex items-center gap-2">
                 <button onclick="claimDuelPrize('${duelData.id}', ${safePayout})" class="px-4 py-2 rounded-xl bg-black text-white hover:brightness-110 text-[#f8fafc] font-extrabold text-xs shadow-md shadow-none flex items-center gap-1.5 transition-all active:scale-95">
-                  💰 CLAIM PRIZE (+${safePayout} USDG)
+                  💰 CLAIM PRIZE (+${safePayout} USDC)
                 </button>
               </div>
             `;
@@ -6336,7 +6370,7 @@
             actionSection = `
               <div class="flex items-center gap-2">
                 <button onclick="claimDuelCashback('${duelData.id}', '${cashbackAmount}')" class="px-4 py-2 rounded-xl bg-[#131b27] text-white font-mono text-xs font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-none flex items-center gap-1.5 animate-pulse cursor-pointer">
-                  💸 CLAIM 3% CASHBACK (+${cashbackAmount} USDG)
+                  💸 CLAIM 3% CASHBACK (+${cashbackAmount} USDC)
                 </button>
               </div>
             `;
@@ -6355,7 +6389,7 @@
             <div class="flex items-center gap-2">
               ${statusBadge}
               <button onclick="reclaimExpiredDeposit('${duelData.id}', ${safeTier})" class="px-3.5 py-2 rounded-xl bg-black text-white text-[#f8fafc] font-extrabold text-xs shadow-md shadow-none hover:brightness-110 flex items-center gap-1 transition-all active:scale-95">
-                💰 RECLAIM DEPOSIT (DUEL #${dispNum} - ${safeTier} USDG)
+                💰 RECLAIM DEPOSIT (DUEL #${dispNum} - ${safeTier} USDC)
               </button>
             </div>
           `;
@@ -6415,7 +6449,7 @@
               ❌ LOSE: <span class="text-white font-extrabold">${loseLabel}</span> [<span class="text-[#cbd5e1] font-black">${loserOption}</span>]
             </span>
             <span class="text-slate-500">•</span>
-            <span class="text-[#cbd5e1] font-bold">Prize: $${safePayout} USDG</span>
+            <span class="text-[#cbd5e1] font-bold">Prize: $${safePayout} USDC</span>
           </div>
         `;
       } else if (category === "expired") {
@@ -6423,7 +6457,7 @@
           <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
             <span>Creator: <span class="text-[#cbd5e1]">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
             <span class="text-slate-500">•</span>
-            <span class="text-[#cbd5e1] font-mono">Refundable Deposit: ${safeTier} USDG</span>
+            <span class="text-[#cbd5e1] font-mono">Refundable Deposit: ${safeTier} USDC</span>
           </div>
         `;
       } else {
@@ -6433,7 +6467,7 @@
             <span class="text-slate-600 font-bold">VS</span>
             <span>P2: <span class="text-[#cbd5e1]">${duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent'}</span> [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>
             <span class="text-slate-500">•</span>
-            <span class="text-[#cbd5e1] font-semibold">Prize: ${safePayout} USDG</span>
+            <span class="text-[#cbd5e1] font-semibold">Prize: ${safePayout} USDC</span>
           </div>
         `;
       }
@@ -6511,7 +6545,7 @@
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
-        const USDG_CONTRACT = new ethers.Contract(USDG_TOKEN_ADDRESS, [
+        const USDC_CONTRACT = new ethers.Contract(USDC_TOKEN_ADDRESS, [
           "function allowance(address owner, address spender) view returns (uint256)",
           "function approve(address spender, uint256 amount) returns (bool)",
           "function balanceOf(address account) view returns (uint256)"
@@ -6523,7 +6557,7 @@
           "event DuelCreated(uint256 indexed duelId, address indexed creator, address indexed token, uint256 wagerAmount, uint8 creatorChoice, uint256 expiresAt, string topic)"
         ], signer);
 
-        // USDG has 6 decimals
+        // USDC has 6 decimals
         const wagerUnits = BigInt(Math.round(parseFloat(selectedDuelTier) * 1000000));
 
         // Fast parallel fetch of balance and allowance
@@ -6531,8 +6565,8 @@
         // Let wallet & contract handle execution or revert if insufficient funds.
         // Always check onchain balance & allowance directly
         const [currentBal, currentAllowance, currentEthBal] = await Promise.all([
-          USDG_CONTRACT.balanceOf(userAddress),
-          USDG_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS),
+          USDC_CONTRACT.balanceOf(userAddress),
+          USDC_CONTRACT.allowance(userAddress, DUEL_CONTRACT_ADDRESS),
           provider.getBalance(userAddress)
         ]);
 
@@ -6543,14 +6577,14 @@
         }
 
         if (BigInt(currentBal.toString()) < wagerUnits) {
-          showToast("❌ Insufficient USDG! You have " + (parseFloat(ethers.utils.formatUnits(currentBal, 6)).toFixed(2)) + " USDG but need " + selectedDuelTier + " USDG.", "error");
+          showToast("❌ Insufficient USDC! You have " + (parseFloat(ethers.utils.formatUnits(currentBal, 6)).toFixed(2)) + " USDC but need " + selectedDuelTier + " USDC.", "error");
           if (btn) btn.disabled = false;
           return;
         }
 
         if (BigInt(currentAllowance.toString()) < wagerUnits) {
-          showToast("🦊 Step 1/2: Please approve USDG in your Wallet...", "info");
-          const approveTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 120000 });
+          showToast("🦊 Step 1/2: Please approve USDC in your Wallet...", "info");
+          const approveTx = await USDC_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 120000 });
           // 🛡️ ACCEPT DUEL ANTI-TAMPER CHECK
         if (duelData && duelData.questionId && window.QUESTION_REGISTRY_ADDRESS) {
           try {
@@ -6566,9 +6600,9 @@
           }
         }
 
-        showToast("⏳ Waiting for USDG approval confirmation on Robinhood Chain...", "info");
+        showToast("⏳ Waiting for USDC approval confirmation on Robinhood Chain...", "info");
           await approveTx.wait();
-          showToast("✅ USDG Approved! Now confirm Duel creation in Wallet...", "success");
+          showToast("✅ USDC Approved! Now confirm Duel creation in Wallet...", "success");
         }
 
         showToast("⏳ Confirm createDuelToken in your Wallet...", "info");
@@ -6664,7 +6698,7 @@
         const cleanTopic = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
 
         const tx = await DUEL_CONTRACT.createDuelToken(
-          USDG_TOKEN_ADDRESS,
+          USDC_TOKEN_ADDRESS,
           wagerUnits.toString(),
           creatorChoiceNum,
           durationSec,
@@ -6754,7 +6788,7 @@
       renderAllDuels();
 
       if (btn) btn.disabled = false;
-      showToast(`🎉 Duel #${onchainDuelId || 1} Created for ${selectedDuelTier} USDG with [${selectedDuelOption}]! Waiting for opponent.`, "success");
+      showToast(`🎉 Duel #${onchainDuelId || 1} Created for ${selectedDuelTier} USDC with [${selectedDuelOption}]! Waiting for opponent.`, "success");
     }
 
     
@@ -6810,14 +6844,14 @@
       const opponentOption = duelData.requiredOpponentOption || (duelData.creatorOption === 'YES' ? 'NO' : 'YES');
 
       // 4. DO NOT change status or broadcast to matched YET!
-      // Require the user to complete signature AND onchain USDG payment FIRST!
+      // Require the user to complete signature AND onchain USDC payment FIRST!
       let txHash = null;
       try {
         // Call acceptDuelToken directly on official contract
         await ensureRobinhoodNetwork();
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const USDG_CONTRACT = new ethers.Contract(USDG_TOKEN_ADDRESS, [
+        const USDC_CONTRACT = new ethers.Contract(USDC_TOKEN_ADDRESS, [
           "function allowance(address,address) view returns (uint256)",
           "function approve(address,uint256) returns (bool)"
         ], signer);
@@ -6832,12 +6866,12 @@
         }
 
         // Always check onchain allowance directly to prevent ERC20 insufficient allowance reverts
-        const curAllowance = await USDG_CONTRACT.allowance(signerAddress, DUEL_CONTRACT_ADDRESS);
+        const curAllowance = await USDC_CONTRACT.allowance(signerAddress, DUEL_CONTRACT_ADDRESS);
         if (BigInt(curAllowance.toString()) < wagerUnits) {
-          showToast("🦊 Approving USDG for duel acceptance in your Wallet...", "info");
-          const appTx = await USDG_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 120000 });
+          showToast("🦊 Approving USDC for duel acceptance in your Wallet...", "info");
+          const appTx = await USDC_CONTRACT.approve(DUEL_CONTRACT_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 120000 });
           await appTx.wait();
-          showToast("✅ USDG Approved! Now confirm acceptance in Wallet...", "success");
+          showToast("✅ USDC Approved! Now confirm acceptance in Wallet...", "success");
         }
         showToast("⏳ Confirm acceptDuel in your Wallet...", "info");
         const onchainNumId = parseInt(duelData && duelData.onchainDuelId ? duelData.onchainDuelId : (duelId.replace("duel_", "") || 1));
@@ -6891,7 +6925,7 @@
       try {
         if (!isConnected) { await connectWallet(); }
         await ensureRobinhoodNetwork();
-        showToast("🦊 Confirm cancellation in wallet to refund " + tier + " USDG...", "info");
+        showToast("🦊 Confirm cancellation in wallet to refund " + tier + " USDC...", "info");
 
         const store = getLocalDuels();
         const duelData = store[duelId];
@@ -6938,7 +6972,7 @@
           if (row) row.remove();
           updateDuelCounter();
           renderAllDuels();
-          showToast("💰 DEPOSIT REFUNDED! " + tier + " USDG returned to your wallet onchain! Tx: " + tx.hash.slice(0, 10) + "...", "success");
+          showToast("💰 DEPOSIT REFUNDED! " + tier + " USDC returned to your wallet onchain! Tx: " + tx.hash.slice(0, 10) + "...", "success");
         } else {
           showToast("❌ Cancellation transaction reverted onchain.", "error");
         }
@@ -6994,17 +7028,17 @@
 
       const isMeWinner = userAddress && winner.toLowerCase() === userAddress.toLowerCase();
       if (isMeWinner) {
-        showToast(`🏆 VICTORY! [${resolvedWinningOption}] won! +${duelData.payout} USDG transferred!`, "success");
+        showToast(`🏆 VICTORY! [${resolvedWinningOption}] won! +${duelData.payout} USDC transferred!`, "success");
       } else {
         const shortW = winner.slice(0, 6) + "..." + winner.slice(-4);
-        showToast(`🏁 Duel Resolved! Winning Side: [${resolvedWinningOption}] (${shortW} won +${duelData.payout} USDG). 3% Cashback credited!`, "info");
+        showToast(`🏁 Duel Resolved! Winning Side: [${resolvedWinningOption}] (${shortW} won +${duelData.payout} USDC). 3% Cashback credited!`, "info");
       }
 
       // Add to Leaderboard and History
       try {
         const shortWinner = winner.slice(0, 6) + "..." + winner.slice(-4);
-        recordLiveLeaderboardEntry("Duel", duelData.tier, shortWinner, `Pick: ${resolvedWinningOption}`, duelData.payout + " USDG");
-        recordLiveHistoryEntry("Duel", duelData.tier, shortWinner, `Pick: ${resolvedWinningOption}`, duelData.payout + " USDG");
+        recordLiveLeaderboardEntry("Duel", duelData.tier, shortWinner, `Pick: ${resolvedWinningOption}`, duelData.payout + " USDC");
+        recordLiveHistoryEntry("Duel", duelData.tier, shortWinner, `Pick: ${resolvedWinningOption}`, duelData.payout + " USDC");
       } catch(e){}
     }
 
@@ -7577,7 +7611,7 @@ window.handleCreateQuestion = async function(e) {
     function addTicketsToTier(tier, qty, paymentMethod) {
       const t = parseInt(tier) || 1;
       const q = parseInt(qty) || 1;
-      const method = (paymentMethod || "USDG").toUpperCase();
+      const method = (paymentMethod || "USDC").toUpperCase();
       const cycle = get2048CycleInfo();
       const data = get2048CycleData();
       
@@ -7800,7 +7834,7 @@ window.handleCreateQuestion = async function(e) {
         }
         const t = payload.tier;
         const q = parseInt(payload.qty) || 1;
-        const method = (payload.paymentMethod || "USDG").toUpperCase();
+        const method = (payload.paymentMethod || "USDC").toUpperCase();
         if (!data.pools[t]) data.pools[t] = { ticketsUsdg: 0, ticketsPvp: 0, pvpTokensGross: 0 };
         if (method === "PVP") {
           data.pools[t].ticketsPvp = (data.pools[t].ticketsPvp || 0) + (q * 2);
@@ -7882,7 +7916,7 @@ window.handleCreateQuestion = async function(e) {
           usdgGrossSpan.innerText = "$" + poolInfo.usdgGross.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " (" + poolInfo.usdgTickets + " Tix)";
         }
         if (usdgPrizeSpan) {
-          usdgPrizeSpan.innerText = "$" + poolInfo.usdgNetPrize.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USDG";
+          usdgPrizeSpan.innerText = "$" + poolInfo.usdgNetPrize.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USDC";
         }
 
         const pvpGrossSpan = document.getElementById("tier-pool-pvp-gross-" + t);
@@ -7898,7 +7932,7 @@ window.handleCreateQuestion = async function(e) {
         const top3UsdgSpan = document.getElementById("top3-prize-usdg-" + t);
         const top3PvpSpan = document.getElementById("top3-prize-pvp-" + t);
         if (top3UsdgSpan) {
-          top3UsdgSpan.innerText = "$" + poolInfo.usdgNetPrize.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USDG (80%)";
+          top3UsdgSpan.innerText = "$" + poolInfo.usdgNetPrize.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " USDC (80%)";
         }
         if (top3PvpSpan) {
           if (top3PvpSpan) top3PvpSpan.innerText = poolInfo.pvpTokensNetPrize.toLocaleString() + " $PVP (80%)";
@@ -7949,7 +7983,7 @@ window.handleCreateQuestion = async function(e) {
                     <div class="flex items-center justify-between text-[10px] flex-wrap gap-1">
                       <span class="text-[#cbd5e1] font-bold">👑 WINNER CANDIDATE</span>
                       <div class="flex items-center gap-1.5 font-bold">
-                        <span class="text-[#cbd5e1]">${poolInfo.usdgNetPrize.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USDG</span>
+                        <span class="text-[#cbd5e1]">${poolInfo.usdgNetPrize.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} USDC</span>
                         <span class="text-slate-500">+</span>
                         <span class="text-[#cbd5e1]">${poolInfo.pvpTokensNetPrize.toLocaleString()} $PVP</span>
                       </div>
@@ -8100,7 +8134,7 @@ window.handleCreateQuestion = async function(e) {
         const titleEl = document.getElementById("claim-banner-title");
         const subEl = document.getElementById("claim-banner-sub");
         if (titleEl) titleEl.innerText = "🎉 YOU WON #1 SPOT IN TIER $" + wonTier + " (OFFICIAL WINNER)!";
-        if (subEl) subEl.innerText = "Tournament deadline ended. Claim Prize: $" + wonPrizeUsdg.toFixed(4) + " USDG (80% Net Prize)";
+        if (subEl) subEl.innerText = "Tournament deadline ended. Claim Prize: $" + wonPrizeUsdg.toFixed(4) + " USDC (80% Net Prize)";
         banner.setAttribute("data-won-tier", wonTier);
         const cleanCycleNum = parseInt(String(wonCycleId).replace(/\D/g, ""), 10) || 0;
         banner.setAttribute("data-won-cycle", cleanCycleNum);
@@ -8135,7 +8169,7 @@ window.handleCreateQuestion = async function(e) {
         const signer = provider.getSigner();
         const contract = new ethers.Contract(TOURNAMENT_2048_CONTRACT, TOURNAMENT_2048_ABI, signer);
 
-        // Claim USDG pool by default
+        // Claim USDC pool by default
         const usdgToken = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
 
         // Pre-check onchain leader and pool before sending tx
@@ -8793,8 +8827,8 @@ window.handleCreateQuestion = async function(e) {
           </div>
         </div>
         <div class="border-t border-white/10 pt-2 flex justify-between items-center text-sm font-bold">
-          <span class="text-slate-300">Total USDG Stake:</span>
-          <span id="modal-total-cost" class="text-emerald-400 font-black text-base">$5.00 USDG</span>
+          <span class="text-slate-300">Total USDC Stake:</span>
+          <span id="modal-total-cost" class="text-emerald-400 font-black text-base">$5.00 USDC</span>
         </div>
       </div>
 
