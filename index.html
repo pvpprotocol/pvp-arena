@@ -719,7 +719,7 @@
         <button onclick="switchTab('jackpot')" id="btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🎯</span> Grand Jackpot</span>
           <div class="flex items-center gap-2">
-            <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
+            <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">LIVE</span>
             <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
           </div>
         </button>
@@ -1633,49 +1633,7 @@
 
     <!-- 3. GRAND JACKPOT TAB -->
     <div id="tab-jackpot" class="tab-content hidden space-y-8">
-
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-[#131b27] shadow-sm border border-[#334155] bg-gradient-to-b from-cyan-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
-      <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#182230] blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
-      
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#182230] border border-[#334155] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
-        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
-        🔒 COMING SOON • PHASE 2
-      </div>
-
-      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
-        🎯
-      </div>
-
-      <h2 class="text-2xl sm:text-3xl font-black font-mono text-white mb-3 tracking-tight">
-        Grand Prediction Jackpot
-      </h2>
-
-      <p class="text-sm sm:text-base text-neutral-700 max-w-lg mx-auto mb-6 leading-relaxed">
-        The multi-tier grand jackpot and target prediction vaults will unlock in Phase 2 once initial duel liquidity milestones are met.
-      </p>
-
-      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
-        <div class="flex items-center justify-between text-neutral-700">
-          <span>Status:</span>
-          <span class="text-[#cbd5e1] font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping"></span>Under Audit & Development</span>
-        </div>
-        <div class="flex items-center justify-between text-neutral-700">
-          <span>Target Network:</span>
-          <span class="text-[#cbd5e1] font-bold">Robinhood Chain</span>
-        </div>
-        <div class="flex items-center justify-between text-neutral-700">
-          <span>Active Flagship Mode:</span>
-          <span class="text-[#cbd5e1] font-bold">PvP Duels (LIVE )</span>
-        </div>
-      </div>
-
-      <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-black text-white hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-none transition-all transform hover:-translate-y-0.5">
-        <span>⚔️</span> PLAY PVP DUELS NOW
-      </button>
-    </div>
-  
-<div id="locked-jackpot-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
+<div id="jackpot-content" class="space-y-6">
       
       <!-- ROUND COUNTDOWN & STATUS BANNER -->
       <div class="bg-[#131b27] shadow-sm p-6 rounded-3xl border border-[#334155] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
