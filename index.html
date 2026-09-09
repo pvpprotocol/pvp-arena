@@ -568,6 +568,7 @@
 </style>
 
   <script>
+  window.duelsPaused = true; // Admin lock: duels paused until explicit command
 
     const ALL = 'ALL';
     const CRYPTO = 'CRYPTO';
@@ -984,8 +985,8 @@
 
         <!-- SUMMARY & CREATE BUTTON -->
         <div class="mt-6 flex justify-center">
-          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl btn-matte-black font-extrabold font-mono text-sm transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
-            <span>⚔️</span> CREATE PVP DUEL
+          <button id="create-duel-btn" onclick="createDuel()" disabled class="w-full sm:w-auto px-10 py-4 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 font-extrabold font-mono text-sm flex items-center justify-center gap-2 cursor-not-allowed">
+            <span>🔒</span> DUELS PAUSED (WAITING FOR ADMIN)
           </button>
         </div>
       </div>
@@ -6468,6 +6469,10 @@
     }
 
     async function createDuel() {
+      if (window.duelsPaused) {
+        showToast("⚔️ PvP Duels are currently paused by admin. Waiting for official start!", "warning");
+        return;
+      }
       if (!isConnected) {
         await connectWallet();
       }
@@ -6755,6 +6760,10 @@
     
 
     async function acceptDuel(duelId, tier) {
+      if (window.duelsPaused) {
+        showToast("⚔️ PvP Duels are currently paused by admin. Waiting for official start!", "warning");
+        return;
+      }
       if (!isConnected) {
         await connectWallet();
       }
