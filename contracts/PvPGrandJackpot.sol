@@ -137,16 +137,14 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         require(questionId > 0, "Invalid questionId");
 
         RoundWindow memory rw = roundWindows[questionId];
-        if (rw.isConfigured) {
-            require(block.timestamp >= rw.startTime, "Jackpot round has not started yet");
-            require(block.timestamp <= rw.endTime, "Jackpot round entry is closed");
-        }
+        require(rw.isConfigured && rw.startTime > 0, "Round not active. Waiting for admin to start next round.");
+        require(block.timestamp >= rw.startTime, "Jackpot round has not started yet");
+        require(block.timestamp <= rw.endTime, "Jackpot round entry is closed");
 
         RoundWindow memory rw = roundWindows[questionId];
-        if (rw.isConfigured) {
-            require(block.timestamp >= rw.startTime, "Jackpot round has not started yet");
-            require(block.timestamp <= rw.endTime, "Jackpot round entry is closed");
-        }
+        require(rw.isConfigured && rw.startTime > 0, "Round not active. Waiting for admin to start next round.");
+        require(block.timestamp >= rw.startTime, "Jackpot round has not started yet");
+        require(block.timestamp <= rw.endTime, "Jackpot round entry is closed");
         uint256 activeTier = userActiveTier[questionId][msg.sender];
         require(activeTier == 0 || activeTier == tier, "Wallet locked to another tier for this round");
         require(
@@ -336,6 +334,23 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
      * @notice Set exact start and end time window for a jackpot round
      * @dev No entries permitted before startTime or after endTime
      */
+
+    /**
+     * @notice Admin explicitly opens and configures the next jackpot round.
+     * @dev Rounds NEVER start automatically. Only the contract owner can start a new round.
+     */
+    function openNewRound(uint256 newQuestionId, uint256 startTime, uint256 endTime) external onlyOwner {
+        require(newQuestionId >= currentQuestionId, "Invalid round ID");
+        require(endTime > startTime, "End time must be after start time");
+        currentQuestionId = newQuestionId;
+        roundWindows[newQuestionId] = RoundWindow({
+            startTime: startTime,
+            endTime: endTime,
+            isConfigured: true
+        });
+        emit RoundWindowConfigured(newQuestionId, startTime, endTime);
+    }
+
     function setRoundWindow(uint256 questionId, uint256 startTime, uint256 endTime) external onlyOwner {
         require(endTime > startTime, "End time must be after start time");
         roundWindows[questionId] = RoundWindow({
@@ -351,7 +366,7 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
      */
     function isRoundOpen(uint256 questionId) public view returns (bool) {
         RoundWindow memory rw = roundWindows[questionId];
-        if (!rw.isConfigured) return true; // default open if unconfigured
+        if (!rw.isConfigured || rw.startTime == 0) return false; // Strictly closed until admin explicitly opens round
         return (block.timestamp >= rw.startTime && block.timestamp <= rw.endTime);
     }
 
