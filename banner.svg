@@ -24,110 +24,112 @@
     </pattern>
   </defs>
 
+  <!-- Background Base -->
   <rect width="1500" height="500" fill="#070c14" />
   <rect width="1500" height="500" fill="url(#grid)" />
   <rect width="1500" height="500" fill="url(#bgGlow)" />
   <rect width="1500" height="500" fill="url(#rightGlow)" />
 
-  <path d="M 0 90 L 250 90 L 320 160 L 600 160" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-opacity="0.6" />
-  <circle cx="600" cy="160" r="4" fill="#14F195" />
-  <path d="M 900 360 L 1150 360 L 1220 430 L 1500 430" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-opacity="0.6" />
-  <circle cx="900" cy="360" r="4" fill="#9945FF" />
+  <!-- Geometric Accent Lines -->
+  <path d="M 0 100 L 250 100 L 320 170 L 580 170" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-opacity="0.6" />
+  <circle cx="580" cy="170" r="4" fill="#14F195" />
+  <path d="M 900 350 L 1150 350 L 1220 420 L 1500 420" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-opacity="0.6" />
+  <circle cx="900" cy="350" r="4" fill="#9945FF" />
 
-  <!-- Top Pill -->
-  <g transform="translate(100, 50)">
-    <rect x="0" y="0" width="310" height="32" rx="16" fill="#14F195" fill-opacity="0.12" stroke="#14F195" stroke-width="1.2"/>
+  <!-- Left Side: Brand & Subtitle -->
+  <g transform="translate(100, 60)">
+    <rect x="0" y="0" width="300" height="32" rx="16" fill="#14F195" fill-opacity="0.12" stroke="#14F195" stroke-width="1.2"/>
     <circle cx="18" cy="16" r="4" fill="#14F195" />
     <text x="32" y="21" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="bold" fill="#14F195" letter-spacing="1.5">NEXT-GEN 1V1 PVP ARENA</text>
   </g>
 
   <!-- Title: pvphub.fun -->
-  <text x="100" y="145" font-family="DejaVu Sans, Arial, sans-serif" font-size="68" font-weight="900" fill="url(#textGrad)" letter-spacing="-1.5">
+  <text x="100" y="155" font-family="DejaVu Sans, Arial, sans-serif" font-size="70" font-weight="900" fill="url(#textGrad)" letter-spacing="-1.5">
     pvphub<tspan fill="#14F195">.fun</tspan>
   </text>
 
-  <!-- EXACT USER REQUEST: زیر pvphub.fun به انگلیسی: DUEL • JACKPOT • SKILL -->
-  <!-- Big, super clear, bold prominent text directly under pvphub.fun -->
-  <text x="100" y="205" font-family="DejaVu Sans, Arial, sans-serif" font-size="32" font-weight="900" letter-spacing="3">
-    <tspan fill="#14F195">DUEL</tspan>
-    <tspan fill="#64748B">  •  </tspan>
-    <tspan fill="#FFB800">JACKPOT</tspan>
-    <tspan fill="#64748B">  •  </tspan>
-    <tspan fill="#9945FF">SKILL</tspan>
-  </text>
-
-  <!-- Secondary subtitle -->
-  <text x="100" y="255" font-family="DejaVu Sans, Arial, sans-serif" font-size="19" font-weight="600" fill="#94A3B8" letter-spacing="-0.2">
-    Predict Live Candles, Win 1v1 Duels &amp; Claim Community Jackpots
-  </text>
-
-  <!-- Key Stat Pills -->
-  <g transform="translate(100, 285)">
-    <rect x="0" y="0" width="170" height="70" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
-    <text x="20" y="30" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" font-weight="800" fill="#14F195">1.9x Payout</text>
-    <text x="20" y="52" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="500" fill="#64748B">vs 1.3x Legacy Odds</text>
-
-    <rect x="190" y="0" width="170" height="70" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
-    <text x="210" y="30" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" font-weight="800" fill="#00C2FF">Instant</text>
-    <text x="210" y="52" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="500" fill="#64748B">Smart Contract Settled</text>
-
-    <rect x="380" y="0" width="170" height="70" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
-    <text x="400" y="30" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" font-weight="800" fill="#9945FF">0% Trap</text>
-    <text x="400" y="52" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="500" fill="#64748B">100% Non-Custodial</text>
+  <!-- DIRECTLY REPLACING OLD SUBTITLE / TAGLINE: DUEL • JACKPOT • SKILL -->
+  <g transform="translate(100, 185)">
+    <!-- Pill Badge Background for DUEL • JACKPOT • SKILL -->
+    <rect x="0" y="0" width="460" height="46" rx="12" fill="#0d1522" stroke="#1e293b" stroke-width="1.5"/>
+    <text x="25" y="31" font-family="DejaVu Sans, Arial, sans-serif" font-size="22" font-weight="900" letter-spacing="2">
+      <tspan fill="#14F195">DUEL</tspan>
+      <tspan fill="#475569">   •   </tspan>
+      <tspan fill="#FFB800">JACKPOT</tspan>
+      <tspan fill="#475569">   •   </tspan>
+      <tspan fill="#9945FF">SKILL</tspan>
+    </text>
   </g>
 
-  <!-- Domain CTA -->
-  <g transform="translate(100, 395)">
-    <text x="0" y="24" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" letter-spacing="0.5">
+  <!-- Key Stat Pills -->
+  <g transform="translate(100, 265)">
+    <rect x="0" y="0" width="175" height="74" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
+    <text x="22" y="32" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" font-weight="800" fill="#14F195">1.9x Payout</text>
+    <text x="22" y="55" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="500" fill="#64748B">vs 1.3x Legacy Odds</text>
+
+    <rect x="195" y="0" width="175" height="74" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
+    <text x="217" y="32" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" font-weight="800" fill="#00C2FF">Instant</text>
+    <text x="217" y="55" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="500" fill="#64748B">Smart Contract Settled</text>
+
+    <rect x="390" y="0" width="175" height="74" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
+    <text x="412" y="32" font-family="DejaVu Sans, Arial, sans-serif" font-size="20" font-weight="800" fill="#9945FF">0% Trap</text>
+    <text x="412" y="55" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="500" fill="#64748B">100% Non-Custodial</text>
+  </g>
+
+  <!-- Domain CTA - ZERO ROBINHOOD REFERENCE -->
+  <g transform="translate(100, 390)">
+    <rect x="0" y="0" width="370" height="42" rx="10" fill="#14F195" fill-opacity="0.12" stroke="#14F195" stroke-width="1"/>
+    <text x="20" y="27" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" letter-spacing="1">
       ENTER THE ARENA: <tspan fill="#14F195">HTTPS://PVPHUB.FUN</tspan>
-    </text>
-    <text x="435" y="24" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" fill="#64748B">
-      • POWERED BY SOLANA
     </text>
   </g>
 
   <!-- Right Side: Live Duel Card -->
-  <g transform="translate(950, 50)">
-    <rect x="0" y="0" width="450" height="400" rx="28" fill="#131c27" stroke="#1f2b3e" stroke-width="2" />
+  <g transform="translate(930, 45)">
+    <!-- Glow behind card -->
+    <rect x="0" y="0" width="470" height="410" rx="28" fill="#131c27" stroke="#1f2b3e" stroke-width="2" />
     
-    <rect x="25" y="25" width="400" height="50" rx="12" fill="#0e141f" stroke="#1e293b" stroke-width="1" />
-    <circle cx="48" cy="50" r="5" fill="#14F195" />
-    <text x="65" y="55" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="bold" fill="#F8FAFC">LIVE DUEL #SOL-1M</text>
-    <rect x="310" y="37" width="95" height="26" rx="6" fill="#14F195" fill-opacity="0.15" stroke="#14F195" stroke-width="0.8" />
-    <text x="322" y="54" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#14F195">POOL: $500</text>
+    <!-- Match Header -->
+    <rect x="25" y="25" width="420" height="52" rx="12" fill="#0e141f" stroke="#1e293b" stroke-width="1" />
+    <circle cx="48" cy="51" r="5" fill="#14F195" />
+    <text x="65" y="56" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#F8FAFC">LIVE DUEL #SOL-1M</text>
+    <rect x="325" y="38" width="105" height="26" rx="6" fill="#14F195" fill-opacity="0.15" stroke="#14F195" stroke-width="0.8" />
+    <text x="338" y="55" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#14F195">POOL: $500</text>
 
-    <g transform="translate(35, 105)">
+    <!-- 1v1 Versus Arena -->
+    <g transform="translate(30, 105)">
       <!-- Bull Card -->
-      <rect x="0" y="0" width="165" height="150" rx="16" fill="#0e141f" stroke="#14F195" stroke-width="1.5" />
-      <text x="18" y="32" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="bold" fill="#14F195">POSITION: UP</text>
-      <text x="18" y="70" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" font-weight="900" fill="#FFFFFF">BULL</text>
-      <text x="18" y="98" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#94A3B8">ODDS: 1.90x</text>
-      <rect x="18" y="115" width="125" height="22" rx="4" fill="#14F195" fill-opacity="0.2" />
-      <text x="45" y="130" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#14F195">MATCHED</text>
+      <rect x="0" y="0" width="175" height="155" rx="16" fill="#0e141f" stroke="#14F195" stroke-width="1.5" />
+      <text x="20" y="34" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="bold" fill="#14F195">POSITION: UP</text>
+      <text x="20" y="74" font-family="DejaVu Sans, Arial, sans-serif" font-size="30" font-weight="900" fill="#FFFFFF">BULL</text>
+      <text x="20" y="104" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#94A3B8">ODDS: 1.90x</text>
+      <rect x="20" y="118" width="135" height="24" rx="4" fill="#14F195" fill-opacity="0.2" />
+      <text x="48" y="134" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#14F195">MATCHED</text>
 
       <!-- Center Swords Icon -->
-      <g transform="translate(190, 55)">
-        <circle cx="0" cy="20" r="26" fill="#070c14" stroke="#9945FF" stroke-width="2" />
+      <g transform="translate(205, 60)">
+        <circle cx="0" cy="20" r="28" fill="#070c14" stroke="#9945FF" stroke-width="2" />
         <line x1="-12" y1="8" x2="12" y2="32" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
         <line x1="12" y1="8" x2="-12" y2="32" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
         <circle cx="0" cy="20" r="3" fill="#14F195"/>
       </g>
 
       <!-- Bear Card -->
-      <rect x="215" y="0" width="165" height="150" rx="16" fill="#0e141f" stroke="#f87171" stroke-width="1.5" />
-      <text x="233" y="32" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="bold" fill="#f87171">POSITION: DOWN</text>
-      <text x="233" y="70" font-family="DejaVu Sans, Arial, sans-serif" font-size="28" font-weight="900" fill="#FFFFFF">BEAR</text>
-      <text x="233" y="98" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#94A3B8">ODDS: 1.90x</text>
-      <rect x="233" y="115" width="125" height="22" rx="4" fill="#f87171" fill-opacity="0.2" />
-      <text x="260" y="130" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#f87171">MATCHED</text>
+      <rect x="235" y="0" width="175" height="155" rx="16" fill="#0e141f" stroke="#f87171" stroke-width="1.5" />
+      <text x="255" y="34" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="bold" fill="#f87171">POSITION: DOWN</text>
+      <text x="255" y="74" font-family="DejaVu Sans, Arial, sans-serif" font-size="30" font-weight="900" fill="#FFFFFF">BEAR</text>
+      <text x="255" y="104" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#94A3B8">ODDS: 1.90x</text>
+      <rect x="255" y="118" width="135" height="24" rx="4" fill="#f87171" fill-opacity="0.2" />
+      <text x="283" y="134" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#f87171">MATCHED</text>
     </g>
 
-    <g transform="translate(25, 290)">
-      <rect x="0" y="0" width="400" height="75" rx="14" fill="#0b1019" stroke="#1e293b" stroke-width="1" />
-      <text x="20" y="30" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#64748B">ORACLE FEED &amp; RESOLUTION</text>
-      <text x="20" y="55" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#F8FAFC">Pyth Network High-Frequency Candle</text>
-      <circle cx="370" cy="38" r="8" fill="#14F195" fill-opacity="0.2" />
-      <circle cx="370" cy="38" r="4" fill="#14F195" />
+    <!-- Resolution Footer -->
+    <g transform="translate(25, 300)">
+      <rect x="0" y="0" width="420" height="75" rx="14" fill="#0b1019" stroke="#1e293b" stroke-width="1" />
+      <text x="22" y="30" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" font-weight="bold" fill="#64748B">ORACLE FEED &amp; RESOLUTION</text>
+      <text x="22" y="56" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#F8FAFC">Pyth Network High-Frequency Candle</text>
+      <circle cx="390" cy="38" r="8" fill="#14F195" fill-opacity="0.2" />
+      <circle cx="390" cy="38" r="4" fill="#14F195" />
     </g>
   </g>
 </svg>
