@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 
-declare_id!("PvPDueLs11111111111111111111111111111111111");
+declare_id!("HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39");
 
 pub const PLATFORM_FEE_BPS: u64 = 500; // 5% platform fee
 pub const BPS_DENOMINATOR: u64 = 10000;
