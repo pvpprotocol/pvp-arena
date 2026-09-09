@@ -1,65 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
     <defs>
-      <linearGradient id="solBorder" x1="0%" y1="100%" x2="100%" y2="0%">
+      <!-- Gradient to-tr from-[#9945FF] to-[#14F195] -->
+      <linearGradient id="solanaGrad" x1="0%" y1="100%" x2="100%" y2="0%">
         <stop offset="0%" stop-color="#9945FF" />
-        <stop offset="50%" stop-color="#00C2FF" />
         <stop offset="100%" stop-color="#14F195" />
       </linearGradient>
-      <linearGradient id="bladeLeftGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#f8fafc" />
-        <stop offset="100%" stop-color="#cbd5e1" />
-      </linearGradient>
-      <linearGradient id="bladeRightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#94a3b8" />
-        <stop offset="100%" stop-color="#475569" />
-      </linearGradient>
-      <linearGradient id="goldGuardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#fef08a" />
-        <stop offset="50%" stop-color="#eab308" />
-        <stop offset="100%" stop-color="#854d0e" />
-      </linearGradient>
-      <filter id="bladeGlow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="8" result="blur" />
-        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-      </filter>
-      
-    <g id="masterSword">
-      <!-- Blade Glow Aura -->
-      <path d="M0,-190 L16,-150 L10,60 L-10,60 L-16,-150 Z" fill="#14F195" opacity="0.4" filter="url(#bladeGlow)" />
-      
-      <!-- Left Blade (Bright Silver / Light Reflection) -->
-      <path d="M0,-180 L0,60 L-9,60 L-11,-140 Z" fill="url(#bladeLeftGrad)" />
-      <!-- Right Blade (Steel / Shaded) -->
-      <path d="M0,-180 L0,60 L9,60 L11,-140 Z" fill="url(#bladeRightGrad)" />
-      
-      <!-- Center Ridge (Crisp White Reflection Line) -->
-      <line x1="0" y1="-175" x2="0" y2="58" stroke="#ffffff" stroke-width="1.5" opacity="0.9" />
-
-      <!-- Crossguard (Sharp Angled Cyber Guard) -->
-      <path d="M-36,56 L-30,48 L0,55 L30,48 L36,56 L26,68 L0,62 L-26,68 Z" fill="url(#goldGuardGrad)" stroke="#14F195" stroke-width="1" />
-      <circle cx="0" cy="58" r="5" fill="#14F195" />
-
-      <!-- Handle / Hilt (Dark Textured Grip with Gold Wraps) -->
-      <rect x="-5" y="66" width="10" height="60" rx="3" fill="#1e293b" />
-      <line x1="-5" y1="76" x2="5" y2="76" stroke="#fbbf24" stroke-width="2" />
-      <line x1="-5" y1="90" x2="5" y2="90" stroke="#fbbf24" stroke-width="2" />
-      <line x1="-5" y1="104" x2="5" y2="104" stroke="#fbbf24" stroke-width="2" />
-      <line x1="-5" y1="118" x2="5" y2="118" stroke="#fbbf24" stroke-width="2" />
-
-      <!-- Pommel (Octagonal Counterweight / Gem) -->
-      <polygon points="0,128 -9,136 -9,148 0,156 9,148 9,136" fill="url(#goldGuardGrad)" stroke="#9945FF" stroke-width="1.5" />
-      <circle cx="0" cy="142" r="3.5" fill="#9945FF" />
-    </g>
-  
     </defs>
-    <rect x="16" y="16" width="480" height="480" rx="110" fill="url(#solBorder)" />
-    <rect x="34" y="34" width="444" height="444" rx="92" fill="#090e17" />
-    <rect x="36" y="36" width="440" height="440" rx="90" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.1" />
-    <g transform="translate(256, 256) scale(1.05)">
-      <use href="#masterSword" transform="rotate(-38)" />
-      <use href="#masterSword" transform="rotate(38)" />
-      <circle cx="0" cy="20" r="22" fill="#090e17" stroke="#14F195" stroke-width="3" />
-      <circle cx="0" cy="20" r="14" fill="url(#solBorder)" filter="url(#bladeGlow)" />
-      <polygon points="0,11 7,20 0,29 -7,20" fill="#ffffff" />
+    
+    <!-- Outer squircle box (matches rounded-2xl with gradient border) -->
+    <rect x="16" y="16" width="480" height="480" rx="140" fill="url(#solanaGrad)" />
+
+    <!-- Inner panel (matches bg-[#0c121d] rounded-[14px]) -->
+    <rect x="36" y="36" width="440" height="440" rx="122" fill="#0c121d" />
+
+    <!-- Exact ⚔️ crossed swords icon centered inside -->
+    <g transform="translate(106, 106) scale(8.333)">
+      <path fill="#CCD6DD" d="M24 29l5-5L6 1H1v5z"/><path fill="#9AAAB4" d="M1 1v5l23 23 2.5-2.5z"/><path fill="#D99E82" d="M33.424 32.808c.284-.284.458-.626.531-.968l-5.242-6.195-.701-.702c-.564-.564-1.57-.473-2.248.205l-.614.612c-.677.677-.768 1.683-.204 2.247l.741.741 6.15 5.205c.345-.072.688-.247.974-.532l.613-.613z"/><path d="M33.424 32.808c.284-.284.458-.626.531-.968l-1.342-1.586-.737 3.684c.331-.077.661-.243.935-.518l.613-.612zm-3.31-5.506l-.888 4.441 1.26 1.066.82-4.1zm-1.401-1.657l-.701-.702c-.096-.096-.208-.166-.326-.224l-.978 4.892 1.26 1.066.957-4.783-.212-.249zm-2.401-.888c-.195.095-.382.225-.548.392l-.614.611c-.254.254-.425.554-.511.86-.142.51-.046 1.035.307 1.387l.596.596.77-3.846c0-.001 0-.001 0 0z" fill="#BF6952"/><circle fill="#8A4633" cx="33.25" cy="33.25" r="2.75"/><path fill="#FFAC33" d="M29.626 22.324c.404.404.404 1.059 0 1.462l-6.092 6.092c-.404.404-1.058.404-1.462 0-.404-.404-.404-1.058 0-1.462l6.092-6.092c.402-.404 1.058-.404 1.462 0z"/><circle fill="#FFAC33" cx="22.072" cy="29.877" r="1.75"/><circle fill="#FFAC33" cx="29.626" cy="22.323" r="1.75"/><circle fill="#FFCC4D" cx="22.072" cy="29.877" r="1"/><circle fill="#FFCC4D" cx="29.626" cy="22.323" r="1"/><path fill="#FFAC33" d="M33.903 29.342c.298.298.298.781 0 1.078l-3.476 3.475c-.298.298-.78.298-1.078 0-.298-.298-.298-.78 0-1.078l3.476-3.475c.297-.298.78-.298 1.078 0z"/><path fill="#CCD6DD" d="M12 29l-5-5L30 1h5v5z"/><path fill="#9AAAB4" d="M35 1v5L12 29l-2.5-2.5z"/><path fill="#D99E82" d="M2.576 32.808c-.284-.284-.458-.626-.531-.968l5.242-6.195.701-.702c.564-.564 1.57-.473 2.248.205l.613.612c.677.677.768 1.683.204 2.247l-.741.741-6.15 5.205c-.345-.072-.688-.247-.974-.532l-.612-.613z"/><path d="M2.576 32.808c-.284-.284-.458-.626-.531-.968l1.342-1.586.737 3.684c-.331-.077-.661-.243-.935-.518l-.613-.612zm3.31-5.506l.888 4.441-1.26 1.066-.82-4.1zm1.401-1.657l.701-.702c.096-.096.208-.166.326-.224l.978 4.892-1.26 1.066-.957-4.783.212-.249zm2.401-.888c.195.095.382.225.548.392l.613.612c.254.254.425.554.511.86.142.51.046 1.035-.307 1.387l-.596.596-.769-3.847c0-.001 0-.001 0 0z" fill="#BF6952"/><circle fill="#8A4633" cx="2.75" cy="33.25" r="2.75"/><path fill="#FFAC33" d="M6.374 22.324c-.404.404-.404 1.059 0 1.462l6.092 6.092c.404.404 1.058.404 1.462 0 .404-.404.404-1.058 0-1.462l-6.092-6.092c-.402-.404-1.058-.404-1.462 0z"/><circle fill="#FFAC33" cx="13.928" cy="29.877" r="1.75"/><circle fill="#FFAC33" cx="6.374" cy="22.323" r="1.75"/><circle fill="#FFCC4D" cx="13.928" cy="29.877" r="1"/><circle fill="#FFCC4D" cx="6.374" cy="22.323" r="1"/><path fill="#FFAC33" d="M2.097 29.342c-.298.298-.298.781 0 1.078l3.476 3.475c.298.298.78.298 1.078 0 .298-.298.298-.78 0-1.078l-3.476-3.475c-.297-.298-.78-.298-1.078 0z"/>
     </g>
   </svg>
