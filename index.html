@@ -897,19 +897,15 @@
             </button>
           </div>
 
-          <!-- 3 Distinct Categories: Crypto, Football, NBA -->
+          <!-- 2 Distinct Categories: Crypto & Sports -->
           <div class="flex items-center gap-1.5 p-1 rounded-xl bg-[#0f172a] border border-[#334155]">
             <button id="cat-tab-crypto" onclick="switchDuelCategory('crypto')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-sm">
               <span>⚡</span><span>CRYPTO</span>
               <span id="cat-badge-crypto" class="text-[10px] px-1.5 py-0.2 rounded-full bg-blue-500/30 text-blue-300">0</span>
             </button>
-            <button id="cat-tab-football" onclick="switchDuelCategory('football')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent">
-              <span>⚽</span><span>FOOTBALL</span>
-              <span id="cat-badge-football" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400">0</span>
-            </button>
-            <button id="cat-tab-nba" onclick="switchDuelCategory('nba')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent">
-              <span>🏀</span><span>NBA</span>
-              <span id="cat-badge-nba" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400">0</span>
+            <button id="cat-tab-sports" onclick="switchDuelCategory('sports')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer text-slate-400 hover:text-white border border-transparent">
+              <span>⚽</span><span>SPORTS</span>
+              <span id="cat-badge-sports" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400">0</span>
             </button>
           </div>
         </div>
@@ -4515,7 +4511,7 @@
 
     window.switchDuelCategory = function(cat) {
       activeDuelCategory = cat;
-      ["crypto", "football", "nba"].forEach(c => {
+      ["crypto", "sports"].forEach(c => {
         const btn = document.getElementById("cat-tab-" + c);
         if (!btn) return;
         if (c === cat) {
@@ -4632,11 +4628,8 @@
       if (cat === "crypto") {
         return c.includes("crypto") || c.includes("12h") || c.includes("btc") || c.includes("eth") || c.includes("sol") || c.includes("bnb") || c.includes("hype") || c.includes("candle");
       }
-      if (cat === "football") {
-        return c.includes("football") || c.includes("soccer") || c.includes("epl") || c.includes("premier") || c.includes("la liga") || c.includes("bundesliga") || c.includes("serie") || c.includes("ligue");
-      }
-      if (cat === "nba") {
-        return c.includes("nba") || c.includes("basketball") || c.includes("lakers") || c.includes("celtics") || c.includes("warriors");
+      if (cat === "sports") {
+        return c.includes("sport") || c.includes("football") || c.includes("soccer") || c.includes("epl") || c.includes("premier") || c.includes("la liga") || c.includes("bundesliga") || c.includes("serie") || c.includes("ligue") || c.includes("nba") || c.includes("basketball") || c.includes("lakers") || c.includes("celtics") || c.includes("warriors");
       }
       return true;
     }
@@ -4649,10 +4642,8 @@
       // Update category badges
       const cBadge = document.getElementById("cat-badge-crypto");
       if (cBadge) cBadge.textContent = liveQuestions.filter(q => isQuestionMatchingCategory(q, "crypto")).length;
-      const fBadge = document.getElementById("cat-badge-football");
-      if (fBadge) fBadge.textContent = liveQuestions.filter(q => isQuestionMatchingCategory(q, "football")).length;
-      const nBadge = document.getElementById("cat-badge-nba");
-      if (nBadge) nBadge.textContent = liveQuestions.filter(q => isQuestionMatchingCategory(q, "nba")).length;
+      const sBadge = document.getElementById("cat-badge-sports");
+      if (sBadge) sBadge.textContent = liveQuestions.filter(q => isQuestionMatchingCategory(q, "sports")).length;
 
       const topicsBadge = document.getElementById("active-topics-count-badge");
       if (topicsBadge) {
