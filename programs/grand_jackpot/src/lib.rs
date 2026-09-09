@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 
-declare_id!("GrndJckPt111111111111111111111111111111111");
+declare_id!("BXjFmivvTKHRm7J6Fnv7HmbsghAodCH2oaiRGJtDhohA");
 
 pub const JACKPOT_WINNER_SHARE_BPS: u64 = 9000; // 90% to winner
 pub const JACKPOT_FEE_BPS: u64 = 1000;          // 10% platform fee
