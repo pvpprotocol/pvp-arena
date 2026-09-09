@@ -115,7 +115,7 @@ contract PvPBinaryDuel {
     }
 
     /**
-     * @notice Create a duel using native ETH (Robinhood Chain ETH)
+     * @notice Create a duel using native ETH (Solana ETH)
      * @param creatorChoice 1 for YES, 2 for NO
      * @param durationInSeconds Duration until unaccepted duel expires
      * @param topic Description / Question of the duel
