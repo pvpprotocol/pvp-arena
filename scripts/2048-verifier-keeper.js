@@ -1,12 +1,12 @@
 // PvP 2048 Tournament Anti-Cheat Verifier & On-chain Keeper
 // Validates game session move logs, speed heuristics, and generates EIP-712 score proofs
-// for on-chain tournament contract verification on Robinhood Chain.
+// for on-chain tournament contract verification on Solana.
 
 const https = require("https");
 const http = require("http");
 const { ethers } = require("ethers");
 
-const RPC_URL = process.env.ROBINHOOD_RPC || "https://rpc.mainnet.chain.robinhood.com";
+const RPC_URL = process.env.SOLANA_RPC || "https://rpc.mainnet.chain.solana.com";
 const TOURNAMENT_CONTRACT_ADDRESS = process.env.TOURNAMENT_2048_CONTRACT || "0xddef71f4e631a73476ebd9efa7770d810d51e8a8";
 const VERIFIER_PRIVATE_KEY = process.env.VERIFIER_PRIVATE_KEY || process.env.DEPLOYER_PRIVATE_KEY || "0x9487920a3a268a7a4a28c4f8ec247d52f7e96b1e000000000000000000000000";
 
