@@ -6,69 +6,62 @@
       <stop offset="100%" stop-color="#00C2FF" />
     </linearGradient>
     <linearGradient id="solBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0b111c" />
-      <stop offset="100%" stop-color="#05070d" />
+      <stop offset="0%" stop-color="#080e18" />
+      <stop offset="100%" stop-color="#04070d" />
     </linearGradient>
-    <linearGradient id="bladeLeftUp" x1="0%" y1="100%" x2="100%" y2="0%">
+    <linearGradient id="solGrad1" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#00C2FF" />
-      <stop offset="40%" stop-color="#14F195" />
+      <stop offset="50%" stop-color="#14F195" />
       <stop offset="100%" stop-color="#ffffff" />
     </linearGradient>
-    <linearGradient id="bladeRightUp" x1="100%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="#ec4899" />
-      <stop offset="40%" stop-color="#9945FF" />
+    <linearGradient id="solGrad2" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#14F195" />
+      <stop offset="50%" stop-color="#9945FF" />
       <stop offset="100%" stop-color="#ffffff" />
     </linearGradient>
     <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feGaussianBlur stdDeviation="10" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
   </defs>
 
-  <!-- Outer Rounded Container with Solana Gradient Border -->
-  <rect x="16" y="16" width="480" height="480" rx="110" fill="url(#solBorder)" />
-  <rect x="24" y="24" width="464" height="464" rx="102" fill="url(#solBg)" />
+  <!-- Outer Rounded Container (Option B style) -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#solBorder)" />
+  <rect x="26" y="26" width="460" height="460" rx="102" fill="url(#solBg)" />
 
-  <!-- Center Ambient Radial Glow -->
-  <circle cx="256" cy="230" r="150" fill="#14F195" opacity="0.1" />
+  <!-- Background Cyber Neon Ambient Glow -->
+  <circle cx="256" cy="256" r="180" fill="#14F195" opacity="0.08" />
 
-  <!-- Crossed Swords Pointing UPWARD -->
+  <!-- Dashed Aura Circle (Signature Option B element) -->
+  <circle cx="256" cy="256" r="144" fill="none" stroke="#14F195" stroke-width="6" stroke-dasharray="16 16" opacity="0.45" />
+
+  <!-- Cyber Swords (Pointed Upward) -->
   <g filter="url(#neonGlow)">
-    <!-- SWORD 1: Hilt Bottom-Left, Blade Pointing Up-Right -->
-    <!-- Blade -->
-    <path d="M165 330 L380 115 L405 90 L395 140 L180 355 Z" fill="url(#bladeLeftUp)" />
-    <!-- Tip Polygon -->
-    <polygon points="405,90 365,110 395,140" fill="#ffffff" />
-    <!-- Center fuller line -->
-    <line x1="185" y1="330" x2="385" y2="115" stroke="#ffffff" stroke-width="3" opacity="0.9" />
-    <!-- Crossguard (Bottom-Left) -->
-    <line x1="120" y1="310" x2="210" y2="400" stroke="#14F195" stroke-width="16" stroke-linecap="round" />
-    <circle cx="120" cy="310" r="10" fill="#ffffff" />
-    <circle cx="210" cy="400" r="10" fill="#ffffff" />
-    <!-- Handle / Grip -->
-    <line x1="150" y1="370" x2="100" y2="420" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round" />
-    <!-- Pommel -->
-    <circle cx="95" cy="425" r="16" fill="#14F195" stroke="#ffffff" stroke-width="3" />
+    <!-- SWORD 1: Blade Pointing UP-RIGHT (from bottom-left to top-right) -->
+    <!-- Blade Body -->
+    <path d="M140 372 L372 140 L392 160 L160 392 Z" fill="url(#solGrad1)" />
+    <!-- Sharp Pointed Tip -->
+    <polygon points="372,140 420,112 392,160" fill="#14F195" />
+    <polygon points="380,146 414,120 394,154" fill="#ffffff" />
 
-    <!-- SWORD 2: Hilt Bottom-Right, Blade Pointing Up-Left -->
-    <!-- Blade -->
-    <path d="M347 330 L132 115 L107 90 L117 140 L332 355 Z" fill="url(#bladeRightUp)" />
-    <!-- Tip Polygon -->
-    <polygon points="107,90 147,110 117,140" fill="#ffffff" />
-    <!-- Center fuller line -->
-    <line x1="327" y1="330" x2="127" y2="115" stroke="#ffffff" stroke-width="3" opacity="0.9" />
-    <!-- Crossguard (Bottom-Right) -->
-    <line x1="392" y1="310" x2="302" y2="400" stroke="#9945FF" stroke-width="16" stroke-linecap="round" />
-    <circle cx="392" cy="310" r="10" fill="#ffffff" />
-    <circle cx="302" cy="400" r="10" fill="#ffffff" />
-    <!-- Handle / Grip -->
-    <line x1="362" y1="370" x2="412" y2="420" stroke="#e2e8f0" stroke-width="14" stroke-linecap="round" />
-    <!-- Pommel -->
-    <circle cx="417" cy="425" r="16" fill="#9945FF" stroke="#ffffff" stroke-width="3" />
+    <!-- SWORD 2: Blade Pointing UP-LEFT (from bottom-right to top-left) -->
+    <!-- Blade Body -->
+    <path d="M372 372 L140 140 L120 160 L352 392 Z" fill="url(#solGrad2)" />
+    <!-- Sharp Pointed Tip -->
+    <polygon points="140,140 92,112 120,160" fill="#9945FF" />
+    <polygon points="132,146 98,120 118,154" fill="#ffffff" />
 
-    <!-- Central Power Core / Shield at Sword Intersection (256, 256) -->
-    <circle cx="256" cy="256" r="30" fill="#0b111c" stroke="url(#solBorder)" stroke-width="6" />
-    <polygon points="256,234 274,256 256,278 238,256" fill="#14F195" />
-    <circle cx="256" cy="256" r="6" fill="#ffffff" />
+    <!-- Hilts & Guards at Bottom -->
+    <!-- Guard Left Sword -->
+    <line x1="110" y1="342" x2="190" y2="422" stroke="#ffffff" stroke-width="14" stroke-linecap="round" />
+    <circle cx="98" cy="434" r="18" fill="#14F195" stroke="#ffffff" stroke-width="4" />
+
+    <!-- Guard Right Sword -->
+    <line x1="402" y1="342" x2="322" y2="422" stroke="#ffffff" stroke-width="14" stroke-linecap="round" />
+    <circle cx="414" cy="434" r="18" fill="#9945FF" stroke="#ffffff" stroke-width="4" />
+
+    <!-- Center Rotating Diamond (Signature Option B element) -->
+    <rect x="236" y="236" width="40" height="40" transform="rotate(45 256 256)" fill="#ffffff" stroke="#14F195" stroke-width="4" />
+    <circle cx="256" cy="256" r="6" fill="#080e18" />
   </g>
 </svg>
