@@ -23,6 +23,17 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
     uint256 public constant WINNER_PERCENT = 90;
     uint256 public constant PROTOCOL_FEE_PERCENT = 10;
 
+    struct RoundWindow {
+        uint256 startTime;         // Timestamp when ticket entries open
+        uint256 endTime;           // Timestamp when ticket entries strictly lock
+        bool isConfigured;
+    }
+
+    // questionId => RoundWindow (Strict participation timing window)
+    mapping(uint256 => RoundWindow) public roundWindows;
+
+    event RoundWindowConfigured(uint256 indexed questionId, uint256 startTime, uint256 endTime);
+
     struct RoundTier {
         uint256 ticketPrice;       // e.g. 1 USDG, 5 USDG, 10 USDG, 100 USDG, 1000 USDG
         uint256 totalVault;         // Accumulated jackpot prize pool (including rollovers)
@@ -102,6 +113,11 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         treasury = _treasury;
         oracleSigner = _oracleSigner;
         currentQuestionId = 1;
+        roundWindows[1] = RoundWindow({
+            startTime: block.timestamp,
+            endTime: block.timestamp + 3 days,
+            isConfigured: true
+        });
     }
 
     /**
@@ -119,6 +135,18 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
         require(qty > 0 && qty <= MAX_TICKETS_PER_WALLET, "Must buy 1 or 2 tickets");
         require(tier > 0, "Invalid tier");
         require(questionId > 0, "Invalid questionId");
+
+        RoundWindow memory rw = roundWindows[questionId];
+        if (rw.isConfigured) {
+            require(block.timestamp >= rw.startTime, "Jackpot round has not started yet");
+            require(block.timestamp <= rw.endTime, "Jackpot round entry is closed");
+        }
+
+        RoundWindow memory rw = roundWindows[questionId];
+        if (rw.isConfigured) {
+            require(block.timestamp >= rw.startTime, "Jackpot round has not started yet");
+            require(block.timestamp <= rw.endTime, "Jackpot round entry is closed");
+        }
         uint256 activeTier = userActiveTier[questionId][msg.sender];
         require(activeTier == 0 || activeTier == tier, "Wallet locked to another tier for this round");
         require(
@@ -302,6 +330,29 @@ contract PvPGrandJackpot is Ownable, EIP712, ReentrancyGuard {
     function getClaimablePrize(uint256 questionId, uint256 tier, address player) external view returns (uint256) {
         if (hasClaimedPrize[questionId][tier][player]) return 0;
         return claimablePrizes[questionId][tier][player];
+    }
+
+    /**
+     * @notice Set exact start and end time window for a jackpot round
+     * @dev No entries permitted before startTime or after endTime
+     */
+    function setRoundWindow(uint256 questionId, uint256 startTime, uint256 endTime) external onlyOwner {
+        require(endTime > startTime, "End time must be after start time");
+        roundWindows[questionId] = RoundWindow({
+            startTime: startTime,
+            endTime: endTime,
+            isConfigured: true
+        });
+        emit RoundWindowConfigured(questionId, startTime, endTime);
+    }
+
+    /**
+     * @notice Check if jackpot entry is currently open for a round
+     */
+    function isRoundOpen(uint256 questionId) public view returns (bool) {
+        RoundWindow memory rw = roundWindows[questionId];
+        if (!rw.isConfigured) return true; // default open if unconfigured
+        return (block.timestamp >= rw.startTime && block.timestamp <= rw.endTime);
     }
 
     function setCurrentQuestionId(uint256 _newId) external onlyOwner {
