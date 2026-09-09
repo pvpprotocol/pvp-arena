@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
   <defs>
     <radialGradient id="bgGlow" cx="20%" cy="50%" r="60%">
-      <stop offset="0%" stop-color="#14F195" stop-opacity="0.14" />
+      <stop offset="0%" stop-color="#14F195" stop-opacity="0.15" />
       <stop offset="50%" stop-color="#9945FF" stop-opacity="0.08" />
       <stop offset="100%" stop-color="#070c14" stop-opacity="0" />
     </radialGradient>
@@ -12,7 +12,7 @@
     </radialGradient>
     <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="50%" stop-color="#F1F5F9" />
+      <stop offset="60%" stop-color="#F8FAFC" />
       <stop offset="100%" stop-color="#94A3B8" />
     </linearGradient>
     <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -34,34 +34,54 @@
   <path d="M 900 350 L 1150 350 L 1220 420 L 1500 420" fill="none" stroke="#1e293b" stroke-width="1.5" stroke-opacity="0.6" />
   <circle cx="900" cy="350" r="4" fill="#9945FF" />
 
-  <!-- Left Side: Brand & Value Proposition -->
-  <g transform="translate(100, 75)">
-    <rect x="0" y="0" width="350" height="36" rx="18" fill="#14F195" fill-opacity="0.12" stroke="#14F195" stroke-width="1.2"/>
-    <circle cx="20" cy="18" r="4" fill="#14F195" />
-    <text x="36" y="23" font-family="monospace" font-size="13" font-weight="bold" fill="#14F195" letter-spacing="1.5">NEXT-GEN 1V1 PVP ARENA</text>
+  <!-- Left Side: Brand & Subtitle -->
+  <g transform="translate(100, 55)">
+    <rect x="0" y="0" width="310" height="32" rx="16" fill="#14F195" fill-opacity="0.12" stroke="#14F195" stroke-width="1.2"/>
+    <circle cx="18" cy="16" r="4" fill="#14F195" />
+    <text x="32" y="21" font-family="monospace" font-size="12" font-weight="bold" fill="#14F195" letter-spacing="1.5">NEXT-GEN 1V1 PVP ARENA</text>
   </g>
 
-  <text x="100" y="180" font-family="sans-serif" font-size="64" font-weight="900" fill="url(#textGrad)" letter-spacing="-1.5">
+  <!-- Title: pvphub.fun -->
+  <text x="100" y="150" font-family="sans-serif" font-size="64" font-weight="900" fill="url(#textGrad)" letter-spacing="-1.5">
     pvphub<tspan fill="#14F195">.fun</tspan>
   </text>
 
-  <text x="100" y="225" font-family="sans-serif" font-size="22" font-weight="600" fill="#94A3B8" letter-spacing="-0.2">
-    Trade Skill, Predict Candles &amp; Settle 1v1 Duels Onchain
+  <!-- USER REQUEST: زیر pvphub.fun به انگلیسی: DUEL • JACKPOT • SKILL -->
+  <g transform="translate(100, 175)">
+    <!-- DUEL badge -->
+    <rect x="0" y="0" width="115" height="38" rx="12" fill="#14F195" fill-opacity="0.15" stroke="#14F195" stroke-width="1.5"/>
+    <circle cx="20" cy="19" r="4" fill="#14F195" />
+    <text x="34" y="24" font-family="monospace" font-size="15" font-weight="900" fill="#14F195" letter-spacing="1.5">DUEL</text>
+
+    <!-- JACKPOT badge -->
+    <rect x="130" y="0" width="145" height="38" rx="12" fill="#FFB800" fill-opacity="0.15" stroke="#FFB800" stroke-width="1.5"/>
+    <circle cx="150" cy="19" r="4" fill="#FFB800" />
+    <text x="164" y="24" font-family="monospace" font-size="15" font-weight="900" fill="#FFB800" letter-spacing="1.5">JACKPOT</text>
+
+    <!-- SKILL badge -->
+    <rect x="290" y="0" width="125" height="38" rx="12" fill="#9945FF" fill-opacity="0.15" stroke="#9945FF" stroke-width="1.5"/>
+    <circle cx="310" cy="19" r="4" fill="#9945FF" />
+    <text x="324" y="24" font-family="monospace" font-size="15" font-weight="900" fill="#9945FF" letter-spacing="1.5">SKILL</text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="100" y="255" font-family="sans-serif" font-size="20" font-weight="600" fill="#94A3B8" letter-spacing="-0.2">
+    Predict Candles, Win 1v1 Duels &amp; Claim The Jackpot
   </text>
 
   <!-- Key Stat Pills -->
-  <g transform="translate(100, 270)">
-    <rect x="0" y="0" width="170" height="72" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
-    <text x="20" y="32" font-family="monospace" font-size="20" font-weight="800" fill="#14F195">1.9x Payout</text>
-    <text x="20" y="54" font-family="sans-serif" font-size="11" font-weight="500" fill="#64748B">vs 1.3x Legacy Odds</text>
+  <g transform="translate(100, 285)">
+    <rect x="0" y="0" width="170" height="70" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
+    <text x="20" y="30" font-family="monospace" font-size="20" font-weight="800" fill="#14F195">1.9x Payout</text>
+    <text x="20" y="52" font-family="sans-serif" font-size="11" font-weight="500" fill="#64748B">vs 1.3x Legacy Odds</text>
 
-    <rect x="190" y="0" width="170" height="72" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
-    <text x="210" y="32" font-family="monospace" font-size="20" font-weight="800" fill="#00C2FF">Instant</text>
-    <text x="210" y="54" font-family="sans-serif" font-size="11" font-weight="500" fill="#64748B">Smart Contract Settled</text>
+    <rect x="190" y="0" width="170" height="70" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
+    <text x="210" y="30" font-family="monospace" font-size="20" font-weight="800" fill="#00C2FF">Instant</text>
+    <text x="210" y="52" font-family="sans-serif" font-size="11" font-weight="500" fill="#64748B">Smart Contract Settled</text>
 
-    <rect x="380" y="0" width="170" height="72" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
-    <text x="400" y="32" font-family="monospace" font-size="20" font-weight="800" fill="#9945FF">0% Trap</text>
-    <text x="400" y="54" font-family="sans-serif" font-size="11" font-weight="500" fill="#64748B">100% Non-Custodial</text>
+    <rect x="380" y="0" width="170" height="70" rx="14" fill="url(#cardGrad)" stroke="#1f2b3e" stroke-width="1.5" />
+    <text x="400" y="30" font-family="monospace" font-size="20" font-weight="800" fill="#9945FF">0% Trap</text>
+    <text x="400" y="52" font-family="sans-serif" font-size="11" font-weight="500" fill="#64748B">100% Non-Custodial</text>
   </g>
 
   <!-- Domain CTA -->
