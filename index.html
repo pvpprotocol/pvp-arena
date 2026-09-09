@@ -3234,8 +3234,12 @@
       
       function tick() {
         const now = Date.now();
+        const startTime = Number(localStorage.getItem("grand_jackpot_round_start") || (Date.now() - 3600000));
         const diff = Math.max(0, storedTarget - now);
         
+        const isBeforeStart = now < startTime;
+        const isAfterEnd = diff <= 0;
+
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -3245,6 +3249,24 @@
         if (hoursEl) hoursEl.innerText = String(h).padStart(2, "0");
         if (minsEl) minsEl.innerText = String(m).padStart(2, "0");
         if (secsEl) secsEl.innerText = String(s).padStart(2, "0");
+
+        // Enforce strict button locking when round is not active
+        const allTiers = [1, 5, 10, 100, 1000];
+        allTiers.forEach(t => {
+          const btn = document.getElementById("btn-jackpot-" + t);
+          if (!btn) return;
+          if (isAfterEnd) {
+            btn.disabled = true;
+            btn.classList.remove("bg-blue-600", "hover:bg-blue-500", "cursor-pointer");
+            btn.classList.add("bg-slate-800", "text-slate-500", "border-slate-700", "cursor-not-allowed");
+            btn.innerText = "ENTRY LOCKED (ROUND ENDED)";
+          } else if (isBeforeStart) {
+            btn.disabled = true;
+            btn.classList.remove("bg-blue-600", "hover:bg-blue-500", "cursor-pointer");
+            btn.classList.add("bg-slate-800", "text-slate-500", "border-slate-700", "cursor-not-allowed");
+            btn.innerText = "STARTS SOON";
+          }
+        });
       }
       
       tick();
@@ -3253,9 +3275,27 @@
       }
     }
 
+        function isJackpotEntryWindowOpen() {
+      const startTime = Number(localStorage.getItem("grand_jackpot_round_start") || (Date.now() - 3600000));
+      const endTime = Number(localStorage.getItem("grand_jackpot_round_deadline") || (Date.now() + 86400000));
+      const now = Date.now();
+      if (now < startTime) return { open: false, reason: "NOT_STARTED" };
+      if (now > endTime) return { open: false, reason: "ENDED" };
+      return { open: true };
+    }
+
     let pendingJackpotData = null;
 
     function openJackpotConfirmation(tier) {
+      const windowStatus = isJackpotEntryWindowOpen();
+      if (!windowStatus.open) {
+        if (windowStatus.reason === "NOT_STARTED") {
+          showToast("Jackpot round has not started yet! Entries open soon.", "warning");
+        } else {
+          showToast("Jackpot entry window has ended! No more entries allowed for this round.", "error");
+        }
+        return;
+      }
       if (!isConnected) {
         if (typeof connectWallet === "function") connectWallet();
         else showToast("Please connect your wallet first", "warning");
