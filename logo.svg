@@ -1,58 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <linearGradient id="solDappBorder" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#9945FF" />
-      <stop offset="100%" stop-color="#14F195" />
-    </linearGradient>
-    <linearGradient id="solDappBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0e1726" />
-      <stop offset="100%" stop-color="#070c14" />
-    </linearGradient>
-    <linearGradient id="bladeRightGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#14F195" />
-      <stop offset="50%" stop-color="#e2e8f0" />
-      <stop offset="100%" stop-color="#ffffff" />
-    </linearGradient>
-    <linearGradient id="bladeLeftGrad" x1="100%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="#9945FF" />
-      <stop offset="50%" stop-color="#e2e8f0" />
-      <stop offset="100%" stop-color="#ffffff" />
-    </linearGradient>
-    <filter id="dappShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#14F195" flood-opacity="0.25" />
-    </filter>
-  </defs>
+    <defs>
+      <linearGradient id="solBorder" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#9945FF" />
+        <stop offset="50%" stop-color="#00C2FF" />
+        <stop offset="100%" stop-color="#14F195" />
+      </linearGradient>
+      <linearGradient id="bladeLeftGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#f8fafc" />
+        <stop offset="100%" stop-color="#cbd5e1" />
+      </linearGradient>
+      <linearGradient id="bladeRightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#94a3b8" />
+        <stop offset="100%" stop-color="#475569" />
+      </linearGradient>
+      <linearGradient id="goldGuardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fef08a" />
+        <stop offset="50%" stop-color="#eab308" />
+        <stop offset="100%" stop-color="#854d0e" />
+      </linearGradient>
+      <filter id="bladeGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="8" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+      
+    <g id="masterSword">
+      <!-- Blade Glow Aura -->
+      <path d="M0,-190 L16,-150 L10,60 L-10,60 L-16,-150 Z" fill="#14F195" opacity="0.4" filter="url(#bladeGlow)" />
+      
+      <!-- Left Blade (Bright Silver / Light Reflection) -->
+      <path d="M0,-180 L0,60 L-9,60 L-11,-140 Z" fill="url(#bladeLeftGrad)" />
+      <!-- Right Blade (Steel / Shaded) -->
+      <path d="M0,-180 L0,60 L9,60 L11,-140 Z" fill="url(#bladeRightGrad)" />
+      
+      <!-- Center Ridge (Crisp White Reflection Line) -->
+      <line x1="0" y1="-175" x2="0" y2="58" stroke="#ffffff" stroke-width="1.5" opacity="0.9" />
 
-  <!-- Squircle Border with Solana Gradient (#9945FF to #14F195) -->
-  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#solDappBorder)" filter="url(#dappShadow)" />
+      <!-- Crossguard (Sharp Angled Cyber Guard) -->
+      <path d="M-36,56 L-30,48 L0,55 L30,48 L36,56 L26,68 L0,62 L-26,68 Z" fill="url(#goldGuardGrad)" stroke="#14F195" stroke-width="1" />
+      <circle cx="0" cy="58" r="5" fill="#14F195" />
 
-  <!-- Inner Dark Obsidian Panel (#0c121d) -->
-  <rect x="28" y="28" width="456" height="456" rx="96" fill="url(#solDappBg)" />
+      <!-- Handle / Hilt (Dark Textured Grip with Gold Wraps) -->
+      <rect x="-5" y="66" width="10" height="60" rx="3" fill="#1e293b" />
+      <line x1="-5" y1="76" x2="5" y2="76" stroke="#fbbf24" stroke-width="2" />
+      <line x1="-5" y1="90" x2="5" y2="90" stroke="#fbbf24" stroke-width="2" />
+      <line x1="-5" y1="104" x2="5" y2="104" stroke="#fbbf24" stroke-width="2" />
+      <line x1="-5" y1="118" x2="5" y2="118" stroke="#fbbf24" stroke-width="2" />
 
-  <!-- Crossed Swords (Upward Pointing, High Contrast & Clean) -->
-  <g transform="translate(0, 0)">
-    <!-- Ambient Center Glow -->
-    <circle cx="256" cy="256" r="140" fill="#14F195" opacity="0.12" />
-
-    <!-- Left Sword: Blade goes to Top-Right -->
-    <path d="M152 360 L356 156 L376 176 L172 380 Z" fill="url(#bladeRightGrad)" />
-    <polygon points="356,156 404,128 376,176" fill="#ffffff" />
-    <polygon points="364,162 396,136 378,170" fill="#14F195" />
-
-    <!-- Right Sword: Blade goes to Top-Left -->
-    <path d="M360 360 L156 156 L136 176 L340 380 Z" fill="url(#bladeLeftGrad)" />
-    <polygon points="156,156 108,128 136,176" fill="#ffffff" />
-    <polygon points="148,162 116,136 134,170" fill="#9945FF" />
-
-    <!-- Guards & Hilts at Bottom -->
-    <line x1="126" y1="334" x2="198" y2="406" stroke="#ffffff" stroke-width="14" stroke-linecap="round" />
-    <circle cx="114" cy="418" r="16" fill="#14F195" stroke="#ffffff" stroke-width="4" />
-
-    <line x1="386" y1="334" x2="314" y2="406" stroke="#ffffff" stroke-width="14" stroke-linecap="round" />
-    <circle cx="398" cy="418" r="16" fill="#9945FF" stroke="#ffffff" stroke-width="4" />
-
-    <!-- Center Gem Emblem -->
-    <rect x="238" y="238" width="36" height="36" transform="rotate(45 256 256)" fill="#ffffff" stroke="#14F195" stroke-width="4" />
-    <circle cx="256" cy="256" r="6" fill="#0e1726" />
-  </g>
-</svg>
+      <!-- Pommel (Octagonal Counterweight / Gem) -->
+      <polygon points="0,128 -9,136 -9,148 0,156 9,148 9,136" fill="url(#goldGuardGrad)" stroke="#9945FF" stroke-width="1.5" />
+      <circle cx="0" cy="142" r="3.5" fill="#9945FF" />
+    </g>
+  
+    </defs>
+    <rect x="16" y="16" width="480" height="480" rx="110" fill="url(#solBorder)" />
+    <rect x="34" y="34" width="444" height="444" rx="92" fill="#090e17" />
+    <rect x="36" y="36" width="440" height="440" rx="90" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.1" />
+    <g transform="translate(256, 256) scale(1.05)">
+      <use href="#masterSword" transform="rotate(-38)" />
+      <use href="#masterSword" transform="rotate(38)" />
+      <circle cx="0" cy="20" r="22" fill="#090e17" stroke="#14F195" stroke-width="3" />
+      <circle cx="0" cy="20" r="14" fill="url(#solBorder)" filter="url(#bladeGlow)" />
+      <polygon points="0,11 7,20 0,29 -7,20" fill="#ffffff" />
+    </g>
+  </svg>
