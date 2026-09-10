@@ -4908,12 +4908,11 @@
 
         showToast("⚔️ Opening Phantom: Approve Onchain Question #1 Deployment Transaction...", "info");
 
-        // Onchain Question #1 (11:00 - 12:00 UTC)
         const qId = 1;
         const now = Date.now();
-        // 11:00 UTC = 1789038000000, 12:00 UTC = 1789041600000
-        const candleStart = 1789038000000;
-        const candleEnd = 1789041600000;
+        const candleStart = now;
+        const candleDeadline = now + (15 * 60 * 1000);
+        const candleEnd = candleDeadline + (15 * 60 * 1000);
         const qTitle = "SOL/USD 15-Min Candle Duel (GREEN vs RED)";
 
         let txSignature = "";
@@ -4966,13 +4965,13 @@
           id: 1,
           qNum: 1,
           category: "crypto",
-          symbol: "BTC-USD",
+          symbol: "SOL-USD",
           title: qTitle,
           desc: "Oracle: Coinbase Exchange BTC-USD 1-Hour candle (11:00:00 to 12:00:00 UTC). Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
           resolutionSource: "Coinbase Exchange API (BTC-USD 1h)",
           deadlineDesc: "Entry Closes at 11:00 UTC",
           candleStartTime: candleStart,
-          deadline: candleStart,
+          deadline: candleDeadline,
           settlementTime: candleEnd,
           opt1: "GREEN",
           opt2: "RED",
@@ -7530,18 +7529,28 @@
                 const parts = rawMemo.split(":");
                 const qNum = parseInt((parts[2] || "").replace("q", "")) || 1;
                 
+                const txTime = (s.blockTime && s.blockTime > 0) ? (s.blockTime * 1000) : Date.now();
+                const entryWindowMs = 15 * 60 * 1000; // 15 minutes
+                let qDeadline = txTime + entryWindowMs;
+                if (qDeadline < Date.now()) {
+                  // Keep active for testing/entering if recently deployed
+                  qDeadline = Date.now() + entryWindowMs;
+                }
+                const qSettlement = qDeadline + (15 * 60 * 1000);
+
+                const isSol = rawMemo.includes("SOL") || rawMemo.includes("15M");
                 const onchainQ = {
                   id: qNum,
                   qNum: qNum,
                   category: "crypto",
-                  symbol: "BTC-USD",
-                  title: "Will the 1-Hour BTC Candle Close Green or Red? (11:00 - 12:00 UTC)",
-                  desc: "Oracle: Coinbase Exchange BTC-USD 1-Hour candle (11:00:00 to 12:00:00 UTC). Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
-                  resolutionSource: "Coinbase Exchange API (BTC-USD 1h)",
-                  deadlineDesc: "Entry Closes at 11:00 UTC",
-                  candleStartTime: 1789038000000,
-                  deadline: 1789038000000,
-                  settlementTime: 1789041600000,
+                  symbol: isSol ? "SOL-USD" : "BTC-USD",
+                  title: isSol ? "SOL/USD 15-Min Candle Duel (GREEN vs RED)" : "BTC/USD 1-Hour Candle Duel",
+                  desc: "Oracle: Pyth / Binance SOL-USD 15-Minute Candle. Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
+                  resolutionSource: "Pyth / Binance Oracle",
+                  deadlineDesc: "15-Minute Entry Window",
+                  candleStartTime: txTime,
+                  deadline: qDeadline,
+                  settlementTime: qSettlement,
                   opt1: "GREEN",
                   opt2: "RED",
                   isEnded: false,
