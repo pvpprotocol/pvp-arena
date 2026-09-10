@@ -4094,7 +4094,7 @@
       const statusText = document.getElementById("board-status-text");
       const cycle = get2048CycleInfo();
       const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
-      const isOwner = currentWallet.toLowerCase() === "GxA1LxnGCkfV1Hon94pnXYmE2Cyi5XEhUmomrvXdbVRa".toLowerCase();
+      const isOwner = currentWallet.toLowerCase() === "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase();
 
       // If round has ended, force is2048RunActive to false and lock everything
       if (cycle.isEnded) {
@@ -7084,7 +7084,7 @@
   // ── ADMIN PANEL LOGIC & ACCESS CONTROL ──
   const AUTHORIZED_ADMINS = [
     "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase(),
-    "GxA1LxnGCkfV1Hon94pnXYmE2Cyi5XEhUmomrvXdbVRa".toLowerCase()
+    "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase()
   ];
 
   function checkAdminAccess(account) {
@@ -7601,7 +7601,7 @@ window.handleCreateQuestion = async function(e) {
       if (!el) return;
       const cycle = get2048CycleInfo();
       const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
-      const isOwner = currentWallet.toLowerCase() === "GxA1LxnGCkfV1Hon94pnXYmE2Cyi5XEhUmomrvXdbVRa".toLowerCase();
+      const isOwner = currentWallet.toLowerCase() === "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase();
 
       if (cycle.isEnded) {
         el.className = "text-xs font-mono font-bold text-neutral-800 bg-[#182230] border border-[#334155] px-3 py-1 rounded-full flex items-center gap-2";
