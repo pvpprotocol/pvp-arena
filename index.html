@@ -958,45 +958,47 @@
           </div>
         </div>
 
-        <!-- Interactive Questions Grid -->
-        <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Question #1: 15-Minute Candle -->
-          <div class="p-4 rounded-2xl border-2 border-emerald-500/40 bg-[#131b27] space-y-3 relative overflow-hidden shadow-lg shadow-emerald-950/20">
-            <div class="flex items-center justify-between">
-              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 font-mono text-xs font-bold border border-emerald-500/30">
-                #1 • 15M CANDLE
-              </span>
-              <span class="text-xs font-mono text-emerald-400 font-bold flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>LIVE
-              </span>
-            </div>
+                <!-- FOUNDER ONLY QUESTION DEPLOYMENT PANEL -->
+        <div id="founder-question-panel" class="hidden mb-4 p-4 rounded-2xl border-2 border-emerald-500/50 bg-[#131b27] space-y-3 relative overflow-hidden shadow-lg shadow-emerald-950/30" style="display: none;">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 font-mono text-xs font-bold border border-emerald-500/30">
+              👑 FOUNDER EXCLUSIVE • PROPOSED QUESTION
+            </span>
+            <span class="text-xs font-mono text-amber-400 font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>AWAITING FOUNDER ON-CHAIN SIGNATURE
+            </span>
+          </div>
 
-            <div>
-              <h4 class="text-sm font-bold font-mono text-white">SOL/USD 15-Min Candle Duel</h4>
-              <p class="text-xs text-slate-400 font-mono mt-0.5">Will the next 15-minute candle close GREEN (Bullish) or RED (Bearish)?</p>
-            </div>
+          <div>
+            <h4 class="text-sm font-bold font-mono text-white">SOL/USD 15-Min Candle Duel</h4>
+            <p class="text-xs text-slate-400 font-mono mt-0.5">Will the next 15-minute candle close GREEN (Bullish) or RED (Bearish)?</p>
+          </div>
 
-            <div class="grid grid-cols-3 gap-2 pt-1 font-mono text-xs">
-              <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
-                <span class="text-[10px] text-slate-400 font-bold uppercase">Entry Window</span>
-                <span class="text-white font-bold text-xs mt-0.5">15 Minutes</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
-                <span class="text-[10px] text-slate-400 font-bold uppercase">Asset</span>
-                <span class="text-emerald-400 font-bold text-xs mt-0.5">SOL / USD</span>
-              </div>
-              <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
-                <span class="text-[10px] text-slate-400 font-bold uppercase">Outcomes</span>
-                <span class="text-emerald-400 font-bold text-xs mt-0.5">GREEN / RED</span>
-              </div>
+          <div class="grid grid-cols-3 gap-2 pt-1 font-mono text-xs">
+            <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Entry Window</span>
+              <span class="text-white font-bold text-xs mt-0.5">15 Minutes</span>
             </div>
-
-            <div class="pt-1">
-              <button onclick="createNextCandleQuestionOnchain()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-mono font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer">
-                <span>⚡</span><span>CREATE DUEL ON-CHAIN</span>
-              </button>
+            <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Asset</span>
+              <span class="text-emerald-400 font-bold text-xs mt-0.5">SOL / USD</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Outcomes</span>
+              <span class="text-emerald-400 font-bold text-xs mt-0.5">GREEN / RED</span>
             </div>
           </div>
+
+          <div class="pt-1">
+            <button id="btn-deploy-15m-q" onclick="createNextCandleQuestionOnchain()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-mono font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer">
+              <span>⚡</span><span>SIGN & DEPLOY 15M QUESTION ON-CHAIN (FOUNDER ONLY)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Questions Grid -->
+        <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <!-- Populated by JavaScript renderDuelQuestions() -->
         </div>
 
         <!-- STEP 2 & 3: PICK TIER & PREDICTION (YES / NO) -->
@@ -4894,8 +4896,8 @@
           if (!activeWallet) return;
         }
 
-        if (typeof isFounderWallet === "function" && !isFounderWallet(activeWallet)) {
-          showToast("⛔ Access Denied: Only founder wallet can deploy onchain questions", "error");
+        if (!activeWallet || activeWallet.toLowerCase() !== "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase()) {
+          showToast("⛔ Access Denied: Only Founder wallet (4GwLw...aeV) can deploy onchain questions!", "error");
           return;
         }
 
@@ -4912,7 +4914,7 @@
         // 11:00 UTC = 1789038000000, 12:00 UTC = 1789041600000
         const candleStart = 1789038000000;
         const candleEnd = 1789041600000;
-        const qTitle = "Will the 1-Hour BTC Candle Close Green or Red? (11:00 - 12:00 UTC)";
+        const qTitle = "SOL/USD 15-Min Candle Duel (GREEN vs RED)";
 
         let txSignature = "";
 
@@ -4932,7 +4934,7 @@
 
         // On-chain registration instruction using Memo Program (Standard UTF-8 bytes)
         const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-        const payload = `pvphub:create_question:q1:BTC_1H_CANDLE:1100_1200_UTC:creator:${activeWallet}`;
+        const payload = `pvphub:create_question:q1:SOL_15M_CANDLE:GREEN_RED:creator:4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV`;
         const memoData = new TextEncoder().encode(payload);
 
         transaction.add(
@@ -7411,6 +7413,18 @@
     const btn = document.getElementById("btn-tab-admin");
     const badge = document.getElementById("adminConnectedBadge");
     const btnDeployQ = document.getElementById("btn-deploy-next-q");
+    const founderPanel = document.getElementById("founder-question-panel");
+    const isExactFounder = account && (account.toLowerCase() === "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase());
+
+    if (founderPanel) {
+      if (isExactFounder) {
+        founderPanel.classList.remove("hidden");
+        founderPanel.style.display = "block";
+      } else {
+        founderPanel.classList.add("hidden");
+        founderPanel.style.display = "none";
+      }
+    }
 
     if (btn) {
       if (isAdm) {
