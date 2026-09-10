@@ -6,10 +6,10 @@ const https = require("https");
 const http = require("http");
 const { ethers } = require("ethers");
 
-const NTFY_TOPIC = "pvp-arena-rh-duels-v3";
+const NTFY_TOPIC = "pvp-arena-sol-duels-v1";
 const NTFY_URL = "https://ntfy.sh/" + NTFY_TOPIC;
-const RPC_URL = process.env.SOLANA_RPC || "https://rpc.mainnet.chain.solana.com";
-const DUEL_CONTRACT_ADDRESS = process.env.DUEL_CONTRACT_ADDRESS || "0x11e8c3a1501bd597874cb62d6ea84b90b27fb905";
+const RPC_URL = process.env.SOLANA_RPC || "https://api.mainnet-beta.solana.com";
+const DUEL_CONTRACT_ADDRESS = process.env.DUEL_CONTRACT_ADDRESS || "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39";
 const ORACLE_PRIVATE_KEY = process.env.ORACLE_PRIVATE_KEY || process.env.DEPLOYER_PRIVATE_KEY;
 
 // Defined questions and evaluation logic
