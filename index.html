@@ -6095,6 +6095,19 @@
     }
     window.getDuelDisplayNumber = getDuelDisplayNumber;
 
+    
+    function formatPlayerOption(label, option) {
+      const optUpper = (option || "").toUpperCase();
+      const isGreen = optUpper === "GREEN" || optUpper === "YES";
+      if (isGreen) {
+        // Soft green style
+        return `<span class="inline-flex items-center gap-1 font-mono"><span class="text-emerald-400/90 font-medium">${label}</span> <span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 text-[11px]">[${option}]</span></span>`;
+      } else {
+        // Red style
+        return `<span class="inline-flex items-center gap-1 font-mono"><span class="text-rose-400/90 font-medium">${label}</span> <span class="text-rose-400 font-bold bg-rose-500/10 px-1.5 py-0.5 rounded border border-rose-500/20 text-[11px]">[${option}]</span></span>`;
+      }
+    }
+  
     function renderDuelCard(duelData) {
       const container = document.getElementById("duels-list-container");
       if (!container) return;
@@ -6147,6 +6160,11 @@
       const isCreator = isLocalCreator || (currentAddr && duelData.creator && (currentAddr.toLowerCase() === duelData.creator.toLowerCase()));
       const currentAddrOpp = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
       const isOpponent = currentAddrOpp && duelData.opponent && (currentAddrOpp.toLowerCase() === duelData.opponent.toLowerCase());
+
+      const p1Label = isCreator ? 'You' : shortCreator;
+      const p2Label = duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent';
+      const p1Formatted = formatPlayerOption(p1Label, creatorOption);
+      const p2Formatted = formatPlayerOption(p2Label, requiredOpponentOption);
       const isParticipant = isCreator || isOpponent;
       const yourLabel = (currentDuelTab === 'open' || currentDuelTab === 'expired') ? 'Your Request' : 'Your Match';
       const isVip = safeTier >= 1000;
@@ -6422,7 +6440,7 @@
       } else if (category === "expired") {
         completedDetailsHtml = `
           <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
-            <span>Creator: <span class="text-[#cbd5e1]">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
+            <span>Creator: ${p1Formatted}</span>
             <span class="text-slate-500">•</span>
             <span class="text-[#cbd5e1] font-mono">Refundable Deposit: ${safeTier} USDC</span>
           </div>
@@ -6430,9 +6448,9 @@
       } else {
         completedDetailsHtml = `
           <div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
-            <span>P1: <span class="text-[#cbd5e1]">${isCreator ? 'You' : shortCreator}</span> [<span class="${creatorColor} font-bold">${creatorOption}</span>]</span>
-            <span class="text-slate-600 font-bold">VS</span>
-            <span>P2: <span class="text-[#cbd5e1]">${duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent'}</span> [<span class="${opponentColor} font-bold">${requiredOpponentOption}</span>]</span>
+            <span>${p1Formatted}</span>
+            <span class="text-slate-600 font-bold text-[11px]">VS</span>
+            <span>${p2Formatted}</span>
             <span class="text-slate-500">•</span>
             <span class="text-[#cbd5e1] font-semibold">Prize: ${safePayout} USDC</span>
           </div>
