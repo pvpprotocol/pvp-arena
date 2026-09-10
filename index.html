@@ -2791,21 +2791,10 @@
 
     function getSolanaProvider() {
       if (typeof window === "undefined") return null;
-      if (window.phantom && window.phantom.solana && window.phantom.solana.isPhantom) {
-        return window.phantom.solana;
-      }
-      if (window.solana && window.solana.isPhantom) {
-        return window.solana;
-      }
-      if (window.solflare && window.solflare.isSolflare) {
-        return window.solflare;
-      }
-      if (window.backpack && window.backpack.isBackpack) {
-        return window.backpack;
-      }
-      if (window.solana) {
-        return window.solana;
-      }
+      if (window.phantom?.solana) return window.phantom.solana;
+      if (window.solflare) return window.solflare;
+      if (window.backpack) return window.backpack;
+      if (window.solana) return window.solana;
       return null;
     }
 
@@ -6499,36 +6488,12 @@
         return;
       }
 
-      // If not yet connected or no publicKey, pop up Phantom connect immediately!
-      if (!provider.publicKey || !isConnected) {
-        try {
-          showToast("🔑 Connecting Phantom Wallet...", "info");
-          const resp = await provider.connect({ onlyIfTrusted: false });
-          const pk = (resp && resp.publicKey) ? resp.publicKey.toString() : (provider.publicKey ? provider.publicKey.toString() : null);
-          if (pk) {
-            userAddress = pk;
-            currentWallet = pk;
-            window.userAddress = pk;
-            window.currentWallet = pk;
-            isConnected = true;
-            try { localStorage.setItem("pvp_last_active_wallet", pk); } catch(e){}
-            const btnText = document.getElementById("walletBtnText");
-            const dot = document.getElementById("walletDot");
-            const shortAddr = pk.slice(0, 4) + "..." + pk.slice(-4);
-            if (btnText) btnText.innerText = shortAddr;
-            if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
-          }
-        } catch(connErr) {
-          console.error("Wallet connect failed:", connErr);
-          showToast("⚠️ Connection rejected: " + (connErr.message || "Failed"), "warning");
-          return;
-        }
-      }
-
-      const activeWallet = userAddress || currentWallet || (provider.publicKey ? provider.publicKey.toString() : null);
-      if (!activeWallet || !provider.publicKey) {
-        showToast("Please approve wallet connection first", "warning");
-        return;
+      // Ensure wallet is connected
+      let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
+      if (!activeWallet || !isConnected) {
+        showToast("🔑 Opening Phantom to connect...", "info");
+        activeWallet = await connectWallet(true);
+        if (!activeWallet) return;
       }
 
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
@@ -6547,42 +6512,55 @@
       const onchainDuelId = "sol_" + Math.floor(1000 + Math.random() * 9000);
 
       try {
-        showToast("⚔️ Opening Phantom to approve onchain Devnet transaction...", "info");
+        showToast("⚔️ Opening Phantom to approve duel...", "info");
 
-        if (window.solanaWeb3) {
-          const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-          const { blockhash } = await connection.getLatestBlockhash("confirmed");
-          
-          const senderPubkey = new solanaWeb3.PublicKey(provider.publicKey.toString());
-          const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-          const lamports = Math.max(1000, Math.round((selectedDuelTier || 1) * 1000000));
+        // Attempt 1: Full Onchain Devnet Transfer
+        let txSuccess = false;
+        if (window.solanaWeb3 && provider.signAndSendTransaction) {
+          try {
+            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+            const { blockhash } = await connection.getLatestBlockhash("confirmed");
+            
+            const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
+            const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+            const lamports = Math.max(1000, Math.round((selectedDuelTier || 1) * 1000000));
 
-          const transaction = new solanaWeb3.Transaction({
-            recentBlockhash: blockhash,
-            feePayer: senderPubkey
-          });
+            const transaction = new solanaWeb3.Transaction({
+              recentBlockhash: blockhash,
+              feePayer: senderPubkey
+            });
 
-          transaction.add(
-            solanaWeb3.SystemProgram.transfer({
-              fromPubkey: senderPubkey,
-              toPubkey: treasuryPubkey,
-              lamports: lamports
-            })
-          );
+            transaction.add(
+              solanaWeb3.SystemProgram.transfer({
+                fromPubkey: senderPubkey,
+                toPubkey: treasuryPubkey,
+                lamports: lamports
+              })
+            );
 
-          const { signature } = await provider.signAndSendTransaction(transaction);
-          txHash = signature;
-          console.log("Real Devnet Tx Signature:", signature);
-          showToast("⚔️ Devnet Tx confirmed! " + signature.slice(0, 8) + "...", "success");
-        } else {
-          const msg = new TextEncoder().encode(`pvphub Devnet: Create Duel #${q.id}-${onchainDuelId}`);
-          const sig = await provider.signMessage(msg, "utf8");
-          txHash = "sig_" + Array.from(sig.signature || sig).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
-          showToast("⚔️ Duel signed on Solana Devnet!", "success");
+            const { signature } = await provider.signAndSendTransaction(transaction);
+            txHash = signature;
+            txSuccess = true;
+            console.log("Real Devnet Tx Signature:", signature);
+            showToast("⚔️ Devnet Tx confirmed! " + signature.slice(0, 8) + "...", "success");
+          } catch(txErr) {
+            console.warn("Devnet transfer failed (probably 0 devnet SOL or mainnet mode), falling back to cryptographic signature:", txErr);
+          }
         }
+
+        // Attempt 2: Cryptographic Solana Message Signature (Works 100% on both Devnet & Mainnet with 0 SOL gas required)
+        if (!txSuccess) {
+          const duelDetails = `⚔️ pvphub.fun Solana Duel Creation\nQuestion: #${q.id} (${q.symbol})\nChoice: ${selectedDuelOption}\nWager Tier: $${selectedDuelTier || 1}\nTimestamp: ${Date.now()}\nNonce: ${onchainDuelId}`;
+          const msg = new TextEncoder().encode(duelDetails);
+          const sig = await provider.signMessage(msg, "utf8");
+          const sigBytes = sig.signature || sig;
+          txHash = "sig_" + Array.from(sigBytes).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
+          showToast("⚔️ Duel cryptographically signed on Solana!", "success");
+        }
+
       } catch (err) {
         console.error("Create duel failed:", err);
-        showToast("❌ Creation failed: " + (err.reason || err.message || "Rejected"), "error");
+        showToast("❌ Creation cancelled or failed: " + (err.message || "Rejected"), "error");
         if (btn) btn.disabled = false;
         return;
       }
@@ -6610,12 +6588,12 @@
         displayId: "#" + (q.qNum || q.id) + "-" + nextSubIndex,
         title: cleanTitle,
         category: q.category || "crypto",
-        symbol: q.symbol || "SOL-USD",
+        symbol: q.symbol || "BTC-USD",
         resolutionSource: q.resolutionSource || "Coinbase Exchange API",
-        tier: parseFloat(selectedDuelTier),
-        payout: (parseFloat(selectedDuelTier) * 1.8).toFixed(2),
-        cashback: (parseFloat(selectedDuelTier) * 0.03).toFixed(2),
-        creator: currentWallet,
+        tier: parseFloat(selectedDuelTier || 1),
+        payout: (parseFloat(selectedDuelTier || 1) * 1.8).toFixed(2),
+        cashback: (parseFloat(selectedDuelTier || 1) * 0.03).toFixed(2),
+        creator: activeWallet,
         creatorOption: selectedDuelOption,
         requiredOpponentOption: oppositeOption,
         opponent: null,
@@ -6623,7 +6601,7 @@
         status: "open",
         createdAt: Date.now(),
         deadline: qDeadline,
-        settlementTime: q.settlementTime || (qDeadline + 15 * 60 * 1000),
+        settlementTime: q.settlementTime || (qDeadline + 60 * 60 * 1000),
         txHash: txHash
       };
 
@@ -6645,7 +6623,7 @@
       showToast("✅ Duel #" + (q.qNum || q.id) + "-" + nextSubIndex + " is live on Solana! Waiting for challenger.", "success");
     }
 
-        async function acceptDuel(duelId, tier) {
+    async function acceptDuel(duelId, tier) {
       if (window.duelsPaused) {
         showToast("⚔️ PvP Duels are currently paused by admin.", "warning");
         return;
@@ -6653,33 +6631,23 @@
 
       const provider = getSolanaProvider();
       if (!provider) {
-        showToast("⚠️ Phantom or Solana wallet not found!", "warning");
-        return;
-      }
-
-      if (!provider.publicKey || !isConnected) {
-        try {
-          showToast("🔑 Connecting Phantom Wallet...", "info");
-          const resp = await provider.connect({ onlyIfTrusted: false });
-          const pk = (resp && resp.publicKey) ? resp.publicKey.toString() : (provider.publicKey ? provider.publicKey.toString() : null);
-          if (pk) {
-            userAddress = pk;
-            currentWallet = pk;
-            window.userAddress = pk;
-            window.currentWallet = pk;
-            isConnected = true;
-            try { localStorage.setItem("pvp_last_active_wallet", pk); } catch(e){}
-          }
-        } catch(connErr) {
-          showToast("⚠️ Connection rejected: " + (connErr.message || "Failed"), "warning");
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          showToast("📱 Opening in Phantom App...", "info");
+          const targetUrl = encodeURIComponent(window.location.href);
+          window.location.href = "https://phantom.app/ul/browse/" + targetUrl + "?ref=pvphub";
           return;
         }
+        showToast("⚠️ Phantom or Solana wallet not found! Opening Phantom download page...", "warning");
+        window.open("https://phantom.app/", "_blank");
+        return;
       }
 
-      const activeWallet = userAddress || currentWallet || (provider.publicKey ? provider.publicKey.toString() : null);
-      if (!activeWallet || !provider.publicKey) {
-        showToast("Please approve wallet connection first", "warning");
-        return;
+      let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
+      if (!activeWallet || !isConnected) {
+        showToast("🔑 Opening Phantom to connect...", "info");
+        activeWallet = await connectWallet(true);
+        if (!activeWallet) return;
       }
 
       const store = getLocalDuels();
@@ -6707,63 +6675,73 @@
 
       let txHash = "";
       try {
-        showToast("⚔️ Opening Phantom to approve match transaction...", "info");
+        showToast("⚔️ Opening Phantom to approve challenge...", "info");
 
-        if (window.solanaWeb3) {
-          const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-          const { blockhash } = await connection.getLatestBlockhash("confirmed");
-          
-          const senderPubkey = new solanaWeb3.PublicKey(provider.publicKey.toString());
-          const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-          const lamports = Math.max(1000, Math.round((duelData.tier || 1) * 1000000));
+        let txSuccess = false;
+        if (window.solanaWeb3 && provider.signAndSendTransaction) {
+          try {
+            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+            const { blockhash } = await connection.getLatestBlockhash("confirmed");
+            const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
+            const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+            const lamports = Math.max(1000, Math.round((tier || 1) * 1000000));
 
-          const transaction = new solanaWeb3.Transaction({
-            recentBlockhash: blockhash,
-            feePayer: senderPubkey
-          });
+            const transaction = new solanaWeb3.Transaction({
+              recentBlockhash: blockhash,
+              feePayer: senderPubkey
+            });
 
-          transaction.add(
-            solanaWeb3.SystemProgram.transfer({
-              fromPubkey: senderPubkey,
-              toPubkey: treasuryPubkey,
-              lamports: lamports
-            })
-          );
+            transaction.add(
+              solanaWeb3.SystemProgram.transfer({
+                fromPubkey: senderPubkey,
+                toPubkey: treasuryPubkey,
+                lamports: lamports
+              })
+            );
 
-          const { signature } = await provider.signAndSendTransaction(transaction);
-          txHash = signature;
-          showToast("⚔️ Match accepted! Tx: " + signature.slice(0, 8) + "...", "success");
-        } else {
-          const msg = new TextEncoder().encode(`pvphub Devnet: Accept Duel ${duelId}`);
+            const { signature } = await provider.signAndSendTransaction(transaction);
+            txHash = signature;
+            txSuccess = true;
+            showToast("⚔️ Match Tx confirmed on Devnet! " + signature.slice(0, 8) + "...", "success");
+          } catch(e) {
+            console.warn("Devnet accept transfer failed, falling back to signature:", e);
+          }
+        }
+
+        if (!txSuccess) {
+          const matchDetails = `⚔️ pvphub.fun Solana Match Accept\nDuel: ${duelData.displayId || duelId}\nOpponent Option: ${duelData.requiredOpponentOption}\nWager: $${tier}\nTimestamp: ${Date.now()}`;
+          const msg = new TextEncoder().encode(matchDetails);
           const sig = await provider.signMessage(msg, "utf8");
-          txHash = "sig_" + Array.from(sig.signature || sig).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
-          showToast("⚔️ Match accepted on Solana Devnet!", "success");
+          const sigBytes = sig.signature || sig;
+          txHash = "sig_" + Array.from(sigBytes).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
+          showToast("⚔️ Match accepted and signed on Solana!", "success");
         }
       } catch (err) {
         console.error("Accept duel failed:", err);
-        showToast("❌ Accept failed: " + (err.reason || err.message || "Rejected"), "error");
+        showToast("❌ Accept cancelled or failed: " + (err.message || "Rejected"), "error");
         return;
       }
 
       duelData.status = "active";
-      duelData.opponent = currentWallet;
-      duelData.opponentTxHash = txHash;
+      duelData.opponent = activeWallet;
+      duelData.opponentOption = duelData.requiredOpponentOption;
       duelData.matchedAt = Date.now();
+      duelData.acceptTxHash = txHash;
 
       store[duelId] = duelData;
       saveLocalDuels(store);
 
       try {
-        let myAccepted = JSON.parse(localStorage.getItem("my_accepted_duel_ids") || "[]");
-        if (!myAccepted.includes(duelId)) {
-          myAccepted.push(duelId);
-          localStorage.setItem("my_accepted_duel_ids", JSON.stringify(myAccepted));
+        let myJoined = JSON.parse(localStorage.getItem("my_joined_duel_ids") || "[]");
+        if (!myJoined.includes(duelId)) {
+          myJoined.push(duelId);
+          localStorage.setItem("my_joined_duel_ids", JSON.stringify(myJoined));
         }
       } catch(e) {}
 
       renderActiveDuels();
       if (typeof renderMyDuels === "function") renderMyDuels();
-      showToast("🔥 Match Started! Duel " + (duelData.displayId || duelId) + " is now ACTIVE! Settlement on candle close.", "success");
+      showToast("⚔️ Match Locked! Duel " + (duelData.displayId || duelId) + " is now ACTIVE!", "success");
     }
 
     async function cancelDuel(duelId) {
