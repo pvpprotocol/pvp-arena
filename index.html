@@ -4708,25 +4708,8 @@
       return getQuestionEntryDeadline(15);
     }
 
-    const DUEL_QUESTIONS = [
-      {
-        id: 1,
-        qNum: 1,
-        category: "crypto",
-        symbol: "BTC-USD",
-        title: "Will the 1-Hour BTC Candle Close Green or Red? (10:00 - 11:00 UTC)",
-        desc: "Oracle: Coinbase Exchange BTC-USD 1-Hour candle (10:00:00 to 11:00:00 UTC). Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
-        resolutionSource: "Coinbase Exchange API (BTC-USD 1h)",
-        deadlineDesc: "Entry Closes at 10:00 UTC",
-        candleStartTime: 1789034400000,
-        deadline: 1789034400000,
-        settlementTime: 1789038000000,
-        opt1: "GREEN",
-        opt2: "RED",
-        isEnded: false,
-        getDeadline: function() { return this.deadline; }
-      }
-    ];
+    // Questions are 100% onchain - no hardcoded/fake questions allowed
+    const DUEL_QUESTIONS = [];
     let selectedDuelQuestionId = null;
     let selectedDuelTier = 1;
     let selectedDuelOption = "GREEN";
@@ -5010,15 +4993,10 @@
     window.createNextCandleQuestionOnchain = createNextCandleQuestionOnchain;
   
     
+    // Clear any legacy unconfirmed local items
     try {
-      const savedQ2 = localStorage.getItem("pvp_onchain_q2");
-      if (savedQ2) {
-        const parsedQ2 = JSON.parse(savedQ2);
-        if (parsedQ2 && !DUEL_QUESTIONS.some(q => q.id === 2)) {
-          parsedQ2.getDeadline = function() { return this.deadline; };
-          DUEL_QUESTIONS.unshift(parsedQ2);
-        }
-      }
+      localStorage.removeItem("pvp_onchain_q1");
+      localStorage.removeItem("pvp_onchain_q2");
     } catch(e) {}
   
     function renderDuelQuestions() {
@@ -5044,6 +5022,18 @@
       const grid = document.getElementById("duel-questions-grid");
       if (!grid) return;
       grid.innerHTML = "";
+      
+      if (poolQuestions.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full p-8 rounded-2xl border border-[#334155] bg-[#131b27]/80 text-center space-y-3">
+            <div class="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mx-auto text-blue-400 text-xl">⛓️</div>
+            <h4 class="text-sm font-bold font-mono text-slate-200 uppercase tracking-wider">No On-Chain Questions Deployed Yet</h4>
+            <p class="text-xs text-slate-400 font-mono max-w-md mx-auto">Questions are deployed 100% on-chain on Solana Devnet. Founder must submit and confirm the deployment transaction first.</p>
+          </div>
+        `;
+        return;
+      }
+  
 
       let poolQuestions = (activeQuestionTab === 'live' ? liveQuestions : endedQuestions)
         .filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
