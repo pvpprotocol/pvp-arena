@@ -576,7 +576,7 @@
     window.GRAND_JACKPOT_PROGRAM_ID = "BXjFmivvTKHRm7J6Fnv7HmbsghAodCH2oaiRGJtDhohA";
     window.SOLANA_USDC_MINT = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"; // Devnet USDC (Mainnet: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
 
-  window.duelsPaused = true; // Admin lock: duels paused until explicit command
+  window.duelsPaused = false; // Admin lock: duels paused until explicit command
 
     const ALL = 'ALL';
     const CRYPTO = 'CRYPTO';
@@ -1006,8 +1006,8 @@
 
         <!-- SUMMARY & CREATE BUTTON -->
         <div class="mt-6 flex justify-center">
-          <button id="create-duel-btn" onclick="createDuel()" disabled class="w-full sm:w-auto px-10 py-4 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 font-extrabold font-mono text-sm flex items-center justify-center gap-2 cursor-not-allowed">
-            <span>🔒</span> DUELS PAUSED (WAITING FOR ADMIN)
+          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl bg-gradient-to-r from-[#22c55e] to-[#16a34a] hover:from-[#16a34a] hover:to-[#15803d] text-white font-extrabold font-mono text-sm flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 transition-all cursor-pointer active:scale-95">
+            <span>⚔️</span> CREATE DUEL
           </button>
         </div>
       </div>
