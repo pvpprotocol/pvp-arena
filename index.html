@@ -2745,84 +2745,27 @@
     var ESCROW_CONTRACT = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39";
 
         async function ensureSolanaNetwork() {
-      const provider = getInjectedProvider();
-      if (!provider) return true;
-      try {
-        const fastChain = (provider.chainId || window.ethereum?.chainId) || ((provider.networkVersion || window.ethereum?.networkVersion) ? "0x" + parseInt((provider.networkVersion || window.ethereum?.networkVersion)).toString(16) : null);
-        if (fastChain && (parseInt(fastChain, 16) === 4663 || fastChain.toLowerCase() === "0x1237" || fastChain.toLowerCase() === "0x2710")) {
-          return true;
-        }
-        const currentChain = await provider.request({ method: "eth_chainId" });
-        const chainNum = parseInt(currentChain, 16);
-        if (chainNum === 4663 || currentChain.toLowerCase() === "0x1237" || currentChain.toLowerCase() === "0x2710") {
-          return true;
-        }
-
-        try {
-          await provider.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: SOLANA_CHAIN_ID }],
-          });
-          return true;
-        } catch (switchError) {
-          if (switchError.code === 4902 || switchError.code === -32603 || (switchError.message && switchError.message.toLowerCase().includes("unrecognized"))) {
-            await provider.request({
-              method: "wallet_addEthereumChain",
-              params: [{
-                chainId: SOLANA_CHAIN_ID,
-                chainName: "Solana",
-                nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-                rpcUrls: ["https://rpc.solana.com"],
-                blockExplorerUrls: ["https://explorer.solana.com"]
-              }]
-            });
-            return true;
-          } else {
-            throw switchError;
-          }
-        }
-      } catch (err) {
-        console.error("Failed to switch to Solana:", err);
-        showToast("⚠️ Please switch wallet network to Solana (Mainnet / Devnet) to proceed.", "warning");
-        throw new Error("Solana required. Transaction aborted on wrong network.");
-      }
-    }
-
-// Universal EVM Wallet Connector (Supports Rabby, MetaMask, Coinbase, Trust, OKX, Rainbow, Phantom EVM, Brave, etc.)
-    let eip6963Providers = [];
-    window.addEventListener("eip6963:announceProvider", (event) => {
-      if (event && event.detail && !eip6963Providers.some(p => p.info.uuid === event.detail.info.uuid)) {
-        eip6963Providers.push(event.detail);
-      }
-    });
-    try { window.dispatchEvent(new Event("eip6963:requestProvider")); } catch(e){}
-
-    function getInjectedProvider() {
-      // 1. Check EIP-6963 discovered providers
-      if (eip6963Providers.length > 0) {
-        return eip6963Providers[0].provider;
-      }
-      // 2. Check window.ethereum
-      if (window.ethereum) {
-        if (window.ethereum.providers && Array.isArray(window.ethereum.providers) && window.ethereum.providers.length > 0) {
-          // Return the selected or first available EVM provider without hardcoded bias
-          return window.ethereum.selectedProvider || window.ethereum.providers[0];
-        }
-        return window.ethereum;
-      }
-      // 3. Check other common injected EVM wallet objects
-      if (window.rabby) return window.rabby;
-      if (window.okxwallet) return window.okxwallet;
-      if (window.trustwallet) return window.trustwallet;
-      if (window.coinbaseWalletExtension) return window.coinbaseWalletExtension;
-      return null;
+      // Pure Solana Architecture - Network is managed by Solana RPC endpoint
+      return true;
     }
 
     function getSolanaProvider() {
-      if (window.phantom && window.phantom.solana && window.phantom.solana.isPhantom) return window.phantom.solana;
-      if (window.solflare && window.solflare.isSolflare) return window.solflare;
-      if (window.backpack && window.backpack.isBackpack) return window.backpack;
-      if (window.solana) return window.solana;
+      if (typeof window === "undefined") return null;
+      if (window.phantom && window.phantom.solana && window.phantom.solana.isPhantom) {
+        return window.phantom.solana;
+      }
+      if (window.solana && window.solana.isPhantom) {
+        return window.solana;
+      }
+      if (window.solflare && window.solflare.isSolflare) {
+        return window.solflare;
+      }
+      if (window.backpack && window.backpack.isBackpack) {
+        return window.backpack;
+      }
+      if (window.solana) {
+        return window.solana;
+      }
       return null;
     }
 
@@ -2830,7 +2773,12 @@
       const btnText = document.getElementById("walletBtnText");
       const dot = document.getElementById("walletDot");
 
+      // If already connected, clicking toggles disconnect
       if (isConnected) {
+        const provider = getSolanaProvider();
+        if (provider && typeof provider.disconnect === "function") {
+          try { await provider.disconnect(); } catch(e){}
+        }
         isConnected = false;
         userAddress = null;
         try { localStorage.removeItem("pvp_last_active_wallet"); } catch(e){}
@@ -2845,14 +2793,21 @@
 
       const provider = getSolanaProvider();
       if (!provider) {
-        showToast("⚠️ No Solana wallet detected! Please install Phantom, Solflare, or Backpack.", "warning");
+        showToast("⚠️ Phantom or Solana wallet not found! Opening Phantom download page...", "warning");
+        window.open("https://phantom.app/", "_blank");
         return;
       }
 
       try {
         if (btnText) btnText.innerText = "Connecting...";
-        const resp = await provider.connect();
-        const pubkey = (resp && resp.publicKey) ? resp.publicKey.toString() : provider.publicKey.toString();
+        const resp = await provider.connect({ onlyIfTrusted: false });
+        let pubkey = null;
+        if (resp && resp.publicKey) {
+          pubkey = resp.publicKey.toString();
+        } else if (provider.publicKey) {
+          pubkey = provider.publicKey.toString();
+        }
+
         if (pubkey) {
           userAddress = pubkey;
           isConnected = true;
@@ -2862,126 +2817,96 @@
           if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
           showToast("Connected: " + shortAddr + " (Solana)", "success");
 
+          if (typeof checkAdminAccess === "function") checkAdminAccess(userAddress);
+          if (typeof loadStoredQuestions === "function") loadStoredQuestions();
+          if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
+          if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats();
+          if (typeof renderAllDuels === "function") renderAllDuels();
+          if (typeof update2048TicketsUI === "function") update2048TicketsUI();
+          if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
+          if (typeof updateLeaderboardUI === "function") updateLeaderboardUI();
+          if (typeof fetchSolanaUsdcBalance === "function") fetchSolanaUsdcBalance(userAddress);
+          return;
+        } else {
+          throw new Error("No public key returned by wallet.");
+        }
+      } catch(err) {
+        console.error("Solana wallet connect error:", err);
+        isConnected = false;
+        userAddress = null;
+        if (btnText) btnText.innerText = "Connect Wallet";
+        if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50";
+        if (err && (err.code === 4001 || (err.message && err.message.includes("rejected")))) {
+          showToast("Connection rejected by user in Phantom.", "info");
+        } else {
+          showToast("Failed to connect: " + (err.message || "Unknown error"), "warning");
+        }
+      }
+    }
+
+    // Auto-reconnect if previously connected
+    async function checkAutoConnect() {
+      const provider = getSolanaProvider();
+      if (!provider) return;
+      const saved = localStorage.getItem("pvp_last_active_wallet");
+      if (!saved) return;
+      try {
+        const resp = await provider.connect({ onlyIfTrusted: true });
+        const pubkey = (resp && resp.publicKey) ? resp.publicKey.toString() : (provider.publicKey ? provider.publicKey.toString() : null);
+        if (pubkey) {
+          userAddress = pubkey;
+          isConnected = true;
+          const btnText = document.getElementById("walletBtnText");
+          const dot = document.getElementById("walletDot");
+          const shortAddr = userAddress.slice(0, 4) + "..." + userAddress.slice(-4);
+          if (btnText) btnText.innerText = shortAddr;
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
+          if (typeof checkAdminAccess === "function") checkAdminAccess(userAddress);
           if (typeof renderAllDuels === "function") renderAllDuels();
           if (typeof update2048TicketsUI === "function") update2048TicketsUI();
           if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
           if (typeof updateLeaderboardUI === "function") updateLeaderboardUI();
           if (typeof fetchSolanaUsdcBalance === "function") fetchSolanaUsdcBalance(userAddress);
         }
-      } catch(err) {
-        console.error("Solana wallet connect error:", err);
-        if (btnText) btnText.innerText = "Connect Wallet";
-        showToast("Connection rejected or failed: " + (err.message || err), "error");
-      }
-
-      try {
-        if (btnText) btnText.innerText = "Connecting...";
-        const accounts = await provider.request({ method: "eth_requestAccounts" });
-        if (accounts && accounts.length > 0) {
-          userAddress = accounts[0];
-    checkAdminAccess(userAddress);
-    loadStoredQuestions();
-    renderAdminQuestionsTable();
-    refreshAdminDuelsStats();
-          isConnected = true;
-          try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
-          const shortAddr = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-          if (btnText) btnText.innerText = shortAddr;
-          if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-400 animate-pulse shadow-sm shadow-blue-400/50";
-          showToast("Connected: " + shortAddr, "success");
-
-          if (typeof renderAllDuels === 'function') renderAllDuels();
-          if (typeof syncOnchainDuelsFromContract === 'function') syncOnchainDuelsFromContract();
-          if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
-          if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
-          if (typeof updateLeaderboardUI === 'function') updateLeaderboardUI();
-          if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
-
-          try {
-            await ensureSolanaNetwork();
-          } catch(netErr) {
-            console.warn("Network switch notice:", netErr);
-          }
-        } else {
-          if (btnText) btnText.innerText = "Connect Wallet";
-          showToast("No account selected in EVM wallet.", "warning");
-        }
-      } catch (err) {
-        console.error("Wallet connection error:", err);
-        isConnected = false;
-        userAddress = null;
-        if (btnText) btnText.innerText = "Connect Wallet";
-        if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50";
-        if (err.code === 4001) {
-          showToast("Connection rejected in wallet.", "info");
-        } else {
-          showToast("Failed to connect: " + (err.message ? err.message.slice(0, 45) : "Unknown error"), "warning");
-        }
+      } catch(e) {
+        // Silent on auto-connect failure
       }
     }
 
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", (accs) => {
-        if (!accs || accs.length === 0) {
-          isConnected = false;
-          userAddress = null;
-          const btnText = document.getElementById("walletBtnText");
-          const dot = document.getElementById("walletDot");
-          if (btnText) btnText.innerText = "Connect Wallet";
-          if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50";
-          if (typeof renderAllDuels === 'function') renderAllDuels();
-        } else {
-          userAddress = accs[0];
-        checkAdminAccess(userAddress);
-        loadStoredQuestions();
-        renderAdminQuestionsTable();
-          isConnected = true;
-          try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
-          const btnText = document.getElementById("walletBtnText");
-          const dot = document.getElementById("walletDot");
-          if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-          if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-400 animate-pulse shadow-sm shadow-blue-400/50";
-          if (typeof renderAllDuels === 'function') renderAllDuels();
-          if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
-          if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
-          if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
-          if (typeof updateLeaderboardUI === 'function') updateLeaderboardUI();
-          try { ensureSolanaNetwork(); } catch (e) {}
-        }
-      });
-      window.ethereum.on("chainChanged", (newChainId) => {
-        const num = parseInt(newChainId, 16);
-        if (num !== 4663 && newChainId.toLowerCase() !== "0x1237" && newChainId.toLowerCase() !== "0x2710") {
-          showToast("⚠️ Network changed to non-Solana! Please switch back to Solana (4663).", "warning");
-        }
-      });
-   
-    // Auto-detect connected wallet account on page load
-    async function checkAutoConnect() {
-      if (window.ethereum) {
-        try {
-          const accs = await provider.request({ method: 'eth_accounts' });
-          if (accs && accs.length > 0) {
-            userAddress = accs[0];
-            isConnected = true;
-            try { localStorage.setItem("pvp_last_active_wallet", userAddress.toLowerCase()); } catch(e){}
+    // Listen to Solana wallet provider events
+    window.addEventListener("load", () => {
+      checkAutoConnect();
+      const provider = getSolanaProvider();
+      if (provider) {
+        if (typeof provider.on === "function") {
+          provider.on("connect", (publicKey) => {
+            if (publicKey) {
+              userAddress = publicKey.toString();
+              isConnected = true;
+              try { localStorage.setItem("pvp_last_active_wallet", userAddress); } catch(e){}
+              const btnText = document.getElementById("walletBtnText");
+              const dot = document.getElementById("walletDot");
+              const shortAddr = userAddress.slice(0, 4) + "..." + userAddress.slice(-4);
+              if (btnText) btnText.innerText = shortAddr;
+              if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
+              if (typeof renderAllDuels === "function") renderAllDuels();
+            }
+          });
+          provider.on("disconnect", () => {
+            userAddress = null;
+            isConnected = false;
+            try { localStorage.removeItem("pvp_last_active_wallet"); } catch(e){}
             const btnText = document.getElementById("walletBtnText");
             const dot = document.getElementById("walletDot");
-            if (btnText) btnText.innerText = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-            if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-400 animate-pulse shadow-sm shadow-blue-400/50";
-            if (typeof renderAllDuels === 'function') renderAllDuels();
-            if (typeof update2048TicketsUI === 'function') update2048TicketsUI();
-            if (typeof renderAll2048PoolsAndCards === 'function') renderAll2048PoolsAndCards();
-            if (typeof checkWinnerClaimBanner === 'function') checkWinnerClaimBanner();
-          }
-        } catch(err) {
-          console.warn("Auto-connect check:", err);
+            if (btnText) btnText.innerText = "Connect Wallet";
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50";
+            if (typeof renderAllDuels === "function") renderAllDuels();
+          });
         }
       }
-    }
-    window.addEventListener("DOMContentLoaded", checkAutoConnect);
-    
-    // HASH ROUTER FOR DIRECT TAB ACCESS (e.g. #whitepaper)
+    });
+
+    // Hash Router for tabs
     window.addEventListener("DOMContentLoaded", () => {
       const h = (window.location.hash || "").toLowerCase();
       if (h === "#whitepaper" || h === "#docs") {
@@ -2994,9 +2919,6 @@
         setTimeout(() => switchTab("history"), 100);
       }
     });
-  
-    window.addEventListener("load", checkAutoConnect);
- }
 
     // PVP DUELS ONCHAIN ESCROW LOGIC
     let activeDuelsCount = 0;
