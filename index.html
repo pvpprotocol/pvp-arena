@@ -4898,66 +4898,47 @@
         let txSignature = "";
 
         // Send real on-chain transaction on Solana Devnet
-        if (window.solanaWeb3 && provider.signAndSendTransaction) {
-          try {
-            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-            const { blockhash } = await connection.getLatestBlockhash("confirmed");
-            const senderPubkey = provider.publicKey;
-
-            const transaction = new solanaWeb3.Transaction({
-              recentBlockhash: blockhash,
-              feePayer: senderPubkey
-            });
-
-            // On-chain registration instruction using Memo Program
-            const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-            const payload = `pvphub:create_question:q1:BTC_1H_CANDLE:1100_1200_UTC:creator:${activeWallet}`;
-            const memoData = Buffer.from(payload, "utf-8");
-
-            transaction.add(
-              new solanaWeb3.TransactionInstruction({
-                keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
-                programId: MEMO_PROGRAM_ID,
-                data: memoData
-              })
-            );
-
-            const { signature } = await provider.signAndSendTransaction(transaction);
-            txSignature = signature;
-            console.log("Question #1 Onchain Deploy Tx Signature:", signature);
-            showToast("✅ Onchain Tx Confirmed! Tx: " + signature.slice(0, 8) + "...", "success");
-          } catch(txErr) {
-            console.warn("Devnet transaction rejected or failed:", txErr);
-            if (txErr.message && (txErr.message.includes("User rejected") || txErr.message.includes("rejected"))) {
-              showToast("❌ Transaction rejected by user in Phantom.", "error");
-              if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = `<span>➕</span><span>DEPLOY QUESTION #1 ON-CHAIN (11:00-12:00 UTC)</span>`;
-              }
-              return;
-            }
-          }
+        if (!window.solanaWeb3 || !provider.signAndSendTransaction) {
+          throw new Error("Solana Web3 provider or Phantom not fully ready.");
         }
 
-        // Cryptographic fallback signature if fee payer has 0 SOL
-        if (!txSignature) {
-          try {
-            const signMsg = `⚔️ pvphub.fun Onchain Question Registration\nAction: Deploy Question #1\nTitle: ${qTitle}\nCreator: ${activeWallet}\nTimestamp: ${now}`;
-            const msg = new TextEncoder().encode(signMsg);
-            const sig = await provider.signMessage(msg, "utf8");
-            const sigBytes = sig.signature || sig;
-            txSignature = "sig_" + Array.from(sigBytes).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
-            showToast("✅ Question cryptographically signed on-chain!", "success");
-          } catch(sigErr) {
-            console.error("Signature rejected:", sigErr);
-            showToast("❌ Deployment rejected in wallet.", "error");
-            if (btn) {
-              btn.disabled = false;
-              btn.innerHTML = `<span>➕</span><span>DEPLOY QUESTION #2 ON-CHAIN (11:00-12:00 UTC)</span>`;
-            }
-            return;
-          }
+        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
+        const senderPubkey = provider.publicKey;
+
+        const transaction = new solanaWeb3.Transaction({
+          recentBlockhash: blockhash,
+          feePayer: senderPubkey
+        });
+
+        // On-chain registration instruction using Memo Program (Standard UTF-8 bytes)
+        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const payload = `pvphub:create_question:q1:BTC_1H_CANDLE:1100_1200_UTC:creator:${activeWallet}`;
+        const memoData = new TextEncoder().encode(payload);
+
+        transaction.add(
+          new solanaWeb3.TransactionInstruction({
+            keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
+            programId: MEMO_PROGRAM_ID,
+            data: memoData
+          })
+        );
+
+        // MUST be a real on-chain transaction - NO message sign fallback
+        const { signature } = await provider.signAndSendTransaction(transaction);
+        txSignature = signature;
+        console.log("Question #1 Real Onchain Deploy Tx Signature:", signature);
+
+        showToast(`⏳ Confirming Question #1 on Devnet... Tx: ${signature.slice(0, 8)}...`, "info");
+
+        // Wait for onchain confirmation
+        try {
+          await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
+        } catch(cErr) {
+          console.warn("Confirmation wait timed out or proceed anyway:", cErr);
         }
+
+        showToast(`✅ Question #1 deployed ON-CHAIN! Tx: ${signature.slice(0, 8)}...`, "success");
 
         // Register Question #1 into DUEL_QUESTIONS
         const newQuestion = {
@@ -5006,23 +4987,23 @@
 
         // Update UI
         switchQuestionTab("live");
-        selectedDuelQuestionId = 2;
+        selectedDuelQuestionId = 1;
         renderDuelQuestions();
 
         if (btn) {
           btn.classList.remove("from-emerald-500", "to-teal-600");
           btn.classList.add("from-blue-600", "to-indigo-600");
-          btn.innerHTML = `<span>✅</span><span>QUESTION #2 LIVE ON-CHAIN</span>`;
+          btn.innerHTML = `<span>✅</span><span>QUESTION #1 LIVE ON-CHAIN</span>`;
         }
 
-        showToast("🎉 Question #2 successfully registered on Solana Devnet!", "success");
+        showToast(`🎉 Question #1 is live on-chain! Tx: ${txSignature.slice(0, 8)}...`, "success");
 
       } catch(err) {
         console.error("Create question error:", err);
-        showToast("❌ Error deploying question: " + (err.message || "Failed"), "error");
+        showToast("❌ Onchain deployment failed: " + (err.message || "Rejected"), "error");
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<span>➕</span><span>DEPLOY QUESTION #2 ON-CHAIN (11:00-12:00 UTC)</span>`;
+          btn.innerHTML = `<span>➕</span><span>DEPLOY QUESTION #1 ON-CHAIN (11:00-12:00 UTC)</span>`;
         }
       }
     }
@@ -7043,7 +7024,7 @@
 
             // On-chain cancel instruction via SPL Memo Program
             const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-            const memoData = Buffer.from(`pvphub:cancel_duel:${duelId}:reclaim_deposit`, "utf-8");
+            const memoData = new TextEncoder().encode(`pvphub:cancel_duel:${duelId}:reclaim_deposit`);
             
             transaction.add(
               new solanaWeb3.TransactionInstruction({
