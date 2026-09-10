@@ -2812,6 +2812,13 @@
 
       const provider = getSolanaProvider();
       if (!provider) {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          showToast("📱 Opening in Phantom App...", "info");
+          const targetUrl = encodeURIComponent(window.location.href);
+          window.location.href = "https://phantom.app/ul/browse/" + targetUrl + "?ref=pvphub";
+          return;
+        }
         showToast("⚠️ Phantom or Solana wallet not found! Opening Phantom download page...", "warning");
         window.open("https://phantom.app/", "_blank");
         return;
@@ -2829,6 +2836,9 @@
 
         if (pubkey) {
           userAddress = pubkey;
+          currentWallet = pubkey;
+          window.userAddress = pubkey;
+          window.currentWallet = pubkey;
           isConnected = true;
           try { localStorage.setItem("pvp_last_active_wallet", userAddress); } catch(e){}
           const shortAddr = userAddress.slice(0, 4) + "..." + userAddress.slice(-4);
