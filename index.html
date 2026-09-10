@@ -941,7 +941,7 @@
               <span id="q-badge-ended" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">0</span>
             </button>
             <button id="btn-deploy-next-q" onclick="createNextCandleQuestionOnchain()" class="hidden px-3.5 py-2 rounded-xl text-xs font-mono font-black items-center gap-1.5 transition-all cursor-pointer bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20 border border-emerald-400/40" style="display: none;">
-              <span>➕</span><span>DEPLOY QUESTION #2 ON-CHAIN (11:00-12:00 UTC)</span>
+              <span>➕</span><span>DEPLOY QUESTION #1 ON-CHAIN (11:00-12:00 UTC)</span>
             </button>
           </div>
 
@@ -4885,10 +4885,10 @@
           btn.innerHTML = `<span class="animate-spin">⏳</span> Submitting Onchain Tx...`;
         }
 
-        showToast("⚔️ Opening Phantom: Approve Onchain Question #2 Deployment Transaction...", "info");
+        showToast("⚔️ Opening Phantom: Approve Onchain Question #1 Deployment Transaction...", "info");
 
-        // Next Question: Question #2 (11:00 - 12:00 UTC)
-        const qId = 2;
+        // Onchain Question #1 (11:00 - 12:00 UTC)
+        const qId = 1;
         const now = Date.now();
         // 11:00 UTC = 1789038000000, 12:00 UTC = 1789041600000
         const candleStart = 1789038000000;
@@ -4911,7 +4911,7 @@
 
             // On-chain registration instruction using Memo Program
             const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-            const payload = `pvphub:create_question:q2:BTC_1H_CANDLE:1100_1200_UTC:creator:${activeWallet}`;
+            const payload = `pvphub:create_question:q1:BTC_1H_CANDLE:1100_1200_UTC:creator:${activeWallet}`;
             const memoData = Buffer.from(payload, "utf-8");
 
             transaction.add(
@@ -4924,7 +4924,7 @@
 
             const { signature } = await provider.signAndSendTransaction(transaction);
             txSignature = signature;
-            console.log("Question #2 Onchain Deploy Tx Signature:", signature);
+            console.log("Question #1 Onchain Deploy Tx Signature:", signature);
             showToast("✅ Onchain Tx Confirmed! Tx: " + signature.slice(0, 8) + "...", "success");
           } catch(txErr) {
             console.warn("Devnet transaction rejected or failed:", txErr);
@@ -4932,7 +4932,7 @@
               showToast("❌ Transaction rejected by user in Phantom.", "error");
               if (btn) {
                 btn.disabled = false;
-                btn.innerHTML = `<span>➕</span><span>DEPLOY QUESTION #2 ON-CHAIN (11:00-12:00 UTC)</span>`;
+                btn.innerHTML = `<span>➕</span><span>DEPLOY QUESTION #1 ON-CHAIN (11:00-12:00 UTC)</span>`;
               }
               return;
             }
@@ -4942,7 +4942,7 @@
         // Cryptographic fallback signature if fee payer has 0 SOL
         if (!txSignature) {
           try {
-            const signMsg = `⚔️ pvphub.fun Onchain Question Registration\nAction: Deploy Question #2\nTitle: ${qTitle}\nCreator: ${activeWallet}\nTimestamp: ${now}`;
+            const signMsg = `⚔️ pvphub.fun Onchain Question Registration\nAction: Deploy Question #1\nTitle: ${qTitle}\nCreator: ${activeWallet}\nTimestamp: ${now}`;
             const msg = new TextEncoder().encode(signMsg);
             const sig = await provider.signMessage(msg, "utf8");
             const sigBytes = sig.signature || sig;
@@ -4959,10 +4959,10 @@
           }
         }
 
-        // Register Question #2 into DUEL_QUESTIONS
+        // Register Question #1 into DUEL_QUESTIONS
         const newQuestion = {
-          id: 2,
-          qNum: 2,
+          id: 1,
+          qNum: 1,
           category: "crypto",
           symbol: "BTC-USD",
           title: qTitle,
@@ -4980,7 +4980,8 @@
           getDeadline: function() { return this.deadline; }
         };
 
-        const existingIdx = DUEL_QUESTIONS.findIndex(q => q.id === 2);
+        // Replace any unverified/test question with this genuine onchain Question #1
+        const existingIdx = DUEL_QUESTIONS.findIndex(q => q.id === 1);
         if (existingIdx >= 0) {
           DUEL_QUESTIONS[existingIdx] = newQuestion;
         } else {
@@ -4989,7 +4990,7 @@
 
         // Save in localStorage for persistence across reloads
         try {
-          localStorage.setItem("pvp_onchain_q2", JSON.stringify(newQuestion));
+          localStorage.setItem("pvp_onchain_q1", JSON.stringify(newQuestion));
         } catch(e) {}
 
         // Broadcast to all connected clients & devices
@@ -7300,6 +7301,16 @@
     // --- ONCHAIN QUESTION REGISTRY INTEGRATION (Solana) ---
     async function loadOnchainQuestions() {
       try {
+        try {
+          const savedQ1 = localStorage.getItem("pvp_onchain_q1");
+          if (savedQ1) {
+            const parsed = JSON.parse(savedQ1);
+            parsed.getDeadline = function() { return this.deadline; };
+            const idx = DUEL_QUESTIONS.findIndex(q => q.id === 1);
+            if (idx >= 0) DUEL_QUESTIONS[idx] = parsed;
+            else DUEL_QUESTIONS.unshift(parsed);
+          }
+        } catch(e) {}
         // Ensure default Question #1 is present if empty
         if (!DUEL_QUESTIONS || DUEL_QUESTIONS.length === 0) {
           DUEL_QUESTIONS = [
