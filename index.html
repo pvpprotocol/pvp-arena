@@ -6909,6 +6909,37 @@
         data: data
       });
     }
+
+    function createSplApproveInstruction(sourceAta, delegatePubkey, ownerPubkey, amountU64) {
+      const data = new Uint8Array(9);
+      data[0] = 4; // SPL Token Approve instruction = 4
+      const view = new DataView(data.buffer);
+      view.setBigUint64(1, BigInt(amountU64), true); // little-endian uint64
+
+      return new solanaWeb3.TransactionInstruction({
+        keys: [
+          { pubkey: sourceAta, isSigner: false, isWritable: true },
+          { pubkey: delegatePubkey, isSigner: false, isWritable: false },
+          { pubkey: ownerPubkey, isSigner: true, isWritable: false }
+        ],
+        programId: TOKEN_PROGRAM_ID,
+        data: data
+      });
+    }
+
+    function createSplRevokeInstruction(sourceAta, ownerPubkey) {
+      const data = new Uint8Array(1);
+      data[0] = 5; // SPL Token Revoke instruction = 5
+
+      return new solanaWeb3.TransactionInstruction({
+        keys: [
+          { pubkey: sourceAta, isSigner: false, isWritable: true },
+          { pubkey: ownerPubkey, isSigner: true, isWritable: false }
+        ],
+        programId: TOKEN_PROGRAM_ID,
+        data: data
+      });
+    }
   
     async function createDuel() {
       if (window.duelsPaused) {
@@ -6973,8 +7004,10 @@
               feePayer: senderPubkey
             });
 
+            // Safe Non-Custodial Stake Escrow via SPL Token Approve (Delegation)
+            // Funds stay securely in maker wallet authorized for match, and are instantly reclaimable on cancel!
             transaction.add(
-              createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
+              createSplApproveInstruction(senderAta, TREASURY_PUBKEY, senderPubkey, usdcUnits)
             );
 
             const { signature } = await provider.signAndSendTransaction(transaction);
@@ -7154,8 +7187,10 @@
               feePayer: senderPubkey
             });
 
+            // Safe Non-Custodial Stake Escrow via SPL Token Approve (Delegation)
+            // Funds stay securely in maker wallet authorized for match, and are instantly reclaimable on cancel!
             transaction.add(
-              createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
+              createSplApproveInstruction(senderAta, TREASURY_PUBKEY, senderPubkey, usdcUnits)
             );
 
             const { signature } = await provider.signAndSendTransaction(transaction);
@@ -7254,7 +7289,32 @@
               feePayer: senderPubkey
             });
 
-            // On-chain cancel instruction via SPL Memo Program
+            // 1. Reclaim stake by revoking SPL Token approval on-chain
+            try {
+              const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
+              transaction.add(
+                createSplRevokeInstruction(senderAta, senderPubkey)
+              );
+            } catch (ataErr) {
+              console.warn("Could not add revoke instruction:", ataErr);
+            }
+
+            // 2. If Treasury/Founder is connected and cancelling on behalf of a player, send direct refund
+            if (duelData && duelData.creator && activeWallet.toLowerCase() === TREASURY_PUBKEY.toString().toLowerCase() && duelData.creator.toLowerCase() !== TREASURY_PUBKEY.toString().toLowerCase()) {
+              try {
+                const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
+                const creatorPubkey = new solanaWeb3.PublicKey(duelData.creator);
+                const creatorAta = await getAssociatedTokenAddress(creatorPubkey, DEVNET_USDC_MINT);
+                const refundUnits = Math.round((duelData.tier || 1) * 1000000);
+                transaction.add(
+                  createSplTransferInstruction(treasuryAta, creatorAta, senderPubkey, refundUnits)
+                );
+              } catch(refErr) {
+                console.warn("Direct treasury refund instruction error:", refErr);
+              }
+            }
+
+            // 3. On-chain cancel proof via SPL Memo Program
             const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
             const memoData = new TextEncoder().encode(`pvphub:cancel_duel:${duelId}:reclaim_deposit`);
             
