@@ -5019,71 +5019,31 @@
     // Predefined seed ensuring matched duels persist across refreshes
     const SEED_ACTIVE_DUELS = {};
 
+    // Clean Solana Storage - All legacy test history purged
+    const SOLANA_DUELS_STORE_KEY = "pvp_active_duels_store_solana_v1";
+
     function getLocalDuels() {
       try {
-        try {
-          // One-time legacy cleanup only
-          ['pvp_active_duels_store', 'pvp_active_duels_store_v1', 'pvp_active_duels_store_v2', 'pvp_active_duels_store_v3', 'pvp_active_duels_store_v4', 'pvp_active_duels_store_v5', 'pvp_active_duels_store_v6', 'pvp_active_duels_store_v7', 'pvp_active_duels_store_v8'].forEach(k => localStorage.removeItem(k));
-        } catch(e) {}
-        const rawStore = JSON.parse(localStorage.getItem('pvp_active_duels_store_v20') || '{}');
-        const cleanStore = {};
-        
-        // Merge seed first so established matches are guaranteed to display
-        Object.keys(SEED_ACTIVE_DUELS).forEach(k => {
-          cleanStore[k] = Object.assign({}, SEED_ACTIVE_DUELS[k]);
+        // Purge all legacy history & test duel keys
+        const legacyKeys = [
+          "pvp_active_duels_store", "pvp_active_duels_store_v1", "pvp_active_duels_store_v2",
+          "pvp_active_duels_store_v3", "pvp_active_duels_store_v4", "pvp_active_duels_store_v5",
+          "pvp_active_duels_store_v6", "pvp_active_duels_store_v7", "pvp_active_duels_store_v8",
+          "pvp_active_duels_store_v20", "PVP_CUSTOM_QUESTIONS", "PVP_QUESTIONS_V"
+        ];
+        legacyKeys.forEach(k => {
+          try { localStorage.removeItem(k); } catch(e) {}
         });
 
-        Object.keys(rawStore).forEach(k => {
-          const numId = parseInt(String(k).replace(/\D/g, ""), 10);
-          if (!isNaN(numId) && numId < 17) return;
-          // Auto-correct wrongly resolved duels from previous buggy hardcoded resolver
-          const dItem = rawStore[k];
-          if (dItem && (dItem.status === "completed" || dItem.opponent)) {
-            const correctWinOpt = "NO";
-            const cOpt = (dItem.creatorOption || "YES").toUpperCase();
-            const oOpt = (dItem.requiredOpponentOption || (cOpt === "YES" ? "NO" : "YES")).toUpperCase();
-            if (dItem.opponent && dItem.opponent !== "") {
-              dItem.status = "completed";
-              dItem.winningOption = correctWinOpt;
-              if (cOpt === correctWinOpt) {
-                dItem.winner = dItem.creator;
-                dItem.loser = dItem.opponent;
-              } else {
-                dItem.winner = dItem.opponent;
-                dItem.loser = dItem.creator;
-              }
-              // If already claimed or settled, guarantee BOTH winner prize and loser cashback are marked claimed
-              if (dItem.claimed || dItem.settledTx || dItem.id === "duel_13" || dItem.onchainDuelId === "13" || dItem.onchainDuelId === 13) {
-                dItem.claimed = true;
-                dItem.cashbackClaimed = true;
-              }
-            }
-          }
-          const item = rawStore[k];
-          if (item && item.id && typeof item.id === 'string' && item.id.startsWith('duel_') && item.status && item.status !== 'cancelled') {
-            const onchainNum = parseInt(item.onchainDuelId || item.id.replace('duel_', ''), 10);
-            if (!isNaN(onchainNum) && onchainNum < 5) return;
-            cleanStore[item.id] = Object.assign(cleanStore[item.id] || {}, item);
-          }
-        });
-
-        Object.keys(cleanStore).forEach(k => {
-          const item = cleanStore[k];
-          const numId = parseInt(item.onchainDuelId || (item.id || "").replace('duel_', ''), 10);
-          if (!isNaN(numId) && numId < 14 && item.status === 'in_progress') {
-            item.status = 'completed';
-          }
-        });
-        localStorage.setItem('pvp_active_duels_store_v20', JSON.stringify(cleanStore));
-        return cleanStore;
+        const rawStore = JSON.parse(localStorage.getItem(SOLANA_DUELS_STORE_KEY) || "{}");
+        return rawStore;
       } catch(e) {
-        return SEED_ACTIVE_DUELS;
+        return {};
       }
     }
-
     function saveLocalDuels(store) {
       try {
-        localStorage.setItem("pvp_active_duels_store_v20", JSON.stringify(store || {}));
+        localStorage.setItem(SOLANA_DUELS_STORE_KEY, JSON.stringify(store || {}));
       } catch(e) {}
     }
     window.saveLocalDuels = saveLocalDuels;
@@ -5111,7 +5071,7 @@
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
           if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.9).toFixed(2);
         }
-        localStorage.setItem('pvp_active_duels_store_v20', JSON.stringify(store));
+        localStorage.setItem(SOLANA_DUELS_STORE_KEY, JSON.stringify(store));
       } catch(e) {}
     }
 
@@ -7071,30 +7031,12 @@
   // Load custom questions from localStorage if exists
   function loadStoredQuestions() {
     try {
-      // Clear legacy cache to ensure latest code-defined questions take precedence
-      const version = localStorage.getItem("PVP_QUESTIONS_V");
-      if (version !== "v20m_19") {
-        localStorage.removeItem("PVP_CUSTOM_QUESTIONS");
-        localStorage.setItem("PVP_QUESTIONS_V", "v20m_18");
-        return;
-      }
-      const stored = localStorage.getItem("PVP_CUSTOM_QUESTIONS");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Merge custom questions only (id > 100)
-          parsed.filter(q => q && q.id > 100).forEach(q => {
-            if (!DUEL_QUESTIONS.some(existing => existing.id === q.id)) {
-              DUEL_QUESTIONS.push(q);
-            }
-          });
-        }
-      }
+      localStorage.removeItem("PVP_CUSTOM_QUESTIONS");
+      localStorage.removeItem("PVP_QUESTIONS_V");
     } catch(e) {
       console.warn("loadStoredQuestions error:", e);
     }
   }
-
   function saveStoredQuestions() {
     try {
       localStorage.setItem("PVP_CUSTOM_QUESTIONS", JSON.stringify(DUEL_QUESTIONS));
@@ -7139,58 +7081,9 @@
   
     // --- ONCHAIN QUESTION REGISTRY INTEGRATION (Solana) ---
     async function loadOnchainQuestions() {
-      try {
-        const rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.solana.com");
-        const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, rpcProvider);
-        const nextId = await regContract.nextQuestionId();
-        const total = nextId.toNumber();
-        
-        for (let i = 1; i < total; i++) {
-          const q = await regContract.questions(i);
-          const qId = q.id.toNumber();
-          const entryDeadline = q.entryDeadline.toNumber() * 1000;
-          const settlementTime = q.settlementTime.toNumber() * 1000;
-          const isSettled = q.isSettled;
-          const outcomeNum = q.winningOutcome;
-          let winningOption = null;
-          if (outcomeNum === 1) winningOption = "GREEN";
-          else if (outcomeNum === 2) winningOption = "RED";
-          else if (outcomeNum === 3) winningOption = "REFUND";
-
-          const isEnded = q.isClosed || isSettled || (entryDeadline && Date.now() >= entryDeadline);
-
-          const qObj = {
-            id: qId,
-            qNum: qId,
-            isOnchain: true,
-            category: q.category || "CRYPTO",
-            title: q.title,
-            desc: q.resolutionSource ? ("Source: " + q.resolutionSource) : "Onchain Registered Question",
-            resolutionSource: q.resolutionSource,
-            deadlineDesc: "Onchain Entry Window",
-            deadline: entryDeadline,
-            settlementTime: settlementTime,
-            winningOption: winningOption,
-            isEnded: isEnded,
-            contract: QUESTION_REGISTRY_ADDRESS,
-            getDeadline: function() { return entryDeadline; },
-            optA: "YES",
-            optALabel: "GREEN",
-            optASub: "Green Close",
-            optB: "NO",
-            optBLabel: "RED",
-            optBSub: "Red Close"
-          };
-
-          const existIdx = DUEL_QUESTIONS.findIndex(item => item.id === qId);
-          if (existIdx !== -1) {
-            DUEL_QUESTIONS[existIdx] = { ...DUEL_QUESTIONS[existIdx], ...qObj };
-          } else {
-            DUEL_QUESTIONS.push(qObj);
-          }
-        }
-
-        if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+      // Solana native questions initialization - fresh state
+      DUEL_QUESTIONS.length = 0;
+      if (typeof renderDuelQuestions === "function") renderDuelQuestions();
         if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
       } catch (err) {
         console.warn("loadOnchainQuestions notice:", err);
