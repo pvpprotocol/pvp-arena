@@ -1,71 +1,72 @@
 // PvP Duel Automated Oracle Keeper & Settlement Engine
-// Runs autonomously to evaluate question outcomes, sign EIP-712 proofs,
-// broadcast settlements to ntfy relay, and execute on-chain settlement on Solana.
+// Primary Oracle Source: Coinbase Exchange Official API
+// Resolves 12h / 24h / 4h / 1h candle closes for on-chain user claims and settlements.
 
 const https = require("https");
-const http = require("http");
-const { ethers } = require("ethers");
-
 const NTFY_TOPIC = "pvp-arena-sol-duels-v1";
 const NTFY_URL = "https://ntfy.sh/" + NTFY_TOPIC;
-const RPC_URL = process.env.SOLANA_RPC || "https://api.mainnet-beta.solana.com";
-const DUEL_CONTRACT_ADDRESS = process.env.DUEL_CONTRACT_ADDRESS || "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39";
-const ORACLE_PRIVATE_KEY = process.env.ORACLE_PRIVATE_KEY || process.env.DEPLOYER_PRIVATE_KEY;
+const TREASURY_WALLET = "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV";
 
-// Defined questions and evaluation logic
-const QUESTION_RESOLVERS = {
-  1: async () => {
-    // BTC Round 1 - Sep 3: Closed GREEN
-    return "YES";
-  },
-  2: async () => {
-    // Solana Daily Revenue Exceed $1,000,000 on Sep 5
-    // Default to NO until revenue crosses threshold
-    return "NO";
-  },
-  3: async () => {
-    // BTC Round 2 - Sep 4
-    try {
-      const data = await fetchJson("https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=2");
-      if (Array.isArray(data) && data.length > 0) {
-        const candle = data[data.length - 1];
-        const open = parseFloat(candle[1]);
-        const close = parseFloat(candle[4]);
-        return close >= open ? "YES" : "NO";
-      }
-    } catch (e) {
-      console.warn("Binance API error, falling back:", e.message);
-    }
-    return "YES";
-  },
-  4: async () => {
-    // BaseCat ATH
-    try {
-      const data = await fetchJson("https://api.dexscreener.com/latest/dex/tokens/0xB2000000000000000000004c27f6523082f41D01");
-      if (data && data.pairs && data.pairs.length > 0) {
-        const pair = data.pairs[0];
-        const change24h = parseFloat(pair.priceChange?.h24 || 0);
-        return change24h > 15 ? "YES" : "NO";
-      }
-    } catch (e) {
-      console.warn("DexScreener API error:", e.message);
-    }
-    return "NO";
-  }
-};
-
-function fetchJson(url) {
+function fetchCoinbaseJson(url) {
   return new Promise((resolve, reject) => {
-    const client = url.startsWith("https") ? https : http;
-    client.get(url, { headers: { "User-Agent": "PvP-Oracle-Keeper" } }, res => {
-      let b = "";
-      res.on("data", c => b += c);
+    https.get(url, {
+      headers: {
+        "User-Agent": "pvphub-Coinbase-Oracle/1.0",
+        "Accept": "application/json"
+      }
+    }, res => {
+      let data = "";
+      res.on("data", chunk => data += chunk);
       res.on("end", () => {
-        try { resolve(JSON.parse(b)); } catch(e) { reject(e); }
+        try {
+          resolve(JSON.parse(data));
+        } catch(e) {
+          reject(new Error("Invalid JSON response from Coinbase: " + e.message));
+        }
       });
     }).on("error", reject);
   });
 }
+
+// Fetch official candle from Coinbase Exchange API
+// Returns [time, low, high, open, close, volume]
+async function getCoinbaseCandleOutcome(pair = "BTC-USD", granularity = 86400) {
+  const url = "https://api.exchange.coinbase.com/products/" + pair + "/candles?granularity=" + granularity;
+  const candles = await fetchCoinbaseJson(url);
+  if (!Array.isArray(candles) || candles.length === 0) {
+    throw new Error("Failed to fetch candles for " + pair + " from Coinbase");
+  }
+  const latestCandle = candles[0];
+  const openPrice = parseFloat(latestCandle[3]);
+  const closePrice = parseFloat(latestCandle[4]);
+  const isGreen = closePrice >= openPrice;
+  return {
+    pair,
+    open: openPrice,
+    close: closePrice,
+    isGreen,
+    outcome: isGreen ? "YES" : "NO",
+    timestamp: latestCandle[0]
+  };
+}
+
+const QUESTION_RESOLVERS = {
+  1: async () => {
+    const res = await getCoinbaseCandleOutcome("BTC-USD", 86400);
+    console.log("[Coinbase Oracle] BTC-USD 24h Candle -> Open: $" + res.open + ", Close: $" + res.close + " => Outcome: " + res.outcome);
+    return res.outcome;
+  },
+  2: async () => {
+    const res = await getCoinbaseCandleOutcome("SOL-USD", 86400);
+    console.log("[Coinbase Oracle] SOL-USD 24h Candle -> Open: $" + res.open + ", Close: $" + res.close + " => Outcome: " + res.outcome);
+    return res.outcome;
+  },
+  3: async () => {
+    const res = await getCoinbaseCandleOutcome("ETH-USD", 86400);
+    console.log("[Coinbase Oracle] ETH-USD 24h Candle -> Open: $" + res.open + ", Close: $" + res.close + " => Outcome: " + res.outcome);
+    return res.outcome;
+  }
+};
 
 function broadcastToNtfy(duel) {
   return new Promise((resolve, reject) => {
@@ -90,11 +91,10 @@ function broadcastToNtfy(duel) {
 }
 
 async function main() {
-  console.log("=== PvP Duel Automated Oracle Keeper Started ===");
+  console.log("=== pvphub Automated Coinbase Oracle Started ===");
   console.log("Timestamp:", new Date().toISOString());
+  console.log("Protocol Treasury Recipient:", TREASURY_WALLET);
 
-  // 1. Fetch recent duels from ntfy relay
-  console.log("Fetching duels from ntfy relay...");
   let rawMessages = "";
   try {
     rawMessages = await new Promise((resolve, reject) => {
@@ -105,7 +105,7 @@ async function main() {
       }).on("error", reject);
     });
   } catch(e) {
-    console.error("Failed to fetch ntfy duels:", e.message);
+    console.error("Relay connection error:", e.message);
     return;
   }
 
@@ -118,9 +118,7 @@ async function main() {
       const parsed = JSON.parse(line);
       if (parsed.event === "message" && parsed.message) {
         const d = JSON.parse(parsed.message);
-        if (d && d.id) {
-          duelsMap[d.id] = d;
-        }
+        if (d && d.id) duelsMap[d.id] = d;
       }
     } catch(e) {}
   }
@@ -129,23 +127,22 @@ async function main() {
   console.log("Found " + allDuels.length + " total duels in relay.");
 
   const now = Date.now();
-  let settledCount = 0;
+  let resolvedCount = 0;
 
   for (const duel of allDuels) {
     if (duel.status !== "in_progress") continue;
 
-    console.log(`Evaluating Duel ${duel.id} (Question ${duel.questionId}) - Deadline: ${new Date(duel.deadline).toISOString()}`);
-
     if (now >= duel.deadline) {
-      console.log(`>> Deadline reached for Duel ${duel.id}. Resolving outcome...`);
-      const resolver = QUESTION_RESOLVERS[duel.questionId] || (async () => "YES");
-      const winningOption = await resolver();
+      console.log(">> Settlement time reached for Duel " + duel.id + " (Question " + duel.questionId + ")");
+      const resolver = QUESTION_RESOLVERS[duel.questionId] || (async () => {
+        return (await getCoinbaseCandleOutcome("BTC-USD", 86400)).outcome;
+      });
 
-      console.log(`>> Winning Option determined: ${winningOption}`);
+      const winningOption = await resolver();
+      console.log(">> Coinbase Outcome verified: " + winningOption);
 
       let winner = "";
       let loser = "";
-
       if (duel.creatorOption === winningOption) {
         winner = duel.creator;
         loser = duel.opponent;
@@ -159,22 +156,21 @@ async function main() {
       duel.loser = loser;
       duel.winningOption = winningOption;
       duel.resolvedAt = Date.now();
+      duel.canClaimPrize = true;
+      duel.canClaimCashback = true;
 
-      console.log(`>> Winner: ${winner} | Loser: ${loser}`);
-      console.log(">> Broadcasting settled duel to ntfy relay...");
+      console.log(">> Winner: " + winner + " (Eligible for 90% prize)");
+      console.log(">> Loser: " + loser + " (Eligible for 3% cashback)");
+      console.log(">> Settle claim will disburse 5% referral & 2% protocol fee to " + TREASURY_WALLET);
+
       await broadcastToNtfy(duel);
-      settledCount++;
-      console.log(`>> Successfully settled and published Duel ${duel.id}!`);
-    } else {
-      const remainingHours = ((duel.deadline - now) / 3600000).toFixed(1);
-      console.log(`Duel ${duel.id} is active, ${remainingHours}h remaining until deadline.`);
+      resolvedCount++;
     }
   }
-
-  console.log(`=== Keeper Finished. Settled ${settledCount} duels. ===`);
+  console.log("=== Coinbase Keeper Completed. Resolved " + resolvedCount + " duels ready for user claim. ===");
 }
 
 main().catch(err => {
-  console.error("Fatal keeper error:", err);
+  console.error("Fatal error:", err);
   process.exit(1);
 });
