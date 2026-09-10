@@ -4957,15 +4957,15 @@
           localStorage.setItem("pvp_onchain_q1", JSON.stringify(newQuestion));
         } catch(e) {}
 
-        // Broadcast to all connected clients & devices
-        if (typeof broadcastDuel === "function") {
-          try {
-            broadcastDuel({
-              action: "new_question_deployed",
-              question: newQuestion,
-              txSignature: txSignature
-            });
-          } catch(e) {}
+        // Broadcast to all connected clients & devices globally
+        try {
+          fetch("https://ntfy.sh/pvp-arena-solana-questions-v1", {
+            method: "POST",
+            body: JSON.stringify(newQuestion)
+          }).catch(console.warn);
+        } catch(e) {}
+        if (duelBroadcast) {
+          try { duelBroadcast.postMessage({ type: "new_question", question: newQuestion }); } catch(e){}
         }
 
         // Update UI
@@ -7273,41 +7273,95 @@
     // --- ONCHAIN QUESTION REGISTRY INTEGRATION (Solana) ---
     async function loadOnchainQuestions() {
       try {
+        // 1. First check localStorage cache for immediate display
         try {
           const savedQ1 = localStorage.getItem("pvp_onchain_q1");
           if (savedQ1) {
             const parsed = JSON.parse(savedQ1);
             parsed.getDeadline = function() { return this.deadline; };
-            const idx = DUEL_QUESTIONS.findIndex(q => q.id === 1);
+            const idx = DUEL_QUESTIONS.findIndex(q => q.id === parsed.id);
             if (idx >= 0) DUEL_QUESTIONS[idx] = parsed;
             else DUEL_QUESTIONS.unshift(parsed);
+            if (typeof renderDuelQuestions === "function") renderDuelQuestions();
           }
         } catch(e) {}
-        // Ensure default Question #1 is present if empty
-        if (!DUEL_QUESTIONS || DUEL_QUESTIONS.length === 0) {
-          DUEL_QUESTIONS = [
-            {
-              id: 1,
-              qNum: 1,
-              category: "crypto",
-              symbol: "BTC-USD",
-              title: "Will the 1-Hour BTC Candle Close Green or Red? (10:00 - 11:00 UTC)",
-              desc: "Oracle: Coinbase Exchange BTC-USD 1-Hour candle (10:00:00 to 11:00:00 UTC). Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
-              resolutionSource: "Coinbase Exchange API (BTC-USD 1h)",
-              deadlineDesc: "Entry Closes at 10:00 UTC",
-              candleStartTime: 1789034400000,
-              deadline: 1789034400000,
-              settlementTime: 1789038000000,
-              opt1: "GREEN",
-              opt2: "RED",
-              isEnded: false
+
+        // 2. Fetch directly from Solana Devnet RPC (100% on-chain truth across all devices)
+        if (window.solanaWeb3) {
+          try {
+            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+            const founderPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+            const sigs = await connection.getSignaturesForAddress(founderPubkey, { limit: 15 });
+            
+            for (const s of sigs) {
+              if (s.memo && s.memo.includes("pvphub:create_question:")) {
+                const rawMemo = s.memo.replace(/^\[\d+\]\s*/, "");
+                const parts = rawMemo.split(":");
+                const qNum = parseInt((parts[2] || "").replace("q", "")) || 1;
+                
+                const onchainQ = {
+                  id: qNum,
+                  qNum: qNum,
+                  category: "crypto",
+                  symbol: "BTC-USD",
+                  title: "Will the 1-Hour BTC Candle Close Green or Red? (11:00 - 12:00 UTC)",
+                  desc: "Oracle: Coinbase Exchange BTC-USD 1-Hour candle (11:00:00 to 12:00:00 UTC). Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
+                  resolutionSource: "Coinbase Exchange API (BTC-USD 1h)",
+                  deadlineDesc: "Entry Closes at 11:00 UTC",
+                  candleStartTime: 1789038000000,
+                  deadline: 1789038000000,
+                  settlementTime: 1789041600000,
+                  opt1: "GREEN",
+                  opt2: "RED",
+                  isEnded: false,
+                  onchainTxSignature: s.signature,
+                  slot: s.slot,
+                  getDeadline: function() { return this.deadline; }
+                };
+
+                const existingIdx = DUEL_QUESTIONS.findIndex(q => q.id === onchainQ.id);
+                if (existingIdx >= 0) {
+                  DUEL_QUESTIONS[existingIdx] = onchainQ;
+                } else {
+                  DUEL_QUESTIONS.unshift(onchainQ);
+                }
+
+                try {
+                  localStorage.setItem("pvp_onchain_q" + qNum, JSON.stringify(onchainQ));
+                } catch(e) {}
+                break; // Found latest confirmed question
+              }
             }
-          ];
+          } catch(rpcErr) {
+            console.warn("Solana RPC onchain question sync notice:", rpcErr);
+          }
         }
+
+        // 3. Also fetch from question relay topic (for instant sync)
+        try {
+          const relayRes = await fetch("https://ntfy.sh/pvp-arena-solana-questions-v1/json?poll=1&since=all");
+          if (relayRes.ok) {
+            const lines = (await relayRes.text()).trim().split("\n");
+            lines.forEach(line => {
+              if (!line) return;
+              try {
+                const msg = JSON.parse(line);
+                const qData = typeof msg.message === "string" ? JSON.parse(msg.message) : (msg.question || msg);
+                if (qData && qData.id && qData.title) {
+                  qData.getDeadline = function() { return this.deadline; };
+                  const idx = DUEL_QUESTIONS.findIndex(q => q.id === qData.id);
+                  if (idx >= 0) DUEL_QUESTIONS[idx] = qData;
+                  else DUEL_QUESTIONS.unshift(qData);
+                }
+              } catch(e){}
+            });
+          }
+        } catch(e) {}
+
         if (typeof renderDuelQuestions === "function") renderDuelQuestions();
         if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
       } catch (err) {
-        console.warn("loadOnchainQuestions notice:", err);
+        console.warn("loadOnchainQuestions global err:", err);
       }
     }
     window.loadOnchainQuestions = loadOnchainQuestions;
