@@ -5807,7 +5807,7 @@
     }
     window.executeOnChainSettlement = executeOnChainSettlement;
 
-    function claimDuelPrize(duelId, payout) {
+    async function claimDuelPrize(duelId, payout) {
       await executeOnChainSettlement(duelId, true, payout);
     }
     window.claimDuelPrize = claimDuelPrize;
