@@ -940,7 +940,7 @@
               <span>🔒 ENDED / RESOLVED</span>
               <span id="q-badge-ended" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">0</span>
             </button>
-            <button id="btn-deploy-next-q" onclick="createNextCandleQuestionOnchain()" class="px-3.5 py-2 rounded-xl text-xs font-mono font-black flex items-center gap-1.5 transition-all cursor-pointer bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20 border border-emerald-400/40">
+            <button id="btn-deploy-next-q" onclick="createNextCandleQuestionOnchain()" class="hidden px-3.5 py-2 rounded-xl text-xs font-mono font-black items-center gap-1.5 transition-all cursor-pointer bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20 border border-emerald-400/40" style="display: none;">
               <span>➕</span><span>DEPLOY QUESTION #2 ON-CHAIN (11:00-12:00 UTC)</span>
             </button>
           </div>
@@ -2813,6 +2813,7 @@
         }
         isConnected = false;
         userAddress = null;
+        if (typeof checkAdminAccess === "function") checkAdminAccess(null);
         try { localStorage.removeItem("pvp_last_active_wallet"); } catch(e){}
         if (btnText) btnText.innerText = "Connect Wallet";
         if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50";
@@ -4872,6 +4873,11 @@
         if (!activeWallet) {
           activeWallet = await connectWallet(true);
           if (!activeWallet) return;
+        }
+
+        if (typeof isFounderWallet === "function" && !isFounderWallet(activeWallet)) {
+          showToast("⛔ Access Denied: Only founder wallet can deploy onchain questions", "error");
+          return;
         }
 
         if (btn) {
@@ -7197,15 +7203,25 @@
 
   // ── ADMIN PANEL LOGIC & ACCESS CONTROL ──
   const AUTHORIZED_ADMINS = [
-    "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase(),
-    "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase()
+    "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase(),
+    "GxA1LxnGCkfV1Hon94pnXYmE2Cyi5XEhUmomrvXdbVRa".toLowerCase(),
+    "0xd8c09b380e1d8120aac2188653b68f1209ee883c".toLowerCase(),
+    "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase()
   ];
+  window.AUTHORIZED_ADMINS = AUTHORIZED_ADMINS;
+
+  function isFounderWallet(account) {
+    if (!account) return false;
+    return AUTHORIZED_ADMINS.includes(account.toLowerCase());
+  }
+  window.isFounderWallet = isFounderWallet;
 
   function checkAdminAccess(account) {
-    if (!account) return false;
-    const isAdm = AUTHORIZED_ADMINS.includes(account.toLowerCase());
+    const isAdm = isFounderWallet(account);
     const btn = document.getElementById("btn-tab-admin");
     const badge = document.getElementById("adminConnectedBadge");
+    const btnDeployQ = document.getElementById("btn-deploy-next-q");
+
     if (btn) {
       if (isAdm) {
         btn.classList.remove("hidden");
@@ -7215,7 +7231,16 @@
         btn.style.display = "none";
       }
     }
-    if (badge && isAdm) {
+    if (btnDeployQ) {
+      if (isAdm) {
+        btnDeployQ.classList.remove("hidden");
+        btnDeployQ.style.display = "inline-flex";
+      } else {
+        btnDeployQ.classList.add("hidden");
+        btnDeployQ.style.display = "none";
+      }
+    }
+    if (badge && isAdm && account) {
       badge.innerText = account.slice(0, 6) + "..." + account.slice(-4);
     }
     return isAdm;
