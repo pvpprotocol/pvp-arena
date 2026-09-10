@@ -5024,7 +5024,10 @@
       const grid = document.getElementById("duel-questions-grid");
       if (!grid) return;
       grid.innerHTML = "";
-      
+
+      let poolQuestions = (activeQuestionTab === 'live' ? liveQuestions : endedQuestions)
+        .filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
+
       if (poolQuestions.length === 0) {
         grid.innerHTML = `
           <div class="col-span-full p-8 rounded-2xl border border-[#334155] bg-[#131b27]/80 text-center space-y-3">
@@ -5035,10 +5038,6 @@
         `;
         return;
       }
-  
-
-      let poolQuestions = (activeQuestionTab === 'live' ? liveQuestions : endedQuestions)
-        .filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
 
       let displayQuestions = [];
       if (activeQuestionTab === 'live') {
