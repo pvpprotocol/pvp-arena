@@ -595,8 +595,8 @@
   <script>
     // Official Solana Program IDs (Anchor)
     window.SOLANA_NETWORK = "devnet";
-    window.PVP_DUELS_PROGRAM_ID = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39";
-    window.GRAND_JACKPOT_PROGRAM_ID = "BXjFmivvTKHRm7J6Fnv7HmbsghAodCH2oaiRGJtDhohA";
+    window.PVP_DUELS_PROGRAM_ID = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
+    window.GRAND_JACKPOT_PROGRAM_ID = "5kYD65G9qSPbebXwTsDQMbRfWxiN6sBeRuCTPX7gAfJK";
     window.SOLANA_USDC_MINT = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"; // Devnet USDC (Mainnet: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
 
   window.duelsPaused = false; // Admin lock: duels paused until explicit command
@@ -959,8 +959,44 @@
         </div>
 
         <!-- Interactive Questions Grid -->
-        <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <!-- Populated by JavaScript renderDuelQuestions() -->
+        <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Question #1: 15-Minute Candle -->
+          <div class="p-4 rounded-2xl border-2 border-emerald-500/40 bg-[#131b27] space-y-3 relative overflow-hidden shadow-lg shadow-emerald-950/20">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 font-mono text-xs font-bold border border-emerald-500/30">
+                #1 • 15M CANDLE
+              </span>
+              <span class="text-xs font-mono text-emerald-400 font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>LIVE
+              </span>
+            </div>
+
+            <div>
+              <h4 class="text-sm font-bold font-mono text-white">SOL/USD 15-Min Candle Duel</h4>
+              <p class="text-xs text-slate-400 font-mono mt-0.5">Will the next 15-minute candle close GREEN (Bullish) or RED (Bearish)?</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 pt-1 font-mono text-xs">
+              <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Entry Window</span>
+                <span class="text-white font-bold text-xs mt-0.5">15 Minutes</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Asset</span>
+                <span class="text-emerald-400 font-bold text-xs mt-0.5">SOL / USD</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-[#182230] border border-slate-700/60 flex flex-col">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Outcomes</span>
+                <span class="text-emerald-400 font-bold text-xs mt-0.5">GREEN / RED</span>
+              </div>
+            </div>
+
+            <div class="pt-1">
+              <button onclick="createNextCandleQuestionOnchain()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-mono font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer">
+                <span>⚡</span><span>CREATE DUEL ON-CHAIN</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- STEP 2 & 3: PICK TIER & PREDICTION (YES / NO) -->
@@ -1043,7 +1079,7 @@
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider flex items-center gap-2">
               <span>⚔️</span> LIVE PVP DUELS
             </h3>
-            <p class="text-xs text-slate-400">Solana Escrow Contract: <a href="https://solscan.io/account/HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39" target="_blank" rel="noopener" class="font-mono text-[#cbd5e1] hover:underline">HTyM...bf39 ↗</a></p>
+            <p class="text-xs text-slate-400">Solana Escrow Contract: <a href="https://solscan.io/account/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7" target="_blank" rel="noopener" class="font-mono text-[#cbd5e1] hover:underline">HTyM...bf39 ↗</a></p>
           </div>
           <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <div class="flex items-center bg-black/50 p-1 rounded-xl border border-[#334155] text-xs font-mono">
@@ -2435,7 +2471,7 @@
             </button>
           </div>
           <div class="p-3 rounded-xl bg-black/60 border border-[#334155] font-mono text-xs text-[#cbd5e1] break-all select-all flex items-center justify-between">
-            <span id="pvp-contract-address">HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39</span>
+            <span id="pvp-contract-address">CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7</span>
           </div>
         </div>
       </div>
@@ -2460,7 +2496,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <a href="https://solscan.io/account/HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-neutral-800 hover:text-[#cbd5e1] transition-all flex items-center gap-1.5">
+          <a href="https://solscan.io/account/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-neutral-800 hover:text-[#cbd5e1] transition-all flex items-center gap-1.5">
             <span>📜</span> Escrow Contract ↗
           </a>
           <button onclick="refreshAdminDuelsStats()" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-[#f8fafc] hover:bg-[#182230] font-bold transition-all flex items-center gap-1.5">
@@ -2638,7 +2674,7 @@
   <script>
 
     function copyPvpContract() {
-      const addr = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39";
+      const addr = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(addr).then(() => {
           showToast("✅ Contract address copied to clipboard!", "success");
@@ -2762,7 +2798,7 @@
       "function personalBests(address player, uint16 tier) view returns (uint256)"
     ];
 
-    var DUEL_CONTRACT_ADDRESS = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39";
+    var DUEL_CONTRACT_ADDRESS = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
     var QUESTION_REGISTRY_ADDRESS = "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5";
     var QUESTION_REGISTRY_ABI = [
       "function owner() view returns (address)",
@@ -2785,7 +2821,7 @@
       "function settleDuelWithProof(uint256 duelId, uint8 winningOutcome, uint256 deadline, bytes32 nonce, bytes signature) external",
       "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
     ];
-    var ESCROW_CONTRACT = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39";
+    var ESCROW_CONTRACT = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
 
         async function ensureSolanaNetwork() {
       // Pure Solana Architecture - Network is managed by Solana RPC endpoint
@@ -2984,8 +3020,8 @@
     
     // ONCHAIN TRANSACTION EXECUTOR (SOLANA)
     var USDC_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDC on Solana
-    var PVP_TOKEN_ADDRESS = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39"; // Native $PVP token
-    var ESCROW_CONTRACT = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39";
+    var PVP_TOKEN_ADDRESS = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7"; // Native $PVP token
+    var ESCROW_CONTRACT = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
 
         async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDC", purpose = "Game Entry", customRecipient = null) {
       const provider = getInjectedProvider() || window.ethereum;
@@ -4212,7 +4248,7 @@
 
         // ==========================================
     // DYNAMIC LIVE NATIVE TOKEN PRICING ENGINE
-    // Token: HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39
+    // Token: CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7
     // ==========================================
     let liveNativeTokenPriceUSD = 0.005; // Default / base price ($0.005 per 1 PVP -> $5 = 1,000 PVP)
     let isFetchingLivePrice = false;
@@ -4223,7 +4259,7 @@
       isFetchingLivePrice = true;
       try {
         // Try DexScreener API
-        const dexRes = await fetch("https://api.dexscreener.com/latest/dex/tokens/HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39");
+        const dexRes = await fetch("https://api.dexscreener.com/latest/dex/tokens/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7");
         if (dexRes.ok) {
           const dexJson = await dexRes.json();
           if (dexJson.pairs && dexJson.pairs.length > 0 && dexJson.pairs[0].priceUsd) {
@@ -4241,7 +4277,7 @@
         }
 
         // Try GeckoTerminal Solana token API
-        const geckoRes = await fetch("https://api.geckoterminal.com/api/v2/networks/solana/tokens/HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39");
+        const geckoRes = await fetch("https://api.geckoterminal.com/api/v2/networks/solana/tokens/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7");
         if (geckoRes.ok) {
           const geckoJson = await geckoRes.json();
           if (geckoJson.data && geckoJson.data.attributes && geckoJson.data.attributes.price_usd) {
@@ -5479,7 +5515,7 @@
             id: Date.now(),
             method: "eth_getLogs",
             params: [{
-              address: "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39",
+              address: "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7",
               fromBlock: "0x3300000",
               toBlock: "latest"
             }]
