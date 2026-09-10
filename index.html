@@ -6468,7 +6468,38 @@
       updateDuelCounter();
     }
 
-        async function createDuel() {
+        
+    const TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+    const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
+    const DEVNET_USDC_MINT = new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
+    const TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+
+    async function getAssociatedTokenAddress(walletPubkey, mintPubkey) {
+      const [address] = await solanaWeb3.PublicKey.findProgramAddress(
+        [walletPubkey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mintPubkey.toBuffer()],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      );
+      return address;
+    }
+
+    function createSplTransferInstruction(sourceAta, destAta, ownerPubkey, amountU64) {
+      const data = new Uint8Array(9);
+      data[0] = 3; // Transfer instruction index = 3
+      const view = new DataView(data.buffer);
+      view.setBigUint64(1, BigInt(amountU64), true); // little-endian uint64
+
+      return new solanaWeb3.TransactionInstruction({
+        keys: [
+          { pubkey: sourceAta, isSigner: false, isWritable: true },
+          { pubkey: destAta, isSigner: false, isWritable: true },
+          { pubkey: ownerPubkey, isSigner: true, isWritable: false }
+        ],
+        programId: TOKEN_PROGRAM_ID,
+        data: data
+      });
+    }
+  
+    async function createDuel() {
       if (window.duelsPaused) {
         showToast("⚔️ PvP Duels are currently paused by admin.", "warning");
         return;
@@ -6522,8 +6553,9 @@
             const { blockhash } = await connection.getLatestBlockhash("confirmed");
             
             const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
-            const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-            const lamports = Math.max(1000, Math.round((selectedDuelTier || 1) * 1000000));
+            const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
+            const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
+            const usdcUnits = Math.round((selectedDuelTier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
 
             const transaction = new solanaWeb3.Transaction({
               recentBlockhash: blockhash,
@@ -6531,11 +6563,7 @@
             });
 
             transaction.add(
-              solanaWeb3.SystemProgram.transfer({
-                fromPubkey: senderPubkey,
-                toPubkey: treasuryPubkey,
-                lamports: lamports
-              })
+              createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
             );
 
             const { signature } = await provider.signAndSendTransaction(transaction);
@@ -6683,8 +6711,9 @@
             const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
             const { blockhash } = await connection.getLatestBlockhash("confirmed");
             const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
-            const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-            const lamports = Math.max(1000, Math.round((tier || 1) * 1000000));
+            const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
+            const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
+            const usdcUnits = Math.round((tier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
 
             const transaction = new solanaWeb3.Transaction({
               recentBlockhash: blockhash,
@@ -6692,11 +6721,7 @@
             });
 
             transaction.add(
-              solanaWeb3.SystemProgram.transfer({
-                fromPubkey: senderPubkey,
-                toPubkey: treasuryPubkey,
-                lamports: lamports
-              })
+              createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
             );
 
             const { signature } = await provider.signAndSendTransaction(transaction);
