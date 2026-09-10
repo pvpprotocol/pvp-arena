@@ -6454,27 +6454,45 @@
       const onchainDuelId = "sol_" + Math.floor(1000 + Math.random() * 9000);
 
       try {
-        // Native Solana Transaction / Signing via Phantom
+        // Real Solana Devnet Transaction via Phantom / Solflare
         const provider = window.phantom?.solana || window.solflare || window.solana;
-        if (provider) {
-          showToast("⚔️ Please approve the duel stake in your Solana wallet...", "info");
-          try {
-            const msg = new TextEncoder().encode(`pvphub: Create Duel #${q.id}-${onchainDuelId} for ${selectedDuelTier} SOL/USDC with option ${selectedDuelOption}`);
-            if (typeof provider.signMessage === "function") {
-              const sig = await provider.signMessage(msg, "utf8");
-              txHash = "sig_" + Array.from(sig.signature || sig).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
-            } else {
-              txHash = "sol_tx_" + Math.random().toString(36).slice(2, 10);
-            }
-          } catch(signErr) {
-            console.warn("Wallet signing skipped or simulated:", signErr);
-            txHash = "sol_tx_" + Math.random().toString(36).slice(2, 10);
-          }
-        } else {
-          txHash = "sol_tx_" + Math.random().toString(36).slice(2, 10);
+        if (!provider || !provider.publicKey) {
+          throw new Error("Solana wallet provider not found. Please connect Phantom.");
         }
 
-        showToast("⚔️ Duel Created on Solana! Tx: " + txHash.slice(0, 10) + "...", "success");
+        showToast("⚔️ Submitting onchain Devnet transaction to Phantom...", "info");
+
+        if (window.solanaWeb3) {
+          const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+          const { blockhash } = await connection.getLatestBlockhash("confirmed");
+          const transaction = new solanaWeb3.Transaction({
+            recentBlockhash: blockhash,
+            feePayer: provider.publicKey
+          });
+
+          // Escrow treasury recipient on Devnet
+          const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+          // Devnet stake (e.g. 0.001 SOL per $1 tier for testnet gas / stake)
+          const lamports = Math.max(1000, Math.round(selectedDuelTier * 1000000));
+
+          transaction.add(
+            solanaWeb3.SystemProgram.transfer({
+              fromPubkey: provider.publicKey,
+              toPubkey: treasuryPubkey,
+              lamports: lamports
+            })
+          );
+
+          const { signature } = await provider.signAndSendTransaction(transaction);
+          txHash = signature;
+          console.log("Real Devnet Tx Signature:", signature);
+          showToast("⚔️ Devnet Tx confirmed! " + signature.slice(0, 8) + "...", "success");
+        } else {
+          const msg = new TextEncoder().encode(`pvphub Devnet: Create Duel #${q.id}-${onchainDuelId}`);
+          const sig = await provider.signMessage(msg, "utf8");
+          txHash = "sig_" + Array.from(sig.signature || sig).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
+          showToast("⚔️ Duel signed on Solana Devnet!", "success");
+        }
       } catch (err) {
         console.error("Create duel failed:", err);
         showToast("❌ Creation failed: " + (err.reason || err.message || "Rejected"), "error");
