@@ -4639,7 +4639,7 @@
 
     // === MULTI-CHANNEL REALTIME SYNC (GunDB + BroadcastChannel + LocalStorage) ===
         // --- GLOBAL REALTIME DUEL SYNC ENGINE (SSE + REST + Local Sync) ---
-    const REALTIME_TOPIC = "pvp-arena-rh-duels-v4";
+    const REALTIME_TOPIC = "pvp-arena-solana-duels-v1";
     const REALTIME_SSE_URL = `https://ntfy.sh/${REALTIME_TOPIC}/sse`;
     const REALTIME_PUB_URL = `https://ntfy.sh/${REALTIME_TOPIC}`;
     let duelBroadcast = null;
@@ -5195,8 +5195,7 @@
       try {
         await fetch(REALTIME_PUB_URL, {
           method: 'POST',
-          body: JSON.stringify(duelData),
-          headers: { 'Content-Type': 'application/json' }
+          body: JSON.stringify(duelData)
         });
       } catch(err) {
         console.warn("Realtime broadcast fallback:", err);
@@ -5212,7 +5211,7 @@
 
     async function fetchActiveDuelsFromRelay() {
       try {
-        const res = await fetch(`https://ntfy.sh/${REALTIME_TOPIC}/json?poll=1`);
+        const res = await fetch(`https://ntfy.sh/${REALTIME_TOPIC}/json?poll=1&since=all`);
         if (!res.ok) return;
         const text = await res.text();
         const lines = text.trim().split('\n');
@@ -5500,6 +5499,7 @@
       }
     }
     
+    window.renderActiveDuels = renderAllDuels;
     function renderAllDuels() {
       const store = getLocalDuels();
       const keys = Object.keys(store);
@@ -5872,6 +5872,7 @@
     function initGlobalDuelsListener() {
       // 1. Initial fetch of all active duels currently waiting in relay
       fetchActiveDuelsFromRelay();
+      setInterval(fetchActiveDuelsFromRelay, 3000);
 
       // 2. Realtime SSE listener
       try {
@@ -6637,6 +6638,13 @@
       store[duelId] = newDuel;
       saveLocalDuels(store);
 
+      // Broadcast globally to all other wallets and devices
+      try {
+        broadcastDuel(newDuel);
+      } catch(bErr) {
+        console.warn("broadcast error:", bErr);
+      }
+
       try {
         let myCreated = JSON.parse(localStorage.getItem("my_created_duel_ids") || "[]");
         if (!myCreated.includes(duelId)) {
@@ -6646,7 +6654,7 @@
       } catch(e) {}
 
       if (btn) btn.disabled = false;
-      renderActiveDuels();
+      renderAllDuels();
       if (typeof renderMyDuels === "function") renderMyDuels();
       showToast("✅ Duel #" + (q.qNum || q.id) + "-" + nextSubIndex + " is live on Solana! Waiting for challenger.", "success");
     }
