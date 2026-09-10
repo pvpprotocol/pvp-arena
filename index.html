@@ -4918,7 +4918,7 @@
 
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#182230] border border-[#334155] text-neutral-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span> <span id="q-timer-${q.id}" class="q-timer-display" data-qid="${q.id}">${timeObj.text}</span></span>`;
+          : `<span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-sm shadow-amber-400/50"></span> <span id="q-timer-${q.id}" class="q-timer-display text-amber-400 font-bold" data-qid="${q.id}">${timeObj.text}</span></span>`;
 
         const winnerBadge = (isQuestionEnded && q.winningOption)
           ? `<div class="mt-2 text-[10px] font-mono bg-[#182230] border border-[#334155] text-[#cbd5e1] px-2 py-1 rounded-lg flex items-center justify-between">
@@ -4949,7 +4949,7 @@
                 <div class="p-2.5 rounded-xl bg-[#182230] border border-[#334155] flex items-center justify-between gap-2 shadow-inner">
                   <div class="flex items-center gap-1.5 font-mono text-xs text-[#cbd5e1] font-bold">
                     <span class="w-2 h-2 rounded-full ${isLive ? 'bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50' : 'bg-slate-500'}"></span>
-                    <span>⏱️ ${q.deadlineDesc ? ("Entry Window (" + q.deadlineDesc.replace(/ Entry Window/i, "") + ")") : "Entry Window"}: <span id="q-entry-remaining-${q.id}" class="text-white font-black tracking-wide">${timeObj.text}</span></span>
+                    <span>⏱️ ${q.deadlineDesc ? ("Entry Window (" + q.deadlineDesc.replace(/ Entry Window/i, "") + ")") : "Entry Window"}: <span id="q-entry-remaining-${q.id}" class="text-amber-400 font-black tracking-wide font-mono">${timeObj.text}</span></span>
                   </div>
                   ${isLive ? '<span class="text-[10px] font-mono text-[#cbd5e1] font-bold bg-[#182230] px-2 py-0.5 rounded-full border border-[#334155]">ENTRY OPEN</span>' : '<span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">ENTRY CLOSED</span>'}
                 </div>
@@ -4958,7 +4958,7 @@
                 <div class="p-2 rounded-xl bg-[#182230] border border-[#334155] flex items-center justify-between gap-2 font-mono text-[11px]">
                   <div class="flex items-center gap-1.5 text-[#cbd5e1] font-medium">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#182230] animate-pulse"></span>
-                    <span>⏳ ${q.settlementLabel || (q.title && q.title.toLowerCase().includes("candle") ? "Candle Close" : (q.category === "sports" ? "Match End" : (q.category === "economy" ? "Report Release" : "Event Settlement")))}: <span id="q-candle-remaining-${q.id}" class="text-[#f8fafc] font-bold">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
+                    <span>⏳ ${q.settlementLabel || (q.title && q.title.toLowerCase().includes("candle") ? "Candle Close" : (q.category === "sports" ? "Match End" : (q.category === "economy" ? "Report Release" : "Event Settlement")))}: <span id="q-candle-remaining-${q.id}" class="text-amber-400 font-bold font-mono">${formatRemainingTime(q.settlementTime || getQuestionSettlementTime(q.id)).text}</span></span>
                   </div>
                   <span class="text-[10px] font-mono text-[#cbd5e1] bg-[#182230] px-2 py-0.5 rounded-full border border-[#334155]">${q.targetDesc || formatTargetTime(q.settlementTime || getQuestionSettlementTime(q.id))}</span>
                 </div>
@@ -5903,7 +5903,7 @@
         const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
         const timerBadge = isQuestionEnded
           ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#182230] border border-[#334155] text-[#cbd5e1] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#182230] animate-pulse"></span> <span id="q-timer-${q.id}">${timeObj.text}</span></span>`;
+          : `<span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-sm shadow-amber-400/50"></span> <span id="q-timer-${q.id}" class="text-amber-400 font-bold">${timeObj.text}</span></span>`;
           el.textContent = timeObj.text;
         }
       });
