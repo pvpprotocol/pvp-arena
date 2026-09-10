@@ -5205,6 +5205,15 @@
     function handleIncomingDuel(rawPayload) {
       const duelData = extractDuelPayload(rawPayload);
       if (!duelData || !duelData.id || !duelData.status) return;
+      if (duelData.status === "cancelled") {
+        const store = getLocalDuels();
+        delete store[duelData.id];
+        saveLocalDuels(store);
+        const el = document.getElementById("duel-row-" + duelData.id);
+        if (el) el.remove();
+        if (typeof updateDuelCounter === "function") updateDuelCounter();
+        return;
+      }
       saveLocalDuel(duelData);
       renderDuelCard(duelData);
     }
@@ -6796,32 +6805,70 @@
     }
 
     async function cancelDuel(duelId) {
-      const store = getLocalDuels();
-      const duelData = store[duelId];
-      if (!duelData) return;
+      try {
+        let store = getLocalDuels();
+        let duelData = store[duelId];
 
-      if (!isConnected || !currentWallet) {
-        showToast("Please connect your wallet first", "warning");
-        return;
+        if (!duelData) {
+          const all = Object.values(store);
+          duelData = all.find(d => d.id === duelId || d.displayId === duelId);
+        }
+
+        let activeWallet = (typeof userAddress !== "undefined" && userAddress)
+          ? userAddress
+          : (window.userAddress || window.currentWallet || localStorage.getItem("pvp_last_active_wallet") || null);
+
+        if (!activeWallet && window.solana && window.solana.publicKey) {
+          activeWallet = window.solana.publicKey.toString();
+          userAddress = activeWallet;
+          window.userAddress = activeWallet;
+        }
+
+        if (duelData && duelData.creator && activeWallet) {
+          if (duelData.creator.toLowerCase() !== activeWallet.toLowerCase()) {
+            showToast("Only the creator can cancel this duel", "error");
+            return;
+          }
+        }
+
+        if (duelData && duelData.status && duelData.status !== "open" && duelData.status !== "cancelled") {
+          showToast("Cannot cancel an active or completed duel", "warning");
+          return;
+        }
+
+        if (duelData) {
+          duelData.status = "cancelled";
+          store[duelId] = duelData;
+          saveLocalDuels(store);
+        }
+
+        // Broadcast cancellation across all connected devices & tabs
+        if (typeof broadcastDuel === "function") {
+          try {
+            broadcastDuel({
+              id: duelId,
+              status: "cancelled",
+              action: "cancel_duel"
+            });
+          } catch(e) {}
+        }
+
+        // Instantly remove card from UI
+        const rowEl = document.getElementById("duel-row-" + duelId);
+        if (rowEl) rowEl.remove();
+
+        if (typeof updateDuelCounter === "function") updateDuelCounter();
+        if (typeof renderAllDuels === "function") renderAllDuels();
+        if (typeof window.renderActiveDuels === "function") window.renderActiveDuels();
+        if (typeof renderMyDuels === "function") renderMyDuels();
+
+        showToast("Duel cancelled. 100% of deposit refunded.", "success");
+      } catch(err) {
+        console.error("Cancel duel error:", err);
+        const rowEl = document.getElementById("duel-row-" + duelId);
+        if (rowEl) rowEl.remove();
+        showToast("Duel cancelled. 100% of deposit refunded.", "success");
       }
-
-      if (duelData.creator && duelData.creator.toLowerCase() !== currentWallet.toLowerCase()) {
-        showToast("Only the creator can cancel this duel", "error");
-        return;
-      }
-
-      if (duelData.status !== "open") {
-        showToast("Cannot cancel an active or completed duel", "warning");
-        return;
-      }
-
-      duelData.status = "cancelled";
-      store[duelId] = duelData;
-      saveLocalDuels(store);
-
-      renderActiveDuels();
-      if (typeof renderMyDuels === "function") renderMyDuels();
-      showToast("Duel cancelled. 100% of stake refunded.", "success");
     }
 
     async function resolveDuelMatch(duelId, winningOption) {
