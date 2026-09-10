@@ -3,7 +3,10 @@ use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 
 declare_id!("HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39");
 
-pub const PLATFORM_FEE_BPS: u64 = 500; // 5% platform fee
+pub const WINNER_PRIZE_BPS: u64 = 9000;      // 90% to winner (1.8x payout)
+pub const REFERRAL_REWARD_BPS: u64 = 500;    // 5% cash referral reward
+pub const LOSER_CASHBACK_BPS: u64 = 300;     // 3% retention cashback to loser
+pub const PROTOCOL_TREASURY_BPS: u64 = 200;  // 2% protocol fee to treasury
 pub const BPS_DENOMINATOR: u64 = 10000;
 
 #[program]
