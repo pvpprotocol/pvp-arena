@@ -902,7 +902,7 @@
             </div>
             <p class="text-xs text-slate-400 font-mono mt-1">Each duel question is available across all 5 stake tiers!</p>
           </div>
-          <span id="active-topics-count-badge" class="text-xs font-mono text-[#cbd5e1] font-bold bg-[#182230] px-3 py-1 rounded-full border border-[#334155]">2 Active Topics Live</span>
+          <span id="active-topics-count-badge" class="text-xs font-mono text-[#cbd5e1] font-bold bg-[#182230] px-3 py-1 rounded-full border border-[#334155]">1 Active Topic Live</span>
         </div>
 
         <!-- Question Tabs: LIVE vs ENDED -->
@@ -5937,8 +5937,30 @@
       // Auto-transition questions and duels when timer expires
       const nowTs = Date.now();
       const currentLive = DUEL_QUESTIONS.filter(item => !item.isEnded && nowTs < getQuestionDeadline(item.id)).length;
+      const currentEnded = DUEL_QUESTIONS.filter(item => item.isEnded || nowTs >= getQuestionDeadline(item.id)).length;
+
+      // Always keep active topics count and tab badges 100% accurate every second
+      const topicsBadgeEl = document.getElementById("active-topics-count-badge");
+      if (topicsBadgeEl) {
+        topicsBadgeEl.textContent = `${currentLive} Active Topic${currentLive === 1 ? "" : "s"} Live`;
+      }
+      const liveBadgeEl = document.getElementById("q-badge-live");
+      if (liveBadgeEl) liveBadgeEl.textContent = currentLive;
+      const endedBadgeEl = document.getElementById("q-badge-ended");
+      if (endedBadgeEl) endedBadgeEl.textContent = currentEnded;
+
+      const cBadgeEl = document.getElementById("cat-badge-crypto");
+      if (cBadgeEl && typeof isQuestionMatchingCategory === "function") {
+        cBadgeEl.textContent = DUEL_QUESTIONS.filter(q => !q.isEnded && nowTs < getQuestionDeadline(q.id) && isQuestionMatchingCategory(q, "crypto")).length;
+      }
+      const sBadgeEl = document.getElementById("cat-badge-sports");
+      if (sBadgeEl && typeof isQuestionMatchingCategory === "function") {
+        sBadgeEl.textContent = DUEL_QUESTIONS.filter(q => !q.isEnded && nowTs < getQuestionDeadline(q.id) && isQuestionMatchingCategory(q, "sports")).length;
+      }
+
       if (window._lastLiveQuestionsCount === undefined) {
         window._lastLiveQuestionsCount = currentLive;
+        renderDuelQuestions();
       } else if (window._lastLiveQuestionsCount !== currentLive) {
         window._lastLiveQuestionsCount = currentLive;
         renderDuelQuestions();
