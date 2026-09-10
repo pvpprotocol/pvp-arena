@@ -130,6 +130,7 @@ pub mod pvp_duels {
     pub fn settle_duel(
         ctx: Context<SettleDuel>,
         winning_option: u8,
+        has_referrer: bool,
     ) -> Result<()> {
         let duel = &mut ctx.accounts.duel_account;
         require!(duel.status == DuelStatus::Matched, ErrorCode::DuelNotMatched);
@@ -145,11 +146,24 @@ pub mod pvp_duels {
             return Err(ErrorCode::InvalidWinningOption.into());
         };
 
+        let loser_pubkey = if duel.maker == winner_pubkey {
+            duel.taker
+        } else {
+            duel.maker
+        };
+
         let total_pot = duel.stake_amount.checked_mul(2).unwrap();
         let winner_prize = total_pot.checked_mul(WINNER_PRIZE_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 90%
         let referral_amount = total_pot.checked_mul(REFERRAL_REWARD_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 5%
         let cashback_amount = total_pot.checked_mul(LOSER_CASHBACK_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 3%
-        let treasury_amount = total_pot.checked_mul(PROTOCOL_TREASURY_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 2%
+        let base_treasury_amount = total_pot.checked_mul(PROTOCOL_TREASURY_BPS).unwrap().checked_div(BPS_DENOMINATOR).unwrap(); // 2%
+
+        // If participant entered without a referral, the 5% referral share goes 100% to protocol treasury (total 7%)
+        let total_treasury_fee = if has_referrer {
+            base_treasury_amount
+        } else {
+            base_treasury_amount.checked_add(referral_amount).unwrap()
+        };
 
         let question_bytes = duel.question_id.to_le_bytes();
         let index_bytes = duel.duel_index.to_le_bytes();
@@ -160,8 +174,8 @@ pub mod pvp_duels {
             &[duel.escrow_bump],
         ]];
 
-        // 1. Transfer 5% platform fee
-        if fee_amount > 0 {
+        // 1. Transfer Protocol Treasury Fee (2% if referred, 7% if unreferred)
+        if total_treasury_fee > 0 {
             let fee_cpi = Transfer {
                 from: ctx.accounts.escrow_token_account.to_account_info(),
                 to: ctx.accounts.fee_recipient_token_account.to_account_info(),
@@ -173,11 +187,47 @@ pub mod pvp_duels {
                     fee_cpi,
                     signer_seeds,
                 ),
-                fee_amount,
+                total_treasury_fee,
             )?;
         }
 
-        // 2. Transfer 95% prize to winner
+        // 2. Transfer 5% Referral Reward to referrer if referred
+        if has_referrer && referral_amount > 0 {
+            if let Some(ref ref_account) = ctx.accounts.referral_token_account {
+                let ref_cpi = Transfer {
+                    from: ctx.accounts.escrow_token_account.to_account_info(),
+                    to: ref_account.to_account_info(),
+                    authority: ctx.accounts.escrow_token_account.to_account_info(),
+                };
+                token::transfer(
+                    CpiContext::new_with_signer(
+                        ctx.accounts.token_program.to_account_info(),
+                        ref_cpi,
+                        signer_seeds,
+                    ),
+                    referral_amount,
+                )?;
+            }
+        }
+
+        // 3. Transfer 3% Cashback to loser
+        if cashback_amount > 0 {
+            let cb_cpi = Transfer {
+                from: ctx.accounts.escrow_token_account.to_account_info(),
+                to: ctx.accounts.loser_token_account.to_account_info(),
+                authority: ctx.accounts.escrow_token_account.to_account_info(),
+            };
+            token::transfer(
+                CpiContext::new_with_signer(
+                    ctx.accounts.token_program.to_account_info(),
+                    cb_cpi,
+                    signer_seeds,
+                ),
+                cashback_amount,
+            )?;
+        }
+
+        // 4. Transfer 90% Prize to winner
         let winner_cpi = Transfer {
             from: ctx.accounts.escrow_token_account.to_account_info(),
             to: ctx.accounts.winner_token_account.to_account_info(),
@@ -200,13 +250,12 @@ pub mod pvp_duels {
             duel_index: duel.duel_index,
             winner: winner_pubkey,
             prize_usdc: winner_prize,
-            fee_usdc: fee_amount,
+            fee_usdc: total_treasury_fee,
         });
 
         Ok(())
     }
 
-    /// Cancel unfilled duel after entry deadline: 100% refund to maker
     pub fn cancel_unfilled_duel(ctx: Context<CancelUnfilledDuel>) -> Result<()> {
         let duel = &mut ctx.accounts.duel_account;
         require!(duel.status == DuelStatus::Open, ErrorCode::DuelNotOpen);
@@ -378,9 +427,18 @@ pub struct SettleDuel<'info> {
 
     #[account(
         mut,
+        constraint = loser_token_account.owner == duel_account.maker || loser_token_account.owner == duel_account.taker
+    )]
+    pub loser_token_account: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
         constraint = fee_recipient_token_account.owner == platform_config.fee_recipient
     )]
     pub fee_recipient_token_account: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub referral_token_account: Option<Account<'info, TokenAccount>>,
 
     pub admin: Signer<'info>,
     pub token_program: Program<'info, Token>,
