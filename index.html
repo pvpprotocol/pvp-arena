@@ -6791,9 +6791,29 @@
   
     // --- ONCHAIN QUESTION REGISTRY INTEGRATION (Solana) ---
     async function loadOnchainQuestions() {
-      // Solana native questions initialization - fresh state
-      DUEL_QUESTIONS.length = 0;
-      if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+      try {
+        // Ensure default Question #1 is present if empty
+        if (!DUEL_QUESTIONS || DUEL_QUESTIONS.length === 0) {
+          DUEL_QUESTIONS = [
+            {
+              id: 1,
+              qNum: 1,
+              category: "crypto",
+              symbol: "BTC-USD",
+              title: "Will the 1-Hour BTC Candle Close Green or Red? (10:00 - 11:00 UTC)",
+              desc: "Oracle: Coinbase Exchange BTC-USD 1-Hour candle (10:00:00 to 11:00:00 UTC). Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
+              resolutionSource: "Coinbase Exchange API (BTC-USD 1h)",
+              deadlineDesc: "Entry Closes at 10:00 UTC",
+              candleStartTime: 1789034400000,
+              deadline: 1789034400000,
+              settlementTime: 1789038000000,
+              opt1: "GREEN",
+              opt2: "RED",
+              isEnded: false
+            }
+          ];
+        }
+        if (typeof renderDuelQuestions === "function") renderDuelQuestions();
         if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
       } catch (err) {
         console.warn("loadOnchainQuestions notice:", err);
