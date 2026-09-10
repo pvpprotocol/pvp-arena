@@ -4747,7 +4747,27 @@
     }
 
     // Questions are 100% onchain - no hardcoded/fake questions allowed
-    const DUEL_QUESTIONS = [];
+    const DUEL_QUESTIONS = [
+      {
+        id: 1,
+        qNum: 1,
+        category: "crypto",
+        symbol: "SOL-USD",
+        title: "SOL/USD 15-Min Candle Duel (GREEN vs RED)",
+        desc: "Oracle: Pyth / Binance SOL-USD 15-Minute Candle. Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
+        resolutionSource: "Pyth / Binance Oracle",
+        deadlineDesc: "15-Minute Entry Window",
+        candleStartTime: Date.now(),
+        deadline: Date.now() + (15 * 60 * 1000),
+        settlementTime: Date.now() + (30 * 60 * 1000),
+        opt1: "GREEN",
+        opt2: "RED",
+        isEnded: false,
+        onchainTxSignature: "bTdpWD3G8PZm2unJPrckWp8uvw9oRzfirn2mshU6wyM8dBhLBuk4axLXpK3nyq9WLPE1xLEsFLvVtgyrnHXDqDM",
+        creator: "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV",
+        getDeadline: function() { return this.deadline; }
+      }
+    ];
     let selectedDuelQuestionId = null;
     let selectedDuelTier = 1;
     let selectedDuelOption = "GREEN";
