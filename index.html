@@ -6136,7 +6136,49 @@
       }
     }
 
+    function repairLegacyDuelNumbers() {
+      try {
+        const store = getLocalDuels();
+        let changed = false;
+        const duelsByQ = {};
+        Object.values(store).forEach(d => {
+          if (!d || !d.id) return;
+          const qId = getDuelQuestionId(d);
+          if (!duelsByQ[qId]) duelsByQ[qId] = [];
+          duelsByQ[qId].push(d);
+        });
+
+        Object.keys(duelsByQ).forEach(qId => {
+          const list = duelsByQ[qId];
+          list.sort((a, b) => {
+            const tA = a.createdAt || a.timestamp || 0;
+            const tB = b.createdAt || b.timestamp || 0;
+            if (tA !== tB) return tA - tB;
+            return (a.id || "").localeCompare(b.id || "");
+          });
+
+          list.forEach((d, idx) => {
+            const expectedSub = idx + 1;
+            if (!d.subIndex || d.subIndex <= 0 || !d.displayId || d.displayId.includes("-0")) {
+              d.subIndex = expectedSub;
+              d.displayId = "#" + qId + "-" + expectedSub;
+              d.displayNumber = qId + "-" + expectedSub;
+              store[d.id] = d;
+              changed = true;
+            }
+          });
+        });
+
+        if (changed) {
+          saveLocalDuels(store);
+        }
+      } catch(e) {
+        console.warn("Repair duel numbers error:", e);
+      }
+    }
+
     function initGlobalDuelsListener() {
+      repairLegacyDuelNumbers();
       // 1. Initial fetch of all active duels currently waiting in relay
       fetchActiveDuelsFromRelay();
       setInterval(fetchActiveDuelsFromRelay, 3000);
@@ -6329,36 +6371,50 @@
     }
 
     function getDuelDisplayNumber(duelData) {
-      if (!duelData) return "17-1";
+      if (!duelData) return "1-1";
       const qId = getDuelQuestionId(duelData);
 
-      // 1. Onchain chronological ordering by blockchain transaction/block
-      if (duelData.onchainDuelId) {
-        const curId = parseInt(duelData.onchainDuelId, 10);
-        const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
-        const onchainIds = [];
-        Object.values(store).forEach(d => {
-          if (d && d.onchainDuelId && getDuelQuestionId(d) === qId) {
-            onchainIds.push(parseInt(d.onchainDuelId, 10));
-          }
-        });
-        if (!onchainIds.includes(curId)) {
-          onchainIds.push(curId);
+      // 1. Check if duelData has a valid displayId (e.g. "#1-1" -> "1-1")
+      if (duelData.displayId && typeof duelData.displayId === "string") {
+        const clean = duelData.displayId.replace(/^#/, "").trim();
+        if (clean.includes("-")) {
+          const parts = clean.split("-");
+          const sub = parseInt(parts[1], 10);
+          if (!isNaN(sub) && sub > 0) return `${qId}-${sub}`;
         }
-        // Ascending chronological order on blockchain: earlier duelId was mined earlier
-        const sorted = [...new Set(onchainIds)].sort((a, b) => a - b);
-        const rank = sorted.indexOf(curId) + 1;
+      }
+
+      // 2. Check if duelData has displayNumber (e.g. "1-2")
+      if (duelData.displayNumber && typeof duelData.displayNumber === "string") {
+        const clean = duelData.displayNumber.replace(/^#/, "").trim();
+        if (clean.includes("-")) {
+          const parts = clean.split("-");
+          const sub = parseInt(parts[1], 10);
+          if (!isNaN(sub) && sub > 0) return `${qId}-${sub}`;
+        }
+      }
+
+      // 3. Check if duelData has subIndex
+      if (duelData.subIndex && typeof duelData.subIndex === "number" && duelData.subIndex > 0) {
+        return `${qId}-${duelData.subIndex}`;
+      }
+
+      // 4. Chronological ordering based on creation in store
+      try {
+        const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
+        const allForQ = Object.values(store).filter(d => d && getDuelQuestionId(d) === qId);
+        allForQ.sort((a, b) => {
+          const tA = a.createdAt || a.timestamp || 0;
+          const tB = b.createdAt || b.timestamp || 0;
+          if (tA !== tB) return tA - tB;
+          return (a.id || "").localeCompare(b.id || "");
+        });
+        const idx = allForQ.findIndex(d => d.id === duelData.id);
+        const rank = idx >= 0 ? (idx + 1) : 1;
         return `${qId}-${rank}`;
+      } catch(e) {
+        return `${qId}-1`;
       }
-
-      // 2. Existing displayNumber
-      if (duelData.displayNumber && typeof duelData.displayNumber === "string" && duelData.displayNumber.includes("-")) {
-        const parts = duelData.displayNumber.split("-");
-        return `${qId}-${parts[1]}`;
-      }
-
-      const subIdx = duelData.subIndex || 1;
-      return `${qId}-${subIdx}`;
     }
     window.getDuelDisplayNumber = getDuelDisplayNumber;
 
@@ -6897,12 +6953,28 @@
       let nextSubIndex = 1;
       try {
         const qIdKey = q.id || 1;
+        const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
+        let maxExisting = 0;
+        Object.values(store).forEach(d => {
+          if (d && getDuelQuestionId(d) === qIdKey) {
+            if (typeof d.subIndex === "number" && d.subIndex > maxExisting) {
+              maxExisting = d.subIndex;
+            }
+            if (d.displayId) {
+              const m = d.displayId.match(/-(\d+)/);
+              if (m) {
+                const val = parseInt(m[1], 10);
+                if (val > maxExisting) maxExisting = val;
+              }
+            }
+          }
+        });
         const seqKey = "duel_seq_counter_q_" + qIdKey;
-        let highest = parseInt(localStorage.getItem(seqKey) || "0", 10);
-        nextSubIndex = highest + 1;
+        let storedCounter = parseInt(localStorage.getItem(seqKey) || "0", 10);
+        nextSubIndex = Math.max(maxExisting, storedCounter) + 1;
         localStorage.setItem(seqKey, nextSubIndex.toString());
       } catch(e) {
-        nextSubIndex = Math.floor(Math.random() * 100) + 1;
+        nextSubIndex = 1;
       }
 
       const newDuel = {
