@@ -108,20 +108,20 @@
     
     /* VIBRANT ACTIVE CREATE DUEL BUTTON */
     #create-duel-btn {
-      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
       color: #ffffff !important;
-      border: 1px solid #4ade80 !important;
+      border: 1px solid #60a5fa !important;
       font-weight: 800 !important;
-      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35) !important;
+      box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45) !important;
       cursor: pointer !important;
       opacity: 1 !important;
       filter: none !important;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     #create-duel-btn:hover {
-      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
-      border-color: #86efac !important;
-      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5) !important;
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+      border-color: #93c5fd !important;
+      box-shadow: 0 6px 25px rgba(37, 99, 235, 0.65) !important;
       transform: translateY(-1px) scale(1.02) !important;
     }
     #create-duel-btn * {
@@ -1011,16 +1011,14 @@
             
             
             <div id="duel-options-container" class="grid grid-cols-2 gap-3 pt-1">
-              <button id="opt-btn-yes" onclick="selectDuelOption('GREEN', false)" class="p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all hover:scale-[1.02] cursor-pointer">
-                <span class="text-lg"></span>
-                <span class="text-base font-black tracking-wider">GREEN</span>
-                <span class="text-[10px] font-mono text-neutral-500 font-medium">⚡ Deposit & Start</span>
+              <button id="opt-btn-yes" onclick="selectDuelOption('GREEN', false)" class="p-3.5 rounded-xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/35 transition-all hover:scale-[1.02] cursor-pointer">
+                <span class="text-base font-black tracking-wider text-white">🟢 GREEN</span>
+                <span class="text-[10px] font-mono text-emerald-100 font-medium">Close ≥ Open</span>
               </button>
 
-              <button id="opt-btn-no" onclick="selectDuelOption('RED', false)" class="p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-[#475569] hover:text-white cursor-pointer">
-                <span class="text-lg"></span>
-                <span class="text-base font-black tracking-wider">RED</span>
-                <span class="text-[10px] font-mono text-[#cbd5e1] font-medium">⚡ Deposit & Start</span>
+              <button id="opt-btn-no" onclick="selectDuelOption('RED', false)" class="p-3.5 rounded-xl border border-rose-500/40 bg-[#131b27] text-rose-400 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all hover:border-rose-400 hover:bg-rose-500/10 hover:text-white cursor-pointer">
+                <span class="text-base font-black tracking-wider text-rose-400">🔴 RED</span>
+                <span class="text-[10px] font-mono text-rose-300/70 font-medium">Close < Open</span>
               </button>
             </div>
           </div>
@@ -1029,7 +1027,7 @@
 
         <!-- SUMMARY & CREATE BUTTON -->
         <div class="mt-6 flex justify-center">
-          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl text-white font-extrabold font-mono text-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important; color: #ffffff !important; border: 1px solid #4ade80 !important; cursor: pointer !important; opacity: 1 !important;">
+          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl text-white font-extrabold font-mono text-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; color: #ffffff !important; border: 1px solid #60a5fa !important; cursor: pointer !important; opacity: 1 !important; box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45) !important;">
             <span>⚔️</span> CREATE DUEL
           </button>
         </div>
@@ -5035,15 +5033,15 @@
       let options = [];
       if (q.isThreeWay) {
         options = [
-          { key: q.opt1 || "Barcelona", label: q.opt1 || "Barcelona", sub: "Choice 1", hoverBorder: "hover:border-[#22c55e]" },
-          { key: q.opt2 || "Draw", label: q.opt2 || "Draw", sub: "Choice 2", hoverBorder: "hover:border-[#38bdf8]" },
-          { key: q.opt3 || "Chelsea", label: q.opt3 || "Chelsea", sub: "Choice 3", hoverBorder: "hover:border-[#ef4444]" }
+          { key: q.opt1 || "Barcelona", label: q.opt1 || "Barcelona", sub: "Choice 1", colorType: "green" },
+          { key: q.opt2 || "Draw", label: q.opt2 || "Draw", sub: "Choice 2", colorType: "blue" },
+          { key: q.opt3 || "Chelsea", label: q.opt3 || "Chelsea", sub: "Choice 3", colorType: "red" }
         ];
         container.className = "grid grid-cols-3 gap-2.5 pt-1";
       } else {
         options = [
-          { key: q.opt1 || "GREEN", label: q.opt1 || "GREEN", sub: "Choice 1", hoverBorder: "hover:border-[#22c55e]" },
-          { key: q.opt2 || "RED", label: q.opt2 || "RED", sub: "Choice 2", hoverBorder: "hover:border-[#ef4444]" }
+          { key: q.opt1 || "GREEN", label: "🟢 " + (q.opt1 || "GREEN"), sub: "Close ≥ Open", colorType: "green" },
+          { key: q.opt2 || "RED", label: "🔴 " + (q.opt2 || "RED"), sub: "Close < Open", colorType: "red" }
         ];
         container.className = "grid grid-cols-2 gap-3 pt-1";
       }
@@ -5052,15 +5050,49 @@
         selectedDuelOption = options[0].key;
       }
 
-      container.innerHTML = options.map((opt, idx) => {
+      container.innerHTML = options.map((opt) => {
         const isSelected = opt.key === selectedDuelOption;
-        const cls = isSelected
-          ? "opt-btn p-3.5 rounded-xl border-2 border-[#94a3b8] bg-[#1e293b] text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-md transition-all cursor-pointer scale-[1.02]"
-          : "opt-btn p-3.5 rounded-xl border border-[#334155] bg-[#131b27] text-[#94a3b8] " + opt.hoverBorder + " hover:text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
-        return '<button onclick="selectDuelOption(\'' + opt.key.replace(/'/g, "\\'") + '\', false)" class="' + cls + '">' +
-          '<span class="text-sm md:text-base font-black tracking-wider text-[#f8fafc]">' + opt.label + '</span>' +
-          '<span class="text-[10px] font-mono text-[#cbd5e1] font-medium">' + opt.sub + '</span>' +
-        '</button>';
+        let btnCls = "";
+        let textCls = "";
+        let subCls = "";
+
+        if (opt.colorType === "green") {
+          if (isSelected) {
+            btnCls = "opt-btn p-3.5 rounded-xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/35 transition-all cursor-pointer scale-[1.03]";
+            textCls = "text-white";
+            subCls = "text-emerald-100";
+          } else {
+            btnCls = "opt-btn p-3.5 rounded-xl border border-emerald-500/40 bg-[#131b27] text-emerald-400 hover:border-emerald-400 hover:bg-emerald-500/10 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+            textCls = "text-emerald-400";
+            subCls = "text-emerald-300/70";
+          }
+        } else if (opt.colorType === "red") {
+          if (isSelected) {
+            btnCls = "opt-btn p-3.5 rounded-xl border-2 border-rose-400 bg-gradient-to-r from-rose-600 to-red-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/35 transition-all cursor-pointer scale-[1.03]";
+            textCls = "text-white";
+            subCls = "text-rose-100";
+          } else {
+            btnCls = "opt-btn p-3.5 rounded-xl border border-rose-500/40 bg-[#131b27] text-rose-400 hover:border-rose-400 hover:bg-rose-500/10 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+            textCls = "text-rose-400";
+            subCls = "text-rose-300/70";
+          }
+        } else {
+          if (isSelected) {
+            btnCls = "opt-btn p-3.5 rounded-xl border-2 border-sky-400 bg-gradient-to-r from-sky-600 to-blue-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-sky-500/35 transition-all cursor-pointer scale-[1.03]";
+            textCls = "text-white";
+            subCls = "text-sky-100";
+          } else {
+            btnCls = "opt-btn p-3.5 rounded-xl border border-sky-500/40 bg-[#131b27] text-sky-400 hover:border-sky-400 hover:bg-sky-500/10 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
+            textCls = "text-sky-400";
+            subCls = "text-sky-300/70";
+          }
+        }
+
+        const safeKey = opt.key.replace(/'/g, "\'");
+        return `<button onclick="selectDuelOption('${safeKey}', false)" class="${btnCls}">
+          <span class="text-sm md:text-base font-black tracking-wider ${textCls}">${opt.label}</span>
+          <span class="text-[10px] font-mono font-medium ${subCls}">${opt.sub}</span>
+        </button>`;
       }).join("");
     }
 
