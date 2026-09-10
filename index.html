@@ -2906,8 +2906,7 @@
         const resp = await provider.connect({ onlyIfTrusted: true });
         const pubkey = (resp && resp.publicKey) ? resp.publicKey.toString() : (provider.publicKey ? provider.publicKey.toString() : null);
         if (pubkey) {
-          userAddress = pubkey;
-          isConnected = true;
+          userAddress = pubkey; currentWallet = pubkey; window.userAddress = pubkey; window.currentWallet = pubkey; isConnected = true;
           const btnText = document.getElementById("walletBtnText");
           const dot = document.getElementById("walletDot");
           const shortAddr = userAddress.slice(0, 4) + "..." + userAddress.slice(-4);
@@ -6448,16 +6447,55 @@
       updateDuelCounter();
     }
 
-    async function createDuel() {
+        async function createDuel() {
       if (window.duelsPaused) {
         showToast("⚔️ PvP Duels are currently paused by admin.", "warning");
         return;
       }
-      if (!isConnected) {
-        await connectWallet();
+
+      const provider = getSolanaProvider();
+      if (!provider) {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          showToast("📱 Opening in Phantom App...", "info");
+          const targetUrl = encodeURIComponent(window.location.href);
+          window.location.href = "https://phantom.app/ul/browse/" + targetUrl + "?ref=pvphub";
+          return;
+        }
+        showToast("⚠️ Phantom or Solana wallet not found! Opening Phantom download page...", "warning");
+        window.open("https://phantom.app/", "_blank");
+        return;
       }
-      if (!isConnected || !currentWallet) {
-        showToast("Please connect your Solana wallet first", "warning");
+
+      // If not yet connected or no publicKey, pop up Phantom connect immediately!
+      if (!provider.publicKey || !isConnected) {
+        try {
+          showToast("🔑 Connecting Phantom Wallet...", "info");
+          const resp = await provider.connect({ onlyIfTrusted: false });
+          const pk = (resp && resp.publicKey) ? resp.publicKey.toString() : (provider.publicKey ? provider.publicKey.toString() : null);
+          if (pk) {
+            userAddress = pk;
+            currentWallet = pk;
+            window.userAddress = pk;
+            window.currentWallet = pk;
+            isConnected = true;
+            try { localStorage.setItem("pvp_last_active_wallet", pk); } catch(e){}
+            const btnText = document.getElementById("walletBtnText");
+            const dot = document.getElementById("walletDot");
+            const shortAddr = pk.slice(0, 4) + "..." + pk.slice(-4);
+            if (btnText) btnText.innerText = shortAddr;
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
+          }
+        } catch(connErr) {
+          console.error("Wallet connect failed:", connErr);
+          showToast("⚠️ Connection rejected: " + (connErr.message || "Failed"), "warning");
+          return;
+        }
+      }
+
+      const activeWallet = userAddress || currentWallet || (provider.publicKey ? provider.publicKey.toString() : null);
+      if (!activeWallet || !provider.publicKey) {
+        showToast("Please approve wallet connection first", "warning");
         return;
       }
 
@@ -6477,30 +6515,24 @@
       const onchainDuelId = "sol_" + Math.floor(1000 + Math.random() * 9000);
 
       try {
-        // Real Solana Devnet Transaction via Phantom / Solflare
-        const provider = window.phantom?.solana || window.solflare || window.solana;
-        if (!provider || !provider.publicKey) {
-          throw new Error("Solana wallet provider not found. Please connect Phantom.");
-        }
-
-        showToast("⚔️ Submitting onchain Devnet transaction to Phantom...", "info");
+        showToast("⚔️ Opening Phantom to approve onchain Devnet transaction...", "info");
 
         if (window.solanaWeb3) {
           const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
           const { blockhash } = await connection.getLatestBlockhash("confirmed");
+          
+          const senderPubkey = new solanaWeb3.PublicKey(provider.publicKey.toString());
+          const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+          const lamports = Math.max(1000, Math.round((selectedDuelTier || 1) * 1000000));
+
           const transaction = new solanaWeb3.Transaction({
             recentBlockhash: blockhash,
-            feePayer: provider.publicKey
+            feePayer: senderPubkey
           });
-
-          // Escrow treasury recipient on Devnet
-          const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-          // Devnet stake (e.g. 0.001 SOL per $1 tier for testnet gas / stake)
-          const lamports = Math.max(1000, Math.round(selectedDuelTier * 1000000));
 
           transaction.add(
             solanaWeb3.SystemProgram.transfer({
-              fromPubkey: provider.publicKey,
+              fromPubkey: senderPubkey,
               toPubkey: treasuryPubkey,
               lamports: lamports
             })
@@ -6581,16 +6613,40 @@
       showToast("✅ Duel #" + (q.qNum || q.id) + "-" + nextSubIndex + " is live on Solana! Waiting for challenger.", "success");
     }
 
-    async function acceptDuel(duelId, tier) {
+        async function acceptDuel(duelId, tier) {
       if (window.duelsPaused) {
         showToast("⚔️ PvP Duels are currently paused by admin.", "warning");
         return;
       }
-      if (!isConnected) {
-        await connectWallet();
+
+      const provider = getSolanaProvider();
+      if (!provider) {
+        showToast("⚠️ Phantom or Solana wallet not found!", "warning");
+        return;
       }
-      if (!isConnected || !currentWallet) {
-        showToast("Please connect your Solana wallet first", "warning");
+
+      if (!provider.publicKey || !isConnected) {
+        try {
+          showToast("🔑 Connecting Phantom Wallet...", "info");
+          const resp = await provider.connect({ onlyIfTrusted: false });
+          const pk = (resp && resp.publicKey) ? resp.publicKey.toString() : (provider.publicKey ? provider.publicKey.toString() : null);
+          if (pk) {
+            userAddress = pk;
+            currentWallet = pk;
+            window.userAddress = pk;
+            window.currentWallet = pk;
+            isConnected = true;
+            try { localStorage.setItem("pvp_last_active_wallet", pk); } catch(e){}
+          }
+        } catch(connErr) {
+          showToast("⚠️ Connection rejected: " + (connErr.message || "Failed"), "warning");
+          return;
+        }
+      }
+
+      const activeWallet = userAddress || currentWallet || (provider.publicKey ? provider.publicKey.toString() : null);
+      if (!activeWallet || !provider.publicKey) {
+        showToast("Please approve wallet connection first", "warning");
         return;
       }
 
@@ -6612,34 +6668,31 @@
         return;
       }
 
-      if (duelData.creator && currentWallet && duelData.creator.toLowerCase() === currentWallet.toLowerCase()) {
+      if (duelData.creator && activeWallet && duelData.creator.toLowerCase() === activeWallet.toLowerCase()) {
         showToast("⚠️ You cannot accept your own duel! Test accept from a secondary wallet.", "warning");
         return;
       }
 
       let txHash = "";
       try {
-        const provider = window.phantom?.solana || window.solflare || window.solana;
-        if (!provider || !provider.publicKey) {
-          throw new Error("Solana wallet provider not found. Please connect Phantom.");
-        }
-
-        showToast("⚔️ Submitting match transaction on Solana Devnet...", "info");
+        showToast("⚔️ Opening Phantom to approve match transaction...", "info");
 
         if (window.solanaWeb3) {
           const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
           const { blockhash } = await connection.getLatestBlockhash("confirmed");
-          const transaction = new solanaWeb3.Transaction({
-            recentBlockhash: blockhash,
-            feePayer: provider.publicKey
-          });
-
+          
+          const senderPubkey = new solanaWeb3.PublicKey(provider.publicKey.toString());
           const treasuryPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
           const lamports = Math.max(1000, Math.round((duelData.tier || 1) * 1000000));
 
+          const transaction = new solanaWeb3.Transaction({
+            recentBlockhash: blockhash,
+            feePayer: senderPubkey
+          });
+
           transaction.add(
             solanaWeb3.SystemProgram.transfer({
-              fromPubkey: provider.publicKey,
+              fromPubkey: senderPubkey,
               toPubkey: treasuryPubkey,
               lamports: lamports
             })
@@ -6647,17 +6700,16 @@
 
           const { signature } = await provider.signAndSendTransaction(transaction);
           txHash = signature;
-          console.log("Real Devnet Accept Tx Signature:", signature);
-          showToast(`⚔️ Match confirmed on Devnet! Tx: ${signature.slice(0, 8)}...`, "success");
+          showToast("⚔️ Match accepted! Tx: " + signature.slice(0, 8) + "...", "success");
         } else {
-          const msg = new TextEncoder().encode(`pvphub Devnet: Accept Duel ${duelData.displayId || duelId}`);
+          const msg = new TextEncoder().encode(`pvphub Devnet: Accept Duel ${duelId}`);
           const sig = await provider.signMessage(msg, "utf8");
           txHash = "sig_" + Array.from(sig.signature || sig).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
-          showToast("⚔️ Duel signed on Solana Devnet!", "success");
+          showToast("⚔️ Match accepted on Solana Devnet!", "success");
         }
-      } catch(err) {
-        console.error("Accept failed:", err);
-        showToast("❌ Accept failed: " + (err.message || "Error"), "error");
+      } catch (err) {
+        console.error("Accept duel failed:", err);
+        showToast("❌ Accept failed: " + (err.reason || err.message || "Rejected"), "error");
         return;
       }
 
