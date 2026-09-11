@@ -7355,7 +7355,83 @@ buffer/index.js:
         ],
         programId: TOKEN_PROGRAM_ID,
         data: data
+      }
+
+    // --- NON-CUSTODIAL ANCHOR ESCROW PROGRAM (Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK) ---
+    const ANCHOR_PVP_PROGRAM_ID = new solanaWeb3.PublicKey("Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK");
+    const SYSVAR_RENT_PUBKEY = new solanaWeb3.PublicKey("SysvarRent111111111111111111111111111111111");
+
+    function getAnchorDuelPda(creatorPubkey, numericDuelId) {
+      const buf = new Uint8Array(8);
+      const view = new DataView(buf.buffer);
+      view.setBigUint64(0, BigInt(numericDuelId), true);
+      const [pda, bump] = solanaWeb3.PublicKey.findProgramAddressSync(
+        [new TextEncoder().encode("duel"), creatorPubkey.toBytes(), buf],
+        ANCHOR_PVP_PROGRAM_ID
+      );
+      return { pda, bump, buf };
+    }
+
+    function getAnchorVaultPda(duelPda) {
+      const [pda, bump] = solanaWeb3.PublicKey.findProgramAddressSync(
+        [new TextEncoder().encode("vault"), duelPda.toBytes()],
+        ANCHOR_PVP_PROGRAM_ID
+      );
+      return { pda, bump };
+    }
+
+    function createAnchorCreateDuelInstruction(creatorPubkey, creatorAta, numericDuelId, questionId, chosenOptionU8, stakeUnits, deadlineUnixSec) {
+      const { pda: duelPda } = getAnchorDuelPda(creatorPubkey, numericDuelId);
+      const { pda: vaultPda } = getAnchorVaultPda(duelPda);
+
+      // Discriminator: sha256("global:create_duel")[0..8] = [49,28,93,11,75,242,69,165]
+      const disc = [49, 28, 93, 11, 75, 242, 69, 165];
+      const data = new Uint8Array(41);
+      data.set(disc, 0);
+      const view = new DataView(data.buffer);
+      view.setBigUint64(8, BigInt(numericDuelId), true);
+      view.setBigUint64(16, BigInt(questionId), true);
+      data[24] = chosenOptionU8; // 1 for YES/GREEN, 2 for NO/RED
+      view.setBigUint64(25, BigInt(stakeUnits), true);
+      view.setBigInt64(33, BigInt(deadlineUnixSec), true);
+
+      return new solanaWeb3.TransactionInstruction({
+        keys: [
+          { pubkey: duelPda, isSigner: false, isWritable: true },
+          { pubkey: vaultPda, isSigner: false, isWritable: true },
+          { pubkey: creatorPubkey, isSigner: true, isWritable: true },
+          { pubkey: creatorAta, isSigner: false, isWritable: true },
+          { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
+          { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+          { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+          { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false }
+        ],
+        programId: ANCHOR_PVP_PROGRAM_ID,
+        data: data
       });
+    }
+
+    function createAnchorCancelDuelInstruction(creatorPubkey, creatorAta, numericDuelId) {
+      const { pda: duelPda } = getAnchorDuelPda(creatorPubkey, numericDuelId);
+      const { pda: vaultPda } = getAnchorVaultPda(duelPda);
+
+      // Discriminator: sha256("global:cancel_duel")[0..8] = [83,124,224,237,235,44,38,57]
+      const data = new Uint8Array([83, 124, 224, 237, 235, 44, 38, 57]);
+
+      return new solanaWeb3.TransactionInstruction({
+        keys: [
+          { pubkey: duelPda, isSigner: false, isWritable: true },
+          { pubkey: vaultPda, isSigner: false, isWritable: true },
+          { pubkey: creatorPubkey, isSigner: true, isWritable: true },
+          { pubkey: creatorAta, isSigner: false, isWritable: true },
+          { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
+        ],
+        programId: ANCHOR_PVP_PROGRAM_ID,
+        data: data
+      });
+    }
+  
+);
     }
   
     async function createDuel() {
@@ -7403,7 +7479,8 @@ buffer/index.js:
 
       const oppositeOption = selectedDuelOption === "GREEN" ? "RED" : "GREEN";
       let txHash = "";
-      const onchainDuelId = "sol_" + Math.floor(1000 + Math.random() * 9000);
+      const numericDuelId = Math.floor(100000 + Math.random() * 900000);
+      const onchainDuelId = "sol_" + numericDuelId;
 
       // Compute nextSubIndex BEFORE building the transaction & memo
       let nextSubIndex = 1;
@@ -7476,6 +7553,25 @@ buffer/index.js:
           createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
         );
 
+        // 1. Non-Custodial Anchor Escrow PDA Deposit
+        try {
+          const optCode = (selectedDuelOption === "GREEN" || selectedDuelOption === "YES") ? 1 : 2;
+          const deadlineSec = Math.floor(qDeadline / 1000);
+          const anchorCreateIx = createAnchorCreateDuelInstruction(
+            senderPubkey,
+            senderAta,
+            numericDuelId,
+            q.id || 1,
+            optCode,
+            usdcUnits,
+            deadlineSec
+          );
+          transaction.add(anchorCreateIx);
+        } catch (anchorErr) {
+          console.warn("Anchor PDA instruction build note:", anchorErr);
+        }
+  
+
         // Link to TREASURY_PUBKEY with 0 lamports transfer so Solana indexes the transaction under Treasury
         transaction.add(
           solanaWeb3.SystemProgram.transfer({
@@ -7516,6 +7612,7 @@ buffer/index.js:
       const newDuel = {
         id: duelId,
         onchainDuelId: onchainDuelId,
+        numericDuelId: numericDuelId,
         questionId: q.id,
         qNum: q.qNum || q.id,
         subIndex: nextSubIndex,
@@ -7762,6 +7859,25 @@ buffer/index.js:
               feePayer: senderPubkey
             });
 
+
+            // Execute 100% Non-Custodial Anchor Escrow Refund if numeric duelId exists
+            try {
+              let numId = null;
+              if (duelData && duelData.numericDuelId) {
+                numId = duelData.numericDuelId;
+              } else if (duelData && duelData.onchainDuelId && duelData.onchainDuelId.startsWith("sol_")) {
+                const parsed = parseInt(duelData.onchainDuelId.replace("sol_", ""), 10);
+                if (!isNaN(parsed)) numId = parsed;
+              }
+              if (numId) {
+                const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
+                const anchorCancelIx = createAnchorCancelDuelInstruction(senderPubkey, senderAta, numId);
+                transaction.add(anchorCancelIx);
+              }
+            } catch(aErr) {
+              console.warn("Anchor cancel ix notice:", aErr);
+            }
+  
             // 1. Reclaim stake by revoking SPL Token approval on-chain
             try {
               const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
