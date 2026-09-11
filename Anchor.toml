@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-pvp_duels = "DuEL111111111111111111111111111111111111111"
+pvp_duels = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK"
 
 [registry]
 url = "https://api.apr.dev"
