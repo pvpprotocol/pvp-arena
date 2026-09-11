@@ -7545,12 +7545,13 @@ buffer/index.js:
         // Real On-chain SPL Token Transfer to Treasury Escrow
         // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
         // Ensure Treasury ATA exists idempotently (safe no-op if already created)
+        // Ensure SENDER has an Associated Token Account for Devnet USDC idempotently (safe no-op if already created)
         transaction.add(
           new solanaWeb3.TransactionInstruction({
             keys: [
               { pubkey: senderPubkey, isSigner: true, isWritable: true },
-              { pubkey: treasuryAta, isSigner: false, isWritable: true },
-              { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false },
+              { pubkey: senderAta, isSigner: false, isWritable: true },
+              { pubkey: senderPubkey, isSigner: false, isWritable: false },
               { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
               { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
               { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
