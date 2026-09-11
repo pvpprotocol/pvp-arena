@@ -1030,23 +1030,20 @@
             <div class="p-3.5 rounded-xl bg-[#151f30] border border-slate-700/60 space-y-2.5">
               <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
                 <span>3. Entry Window (Deadline)</span>
-                <span id="selected-deadline-display" class="text-cyan-400 font-black">10M</span>
+                <span id="selected-deadline-display" class="text-cyan-400 font-black">AUTO (SMART)</span>
               </label>
               <div class="grid grid-cols-3 gap-1.5" id="founder-deadline-buttons">
-                <button type="button" onclick="setFounderDeadline(10, '10M')" class="founder-dl-btn active-founder-btn px-2 py-2 rounded-lg text-xs font-bold border-2 border-cyan-500 bg-cyan-500/20 text-cyan-300 transition-all flex items-center justify-center">
+                <button type="button" onclick="setFounderDeadline(0, 'AUTO')" class="founder-dl-btn active-founder-btn px-3 py-2 rounded-lg text-xs font-black border-2 border-cyan-400 bg-cyan-500/25 text-cyan-300 transition-all flex items-center justify-center gap-1.5 col-span-3 shadow-md shadow-cyan-950/40">
+                  <span>⚡ AUTO</span><span>(EXACT CANDLE OPEN TIME)</span>
+                </button>
+                <button type="button" onclick="setFounderDeadline(10, '10M')" class="founder-dl-btn px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white transition-all flex items-center justify-center">
                   10m
                 </button>
-                <button type="button" onclick="setFounderDeadline(30, '30M')" class="founder-dl-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center">
+                <button type="button" onclick="setFounderDeadline(30, '30M')" class="founder-dl-btn px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white transition-all flex items-center justify-center">
                   30m
                 </button>
-                <button type="button" onclick="setFounderDeadline(60, '60M')" class="founder-dl-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center">
+                <button type="button" onclick="setFounderDeadline(60, '60M')" class="founder-dl-btn px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white transition-all flex items-center justify-center">
                   60m
-                </button>
-                <button type="button" onclick="setFounderDeadline(120, '120M')" class="founder-dl-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center">
-                  120m
-                </button>
-                <button type="button" onclick="setFounderDeadline(360, '360M')" class="founder-dl-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center col-span-2">
-                  360m (6h)
                 </button>
               </div>
             </div>
