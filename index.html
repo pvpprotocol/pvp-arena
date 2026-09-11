@@ -5882,7 +5882,12 @@ buffer/index.js:
       // that request MUST IMMEDIATELY move to the EXPIRED tab!
       // =========================================================================
       if (!isMatched) {
-        if (now >= entryDeadline) {
+        const directDeadline = (duelData.deadline && Number(duelData.deadline) > 0) ? Number(duelData.deadline) : 0;
+        const effectiveDeadline = directDeadline || entryDeadline;
+        if (effectiveDeadline > 0 && now >= effectiveDeadline) {
+          return 'expired';
+        }
+        if (q && (q.isEnded || (entryDeadline > 0 && now >= entryDeadline))) {
           return 'expired';
         }
         return 'open';
@@ -6253,7 +6258,7 @@ buffer/index.js:
 
       Object.keys(store).forEach(k => {
         const item = store[k];
-        if (!item || item.status === 'cancelled') return;
+        if (!item) return;
         const cat = getDuelCategory(item);
         if (cat === 'open') openCount++;
         else if (cat === 'matched') matchedCount++;
