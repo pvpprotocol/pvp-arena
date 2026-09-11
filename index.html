@@ -7376,6 +7376,34 @@
               createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
             );
 
+            // On-chain Memo Instruction: Indexed under TREASURY_PUBKEY for global match synchronization!
+            const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+            const memoAcceptText = `pvphub:accept_duel:${duelData.displayId || duelId}:${duelData.requiredOpponentOption}:${activeWallet}`;
+            transaction.add(
+              new solanaWeb3.TransactionInstruction({
+                keys: [
+                  { pubkey: senderPubkey, isSigner: true, isWritable: false },
+                  { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false }
+                ],
+                programId: MEMO_PROGRAM_ID,
+                data: new TextEncoder().encode(memoAcceptText)
+              })
+            );
+
+            // On-chain Memo Instruction: Indexed under TREASURY_PUBKEY so ALL wallets & devices worldwide see it!
+            const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+            const memoCreateText = `pvphub:create_duel:q${q.id}:${selectedDuelOption}:${selectedDuelTier || 1}:${activeWallet}:${nextSubIndex}:${onchainDuelId}`;
+            transaction.add(
+              new solanaWeb3.TransactionInstruction({
+                keys: [
+                  { pubkey: senderPubkey, isSigner: true, isWritable: false },
+                  { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false }
+                ],
+                programId: MEMO_PROGRAM_ID,
+                data: new TextEncoder().encode(memoCreateText)
+              })
+            );
+
             const { signature } = await provider.signAndSendTransaction(transaction);
             txHash = signature;
             txSuccess = true;
@@ -8086,6 +8114,124 @@
     window.loadOnchainQuestions = loadOnchainQuestions;
     // Auto load on init
     loadOnchainQuestions(); setInterval(loadOnchainQuestions, 6000);
+
+    // =========================================================================
+    // ⛓️ 100% DECENTRALIZED ON-CHAIN DUEL SYNCHRONIZATION ENGINE
+    // Synchronizes all duels directly from Solana Devnet RPC across all accounts & devices worldwide
+    // =========================================================================
+    async function loadOnchainDuels() {
+      try {
+        if (!window.solanaWeb3) return;
+        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const sigs = await connection.getSignaturesForAddress(TREASURY_PUBKEY, { limit: 100 });
+        
+        const store = getLocalDuels();
+        let changed = false;
+
+        // Process chronological order (oldest to newest)
+        const reversedSigs = [...sigs].reverse();
+
+        for (const s of reversedSigs) {
+          if (!s.memo) continue;
+          const cleanMemo = s.memo.replace(/^\[\d+\]\s*/, "");
+
+          // 1. On-Chain Duel Creation
+          if (cleanMemo.includes("pvphub:create_duel:")) {
+            const parts = cleanMemo.split(":");
+            // Format: pvphub:create_duel:q{qId}:{opt}:{tier}:{creator}:{subIndex}:{onchainDuelId}
+            const qNum = parseInt((parts[2] || "").replace("q", ""), 10) || 1;
+            const option = parts[3] || "GREEN";
+            const oppositeOption = option === "GREEN" ? "RED" : "GREEN";
+            const tier = parseFloat(parts[4]) || 1;
+            const creator = parts[5];
+            const subIndex = parseInt(parts[6], 10) || 1;
+            const onchainDuelId = parts[7] || s.signature.slice(0, 8);
+            const duelId = "duel_" + onchainDuelId;
+
+            if (!store[duelId]) {
+              const q = getQuestionById(qNum) || (DUEL_QUESTIONS.find(x => x.id === qNum) || { title: `Duel #${qNum} • SOL/USD`, symbol: "SOL-USD" });
+              const txTime = (s.blockTime && s.blockTime > 0) ? (s.blockTime * 1000) : Date.now();
+              const qDeadline = q && q.deadline ? q.deadline : (txTime + 15 * 60 * 1000);
+              const cleanTitle = q.title && q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : (q.title || `Duel #${qNum}`);
+
+              store[duelId] = {
+                id: duelId,
+                onchainDuelId: onchainDuelId,
+                questionId: qNum,
+                qNum: qNum,
+                subIndex: subIndex,
+                displayId: "#" + qNum + "-" + subIndex,
+                title: cleanTitle,
+                category: q.category || "crypto",
+                symbol: q.symbol || "SOL-USD",
+                resolutionSource: q.resolutionSource || "Coinbase Exchange API",
+                tier: tier,
+                payout: (tier * 1.8).toFixed(2),
+                cashback: (tier * 0.03).toFixed(2),
+                creator: creator,
+                creatorOption: option,
+                requiredOpponentOption: oppositeOption,
+                opponent: null,
+                opponentOption: oppositeOption,
+                status: "open",
+                createdAt: txTime,
+                deadline: qDeadline,
+                settlementTime: q.settlementTime || (qDeadline + 60 * 60 * 1000),
+                txHash: s.signature
+              };
+              changed = true;
+            }
+          }
+
+          // 2. On-Chain Duel Match / Accept
+          if (cleanMemo.includes("pvphub:accept_duel:")) {
+            const parts = cleanMemo.split(":");
+            const targetId = parts[2];
+            const oppOption = parts[3];
+            const oppWallet = parts[4];
+            
+            let targetDuel = store[targetId];
+            if (!targetDuel) {
+              targetDuel = Object.values(store).find(d => d.displayId === targetId || d.id === targetId || d.onchainDuelId === targetId);
+            }
+            if (targetDuel && targetDuel.status !== "cancelled") {
+              if (!targetDuel.opponent || targetDuel.status === "open") {
+                targetDuel.opponent = oppWallet;
+                targetDuel.opponentOption = oppOption;
+                targetDuel.status = "in_progress";
+                targetDuel.acceptedAt = (s.blockTime && s.blockTime > 0) ? (s.blockTime * 1000) : Date.now();
+                targetDuel.acceptTxHash = s.signature;
+                changed = true;
+              }
+            }
+          }
+
+          // 3. On-Chain Duel Cancellation
+          if (cleanMemo.includes("pvphub:cancel_duel:")) {
+            const parts = cleanMemo.split(":");
+            const targetId = parts[2];
+            let targetDuel = store[targetId];
+            if (!targetDuel) {
+              targetDuel = Object.values(store).find(d => d.displayId === targetId || d.id === targetId || d.onchainDuelId === targetId);
+            }
+            if (targetDuel && targetDuel.status !== "cancelled") {
+              targetDuel.status = "cancelled";
+              changed = true;
+            }
+          }
+        }
+
+        if (changed) {
+          saveLocalDuels(store);
+          renderAllDuels();
+        }
+      } catch(err) {
+        console.warn("loadOnchainDuels notice:", err);
+      }
+    }
+    window.loadOnchainDuels = loadOnchainDuels;
+    loadOnchainDuels(); setInterval(loadOnchainDuels, 5000);
+
 
 window.handleCreateQuestion = async function(e) {
     e.preventDefault();
