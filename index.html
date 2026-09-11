@@ -7947,71 +7947,103 @@
     // --- ONCHAIN QUESTION REGISTRY INTEGRATION (Solana) ---
     async function loadOnchainQuestions() {
       try {
-        // 1. First check localStorage cache for immediate display
-        try {
-          const savedQ1 = localStorage.getItem("pvp_onchain_q1");
-          if (savedQ1) {
-            const parsed = JSON.parse(savedQ1);
-            parsed.getDeadline = function() { return this.deadline; };
-            const idx = DUEL_QUESTIONS.findIndex(q => q.id === parsed.id);
-            if (idx >= 0) DUEL_QUESTIONS[idx] = parsed;
-            else DUEL_QUESTIONS.unshift(parsed);
-            if (typeof renderDuelQuestions === "function") renderDuelQuestions();
-          }
-        } catch(e) {}
-
-        // 2. Fetch directly from Solana Devnet RPC (100% on-chain truth across all devices)
+        // 1. Fetch directly from Solana Devnet RPC (100% on-chain ground truth)
         if (window.solanaWeb3) {
           try {
             const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
             const founderPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-            const sigs = await connection.getSignaturesForAddress(founderPubkey, { limit: 15 });
+            const sigs = await connection.getSignaturesForAddress(founderPubkey, { limit: 25 });
             
+            const seenSignatures = new Set();
+            const parsedOnchainQuestions = [];
+
             for (const s of sigs) {
               if (s.memo && s.memo.includes("pvphub:create_question:")) {
+                if (seenSignatures.has(s.signature)) continue;
+                seenSignatures.add(s.signature);
+
                 const rawMemo = s.memo.replace(/^\[\d+\]\s*/, "");
                 const parts = rawMemo.split(":");
-                const qNum = parseInt((parts[2] || "").replace("q", "")) || 1;
+                const rawQNum = parseInt((parts[2] || "").replace("q", ""), 10) || 1;
                 
+                // Parse Asset and Timeframe
+                const assetTf = parts[3] || "SOL_15M_CANDLE";
+                const asset = assetTf.split("_")[0] || "SOL";
+                const tfLabel = assetTf.split("_")[1] || "15M";
+                
+                let tfMinutes = 15;
+                if (tfLabel === "1H" || tfLabel.includes("60")) tfMinutes = 60;
+                else if (tfLabel === "6H" || tfLabel.includes("360")) tfMinutes = 360;
+                else if (tfLabel === "12H" || tfLabel.includes("720")) tfMinutes = 720;
+                else if (tfLabel === "1D" || tfLabel.includes("1440")) tfMinutes = 1440;
+                
+                const tfMs = tfMinutes * 60 * 1000;
                 const txTime = (s.blockTime && s.blockTime > 0) ? (s.blockTime * 1000) : Date.now();
-                const entryWindowMs = 15 * 60 * 1000; // 15 minutes
-                let qDeadline = txTime + entryWindowMs;
-                const isPastDeadline = qDeadline < Date.now();
-                const qSettlement = qDeadline + (15 * 60 * 1000);
+                
+                // Unopened candle boundary calculation based on blockTime
+                const currentCandleBoundary = Math.floor(txTime / tfMs) * tfMs;
+                let targetCandleStart = currentCandleBoundary + tfMs;
+                if (targetCandleStart - txTime < 2 * 60 * 1000) {
+                  targetCandleStart += tfMs;
+                }
+                const candleDeadline = targetCandleStart; // Entry closes at candle open
+                const candleEnd = targetCandleStart + tfMs; // Candle close
 
-                const isSol = rawMemo.includes("SOL") || rawMemo.includes("15M");
+                const isPastDeadline = Date.now() >= candleDeadline;
+
+                const formatTime = (ts) => {
+                  const d = new Date(ts);
+                  const hours = String(d.getUTCHours()).padStart(2, "0");
+                  const mins = String(d.getUTCMinutes()).padStart(2, "0");
+                  return `${hours}:${mins} UTC`;
+                };
+
+                let tfText = tfMinutes >= 1440 ? "1-Day" : (tfMinutes >= 60 ? (tfMinutes / 60) + "-Hour" : tfMinutes + "-Min");
+                let oracleSource = "Coinbase Exchange";
+                if (asset === "BNB") oracleSource = "Binance Market API";
+                if (asset === "HYPE") oracleSource = "Hyperliquid Oracle";
+
                 const onchainQ = {
-                  id: qNum,
-                  qNum: qNum,
+                  id: rawQNum,
+                  qNum: rawQNum,
                   category: "crypto",
-                  symbol: isSol ? "SOL-USD" : "BTC-USD",
-                  title: isSol ? `SOL/USD 15-Min Candle Duel #${qNum}` : `BTC/USD 1-Hour Candle Duel #${qNum}`,
-                  desc: "Oracle: Pyth / Binance SOL-USD Candle. Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
-                  resolutionSource: "Pyth / Binance Oracle",
-                  deadlineDesc: "Entry Window Closed",
-                  candleStartTime: txTime,
-                  deadline: qDeadline,
-                  settlementTime: qSettlement,
+                  symbol: `${asset}-USD`,
+                  title: `${asset}/USD Upcoming ${tfText} Candle (${formatTime(targetCandleStart)} - ${formatTime(candleEnd)})`,
+                  desc: `Oracle: ${oracleSource} ${asset}-USD ${tfText} candle. Target is upcoming candle. Entry closes strictly at candle open (${formatTime(targetCandleStart)}). Green = Close >= Open. Red = Close < Open.`,
+                  resolutionSource: `${oracleSource} (${asset}-USD ${tfLabel})`,
+                  deadlineDesc: isPastDeadline ? "Entry Window Closed" : `Entry Closes at ${formatTime(targetCandleStart)}`,
+                  candleStartTime: targetCandleStart,
+                  deadline: candleDeadline,
+                  settlementTime: candleEnd,
                   opt1: "GREEN",
                   opt2: "RED",
-                  isEnded: isPastDeadline, // Strictly ended if deadline passed - NEVER revive
+                  isEnded: isPastDeadline,
+                  creator: "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV",
                   onchainTxSignature: s.signature,
                   slot: s.slot,
                   getDeadline: function() { return this.deadline; }
                 };
 
-                const existingIdx = DUEL_QUESTIONS.findIndex(q => q.id === onchainQ.id);
-                if (existingIdx >= 0) {
-                  // If it was already ended, keep it strictly ended!
-                  if (DUEL_QUESTIONS[existingIdx].isEnded) onchainQ.isEnded = true;
-                  DUEL_QUESTIONS[existingIdx] = onchainQ;
-                } else {
-                  DUEL_QUESTIONS.push(onchainQ);
-                }
+                parsedOnchainQuestions.push(onchainQ);
+              }
+            }
 
-                try {
-                  localStorage.setItem("pvp_onchain_q" + qNum, JSON.stringify(onchainQ));
-                } catch(e) {}
+            // Assign unique incremental IDs so multiple deployments never collide
+            // Reverse so oldest tx is q1, latest is qN
+            parsedOnchainQuestions.reverse();
+            parsedOnchainQuestions.forEach((q, idx) => {
+              q.id = idx + 1;
+              q.qNum = idx + 1;
+              q.title = q.title.replace(/Candle/, `Candle Duel #${idx + 1}`);
+            });
+            // Newest first for display
+            parsedOnchainQuestions.reverse();
+
+            if (parsedOnchainQuestions.length > 0) {
+              DUEL_QUESTIONS.length = 0; // Clear and replace with true onchain questions
+              parsedOnchainQuestions.forEach(q => DUEL_QUESTIONS.push(q));
+              if (!selectedDuelQuestionId && DUEL_QUESTIONS.length > 0) {
+                selectedDuelQuestionId = DUEL_QUESTIONS[0].id;
               }
             }
           } catch(rpcErr) {
@@ -8048,7 +8080,7 @@
     }
     window.loadOnchainQuestions = loadOnchainQuestions;
     // Auto load on init
-    setTimeout(loadOnchainQuestions, 1000);
+    loadOnchainQuestions(); setInterval(loadOnchainQuestions, 6000);
 
 window.handleCreateQuestion = async function(e) {
     e.preventDefault();
