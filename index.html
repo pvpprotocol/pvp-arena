@@ -6629,12 +6629,28 @@
         }
       });
 
-      // 2. Update summary timer
+      // 2. Update summary timer & lock duel creation if deadline expired
       const summaryTimerEl = document.getElementById("summary-deadline-timer");
+      const createDuelBtn = document.getElementById("create-duel-btn");
+      const qDeadline = getQuestionDeadline(selectedDuelQuestionId);
+      const isSelectedQExpired = (Date.now() >= qDeadline);
+
       if (summaryTimerEl) {
-        const qDeadline = getQuestionDeadline(selectedDuelQuestionId);
         const timeObj = formatRemainingTime(qDeadline);
-        summaryTimerEl.textContent = timeObj.text;
+        summaryTimerEl.textContent = isSelectedQExpired ? "ENTRY CLOSED" : timeObj.text;
+      }
+
+      if (createDuelBtn) {
+        if (isSelectedQExpired) {
+          createDuelBtn.disabled = true;
+          createDuelBtn.classList.add("opacity-50", "cursor-not-allowed");
+          createDuelBtn.classList.remove("hover:from-emerald-400");
+          createDuelBtn.innerHTML = `<span>🔒</span><span>ENTRY WINDOW CLOSED (QUESTION ENDED)</span>`;
+        } else if (!window.duelsPaused) {
+          createDuelBtn.disabled = false;
+          createDuelBtn.classList.remove("opacity-50", "cursor-not-allowed");
+          createDuelBtn.innerHTML = `<span>⚔️</span><span>CREATE DUEL ON-CHAIN</span>`;
+        }
       }
 
       // 3. Update duel card timers in the lobby (100% in-sync with questions)
@@ -7464,8 +7480,10 @@
         return;
       }
 
-      if (Date.now() >= duelData.deadline) {
-        showToast("⚠️ Entry window for this duel has closed!", "warning");
+      const parentQId = getDuelQuestionId(duelData);
+      const parentQDeadline = getQuestionDeadline(parentQId);
+      if (Date.now() >= parentQDeadline || Date.now() >= duelData.deadline) {
+        showToast("⚠️ Entry window for this question has closed! Duels are no longer joinable.", "warning");
         return;
       }
 
