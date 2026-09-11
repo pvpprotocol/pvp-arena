@@ -7548,12 +7548,9 @@ buffer/index.js:
           })
         );
 
-        // SPL Token Transfer Instruction
-        transaction.add(
-          createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
-        );
-
-        // 1. Non-Custodial Anchor Escrow PDA Deposit
+        // 1. Non-Custodial Anchor Escrow PDA Deposit (100% On-Chain Escrow)
+        // Tokens are transferred directly into the Program-controlled Escrow Vault PDA (NOT Treasury)
+        // This ensures cancelDuel can autonomously refund 100% of USDC back to the creator without any admin/private key
         try {
           const optCode = (selectedDuelOption === "GREEN" || selectedDuelOption === "YES") ? 1 : 2;
           const deadlineSec = Math.floor(qDeadline / 1000);
@@ -7568,7 +7565,8 @@ buffer/index.js:
           );
           transaction.add(anchorCreateIx);
         } catch (anchorErr) {
-          console.warn("Anchor PDA instruction build note:", anchorErr);
+          console.error("Critical Anchor PDA instruction error:", anchorErr);
+          throw new Error("Failed to construct Anchor Escrow deposit: " + anchorErr.message);
         }
   
 
@@ -8201,8 +8199,14 @@ buffer/index.js:
         if (window.solanaWeb3) {
           try {
             const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-            const founderPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-            const sigs = await connection.getSignaturesForAddress(founderPubkey, { limit: 100 });
+            const scanAddresses = [TREASURY_PUBKEY, new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV")];
+            let sigs = [];
+            for (const addr of scanAddresses) {
+              try {
+                const s = await connection.getSignaturesForAddress(addr, { limit: 100 });
+                if (s && s.length) sigs.push(...s);
+              } catch(e) {}
+            }
             
             const seenSignatures = new Set();
             const parsedOnchainQuestions = [];
@@ -9802,8 +9806,9 @@ window.handleCreateQuestion = async function(e) {
         }
       }
 
-      if (!window.ethereum) {
-        alert("Please connect your Web3 wallet first.");
+      const solProvider = getSolanaProvider();
+      if (!window.ethereum && (!solProvider || !isConnected)) {
+        alert("Please connect your Phantom / Solana wallet first.");
         return;
       }
 
