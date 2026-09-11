@@ -974,8 +974,8 @@
             </div>
           </div>
 
-          <!-- Selection Controls Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono">
+          <!-- Selection Controls Grid (Asset & Timeframe - Deadline is 100% Automated) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono">
             <!-- 1. Crypto Asset Selection -->
             <div class="p-3.5 rounded-xl bg-[#151f30] border border-slate-700/60 space-y-2.5">
               <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
@@ -1026,27 +1026,7 @@
               </div>
             </div>
 
-            <!-- 3. Entry Window / Deadline Selection -->
-            <div class="p-3.5 rounded-xl bg-[#151f30] border border-slate-700/60 space-y-2.5">
-              <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                <span>3. Entry Window (Deadline)</span>
-                <span id="selected-deadline-display" class="text-cyan-400 font-black">AUTO (SMART)</span>
-              </label>
-              <div class="grid grid-cols-3 gap-1.5" id="founder-deadline-buttons">
-                <button type="button" onclick="setFounderDeadline(0, 'AUTO')" class="founder-dl-btn active-founder-btn px-3 py-2 rounded-lg text-xs font-black border-2 border-cyan-400 bg-cyan-500/25 text-cyan-300 transition-all flex items-center justify-center gap-1.5 col-span-3 shadow-md shadow-cyan-950/40">
-                  <span>⚡ AUTO</span><span>(EXACT CANDLE OPEN TIME)</span>
-                </button>
-                <button type="button" onclick="setFounderDeadline(10, '10M')" class="founder-dl-btn px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white transition-all flex items-center justify-center">
-                  10m
-                </button>
-                <button type="button" onclick="setFounderDeadline(30, '30M')" class="founder-dl-btn px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white transition-all flex items-center justify-center">
-                  30m
-                </button>
-                <button type="button" onclick="setFounderDeadline(60, '60M')" class="founder-dl-btn px-2 py-1.5 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white transition-all flex items-center justify-center">
-                  60m
-                </button>
-              </div>
-            </div>
+
           </div>
 
           <!-- Live Preview Box -->
@@ -5026,7 +5006,7 @@
       const tf = founderSelectedTimeframeLabel;
       const tfMinutes = founderSelectedTimeframeMinutes;
       const dl = founderSelectedDeadlineLabel;
-      const dlMinutes = founderSelectedDeadlineMinutes;
+      const dlMinutes = 0; // 100% Automated Deadline at Candle Open
 
       const sched = computeUnopenedCandleSchedule(tfMinutes, dlMinutes);
 
@@ -5041,7 +5021,7 @@
         titleEl.textContent = `${asset}/USD Upcoming ${tfText} Candle (${sched.windowStr})`;
       }
       if (descEl) {
-        descEl.textContent = `Target: Upcoming unopened ${tfText.toLowerCase()} candle (${sched.windowStr}). Opens in ~${sched.timeUntilOpenMin}m. Entry closes strictly at ${sched.startStr} before candle opens. Oracle will settle at ${sched.endStr}.`;
+        descEl.textContent = `Target: Upcoming unopened ${tfText.toLowerCase()} candle (${sched.windowStr}). Opens in ~${sched.timeUntilOpenMin}m. ⚡ Automated Entry Deadline: Closes strictly at ${sched.startStr} (Exact Candle Open). Oracle will settle at ${sched.endStr}.`;
       }
       if (oracleEl) {
         let source = "Coinbase Exchange";
@@ -5086,8 +5066,8 @@
         const asset = founderSelectedAsset;
         const tfMinutes = founderSelectedTimeframeMinutes;
         const tfLabel = founderSelectedTimeframeLabel;
-        const dlMinutes = founderSelectedDeadlineMinutes;
-        const dlLabel = founderSelectedDeadlineLabel;
+        const dlMinutes = 0; // 100% Automated Deadline at Candle Open
+        const dlLabel = "AUTO";
 
         const nextQId = (DUEL_QUESTIONS && DUEL_QUESTIONS.length > 0) ? Math.max(...DUEL_QUESTIONS.map(q => q.id || 0)) + 1 : 1;
         const sched = computeUnopenedCandleSchedule(tfMinutes, dlMinutes);
