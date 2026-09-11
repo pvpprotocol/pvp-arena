@@ -6432,7 +6432,7 @@ buffer/index.js:
         
         if (isPrize === true || isPrize === "prize") {
           duelData.claimed = true;
-          showToast(`🏆 Prize Claimed! ${winnerPrize.toFixed(2)} USDC sent to winner.\nFee Summary: 3% Cashback to loser ($${loserCashback.toFixed(2)}), ${hasReferrer ? "5% Referral ($" + referralShare.toFixed(2) + "), 2% Treasury ($" + protocolTreasuryFee.toFixed(2) + ")" : "7% Protocol Treasury ($" + protocolTreasuryFee.toFixed(2) + " [Unreferred])"}`, "success");
+          showToast(`🏆 Prize Claimed! ${winnerPrize.toFixed(2)} USDC sent to winner.\nFee Summary: 3% Cashback to loser (${loserCashback.toFixed(2)}), ${hasReferrer ? "5% Referral ($" + referralShare.toFixed(2) + "), 2% Treasury ($" + protocolTreasuryFee.toFixed(2) + ")" : "7% Protocol Treasury ($" + protocolTreasuryFee.toFixed(2) + " [Unreferred])"}`, "success");
         } else if (isPrize === "cashback") {
           duelData.cashbackClaimed = true;
           showToast(`🛡️ Cashback Claimed! ${loserCashback.toFixed(2)} USDC returned to your wallet.`, "success");
@@ -7241,7 +7241,7 @@ buffer/index.js:
               ❌ LOSE: <span class="text-white font-extrabold">${loseLabel}</span> [<span class="text-[#cbd5e1] font-black">${loserOption}</span>]
             </span>
             <span class="text-slate-500">•</span>
-            <span class="text-[#cbd5e1] font-bold">Prize: $${safePayout} USDC</span>
+            <span class="text-[#cbd5e1] font-bold">Prize: ${safePayout} USDC</span>
           </div>
         `;
       } else if (category === "expired") {
@@ -7269,7 +7269,7 @@ buffer/index.js:
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-xl bg-[#131b27] border border-[#334155] flex flex-col items-center justify-center shrink-0">
               <span class="text-[10px] text-slate-400 font-mono uppercase font-bold">TIER</span>
-              <span class="text-sm font-black font-mono text-[#cbd5e1]">$${safeTier}</span>
+              <span class="text-sm font-black font-mono text-[#cbd5e1]">${safeTier}</span>
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
@@ -7355,7 +7355,8 @@ buffer/index.js:
         ],
         programId: TOKEN_PROGRAM_ID,
         data: data
-      }
+      });
+    }
 
     // --- NON-CUSTODIAL ANCHOR ESCROW PROGRAM (Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK) ---
     const ANCHOR_PVP_PROGRAM_ID = new solanaWeb3.PublicKey("Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK");
@@ -7429,9 +7430,6 @@ buffer/index.js:
         programId: ANCHOR_PVP_PROGRAM_ID,
         data: data
       });
-    }
-  
-);
     }
   
     async function createDuel() {
