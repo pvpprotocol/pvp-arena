@@ -4856,8 +4856,11 @@
         if (q.deadline) return Number(q.deadline);
       }
       const num = parseInt(qId, 10);
-      if (!isNaN(num) && num >= 1 && num <= 3) return getQuestionEntryDeadline(num);
-      return getQuestionEntryDeadline(1);
+      if (!isNaN(num) && num >= 1 && num <= 3) {
+        const res = getQuestionEntryDeadline(num);
+        if (res > Date.now()) return res;
+      }
+      return Date.now() + 15 * 60 * 1000;
     }
 
     function getDuelEffectiveDeadline(duelData) {
@@ -4949,6 +4952,37 @@
     let founderSelectedTimeframeLabel = "15M";
     let founderSelectedDeadlineMinutes = 0; // 0 = AUTO (exact candle open)
     let founderSelectedDeadlineLabel = "AUTO";
+
+    window.setFounderAsset = function(asset) {
+      founderSelectedAsset = asset;
+      const buttons = document.querySelectorAll(".founder-asset-btn");
+      buttons.forEach(btn => {
+        btn.classList.remove("active-founder-btn", "border-2", "border-emerald-500", "bg-emerald-500/20", "text-emerald-300");
+        btn.classList.add("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
+        if (btn.textContent.includes(asset)) {
+          btn.classList.add("active-founder-btn", "border-2", "border-emerald-500", "bg-emerald-500/20", "text-emerald-300");
+          btn.classList.remove("border-slate-700", "bg-[#1c283c]", "text-slate-300");
+        }
+      });
+      updateFounderPreview();
+    };
+
+    window.setFounderTimeframe = function(mins, label) {
+      founderSelectedTimeframeMinutes = mins;
+      founderSelectedTimeframeLabel = label;
+      const buttons = document.querySelectorAll(".founder-tf-btn");
+      buttons.forEach(btn => {
+        btn.classList.remove("active-founder-btn", "border-2", "border-teal-500", "bg-teal-500/20", "text-teal-300");
+        btn.classList.add("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
+        const txt = btn.textContent.trim().toLowerCase();
+        if (txt === label.toLowerCase() || txt.startsWith(label.toLowerCase())) {
+          btn.classList.add("active-founder-btn", "border-2", "border-teal-500", "bg-teal-500/20", "text-teal-300");
+          btn.classList.remove("border-slate-700", "bg-[#1c283c]", "text-slate-300");
+        }
+      });
+      updateFounderPreview();
+    };
+
 
     function computeUnopenedCandleSchedule(tfMinutes, dlMinutes) {
       const now = Date.now();
@@ -5538,7 +5572,14 @@
       if (subTitle) { subTitle.textContent = ""; }
 
       let options = [];
-      if (q.isThreeWay) {
+      if (!q) {
+        // Active fallback when waiting for on-chain questions
+        options = [
+          { key: "GREEN", label: "🟢 GREEN", sub: "Close ≥ Open", colorType: "green" },
+          { key: "RED", label: "🔴 RED", sub: "Close < Open", colorType: "red" }
+        ];
+        container.className = "grid grid-cols-2 gap-3 pt-1";
+      } else if (q.isThreeWay) {
         options = [
           { key: q.opt1 || "Barcelona", label: q.opt1 || "Barcelona", sub: "Choice 1", colorType: "green" },
           { key: q.opt2 || "Draw", label: q.opt2 || "Draw", sub: "Choice 2", colorType: "blue" },
@@ -6633,7 +6674,8 @@
       }
 
       if (createDuelBtn) {
-        if (isSelectedQExpired) {
+        const hasLiveQ = DUEL_QUESTIONS.some(q => !q.isEnded && Date.now() < getQuestionDeadline(q.id));
+        if (hasLiveQ && isSelectedQExpired) {
           createDuelBtn.disabled = true;
           createDuelBtn.classList.add("opacity-50", "cursor-not-allowed");
           createDuelBtn.classList.remove("hover:from-emerald-400");
@@ -6641,6 +6683,7 @@
         } else if (!window.duelsPaused) {
           createDuelBtn.disabled = false;
           createDuelBtn.classList.remove("opacity-50", "cursor-not-allowed");
+          createDuelBtn.classList.add("hover:from-emerald-400");
           createDuelBtn.innerHTML = `<span>⚔️</span><span>CREATE DUEL ON-CHAIN</span>`;
         }
       }
