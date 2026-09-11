@@ -7605,6 +7605,32 @@ buffer/index.js:
       }
 
       const duelId = "duel_" + onchainDuelId;
+
+            // Dynamic Question Auto-Registration:
+            // If this on-chain duel belongs to a question ID not yet present in DUEL_QUESTIONS,
+            // dynamically register the question so that ALL accounts, browsers, and devices immediately see it!
+            if (!DUEL_QUESTIONS.find(function(item) { return item.id === qNum; })) {
+              DUEL_QUESTIONS.push({
+                id: qNum,
+                qNum: qNum,
+                category: "CRYPTO",
+                title: "Will Crypto close GREEN or RED?",
+                desc: "Official On-Chain Market #" + qNum,
+                deadlineDesc: "12-Hour Entry Window",
+                deadline: Date.now() + 86400000,
+                settlementTime: Date.now() + 172800000,
+                isEnded: false,
+                getDeadline: function() { return this.deadline; },
+                optA: "GREEN",
+                optALabel: "GREEN (Up)",
+                optASub: "Bullish Close",
+                optB: "RED",
+                optBLabel: "RED (Down)",
+                optBSub: "Bearish Close"
+              });
+              DUEL_QUESTIONS.sort(function(a, b) { return (a.id || 0) - (b.id || 0); });
+              try { renderDuelQuestions(); } catch(e) {}
+            }
       const cleanTitle = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
 
       const newDuel = {
