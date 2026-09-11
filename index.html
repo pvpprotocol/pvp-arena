@@ -5216,7 +5216,8 @@
           getDeadline: function() { return this.deadline; }
         };
 
-        DUEL_QUESTIONS.unshift(newQuestion);
+        DUEL_QUESTIONS.push(newQuestion);
+        DUEL_QUESTIONS.sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
 
         try {
           localStorage.setItem(`pvp_onchain_q${nextQId}`, JSON.stringify(newQuestion));
@@ -5459,17 +5460,14 @@
 
       let displayQuestions = [];
       if (activeQuestionTab === 'live') {
-        displayQuestions = [...poolQuestions].sort((a, b) => {
-          const aRem = getQuestionDeadline(a.id) - Date.now();
-          const bRem = getQuestionDeadline(b.id) - Date.now();
-          return aRem - bRem;
-        });
+        // Strictly sort deployed questions in order by Question ID (#1, #2, ... #15, #16)
+        displayQuestions = [...poolQuestions].sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
 
         if (displayQuestions.length > 0 && !displayQuestions.some(q => q.id === selectedDuelQuestionId)) {
-          selectedDuelQuestionId = displayQuestions[0].id;
+          selectedDuelQuestionId = displayQuestions[displayQuestions.length - 1].id;
         }
       } else {
-        displayQuestions = [...poolQuestions].sort((a, b) => b.id - a.id);
+        displayQuestions = [...poolQuestions].sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
       }
 
       if (displayQuestions.length === 0) {
@@ -5495,7 +5493,8 @@
           ? "border-2 border-blue-500 bg-[#16262b] shadow-md shadow-blue-500/10 ring-1 ring-blue-500" 
           : "border border-[#334155] bg-[#131b27] hover:border-[#38bdf8]/50 hover:shadow-sm";
         const dotClass = isSelected ? "bg-slate-700" : (isLive ? "bg-slate-400" : "bg-slate-300");
-        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#182230] text-[#f8fafc] font-black shadow-md shadow-none ' : 'bg-[#182230] text-neutral-700 font-bold border border-[#334155] group-hover:border-[#334155]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${q.qNum || (idx + 1)}</div>`;
+        const qDisplayId = q.id || q.qNum || (idx + 1);
+        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#182230] text-[#f8fafc] font-black shadow-md shadow-none ' : 'bg-[#182230] text-neutral-700 font-bold border border-[#334155] group-hover:border-[#334155]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${qDisplayId}</div>`;
         
         const qDeadline = getQuestionDeadline(q.id);
         const timeObj = formatRemainingTime(qDeadline);
