@@ -7958,8 +7958,7 @@ buffer/index.js:
             transaction.add(
               new solanaWeb3.TransactionInstruction({
                 keys: [
-                  { pubkey: senderPubkey, isSigner: true, isWritable: true },
-                  { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false }
+                  { pubkey: senderPubkey, isSigner: true, isWritable: true }
                 ],
                 programId: MEMO_PROGRAM_ID,
                 data: memoData
