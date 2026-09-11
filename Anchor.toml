@@ -4,13 +4,8 @@
 resolution = true
 skip-lint = false
 
-[programs.localnet]
-pvp_duels = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39"
-grand_jackpot = "BXjFmivvTKHRm7J6Fnv7HmbsghAodCH2oaiRGJtDhohA"
-
 [programs.devnet]
-pvp_duels = "HTyMSTjFFVnkDHeqqK87aPvDZ4pTat8pu9CFpor7bf39"
-grand_jackpot = "BXjFmivvTKHRm7J6Fnv7HmbsghAodCH2oaiRGJtDhohA"
+pvp_duels = "DuEL111111111111111111111111111111111111111"
 
 [registry]
 url = "https://api.apr.dev"
@@ -20,4 +15,4 @@ cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "bun test"
