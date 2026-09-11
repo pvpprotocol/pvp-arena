@@ -1,7 +1,6 @@
 [workspace]
 members = [
-    "programs/pvp_duels",
-    "programs/grand_jackpot",
+    "programs/*"
 ]
 resolver = "2"
 
