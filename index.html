@@ -958,7 +958,7 @@
 
                 
         <!-- FOUNDER ONLY QUESTION DEPLOYMENT DASHBOARD -->
-        <div id="founder-question-panel" class="mb-6 p-5 rounded-2xl border-2 border-emerald-500/60 bg-[#101726] space-y-4 relative overflow-hidden shadow-2xl shadow-emerald-950/40" style="display: block;">
+        <div id="founder-question-panel" class="hidden mb-6 p-5 rounded-2xl border-2 border-emerald-500/60 bg-[#101726] space-y-4 relative overflow-hidden shadow-2xl shadow-emerald-950/40" style="display: none;">
           <!-- Top Header -->
           <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
             <div class="flex items-center gap-2">
@@ -7891,17 +7891,17 @@
     const isExactFounder = account && (account.toLowerCase() === "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase());
 
     if (founderPanel) {
-      founderPanel.classList.remove("hidden");
-      founderPanel.style.display = "block";
-      const authBadge = document.getElementById("founder-auth-status-badge");
-      if (authBadge) {
-        if (isExactFounder) {
+      if (isExactFounder) {
+        founderPanel.classList.remove("hidden");
+        founderPanel.style.display = "block";
+        const authBadge = document.getElementById("founder-auth-status-badge");
+        if (authBadge) {
           authBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>FOUNDER AUTHENTICATED';
           authBadge.className = "text-[11px] font-mono text-emerald-400 font-bold flex items-center gap-1 bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-500/20";
-        } else {
-          authBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span>CONNECT FOUNDER WALLET';
-          authBadge.className = "text-[11px] font-mono text-amber-400 font-bold flex items-center gap-1 bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-500/20";
         }
+      } else {
+        founderPanel.classList.add("hidden");
+        founderPanel.style.display = "none";
       }
     }
 
@@ -7928,6 +7928,14 @@
     }
     return isAdm;
   }
+
+  // Initial check on load: Strictly hide founder panel unless connected as founder
+  try {
+    if (typeof checkAdminAccess === "function") {
+      checkAdminAccess(window.userAddress || null);
+    }
+  } catch(e) {}
+
 
   // Load custom questions from localStorage if exists
   function loadStoredQuestions() {
