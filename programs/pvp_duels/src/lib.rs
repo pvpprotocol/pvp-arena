@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, CloseAccount, Token, TokenAccount, Transfer};
 
-declare_id!("DuEL111111111111111111111111111111111111111");
+declare_id!("Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK");
 
 #[program]
 pub mod pvp_duels {
