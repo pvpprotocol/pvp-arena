@@ -5172,13 +5172,14 @@ buffer/index.js:
         }
 
         const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
+        const { blockhash, lastValidBlockHeight } = await getFastRecentBlockhash(connection);
         const senderPubkey = provider.publicKey;
 
         const transaction = new solanaWeb3.Transaction({
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
+        addSolanaPriorityFee(transaction);
 
         const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const payload = `pvphub:create_question:q${nextQId}:${asset}_${tfLabel}_CANDLE:GREEN_RED:dl_${dlMinutes}m:creator:4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV`;
@@ -5192,13 +5193,13 @@ buffer/index.js:
           })
         );
 
-        const { signature } = await provider.signAndSendTransaction(transaction);
+        const { signature } = await provider.signAndSendTransaction(transaction, { skipPreflight: true });
         console.log(`Question #${nextQId} Real Onchain Deploy Tx Signature:`, signature);
 
         showToast(`⏳ Confirming Question #${nextQId} on Devnet... Tx: ${signature.slice(0, 8)}...`, "info");
 
         try {
-          await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
+          await fastConfirmTransaction(connection, signature, 8000);
         } catch(cErr) {
           console.warn("Confirmation wait timed out:", cErr);
         }
@@ -6499,7 +6500,7 @@ buffer/index.js:
         if (window.solanaWeb3 && provider.signAndSendTransaction) {
           try {
             const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-            const { blockhash } = await connection.getLatestBlockhash("confirmed");
+            const { blockhash } = await getFastRecentBlockhash(connection);
             const senderPubkey = provider.publicKey;
 
             const transaction = new solanaWeb3.Transaction({
@@ -6518,9 +6519,10 @@ buffer/index.js:
               })
             );
 
-            const { signature } = await provider.signAndSendTransaction(transaction);
+            const { signature } = await provider.signAndSendTransaction(transaction, { skipPreflight: true });
             txHash = signature;
             txSuccess = true;
+            fastConfirmTransaction(connection, signature, 8000);
             console.log("Onchain Reclaim Tx Signature:", signature);
             showToast("✅ Deposit Reclaimed On-Chain! Tx: " + signature.slice(0, 8) + "...", "success");
           } catch(txErr) {
@@ -7306,6 +7308,15 @@ buffer/index.js:
 
     // Browser-safe ATA derivation using standard Uint8Array toBytes() without requiring Node Buffer
     async function getAssociatedTokenAddress(walletPubkey, mintPubkey) {
+      try {
+        if (window.solanaWeb3 && window.solanaWeb3.PublicKey && window.solanaWeb3.PublicKey.findProgramAddressSync) {
+          const [address] = window.solanaWeb3.PublicKey.findProgramAddressSync(
+            [walletPubkey.toBytes(), TOKEN_PROGRAM_ID.toBytes(), mintPubkey.toBytes()],
+            ASSOCIATED_TOKEN_PROGRAM_ID
+          );
+          return address;
+        }
+      } catch(e) {}
       const [address] = await solanaWeb3.PublicKey.findProgramAddress(
         [walletPubkey.toBytes(), TOKEN_PROGRAM_ID.toBytes(), mintPubkey.toBytes()],
         ASSOCIATED_TOKEN_PROGRAM_ID
@@ -7519,8 +7530,7 @@ buffer/index.js:
         }
 
         const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-        const { blockhash } = await connection.getLatestBlockhash("confirmed");
-        
+        const { blockhash } = await getFastRecentBlockhash(connection);
         const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
         const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
         const treasuryAta = TREASURY_USDC_ATA;
@@ -7530,6 +7540,7 @@ buffer/index.js:
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
+        addSolanaPriorityFee(transaction);
 
         // Real On-chain SPL Token Transfer to Treasury Escrow
         // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
@@ -7593,8 +7604,9 @@ buffer/index.js:
           })
         );
 
-        const res = await provider.signAndSendTransaction(transaction);
+        const res = await provider.signAndSendTransaction(transaction, { skipPreflight: true });
         txHash = res.signature || res;
+        fastConfirmTransaction(connection, txHash, 8000);
         console.log("Real Devnet Tx Signature:", txHash);
         showToast("✅ On-chain Tx confirmed! $" + (selectedDuelTier || 1) + " USDC deducted.", "success");
 
@@ -7883,7 +7895,7 @@ buffer/index.js:
               recentBlockhash: blockhash,
               feePayer: senderPubkey
             });
-
+            addSolanaPriorityFee(transaction);
 
             // Execute 100% Non-Custodial Anchor Escrow Refund if numeric duelId exists
             try {
