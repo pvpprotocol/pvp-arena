@@ -7956,7 +7956,7 @@
           try {
             const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
             const founderPubkey = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-            const sigs = await connection.getSignaturesForAddress(founderPubkey, { limit: 25 });
+            const sigs = await connection.getSignaturesForAddress(founderPubkey, { limit: 100 });
             
             const seenSignatures = new Set();
             const parsedOnchainQuestions = [];
@@ -8032,16 +8032,17 @@
               }
             }
 
-            // Assign unique incremental IDs so multiple deployments never collide
-            // Reverse so oldest tx is q1, latest is qN
-            parsedOnchainQuestions.reverse();
+            // Strictly index each on-chain transaction by its chronological order:
+            // Oldest tx = Question #1, newest tx = Question #N
+            parsedOnchainQuestions.sort((a, b) => a.blockTime - b.blockTime);
             parsedOnchainQuestions.forEach((q, idx) => {
-              q.id = idx + 1;
-              q.qNum = idx + 1;
-              q.title = q.title.replace(/Candle/, `Candle Duel #${idx + 1}`);
+              const qId = idx + 1;
+              q.id = qId;
+              q.qNum = qId;
+              if (!q.title.includes("#")) {
+                q.title = q.title.replace(/Upcoming/, `Duel #${qId} • Upcoming`);
+              }
             });
-            // Newest first for display
-            parsedOnchainQuestions.reverse();
 
             if (parsedOnchainQuestions.length > 0) {
               DUEL_QUESTIONS.length = 0; // Clear and replace with true onchain questions
