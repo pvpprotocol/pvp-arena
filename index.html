@@ -718,6 +718,14 @@
     });
   </script>
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/buffer/6.0.3/buffer.min.js"></script>
+  <script>
+    if (typeof window !== "undefined") {
+      if (typeof buffer !== "undefined" && buffer.Buffer) {
+        window.Buffer = buffer.Buffer;
+      }
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.8/lib/index.iife.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script>
@@ -7275,9 +7283,10 @@
         const TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
     const TREASURY_USDC_ATA = new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
 
+    // Browser-safe ATA derivation using standard Uint8Array toBytes() without requiring Node Buffer
     async function getAssociatedTokenAddress(walletPubkey, mintPubkey) {
       const [address] = await solanaWeb3.PublicKey.findProgramAddress(
-        [walletPubkey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mintPubkey.toBuffer()],
+        [walletPubkey.toBytes(), TOKEN_PROGRAM_ID.toBytes(), mintPubkey.toBytes()],
         ASSOCIATED_TOKEN_PROGRAM_ID
       );
       return address;
