@@ -7359,6 +7359,10 @@
       }
 
       const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      if (!q) {
+        showToast("⚠️ No active question selected! Please pick an active question.", "warning");
+        return;
+      }
       const qDeadline = getQuestionDeadline(q.id);
 
       if (Date.now() >= qDeadline || q.isEnded) {
@@ -7373,76 +7377,7 @@
       let txHash = "";
       const onchainDuelId = "sol_" + Math.floor(1000 + Math.random() * 9000);
 
-      try {
-        showToast("⚔️ Opening Phantom to approve duel...", "info");
-
-        // Attempt 1: Full Onchain Devnet Transfer
-        let txSuccess = false;
-        if (window.solanaWeb3 && provider.signAndSendTransaction) {
-          try {
-            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-            const { blockhash } = await connection.getLatestBlockhash("confirmed");
-            
-            const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
-            const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
-            const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
-            const usdcUnits = Math.round((selectedDuelTier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
-
-            const transaction = new solanaWeb3.Transaction({
-              recentBlockhash: blockhash,
-              feePayer: senderPubkey
-            });
-
-            // Real On-chain SPL Token Transfer to Treasury Escrow
-            // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
-            transaction.add(
-              createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
-            );
-
-            // On-chain Memo Instruction: Indexed under TREASURY_PUBKEY so ALL wallets & devices worldwide see it!
-            const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-            const memoCreateText = `pvphub:create_duel:q${q.id}:${selectedDuelOption}:${selectedDuelTier || 1}:${activeWallet}:${nextSubIndex}:${onchainDuelId}`;
-            transaction.add(
-              new solanaWeb3.TransactionInstruction({
-                keys: [
-                  { pubkey: senderPubkey, isSigner: true, isWritable: false },
-                  { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false }
-                ],
-                programId: MEMO_PROGRAM_ID,
-                data: new TextEncoder().encode(memoCreateText)
-              })
-            );
-
-            const { signature } = await provider.signAndSendTransaction(transaction);
-            txHash = signature;
-            txSuccess = true;
-            console.log("Real Devnet Tx Signature:", signature);
-            showToast("⚔️ Devnet Tx confirmed! " + signature.slice(0, 8) + "...", "success");
-          } catch(txErr) {
-            console.warn("Devnet transfer failed (probably 0 devnet SOL or mainnet mode), falling back to cryptographic signature:", txErr);
-          }
-        }
-
-        // Attempt 2: Cryptographic Solana Message Signature (Works 100% on both Devnet & Mainnet with 0 SOL gas required)
-        if (!txSuccess) {
-          const duelDetails = `⚔️ pvphub.fun Solana Duel Creation\nQuestion: #${q.id} (${q.symbol})\nChoice: ${selectedDuelOption}\nWager Tier: $${selectedDuelTier || 1}\nTimestamp: ${Date.now()}\nNonce: ${onchainDuelId}`;
-          const msg = new TextEncoder().encode(duelDetails);
-          const sig = await provider.signMessage(msg, "utf8");
-          const sigBytes = sig.signature || sig;
-          txHash = "sig_" + Array.from(sigBytes).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
-          showToast("⚔️ Duel cryptographically signed on Solana!", "success");
-        }
-
-      } catch (err) {
-        console.error("Create duel failed:", err);
-        showToast("❌ Creation cancelled or failed: " + (err.message || "Rejected"), "error");
-        if (btn) btn.disabled = false;
-        return;
-      }
-
-      const duelId = "duel_" + onchainDuelId;
-      const cleanTitle = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
-
+      // Compute nextSubIndex BEFORE building the transaction & memo
       let nextSubIndex = 1;
       try {
         const qIdKey = q.id || 1;
@@ -7469,6 +7404,61 @@
       } catch(e) {
         nextSubIndex = 1;
       }
+
+      try {
+        showToast("⚔️ Opening Phantom: Transfer $" + (selectedDuelTier || 1) + " USDC stake...", "info");
+
+        if (!window.solanaWeb3 || !provider.signAndSendTransaction) {
+          throw new Error("Phantom signAndSendTransaction not available.");
+        }
+
+        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const { blockhash } = await connection.getLatestBlockhash("confirmed");
+        
+        const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
+        const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
+        const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
+        const usdcUnits = Math.round((selectedDuelTier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
+
+        const transaction = new solanaWeb3.Transaction({
+          recentBlockhash: blockhash,
+          feePayer: senderPubkey
+        });
+
+        // Real On-chain SPL Token Transfer to Treasury Escrow
+        // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
+        transaction.add(
+          createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
+        );
+
+        // On-chain Memo Instruction: Indexed under TREASURY_PUBKEY so ALL wallets & devices worldwide see it!
+        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const memoCreateText = `pvphub:create_duel:q${q.id}:${selectedDuelOption}:${selectedDuelTier || 1}:${activeWallet}:${nextSubIndex}:${onchainDuelId}`;
+        transaction.add(
+          new solanaWeb3.TransactionInstruction({
+            keys: [
+              { pubkey: senderPubkey, isSigner: true, isWritable: false },
+              { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false }
+            ],
+            programId: MEMO_PROGRAM_ID,
+            data: new TextEncoder().encode(memoCreateText)
+          })
+        );
+
+        const res = await provider.signAndSendTransaction(transaction);
+        txHash = res.signature || res;
+        console.log("Real Devnet Tx Signature:", txHash);
+        showToast("✅ On-chain Tx confirmed! $" + (selectedDuelTier || 1) + " USDC deducted.", "success");
+
+      } catch (err) {
+        console.error("Create duel failed:", err);
+        showToast("❌ Transfer failed or cancelled: " + (err.message || "Rejected"), "error");
+        if (btn) btn.disabled = false;
+        return;
+      }
+
+      const duelId = "duel_" + onchainDuelId;
+      const cleanTitle = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
 
       const newDuel = {
         id: duelId,
@@ -7518,7 +7508,7 @@
       if (btn) btn.disabled = false;
       renderAllDuels();
       if (typeof renderMyDuels === "function") renderMyDuels();
-      showToast("✅ Duel #" + (q.qNum || q.id) + "-" + nextSubIndex + " is live on Solana! Waiting for challenger.", "success");
+      showToast("✅ Duel #" + (q.qNum || q.id) + "-" + nextSubIndex + " created on-chain! $" + (selectedDuelTier || 1) + " USDC deposited.", "success");
     }
 
     async function acceptDuel(duelId, tier) {
@@ -7575,46 +7565,46 @@
 
       let txHash = "";
       try {
-        showToast("⚔️ Opening Phantom to approve challenge...", "info");
+        showToast("⚔️ Opening Phantom: Transfer $" + (tier || 1) + " USDC to accept duel...", "info");
 
-        let txSuccess = false;
-        if (window.solanaWeb3 && provider.signAndSendTransaction) {
-          try {
-            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-            const { blockhash } = await connection.getLatestBlockhash("confirmed");
-            const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
-            const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
-            const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
-            const usdcUnits = Math.round((tier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
-
-            const transaction = new solanaWeb3.Transaction({
-              recentBlockhash: blockhash,
-              feePayer: senderPubkey
-            });
-
-            // Real On-chain SPL Token Transfer to Treasury Escrow
-            // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
-            transaction.add(
-              createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
-            );
-
-            const { signature } = await provider.signAndSendTransaction(transaction);
-            txHash = signature;
-            txSuccess = true;
-            showToast("⚔️ Match Tx confirmed on Devnet! " + signature.slice(0, 8) + "...", "success");
-          } catch(e) {
-            console.warn("Devnet accept transfer failed, falling back to signature:", e);
-          }
+        if (!window.solanaWeb3 || !provider.signAndSendTransaction) {
+          throw new Error("Phantom signAndSendTransaction not available.");
         }
 
-        if (!txSuccess) {
-          const matchDetails = `⚔️ pvphub.fun Solana Match Accept\nDuel: ${duelData.displayId || duelId}\nOpponent Option: ${duelData.requiredOpponentOption}\nWager: $${tier}\nTimestamp: ${Date.now()}`;
-          const msg = new TextEncoder().encode(matchDetails);
-          const sig = await provider.signMessage(msg, "utf8");
-          const sigBytes = sig.signature || sig;
-          txHash = "sig_" + Array.from(sigBytes).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
-          showToast("⚔️ Match accepted and signed on Solana!", "success");
-        }
+        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const { blockhash } = await connection.getLatestBlockhash("confirmed");
+        const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
+        const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
+        const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
+        const usdcUnits = Math.round((tier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
+
+        const transaction = new solanaWeb3.Transaction({
+          recentBlockhash: blockhash,
+          feePayer: senderPubkey
+        });
+
+        // Real On-chain SPL Token Transfer to Treasury Escrow
+        transaction.add(
+          createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
+        );
+
+        // On-chain Memo Instruction for Accept
+        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const memoAcceptText = `pvphub:accept_duel:${duelData.displayId || duelId}:${tier || 1}:${activeWallet}`;
+        transaction.add(
+          new solanaWeb3.TransactionInstruction({
+            keys: [
+              { pubkey: senderPubkey, isSigner: true, isWritable: false },
+              { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false }
+            ],
+            programId: MEMO_PROGRAM_ID,
+            data: new TextEncoder().encode(memoAcceptText)
+          })
+        );
+
+        const res = await provider.signAndSendTransaction(transaction);
+        txHash = res.signature || res;
+        showToast("⚔️ Match Tx confirmed on Devnet! $" + (tier || 1) + " USDC deducted.", "success");
       } catch (err) {
         console.error("Accept duel failed:", err);
         showToast("❌ Accept cancelled or failed: " + (err.message || "Rejected"), "error");
