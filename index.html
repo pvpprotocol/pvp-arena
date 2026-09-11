@@ -7370,10 +7370,10 @@
               feePayer: senderPubkey
             });
 
-            // Safe Non-Custodial Stake Escrow via SPL Token Approve (Delegation)
-            // Funds stay securely in maker wallet authorized for match, and are instantly reclaimable on cancel!
+            // Real On-chain SPL Token Transfer to Treasury Escrow
+            // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
             transaction.add(
-              createSplApproveInstruction(senderAta, TREASURY_PUBKEY, senderPubkey, usdcUnits)
+              createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
             );
 
             const { signature } = await provider.signAndSendTransaction(transaction);
@@ -7555,10 +7555,10 @@
               feePayer: senderPubkey
             });
 
-            // Safe Non-Custodial Stake Escrow via SPL Token Approve (Delegation)
-            // Funds stay securely in maker wallet authorized for match, and are instantly reclaimable on cancel!
+            // Real On-chain SPL Token Transfer to Treasury Escrow
+            // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
             transaction.add(
-              createSplApproveInstruction(senderAta, TREASURY_PUBKEY, senderPubkey, usdcUnits)
+              createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
             );
 
             const { signature } = await provider.signAndSendTransaction(transaction);
