@@ -4797,10 +4797,7 @@
         if (typeof q.getDeadline === "function") return q.getDeadline();
         if (q.deadline) return Number(q.deadline);
       }
-      const num = parseInt(qId, 10) || 15;
-      if (num === 1) return 1788707557000;
-      if (num === 15) return 1788600600000;
-      return 1788602400000;
+      return 0;
     }
 
     function getQuestion1EntryDeadline() {
@@ -4849,18 +4846,13 @@
     };
 
     function getQuestionDeadline(qId) {
-      if (!qId) return getQuestionEntryDeadline(1);
-      const q = DUEL_QUESTIONS.find(item => item.id == qId);
+      if (!qId) return 0;
+      const q = DUEL_QUESTIONS.find(item => String(item.id) === String(qId));
       if (q) {
         if (typeof q.getDeadline === "function") return q.getDeadline();
         if (q.deadline) return Number(q.deadline);
       }
-      const num = parseInt(qId, 10);
-      if (!isNaN(num) && num >= 1 && num <= 3) {
-        const res = getQuestionEntryDeadline(num);
-        if (res > Date.now()) return res;
-      }
-      return Date.now() + 15 * 60 * 1000;
+      return 0; // STRICT: Never return future time for missing or expired questions!
     }
 
     function getDuelEffectiveDeadline(duelData) {
@@ -4893,8 +4885,9 @@
     }
 
     function formatRemainingTime(deadlineMs) {
-      const diff = (deadlineMs || 0) - Date.now();
-      if (diff <= 0) return { expired: true, text: "CLOSED (00:00:00)", short: "CLOSED" };
+      if (!deadlineMs || Number(deadlineMs) <= 0) return { expired: true, text: "CLOSED (00:00:00)", short: "CLOSED", diff: 0 };
+      const diff = Number(deadlineMs) - Date.now();
+      if (diff <= 0) return { expired: true, text: "CLOSED (00:00:00)", short: "CLOSED", diff: 0 };
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const secs = Math.floor((diff % (1000 * 60)) / 1000);
@@ -6618,15 +6611,21 @@
 
     // Ticking interval to update live countdown timers across all cards
     setInterval(() => {
-      // 1. Update questions grid timers
+      // 1. Update questions grid timers - STRICT: Stay 100% stopped at 0 once target is reached
       DUEL_QUESTIONS.forEach(q => {
+        const qDeadline = getQuestionDeadline(q.id);
+        const isQEnded = q.isEnded || (qDeadline > 0 && Date.now() >= qDeadline);
+        if (isQEnded) {
+          q.isEnded = true; // Permanently lock
+        }
+
         const el = document.querySelector(`.q-timer-display[data-qid="${q.id}"]`);
         const candleRemEl = document.getElementById(`q-candle-remaining-${q.id}`);
         if (candleRemEl) {
           const sTime = q.settlementTime || getQuestionSettlementTime(q.id);
           const isCandlePassed = Date.now() >= sTime;
           if (isCandlePassed) {
-            candleRemEl.textContent = "SETTLED / CLOSED";
+            candleRemEl.textContent = "SETTLED / CLOSED (00:00:00)";
             candleRemEl.className = "text-slate-400 font-bold tracking-wide";
           } else {
             candleRemEl.textContent = formatRemainingTime(sTime).text;
@@ -6635,10 +6634,8 @@
         }
         const entryRemEl = document.getElementById(`q-entry-remaining-${q.id}`);
         if (entryRemEl) {
-          const qDeadline = getQuestionDeadline(q.id);
-          const isQEnded = q.isEnded || (Date.now() >= qDeadline);
           if (isQEnded) {
-            entryRemEl.textContent = "ENTRY CLOSED";
+            entryRemEl.textContent = "CLOSED (00:00:00)";
             entryRemEl.className = "text-slate-400 font-black tracking-wide";
           } else {
             const timeObj = formatRemainingTime(qDeadline);
@@ -6647,18 +6644,21 @@
         }
         const remEl = document.getElementById(`q-12h-remaining-${q.id}`);
         if (remEl) {
-          const qDeadline = getQuestionDeadline(q.id);
-          const timeObj = formatRemainingTime(qDeadline);
-          remEl.textContent = timeObj.text;
+          if (isQEnded) {
+            remEl.textContent = "CLOSED (00:00:00)";
+          } else {
+            const timeObj = formatRemainingTime(qDeadline);
+            remEl.textContent = timeObj.text;
+          }
         }
         if (el) {
-          const qDeadline = getQuestionDeadline(q.id);
-          const timeObj = formatRemainingTime(qDeadline);
-        const isQuestionEnded = q.isEnded || (Date.now() >= qDeadline);
-        const timerBadge = isQuestionEnded
-          ? '<span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] text-slate-400 flex items-center gap-1">🔒 <span>CLOSED (ENDED)</span></span>'
-          : `<span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-sm shadow-amber-400/50"></span> <span id="q-timer-${q.id}" class="text-amber-400 font-bold">${timeObj.text}</span></span>`;
-          el.textContent = timeObj.text;
+          if (isQEnded) {
+            el.textContent = "CLOSED (00:00:00)";
+            el.className = "q-timer-display text-slate-500 font-bold";
+          } else {
+            const timeObj = formatRemainingTime(qDeadline);
+            el.textContent = timeObj.text;
+          }
         }
       });
 
@@ -6669,8 +6669,12 @@
       const isSelectedQExpired = (Date.now() >= qDeadline);
 
       if (summaryTimerEl) {
-        const timeObj = formatRemainingTime(qDeadline);
-        summaryTimerEl.textContent = isSelectedQExpired ? "ENTRY CLOSED" : timeObj.text;
+        if (!selectedDuelQuestionId || qDeadline <= 0 || isSelectedQExpired) {
+          summaryTimerEl.textContent = "ENTRY CLOSED (00:00:00)";
+        } else {
+          const timeObj = formatRemainingTime(qDeadline);
+          summaryTimerEl.textContent = timeObj.expired ? "ENTRY CLOSED (00:00:00)" : timeObj.text;
+        }
       }
 
       if (createDuelBtn) {
