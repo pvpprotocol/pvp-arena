@@ -2476,7 +2476,7 @@ buffer/index.js:
               <br>
               • <strong>5% Referral Cash Reward:</strong> Instantly routed to the referrer wallet if entered via referral.
               <br>
-              • <strong>Unreferred Match Policy:</strong> If a participant entered without an active referral code, the 5% referral allocation is automatically routed to the Protocol Treasury, resulting in a <strong>7% total protocol fee</strong> (4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV).
+              • <strong>Unreferred Match Policy:</strong> If a participant entered without an active referral code, the 5% referral allocation is automatically routed to the Protocol Treasury, resulting in a <strong>7% total protocol fee</strong> (CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7).
           </p>
           <div class="p-4 rounded-2xl bg-[#182230] border border-[#334155] space-y-3">
             <h4 class="text-xs font-bold font-mono text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -6423,7 +6423,7 @@ buffer/index.js:
         showToast("⚡ Processing Solana onchain claim...", "info");
         
         // Mock Solana Tx simulation if program not yet deployed or execute live onchain
-        const TREASURY_WALLET = "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV";
+        const TREASURY_WALLET = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
         
         if (isPrize === true || isPrize === "prize") {
           duelData.claimed = true;
@@ -7293,8 +7293,8 @@ buffer/index.js:
     const TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
     const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
     const DEVNET_USDC_MINT = new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
-        const TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-    const TREASURY_USDC_ATA = new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
+        const TREASURY_PUBKEY = new solanaWeb3.PublicKey("CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7");
+    const TREASURY_USDC_ATA = new solanaWeb3.PublicKey("GtZS7QVW8BuCQwoeMc7NA5xG7VAkJUsAGpBENgPxvT35");
 
     // Browser-safe ATA derivation using standard Uint8Array toBytes() without requiring Node Buffer
     async function getAssociatedTokenAddress(walletPubkey, mintPubkey) {
@@ -7450,6 +7450,23 @@ buffer/index.js:
 
         // Real On-chain SPL Token Transfer to Treasury Escrow
         // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
+        // Ensure Treasury ATA exists idempotently (safe no-op if already created)
+        transaction.add(
+          new solanaWeb3.TransactionInstruction({
+            keys: [
+              { pubkey: senderPubkey, isSigner: true, isWritable: true },
+              { pubkey: treasuryAta, isSigner: false, isWritable: true },
+              { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false },
+              { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
+              { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+              { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
+            ],
+            programId: ASSOCIATED_TOKEN_PROGRAM_ID,
+            data: new Uint8Array([1])
+          })
+        );
+
+        // SPL Token Transfer Instruction
         transaction.add(
           createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
         );
@@ -7615,6 +7632,23 @@ buffer/index.js:
         });
 
         // Real On-chain SPL Token Transfer to Treasury Escrow
+        // Ensure Treasury ATA exists idempotently (safe no-op if already created)
+        transaction.add(
+          new solanaWeb3.TransactionInstruction({
+            keys: [
+              { pubkey: senderPubkey, isSigner: true, isWritable: true },
+              { pubkey: treasuryAta, isSigner: false, isWritable: true },
+              { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false },
+              { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
+              { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+              { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
+            ],
+            programId: ASSOCIATED_TOKEN_PROGRAM_ID,
+            data: new Uint8Array([1])
+          })
+        );
+
+        // SPL Token Transfer Instruction
         transaction.add(
           createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
         );
