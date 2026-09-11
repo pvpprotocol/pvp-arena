@@ -1,7 +1,7 @@
 [package]
 name = "pvp_duels"
 version = "0.1.0"
-description = "High-speed 1v1 PvP Duel Escrow and Settlement Program on Solana"
+description = "Non-custodial 1v1 PvP Escrow Smart Contract on Solana"
 edition = "2021"
 
 [lib]
@@ -16,5 +16,5 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.30.1"
-anchor-spl = "0.30.1"
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"
