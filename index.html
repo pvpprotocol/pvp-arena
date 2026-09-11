@@ -4828,27 +4828,8 @@
     }
 
     // Questions are 100% onchain - no hardcoded/fake questions allowed
-    const DUEL_QUESTIONS = [
-      {
-        id: 1,
-        qNum: 1,
-        category: "crypto",
-        symbol: "SOL-USD",
-        title: "SOL/USD 15-Min Candle Duel (GREEN vs RED)",
-        desc: "Oracle: Pyth / Binance SOL-USD 15-Minute Candle. Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
-        resolutionSource: "Pyth / Binance Oracle",
-        deadlineDesc: "15-Minute Entry Window",
-        candleStartTime: Date.now(),
-        deadline: 1725900000000,
-        settlementTime: 1725901000000,
-        opt1: "GREEN",
-        opt2: "RED",
-        isEnded: true,
-        onchainTxSignature: "bTdpWD3G8PZm2unJPrckWp8uvw9oRzfirn2mshU6wyM8dBhLBuk4axLXpK3nyq9WLPE1xLEsFLvVtgyrnHXDqDM",
-        creator: "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV",
-        getDeadline: function() { return this.deadline; }
-      }
-    ];
+    // STRICT PURE ON-CHAIN LAW: No hardcoded questions. Array starts 100% empty!
+    const DUEL_QUESTIONS = [];
     let selectedDuelQuestionId = null;
     let selectedDuelTier = 1;
     let selectedDuelOption = "GREEN";
@@ -5368,7 +5349,7 @@
     
     // Clear any legacy unconfirmed local items
     try {
-      localStorage.removeItem("pvp_onchain_q1");
+      localStorage.clear(); // Clear all stale questions and caches
       localStorage.removeItem("pvp_onchain_q2");
       localStorage.removeItem("pvp_arena_questions_v1");
       localStorage.removeItem("pvp_questions_devnet");
@@ -7947,8 +7928,8 @@
                 const entryWindowMs = 15 * 60 * 1000; // 15 minutes
                 let qDeadline = txTime + entryWindowMs;
                 if (qDeadline < Date.now()) {
-                  // Keep active for testing/entering if recently deployed
-                  qDeadline = Date.now() + entryWindowMs;
+                  // Expired: mark strictly ended, DO NOT revive
+                  continue;
                 }
                 const qSettlement = qDeadline + (15 * 60 * 1000);
 
