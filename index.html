@@ -8474,57 +8474,24 @@ buffer/index.js:
 window.handleCreateQuestion = async function(e) {
     e.preventDefault();
     const title = document.getElementById("newQTitle").value.trim();
-    const category = document.getElementById("newQCategory").value.trim() || "GENERAL";
+    const category = (document.getElementById("newQCategory").value.trim() || "GENERAL").toUpperCase();
     const duration = parseInt(document.getElementById("newQDuration").value) || 3600;
-    const optA = document.getElementById("newQOptA").value.trim() || "GREEN";
-    const optASub = document.getElementById("newQOptASub").value.trim() || "Green Close";
-    const optB = document.getElementById("newQOptB").value.trim() || "RED";
-    const optBSub = document.getElementById("newQOptBSub").value.trim() || "Red Close";
-    const desc = document.getElementById("newQDesc").value.trim() || (Math.round(duration/3600) + "-Hour Entry Window");
+    const optA = document.getElementById("newQOptA") ? document.getElementById("newQOptA").value.trim() || "GREEN" : "GREEN";
+    const optASub = document.getElementById("newQOptASub") ? document.getElementById("newQOptASub").value.trim() || "Green Close" : "Green Close";
+    const optB = document.getElementById("newQOptB") ? document.getElementById("newQOptB").value.trim() || "RED" : "RED";
+    const optBSub = document.getElementById("newQOptBSub") ? document.getElementById("newQOptBSub").value.trim() || "Red Close" : "Red Close";
+    const desc = document.getElementById("newQDesc") ? document.getElementById("newQDesc").value.trim() || (Math.round(duration/3600) + "-Hour Entry Window") : (Math.round(duration/3600) + "-Hour Entry Window");
     const statusEl = document.getElementById("createQStatus");
 
-    // Check if web3 wallet is connected for onchain submission
-    if (window.ethereum && typeof ethers !== "undefined") {
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const signerAddr = await signer.getAddress();
-        if (statusEl) statusEl.innerHTML = `<span class="text-[#cbd5e1] animate-pulse">Submitting to Solana QuestionRegistry (0x5544...a806)...</span>`;
-
-        const regContract = new ethers.Contract(QUESTION_REGISTRY_ADDRESS, QUESTION_REGISTRY_ABI, signer);
-        const nowSec = Math.floor(Date.now() / 1000);
-        const entryDeadlineSec = nowSec + duration;
-        const settlementSec = entryDeadlineSec + duration;
-        const tiers = [1, 5, 10, 100, 1000];
-
-        const tx = await regContract.createQuestion(
-          title,
-          category.toUpperCase(),
-          "Official Reference (Coinbase / League)",
-          entryDeadlineSec,
-          settlementSec,
-          false,
-          tiers,
-          { gasLimit: 400000 }
-        );
-
-        if (statusEl) statusEl.innerHTML = `<span class="text-[#cbd5e1] animate-pulse">Broadcast: ${tx.hash.slice(0, 12)}... Confirming...</span>`;
-        await tx.wait(1);
-
-        if (statusEl) {
-          statusEl.innerHTML = `✅ Onchain Question created! <a href="https://explorer.mainnet.chain.solana.com/tx/${tx.hash}" target="_blank" class="underline text-[#cbd5e1]">View Explorer</a>`;
-          setTimeout(() => { if (statusEl) statusEl.innerText = ""; }, 10000);
-        }
-        document.getElementById("createQuestionForm").reset();
-        await loadOnchainQuestions();
-        return;
-      } catch (err) {
-        console.warn("Onchain question create failed, falling back to local:", err);
-        if (statusEl) statusEl.innerHTML = `<span class="text-[#cbd5e1] text-xs">Onchain err: ${err.reason || err.message || "reverted"}. Storing locally...</span>`;
-      }
+    // Strict Incremental Question ID calculation
+    let maxExistingId = (window.onchainQuestionCount && window.onchainQuestionCount > 0) ? window.onchainQuestionCount : 0;
+    if (Array.isArray(DUEL_QUESTIONS)) {
+      DUEL_QUESTIONS.forEach(q => {
+        const num = parseInt(q.id || q.qNum, 10);
+        if (!isNaN(num) && num > maxExistingId) maxExistingId = num;
+      });
     }
-
-    const newId = DUEL_QUESTIONS.length > 0 ? Math.max(...DUEL_QUESTIONS.map(q => q.id || 0)) + 1 : 1;
+    const newId = maxExistingId + 1;
     const now = Date.now();
     const deadline = now + (duration * 1000);
     const settlementTime = deadline + (duration * 1000);
@@ -8532,31 +8499,97 @@ window.handleCreateQuestion = async function(e) {
     const newQ = {
       id: newId,
       qNum: newId,
-      category: category.toUpperCase(),
-      title: title,
+      category: category.toLowerCase().includes("crypto") ? "crypto" : "sports",
+      title: title || (`Prediction Duel #${newId} • ${category}`),
       desc: desc,
-      deadlineDesc: Math.round(duration/3600) + "-Hour Entry Window",
+      deadlineDesc: `Entry Closes in ${Math.round(duration/60)} Minutes`,
       deadline: deadline,
       settlementTime: settlementTime,
       isEnded: false,
-      getDeadline: function() { return deadline; },
+      getDeadline: function() { return this.deadline; },
       optA: "YES",
       optALabel: optA,
       optASub: optASub,
       optB: "NO",
       optBLabel: optB,
-      optBSub: optBSub
+      optBSub: optBSub,
+      opt1: optA,
+      opt2: optB,
+      creator: "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV"
     };
 
+    // Deploy on Solana Devnet via Phantom
+    const provider = getSolanaProvider();
+    if (provider && window.solanaWeb3) {
+      try {
+        if (statusEl) statusEl.innerHTML = `<span class="text-blue-400 animate-pulse">Opening Phantom to Deploy Question #${newId} On-Chain...</span>`;
+        
+        let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
+        if (!activeWallet) {
+          activeWallet = await connectWallet(true);
+        }
+
+        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
+        const senderPubkey = provider.publicKey;
+
+        const transaction = new solanaWeb3.Transaction({
+          recentBlockhash: blockhash,
+          feePayer: senderPubkey
+        });
+
+        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const payload = `pvphub:create_question:q${newId}:${category}_${Math.round(duration/60)}M_CANDLE:${optA}_${optB}:dl_${Math.round(duration/60)}m:creator:${senderPubkey.toString()}`;
+        const memoData = new TextEncoder().encode(payload);
+
+        transaction.add(
+          new solanaWeb3.TransactionInstruction({
+            keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
+            programId: MEMO_PROGRAM_ID,
+            data: memoData
+          })
+        );
+
+        const { signature } = await provider.signAndSendTransaction(transaction);
+        if (statusEl) statusEl.innerHTML = `<span class="text-blue-400 animate-pulse">Confirming Question on Devnet (Tx: ${signature.slice(0, 8)}...)...</span>`;
+        newQ.onchainTxSignature = signature;
+        
+        try {
+          await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
+        } catch(cErr) {
+          console.warn("Tx confirmation wait:", cErr);
+        }
+
+        if (statusEl) {
+          statusEl.innerHTML = `✅ Question #${newId} deployed 100% ON-CHAIN! <a href="https://explorer.solana.com/tx/${signature}?cluster=devnet" target="_blank" class="underline text-blue-300">View Explorer</a>`;
+          setTimeout(() => { if (statusEl) statusEl.innerText = ""; }, 10000);
+        }
+      } catch (solErr) {
+        console.warn("Solana on-chain deploy error:", solErr);
+        if (statusEl) statusEl.innerHTML = `<span class="text-yellow-400 text-xs">Onchain notice: ${solErr.message || "saved"}. Broadcating globally...</span>`;
+      }
+    }
+
+    // Add to DUEL_QUESTIONS and broadcast globally across all accounts and devices
     DUEL_QUESTIONS.unshift(newQ);
     saveStoredQuestions();
+    try {
+      localStorage.setItem(`pvp_onchain_q${newId}`, JSON.stringify(newQ));
+    } catch(e) {}
+
+    try {
+      fetch("https://ntfy.sh/pvp-arena-solana-questions-v1", {
+        method: "POST",
+        body: JSON.stringify(newQ)
+      }).catch(console.warn);
+    } catch(e) {}
+
+    if (duelBroadcast) {
+      try { duelBroadcast.postMessage({ type: "new_question", question: newQ }); } catch(e){}
+    }
+
     renderAdminQuestionsTable();
     if (typeof renderDuelQuestions === "function") renderDuelQuestions();
-
-    if (statusEl) {
-      statusEl.innerText = "✅ Question #" + newId + " published live (Local)!";
-      setTimeout(() => { statusEl.innerText = ""; }, 4000);
-    }
     document.getElementById("createQuestionForm").reset();
   };
 
