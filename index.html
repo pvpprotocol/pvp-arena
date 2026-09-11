@@ -4992,12 +4992,57 @@
     let founderSelectedDeadlineMinutes = 10;
     let founderSelectedDeadlineLabel = "10M";
 
+    function computeUnopenedCandleSchedule(tfMinutes, dlMinutes) {
+      const now = Date.now();
+      const tfMs = tfMinutes * 60 * 1000;
+      const dlMs = dlMinutes * 60 * 1000;
+
+      // 1. Current candle boundary
+      const currentCandleStart = Math.floor(now / tfMs) * tfMs;
+      let targetCandleStart = currentCandleStart + tfMs;
+
+      // 2. Ensure entry window closes strictly BEFORE or AT the candle open
+      // If the upcoming candle starts sooner than the selected entry window, shift to the next boundary
+      while (targetCandleStart - now < dlMs) {
+        targetCandleStart += tfMs;
+      }
+
+      const candleDeadline = targetCandleStart; // Entry closes exactly when candle opens
+      const candleEnd = targetCandleStart + tfMs; // Candle close / settlement
+
+      // Format UTC time strings
+      const formatTime = (ts) => {
+        const d = new Date(ts);
+        const hours = String(d.getUTCHours()).padStart(2, "0");
+        const mins = String(d.getUTCMinutes()).padStart(2, "0");
+        return `${hours}:${mins} UTC`;
+      };
+
+      const startStr = formatTime(targetCandleStart);
+      const endStr = formatTime(candleEnd);
+      const windowStr = `${startStr} - ${endStr}`;
+      const timeUntilOpenMin = Math.max(1, Math.round((targetCandleStart - now) / 60000));
+
+      return {
+        now,
+        targetCandleStart,
+        candleDeadline,
+        candleEnd,
+        startStr,
+        endStr,
+        windowStr,
+        timeUntilOpenMin
+      };
+    }
+
     function updateFounderPreview() {
       const asset = founderSelectedAsset;
       const tf = founderSelectedTimeframeLabel;
       const tfMinutes = founderSelectedTimeframeMinutes;
       const dl = founderSelectedDeadlineLabel;
       const dlMinutes = founderSelectedDeadlineMinutes;
+
+      const sched = computeUnopenedCandleSchedule(tfMinutes, dlMinutes);
 
       const titleEl = document.getElementById("preview-q-title");
       const descEl = document.getElementById("preview-q-desc");
@@ -5007,65 +5052,24 @@
       let dlText = dlMinutes >= 60 ? (dlMinutes / 60) + "h" : dlMinutes + "m";
 
       if (titleEl) {
-        titleEl.textContent = `${asset}/USD ${tfText} Candle Duel`;
+        titleEl.textContent = `${asset}/USD Upcoming ${tfText} Candle (${sched.windowStr})`;
       }
       if (descEl) {
-        descEl.textContent = `Will the next ${tfText.toLowerCase()} candle close GREEN (Bullish) or RED (Bearish)? Entry window: ${dlText}.`;
+        descEl.textContent = `Target: Upcoming unopened ${tfText.toLowerCase()} candle (${sched.windowStr}). Opens in ~${sched.timeUntilOpenMin}m. Entry closes strictly at ${sched.startStr} before candle opens. Oracle will settle at ${sched.endStr}.`;
       }
       if (oracleEl) {
         let source = "Coinbase Exchange";
         if (asset === "BNB") source = "Binance Market API";
         if (asset === "HYPE") source = "Hyperliquid Oracle";
-        oracleEl.textContent = `Oracle: ${source} (${asset}-USD)`;
+        oracleEl.textContent = `Oracle: ${source} (${asset}-USD) • Unopened Candle: ${sched.windowStr}`;
       }
 
       const assetDisp = document.getElementById("selected-asset-display");
       if (assetDisp) assetDisp.textContent = asset;
       const tfDisp = document.getElementById("selected-timeframe-display");
-      if (tfDisp) tfDisp.textContent = tf;
+      if (tfDisp) tfDisp.textContent = `${tf} (${sched.windowStr})`;
       const dlDisp = document.getElementById("selected-deadline-display");
-      if (dlDisp) dlDisp.textContent = dl;
-    }
-
-    function setFounderAsset(asset) {
-      founderSelectedAsset = asset;
-      document.querySelectorAll(".founder-asset-btn").forEach(btn => {
-        btn.classList.remove("border-2", "border-emerald-500", "bg-emerald-500/20", "text-emerald-300");
-        btn.classList.add("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
-      });
-      if (event && event.currentTarget) {
-        event.currentTarget.classList.remove("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
-        event.currentTarget.classList.add("border-2", "border-emerald-500", "bg-emerald-500/20", "text-emerald-300");
-      }
-      updateFounderPreview();
-    }
-
-    function setFounderTimeframe(minutes, label) {
-      founderSelectedTimeframeMinutes = minutes;
-      founderSelectedTimeframeLabel = label;
-      document.querySelectorAll(".founder-tf-btn").forEach(btn => {
-        btn.classList.remove("border-2", "border-teal-500", "bg-teal-500/20", "text-teal-300");
-        btn.classList.add("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
-      });
-      if (event && event.currentTarget) {
-        event.currentTarget.classList.remove("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
-        event.currentTarget.classList.add("border-2", "border-teal-500", "bg-teal-500/20", "text-teal-300");
-      }
-      updateFounderPreview();
-    }
-
-    function setFounderDeadline(minutes, label) {
-      founderSelectedDeadlineMinutes = minutes;
-      founderSelectedDeadlineLabel = label;
-      document.querySelectorAll(".founder-dl-btn").forEach(btn => {
-        btn.classList.remove("border-2", "border-cyan-500", "bg-cyan-500/20", "text-cyan-300");
-        btn.classList.add("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
-      });
-      if (event && event.currentTarget) {
-        event.currentTarget.classList.remove("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
-        event.currentTarget.classList.add("border-2", "border-cyan-500", "bg-cyan-500/20", "text-cyan-300");
-      }
-      updateFounderPreview();
+      if (dlDisp) dlDisp.textContent = `Closes at ${sched.startStr} (in ${sched.timeUntilOpenMin}m)`;
     }
 
     async function deployCustomFounderQuestionOnchain() {
@@ -5100,13 +5104,14 @@
         const dlLabel = founderSelectedDeadlineLabel;
 
         const nextQId = (DUEL_QUESTIONS && DUEL_QUESTIONS.length > 0) ? Math.max(...DUEL_QUESTIONS.map(q => q.id || 0)) + 1 : 1;
-        const now = Date.now();
-        const candleStart = now;
-        const candleDeadline = now + (dlMinutes * 60 * 1000);
-        const candleEnd = now + (tfMinutes * 60 * 1000);
+        const sched = computeUnopenedCandleSchedule(tfMinutes, dlMinutes);
+        const now = sched.now;
+        const candleStart = sched.targetCandleStart;
+        const candleDeadline = sched.candleDeadline;
+        const candleEnd = sched.candleEnd;
 
         let tfText = tfMinutes >= 1440 ? "1-Day" : (tfMinutes >= 60 ? (tfMinutes / 60) + "-Hour" : tfMinutes + "-Min");
-        const qTitle = `${asset}/USD ${tfText} Candle Duel (GREEN vs RED)`;
+        const qTitle = `${asset}/USD Upcoming ${tfText} Candle Duel (${sched.windowStr})`;
 
         showToast(`⚔️ Opening Phantom: Deploy Question #${nextQId} (${asset} ${tfLabel})...`, "info");
 
@@ -5158,7 +5163,7 @@
           category: "crypto",
           symbol: `${asset}-USD`,
           title: qTitle,
-          desc: `Oracle: ${oracleSource} ${asset}-USD ${tfText} candle. Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.`,
+          desc: `Oracle: ${oracleSource} ${asset}-USD ${tfText} candle (${sched.windowStr}). Target is upcoming unopened candle. Entry closes strictly before open at ${sched.startStr}. Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.`,
           resolutionSource: `${oracleSource} (${asset}-USD ${tfLabel})`,
           deadlineDesc: `Entry Closes in ${dlMinutes} Minutes`,
           candleStartTime: candleStart,
