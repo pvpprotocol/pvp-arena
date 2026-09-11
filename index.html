@@ -5096,8 +5096,8 @@
         const dlMinutes = 0; // 100% Automated Deadline at Candle Open
         const dlLabel = "AUTO";
 
-        // STRICT INCREMENTAL ID: Never reuse or overwrite past question IDs!
-        let maxExistingId = 0;
+        // STRICT INCREMENTAL ID: 100% On-Chain Accurate Question Sequencing!
+        let maxExistingId = (window.onchainQuestionCount && window.onchainQuestionCount > 0) ? window.onchainQuestionCount : 0;
         if (Array.isArray(DUEL_QUESTIONS)) {
           DUEL_QUESTIONS.forEach(q => {
             const num = parseInt(q.id || q.qNum, 10);
@@ -8038,6 +8038,13 @@
                 const onchainQ = {
                   id: rawQNum,
                   qNum: rawQNum,
+                  blockTime: (s.blockTime && s.blockTime > 0) ? s.blockTime : (s.slot || 0),
+                  asset: asset,
+                  tfText: tfText,
+                  tfLabel: tfLabel,
+                  formatTime: formatTime,
+                  targetCandleStart: targetCandleStart,
+                  candleEnd: candleEnd,
                   category: "crypto",
                   symbol: `${asset}-USD`,
                   title: `${asset}/USD Upcoming ${tfText} Candle (${formatTime(targetCandleStart)} - ${formatTime(candleEnd)})`,
@@ -8061,16 +8068,15 @@
             }
 
             // Strictly index each on-chain transaction by its chronological order:
-            // Oldest tx = Question #1, newest tx = Question #N
-            parsedOnchainQuestions.sort((a, b) => a.blockTime - b.blockTime);
+            // Oldest tx on chain = Question #1, newest tx on chain = Question #N
+            parsedOnchainQuestions.sort((a, b) => (a.blockTime || 0) - (b.blockTime || 0));
             parsedOnchainQuestions.forEach((q, idx) => {
               const qId = idx + 1;
               q.id = qId;
               q.qNum = qId;
-              if (!q.title.includes("#")) {
-                q.title = q.title.replace(/Upcoming/, `Duel #${qId} • Upcoming`);
-              }
+              q.title = `${q.asset || 'SOL'}/USD Duel #${qId} • Upcoming ${q.tfText || '15-Min'} Candle (${q.formatTime ? q.formatTime(q.targetCandleStart) : ''} - ${q.formatTime ? q.formatTime(q.candleEnd) : ''})`;
             });
+            window.onchainQuestionCount = parsedOnchainQuestions.length;
 
             if (parsedOnchainQuestions.length > 0) {
               DUEL_QUESTIONS.length = 0; // Clear and replace with true onchain questions
