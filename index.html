@@ -5069,7 +5069,22 @@
         const dlMinutes = 0; // 100% Automated Deadline at Candle Open
         const dlLabel = "AUTO";
 
-        const nextQId = (DUEL_QUESTIONS && DUEL_QUESTIONS.length > 0) ? Math.max(...DUEL_QUESTIONS.map(q => q.id || 0)) + 1 : 1;
+        // STRICT INCREMENTAL ID: Never reuse or overwrite past question IDs!
+        let maxExistingId = 0;
+        if (Array.isArray(DUEL_QUESTIONS)) {
+          DUEL_QUESTIONS.forEach(q => {
+            const num = parseInt(q.id || q.qNum, 10);
+            if (!isNaN(num) && num > maxExistingId) maxExistingId = num;
+          });
+        }
+        try {
+          for (let i = 1; i <= 500; i++) {
+            if (localStorage.getItem("pvp_onchain_q" + i)) {
+              if (i > maxExistingId) maxExistingId = i;
+            }
+          }
+        } catch(e) {}
+        const nextQId = maxExistingId + 1;
         const sched = computeUnopenedCandleSchedule(tfMinutes, dlMinutes);
         const now = sched.now;
         const candleStart = sched.targetCandleStart;
@@ -5137,7 +5152,7 @@
           settlementTime: candleEnd,
           opt1: "GREEN",
           opt2: "RED",
-          isEnded: true,
+          isEnded: false, // LIVE on deployment until deadline arrives
           creator: activeWallet,
           onchainTxSignature: signature,
           getDeadline: function() { return this.deadline; }
@@ -5272,7 +5287,7 @@
           settlementTime: candleEnd,
           opt1: "GREEN",
           opt2: "RED",
-          isEnded: true,
+          isEnded: false, // LIVE on deployment until deadline arrives
           creator: activeWallet,
           onchainTxSignature: txSignature,
           getDeadline: function() { return this.deadline; }
@@ -5336,9 +5351,20 @@
     } catch(e) {}
   
     function renderDuelQuestions() {
-      // Badges calculation
-      const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && Date.now() < getQuestionDeadline(item.id));
-      const endedQuestions = DUEL_QUESTIONS.filter(item => item.isEnded || Date.now() >= getQuestionDeadline(item.id));
+      // STRICT ONE-WAY STATE: Once a question reaches or exceeds its deadline, it is permanently ENDED and can NEVER be revived!
+      const nowTs = Date.now();
+      DUEL_QUESTIONS.forEach(item => {
+        const dl = getQuestionDeadline(item.id);
+        if (nowTs >= dl) {
+          item.isEnded = true; // Permanent irreversible termination
+          try {
+            localStorage.setItem("pvp_onchain_q" + item.id, JSON.stringify(item));
+          } catch(e) {}
+        }
+      });
+
+      const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && nowTs < getQuestionDeadline(item.id));
+      const endedQuestions = DUEL_QUESTIONS.filter(item => item.isEnded || nowTs >= getQuestionDeadline(item.id));
 
       // Update category badges
       const cBadge = document.getElementById("cat-badge-crypto");
@@ -7907,10 +7933,7 @@
                 const txTime = (s.blockTime && s.blockTime > 0) ? (s.blockTime * 1000) : Date.now();
                 const entryWindowMs = 15 * 60 * 1000; // 15 minutes
                 let qDeadline = txTime + entryWindowMs;
-                if (qDeadline < Date.now()) {
-                  // Expired: mark strictly ended, DO NOT revive
-                  continue;
-                }
+                const isPastDeadline = qDeadline < Date.now();
                 const qSettlement = qDeadline + (15 * 60 * 1000);
 
                 const isSol = rawMemo.includes("SOL") || rawMemo.includes("15M");
@@ -7919,16 +7942,16 @@
                   qNum: qNum,
                   category: "crypto",
                   symbol: isSol ? "SOL-USD" : "BTC-USD",
-                  title: isSol ? "SOL/USD 15-Min Candle Duel (GREEN vs RED)" : "BTC/USD 1-Hour Candle Duel",
-                  desc: "Oracle: Pyth / Binance SOL-USD 15-Minute Candle. Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
+                  title: isSol ? `SOL/USD 15-Min Candle Duel #${qNum}` : `BTC/USD 1-Hour Candle Duel #${qNum}`,
+                  desc: "Oracle: Pyth / Binance SOL-USD Candle. Green = Close >= Open. Red = Close < Open. 1.8x Payout to Winner, 3% Cashback to Loser, 5% Referral, 2% Treasury.",
                   resolutionSource: "Pyth / Binance Oracle",
-                  deadlineDesc: "15-Minute Entry Window",
+                  deadlineDesc: "Entry Window Closed",
                   candleStartTime: txTime,
                   deadline: qDeadline,
                   settlementTime: qSettlement,
                   opt1: "GREEN",
                   opt2: "RED",
-                  isEnded: false,
+                  isEnded: isPastDeadline, // Strictly ended if deadline passed - NEVER revive
                   onchainTxSignature: s.signature,
                   slot: s.slot,
                   getDeadline: function() { return this.deadline; }
@@ -7936,15 +7959,16 @@
 
                 const existingIdx = DUEL_QUESTIONS.findIndex(q => q.id === onchainQ.id);
                 if (existingIdx >= 0) {
+                  // If it was already ended, keep it strictly ended!
+                  if (DUEL_QUESTIONS[existingIdx].isEnded) onchainQ.isEnded = true;
                   DUEL_QUESTIONS[existingIdx] = onchainQ;
                 } else {
-                  DUEL_QUESTIONS.unshift(onchainQ);
+                  DUEL_QUESTIONS.push(onchainQ);
                 }
 
                 try {
                   localStorage.setItem("pvp_onchain_q" + qNum, JSON.stringify(onchainQ));
                 } catch(e) {}
-                break; // Found latest confirmed question
               }
             }
           } catch(rpcErr) {
