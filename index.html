@@ -4989,22 +4989,30 @@
     let founderSelectedAsset = "SOL";
     let founderSelectedTimeframeMinutes = 15;
     let founderSelectedTimeframeLabel = "15M";
-    let founderSelectedDeadlineMinutes = 10;
-    let founderSelectedDeadlineLabel = "10M";
+    let founderSelectedDeadlineMinutes = 0; // 0 = AUTO (exact candle open)
+    let founderSelectedDeadlineLabel = "AUTO";
 
     function computeUnopenedCandleSchedule(tfMinutes, dlMinutes) {
       const now = Date.now();
       const tfMs = tfMinutes * 60 * 1000;
-      const dlMs = dlMinutes * 60 * 1000;
 
-      // 1. Current candle boundary
+      // 1. Current candle boundary (UTC Standard)
       const currentCandleStart = Math.floor(now / tfMs) * tfMs;
       let targetCandleStart = currentCandleStart + tfMs;
 
-      // 2. Ensure entry window closes strictly BEFORE or AT the candle open
-      // If the upcoming candle starts sooner than the selected entry window, shift to the next boundary
-      while (targetCandleStart - now < dlMs) {
-        targetCandleStart += tfMs;
+      // Minimum buffer: if upcoming candle opens in less than 2 minutes, target the next candle
+      // so users have enough time to enter duels
+      const minBufferMs = 2 * 60 * 1000;
+      if (dlMinutes === 0) {
+        // AUTO MODE: Target next unopened candle, deadline is exactly at candle open!
+        if (targetCandleStart - now < minBufferMs) {
+          targetCandleStart += tfMs;
+        }
+      } else {
+        const dlMs = dlMinutes * 60 * 1000;
+        while (targetCandleStart - now < dlMs) {
+          targetCandleStart += tfMs;
+        }
       }
 
       const candleDeadline = targetCandleStart; // Entry closes exactly when candle opens
