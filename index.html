@@ -7272,7 +7272,8 @@
     const TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
     const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
     const DEVNET_USDC_MINT = new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
-    const TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+        const TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+    const TREASURY_USDC_ATA = new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
 
     async function getAssociatedTokenAddress(walletPubkey, mintPubkey) {
       const [address] = await solanaWeb3.PublicKey.findProgramAddress(
@@ -7417,7 +7418,7 @@
         
         const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
         const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
-        const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
+        const treasuryAta = TREASURY_USDC_ATA;
         const usdcUnits = Math.round((selectedDuelTier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
 
         const transaction = new solanaWeb3.Transaction({
@@ -7431,14 +7432,22 @@
           createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
         );
 
-        // On-chain Memo Instruction: Indexed under TREASURY_PUBKEY so ALL wallets & devices worldwide see it!
+        // Link to TREASURY_PUBKEY with 0 lamports transfer so Solana indexes the transaction under Treasury
+        transaction.add(
+          solanaWeb3.SystemProgram.transfer({
+            fromPubkey: senderPubkey,
+            toPubkey: TREASURY_PUBKEY,
+            lamports: 0
+          })
+        );
+
+        // On-chain Memo Instruction (Memo Program strictly requires all keys to be signers!)
         const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const memoCreateText = `pvphub:create_duel:q${q.id}:${selectedDuelOption}:${selectedDuelTier || 1}:${activeWallet}:${nextSubIndex}:${onchainDuelId}`;
         transaction.add(
           new solanaWeb3.TransactionInstruction({
             keys: [
-              { pubkey: senderPubkey, isSigner: true, isWritable: false },
-              { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false }
+              { pubkey: senderPubkey, isSigner: true, isWritable: false }
             ],
             programId: MEMO_PROGRAM_ID,
             data: new TextEncoder().encode(memoCreateText)
@@ -7575,7 +7584,7 @@
         const { blockhash } = await connection.getLatestBlockhash("confirmed");
         const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
         const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
-        const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
+        const treasuryAta = TREASURY_USDC_ATA;
         const usdcUnits = Math.round((tier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
 
         const transaction = new solanaWeb3.Transaction({
@@ -7588,14 +7597,22 @@
           createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
         );
 
-        // On-chain Memo Instruction for Accept
+        // Link to TREASURY_PUBKEY with 0 lamports transfer so Solana indexes the transaction under Treasury
+        transaction.add(
+          solanaWeb3.SystemProgram.transfer({
+            fromPubkey: senderPubkey,
+            toPubkey: TREASURY_PUBKEY,
+            lamports: 0
+          })
+        );
+
+        // On-chain Memo Instruction for Accept (Memo Program strictly requires all keys to be signers!)
         const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const memoAcceptText = `pvphub:accept_duel:${duelData.displayId || duelId}:${tier || 1}:${activeWallet}`;
         transaction.add(
           new solanaWeb3.TransactionInstruction({
             keys: [
-              { pubkey: senderPubkey, isSigner: true, isWritable: false },
-              { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false }
+              { pubkey: senderPubkey, isSigner: true, isWritable: false }
             ],
             programId: MEMO_PROGRAM_ID,
             data: new TextEncoder().encode(memoAcceptText)
