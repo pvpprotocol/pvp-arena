@@ -7619,6 +7619,7 @@ buffer/index.js:
       }
 
       const duelId = "duel_" + onchainDuelId;
+      const qNum = (q && (q.qNum || q.id)) ? (q.qNum || q.id) : 1;
 
             // Dynamic Question Auto-Registration:
             // If this on-chain duel belongs to a question ID not yet present in DUEL_QUESTIONS,
