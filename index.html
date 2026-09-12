@@ -3130,7 +3130,7 @@ buffer/index.js:
       if (_cachedBlockhash && (now - _cachedBlockhashTime < 4000)) {
         return _cachedBlockhash;
       }
-      const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed"));
+      const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed"));
       try {
         const { blockhash } = await connection.getLatestBlockhash("confirmed");
         _cachedBlockhash = blockhash;
@@ -3144,7 +3144,7 @@ buffer/index.js:
     window.getFastBlockhash = getFastBlockhash;
 
     async function getFastRecentBlockhash(conn) {
-      const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed"));
+      const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed"));
       // 1. If cached blockhash is fresh (less than 45s old), return immediately without RPC call to avoid 429
       if (_cachedBlockhash && (Date.now() - _cachedBlockhashTime < 45000)) {
         return { blockhash: _cachedBlockhash, lastValidBlockHeight: 0 };
@@ -5831,7 +5831,7 @@ buffer/index.js:
           throw new Error("Solana Web3 provider or Phantom not fully ready.");
         }
 
-        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash, lastValidBlockHeight } = await getFastRecentBlockhash(connection);
         const senderPubkey = provider.publicKey;
 
@@ -5967,7 +5967,7 @@ buffer/index.js:
           throw new Error("Solana Web3 provider or Phantom not fully ready.");
         }
 
-        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash, lastValidBlockHeight } = await getFastRecentBlockhash(connection);
         const senderPubkey = provider.publicKey;
 
@@ -7161,7 +7161,7 @@ buffer/index.js:
         // Real Solana Onchain Reclaim Transaction via SPL Memo Program
         if (window.solanaWeb3 && provider.signAndSendTransaction) {
           try {
-            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+            const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
             const { blockhash } = await getFastRecentBlockhash(connection);
             const senderPubkey = provider.publicKey;
 
@@ -8191,7 +8191,7 @@ buffer/index.js:
           throw new Error("Phantom signAndSendTransaction not available.");
         }
 
-        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash } = await getFastRecentBlockhash(connection);
         const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
         const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
@@ -8422,7 +8422,7 @@ buffer/index.js:
           throw new Error("Phantom signAndSendTransaction not available.");
         }
 
-        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash } = await connection.getLatestBlockhash("confirmed");
         const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
         const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
@@ -8551,7 +8551,7 @@ buffer/index.js:
         // 1. Submit Real Solana Onchain Cancel & Reclaim Transaction
         if (window.solanaWeb3 && provider.signAndSendTransaction) {
           try {
-            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+            const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
             const { blockhash } = await connection.getLatestBlockhash("confirmed");
             const senderPubkey = provider.publicKey;
 
@@ -8900,7 +8900,7 @@ buffer/index.js:
         // 1. Fetch directly from Solana Devnet RPC (100% on-chain ground truth)
         if (window.solanaWeb3) {
           try {
-            const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+            const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
             const scanAddresses = [TREASURY_PUBKEY];
             let sigs = [];
             for (const addr of scanAddresses) {
@@ -9034,7 +9034,7 @@ buffer/index.js:
     async function loadOnchainDuels() {
       try {
         if (!window.solanaWeb3) return;
-        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const sigs = await connection.getSignaturesForAddress(TREASURY_PUBKEY, { limit: 100 });
         
         const store = getLocalDuels();
@@ -9215,7 +9215,7 @@ window.handleCreateQuestion = async function(e) {
           activeWallet = await connectWallet(true);
         }
 
-        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
         const senderPubkey = provider.publicKey;
 
@@ -10582,7 +10582,7 @@ window.handleCreateQuestion = async function(e) {
         };
 
         // Submit Solana onchain transaction via Phantom
-        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash } = await connection.getLatestBlockhash("confirmed");
 
         const transaction = new solanaWeb3.Transaction({
