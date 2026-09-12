@@ -3174,9 +3174,12 @@ buffer/index.js:
     }
     window.getFastRecentBlockhash = getFastRecentBlockhash;
 
-    function addSolanaPriorityFee(transaction, microLamports = 150000) {
+    function addSolanaPriorityFee(transaction, microLamports = 250000, units = 300000) {
       try {
         if (window.solanaWeb3 && solanaWeb3.ComputeBudgetProgram) {
+          transaction.add(
+            solanaWeb3.ComputeBudgetProgram.setComputeUnitLimit({ units })
+          );
           transaction.add(
             solanaWeb3.ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
           );
@@ -7169,6 +7172,7 @@ buffer/index.js:
               recentBlockhash: blockhash,
               feePayer: senderPubkey
             });
+            addSolanaPriorityFee(transaction);
 
             const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
             const memoData = new TextEncoder().encode(`pvphub:reclaim_deposit:${duelId}:${tier || 1}_USDC:wallet:${activeWallet}`);
@@ -8423,7 +8427,7 @@ buffer/index.js:
         }
 
         const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
-        const { blockhash } = await connection.getLatestBlockhash("confirmed");
+        const { blockhash } = await getFastRecentBlockhash(connection);
         const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
         const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
         const treasuryAta = TREASURY_USDC_ATA;
@@ -8433,6 +8437,7 @@ buffer/index.js:
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
+        addSolanaPriorityFee(transaction);
 
         // Real On-chain SPL Token Transfer to Treasury Escrow
         // Ensure Treasury ATA exists idempotently (safe no-op if already created)
@@ -8552,7 +8557,7 @@ buffer/index.js:
         if (window.solanaWeb3 && provider.signAndSendTransaction) {
           try {
             const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
-            const { blockhash } = await connection.getLatestBlockhash("confirmed");
+            const { blockhash } = await getFastRecentBlockhash(connection);
             const senderPubkey = provider.publicKey;
 
             const transaction = new solanaWeb3.Transaction({
