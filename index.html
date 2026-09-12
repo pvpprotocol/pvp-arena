@@ -1163,7 +1163,7 @@ buffer/index.js:
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider flex items-center gap-2">
               <span>⚔️</span> LIVE PVP DUELS
             </h3>
-            <p class="text-xs text-slate-400">Solana Escrow Contract: <a href="https://solscan.io/account/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7" target="_blank" rel="noopener" class="font-mono text-[#cbd5e1] hover:underline">HTyM...bf39 ↗</a></p>
+            <p class="text-xs text-slate-400">Solana Escrow Contract: <a href="https://solscan.io/account/Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK" target="_blank" rel="noopener" class="font-mono text-[#cbd5e1] hover:underline">HTyM...bf39 ↗</a></p>
           </div>
           <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <div class="flex items-center bg-black/50 p-1 rounded-xl border border-[#334155] text-xs font-mono">
@@ -2555,7 +2555,7 @@ buffer/index.js:
             </button>
           </div>
           <div class="p-3 rounded-xl bg-black/60 border border-[#334155] font-mono text-xs text-[#cbd5e1] break-all select-all flex items-center justify-between">
-            <span id="pvp-contract-address">CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7</span>
+            <span id="pvp-contract-address">Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK</span>
           </div>
         </div>
       </div>
@@ -2580,7 +2580,7 @@ buffer/index.js:
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <a href="https://solscan.io/account/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-neutral-800 hover:text-[#cbd5e1] transition-all flex items-center gap-1.5">
+          <a href="https://solscan.io/account/Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-neutral-800 hover:text-[#cbd5e1] transition-all flex items-center gap-1.5">
             <span>📜</span> Escrow Contract ↗
           </a>
           <button onclick="refreshAdminDuelsStats()" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-[#f8fafc] hover:bg-[#182230] font-bold transition-all flex items-center gap-1.5">
@@ -2882,7 +2882,7 @@ buffer/index.js:
       "function personalBests(address player, uint16 tier) view returns (uint256)"
     ];
 
-    var DUEL_CONTRACT_ADDRESS = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
+    var DUEL_CONTRACT_ADDRESS = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
     var QUESTION_REGISTRY_ADDRESS = "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5";
     var QUESTION_REGISTRY_ABI = [
       "function owner() view returns (address)",
@@ -2905,7 +2905,7 @@ buffer/index.js:
       "function settleDuelWithProof(uint256 duelId, uint8 winningOutcome, uint256 deadline, bytes32 nonce, bytes signature) external",
       "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
     ];
-    var ESCROW_CONTRACT = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
+    var ESCROW_CONTRACT = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
 
         async function ensureSolanaNetwork() {
       // Pure Solana Architecture - Network is managed by Solana RPC endpoint
@@ -3105,7 +3105,7 @@ buffer/index.js:
     // ONCHAIN TRANSACTION EXECUTOR (SOLANA)
     var USDC_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDC on Solana
     var PVP_TOKEN_ADDRESS = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7"; // Native $PVP token
-    var ESCROW_CONTRACT = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
+    var ESCROW_CONTRACT = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
 
         async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDC", purpose = "Game Entry", customRecipient = null) {
       const provider = getSolanaProvider();
@@ -4785,31 +4785,7 @@ buffer/index.js:
     }
 
     // Pre-seeded with confirmed on-chain Solana Devnet transactions (updated dynamically by RPC)
-    const DUEL_QUESTIONS = [
-      {
-        id: 15,
-        qNum: 15,
-        blockTime: 1789113717,
-        asset: "BTC",
-        tfText: "1-Hour",
-        tfLabel: "1H",
-        category: "crypto",
-        symbol: "BTC-USD",
-        title: "BTC/USD Duel #15 • Upcoming 1-Hour Candle (09:00 UTC - 10:00 UTC)",
-        desc: "Oracle: Coinbase Exchange BTC-USD 1-Hour candle. Target is upcoming candle. Entry closes strictly at candle open (09:00 UTC). Green = Close >= Open. Red = Close < Open.",
-        resolutionSource: "Coinbase Exchange (BTC-USD 1H)",
-        deadlineDesc: "Entry Closes at 09:00 UTC",
-        candleStartTime: 1789117200000,
-        deadline: 1789117200000,
-        settlementTime: 1789120800000,
-        opt1: "GREEN",
-        opt2: "RED",
-        isEnded: false,
-        creator: "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV",
-        onchainTxSignature: "53Xven6Ryfn1a7h94oV2h1Y3b7zP7Gq9a7zF9z7k7V",
-        getDeadline: function() { return this.deadline; }
-      }
-    ];
+    const DUEL_QUESTIONS = []; // Pure on-chain single source of truth
     let selectedDuelQuestionId = 15;
     let selectedDuelTier = 1;
     let selectedDuelOption = "GREEN";
@@ -6387,7 +6363,7 @@ buffer/index.js:
         showToast("⚡ Processing Solana onchain claim...", "info");
         
         // Mock Solana Tx simulation if program not yet deployed or execute live onchain
-        const TREASURY_WALLET = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
+        const TREASURY_WALLET = "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV";
         
         if (isPrize === true || isPrize === "prize") {
           duelData.claimed = true;
@@ -7258,8 +7234,8 @@ buffer/index.js:
     const TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
     const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
     const DEVNET_USDC_MINT = new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
-        const TREASURY_PUBKEY = new solanaWeb3.PublicKey("CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7");
-    const TREASURY_USDC_ATA = new solanaWeb3.PublicKey("GtZS7QVW8BuCQwoeMc7NA5xG7VAkJUsAGpBENgPxvT35");
+        const TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+    const TREASURY_USDC_ATA = new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
 
     // Browser-safe ATA derivation using standard Uint8Array toBytes() without requiring Node Buffer
     async function getAssociatedTokenAddress(walletPubkey, mintPubkey) {
