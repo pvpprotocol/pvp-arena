@@ -7472,7 +7472,7 @@ buffer/index.js:
         if (!activeWallet) return;
       }
 
-      const q = DUEL_QUESTIONS.find(x => x.id === selectedDuelQuestionId) || DUEL_QUESTIONS[0];
+      const q = DUEL_QUESTIONS.find(x => String(x.id) === String(selectedDuelQuestionId)) || DUEL_QUESTIONS.find(x => !x.isEnded && Date.now() < getQuestionDeadline(x.id)) || DUEL_QUESTIONS[0];
       if (!q) {
         showToast("⚠️ No active question selected! Please pick an active question.", "warning");
         return;
