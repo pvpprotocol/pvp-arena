@@ -741,6 +741,24 @@ buffer/index.js:
   }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.8/lib/index.iife.min.js"></script>
+  <script>
+    if (window.solanaWeb3) {
+      window.TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+      window.TREASURY_USDC_ATA = new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
+      window.DEVNET_USDC_MINT = new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
+      window.TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+      window.ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
+      window.MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+      window.ANCHOR_PVP_PROGRAM_ID = new solanaWeb3.PublicKey("Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK");
+      var TREASURY_PUBKEY = window.TREASURY_PUBKEY;
+      var TREASURY_USDC_ATA = window.TREASURY_USDC_ATA;
+      var DEVNET_USDC_MINT = window.DEVNET_USDC_MINT;
+      var TOKEN_PROGRAM_ID = window.TOKEN_PROGRAM_ID;
+      var ASSOCIATED_TOKEN_PROGRAM_ID = window.ASSOCIATED_TOKEN_PROGRAM_ID;
+      var MEMO_PROGRAM_ID = window.MEMO_PROGRAM_ID;
+      var ANCHOR_PVP_PROGRAM_ID = window.ANCHOR_PVP_PROGRAM_ID;
+    }
+  </script>
   <!-- ethers removed: 100% pure solana -->
 <script>
     function toggleMobileSidebar() {
@@ -7298,11 +7316,11 @@ buffer/index.js:
     }
 
         
-    const TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-    const ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
-    const DEVNET_USDC_MINT = new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
-        const TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-    const TREASURY_USDC_ATA = new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
+    var TOKEN_PROGRAM_ID = window.TOKEN_PROGRAM_ID || new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+    var ASSOCIATED_TOKEN_PROGRAM_ID = window.ASSOCIATED_TOKEN_PROGRAM_ID || new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
+    var DEVNET_USDC_MINT = window.DEVNET_USDC_MINT || new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
+        var TREASURY_PUBKEY = window.TREASURY_PUBKEY || new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
+    var TREASURY_USDC_ATA = window.TREASURY_USDC_ATA || new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
 
     // Browser-safe ATA derivation using standard Uint8Array toBytes() without requiring Node Buffer
     async function getAssociatedTokenAddress(walletPubkey, mintPubkey) {
@@ -7371,7 +7389,7 @@ buffer/index.js:
     }
 
     // --- NON-CUSTODIAL ANCHOR ESCROW PROGRAM (Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK) ---
-    const ANCHOR_PVP_PROGRAM_ID = new solanaWeb3.PublicKey("Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK");
+    var ANCHOR_PVP_PROGRAM_ID = window.ANCHOR_PVP_PROGRAM_ID || new solanaWeb3.PublicKey("Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK");
     const SYSVAR_RENT_PUBKEY = new solanaWeb3.PublicKey("SysvarRent111111111111111111111111111111111");
 
     function getAnchorDuelPda(creatorPubkey, numericDuelId) {
