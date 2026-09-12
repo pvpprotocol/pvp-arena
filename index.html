@@ -5590,7 +5590,7 @@ buffer/index.js:
         grid.insertAdjacentHTML("beforeend", qHtml);
       });
       updateOptionButtonsUI();
-      selectDuelTier(1);
+      selectDuelTier(selectedDuelTier || 1);
       updateDuelSummary();
     }
 
