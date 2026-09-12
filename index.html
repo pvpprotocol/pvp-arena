@@ -5460,24 +5460,29 @@ buffer/index.js:
       if (!grid) return;
       grid.innerHTML = "";
 
-      let poolQuestions = (activeQuestionTab === "all" 
-        ? DUEL_QUESTIONS 
-        : (activeQuestionTab === "live" ? liveQuestions : endedQuestions))
-        .filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
-      
-      // Fallback: If "live" tab selected but no live questions, display all questions with fallback notice
-      let fallbackToAll = false;
-      if (poolQuestions.length === 0 && activeQuestionTab === "live" && DUEL_QUESTIONS.length > 0) {
+      // STRICT ISOLATION: LIVE tab shows ONLY live questions. ENDED tab shows ONLY ended questions.
+      let poolQuestions = [];
+      if (activeQuestionTab === "live") {
+        poolQuestions = liveQuestions.filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
+      } else if (activeQuestionTab === "ended") {
+        poolQuestions = endedQuestions.filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
+      } else {
         poolQuestions = DUEL_QUESTIONS.filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
-        fallbackToAll = true;
       }
 
       if (poolQuestions.length === 0) {
+        const tabLabel = activeQuestionTab === "live" ? "Live Active" : (activeQuestionTab === "ended" ? "Ended / Archive" : "Deployed");
         grid.innerHTML = `
-          <div class="col-span-full p-8 rounded-2xl border border-[#334155] bg-[#131b27]/80 text-center space-y-3">
-            <div class="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mx-auto text-blue-400 text-xl">⛓️</div>
-            <h4 class="text-sm font-bold font-mono text-slate-200 uppercase tracking-wider">No On-Chain Questions Deployed Yet</h4>
-            <p class="text-xs text-slate-400 font-mono max-w-md mx-auto">Questions are deployed 100% on-chain on Solana Devnet. Founder must submit and confirm the deployment transaction first.</p>
+          <div class="col-span-full p-8 rounded-2xl border border-dashed border-[#334155] bg-[#131b27]/80 text-center space-y-3">
+            <div class="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mx-auto text-blue-400 text-xl">
+              ${activeQuestionTab === "live" ? "⚡" : "🔒"}
+            </div>
+            <h4 class="text-sm font-bold font-mono text-slate-200 uppercase tracking-wider">No ${tabLabel} Contests</h4>
+            <p class="text-xs text-slate-400 font-mono max-w-md mx-auto">
+              ${activeQuestionTab === "live" 
+                ? "There are currently no live contests open for entry. Founder can deploy a new contest from the Admin panel, or you can browse completed contests in the ENDED tab."
+                : "No ended contests in this category yet."}
+            </p>
           </div>
         `;
         return;
