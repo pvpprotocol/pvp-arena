@@ -6977,6 +6977,9 @@ buffer/index.js:
       const currentAddrOpp = (typeof userAddress !== 'undefined' && userAddress) ? userAddress : (window.userAddress || null);
       const isOpponent = currentAddrOpp && duelData.opponent && (currentAddrOpp.toLowerCase() === duelData.opponent.toLowerCase());
 
+      const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
+      const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
+
       const p1Label = isCreator ? 'You' : shortCreator;
       const p2Label = duelData.opponent ? (isOpponent ? 'You' : shortOpponent) : 'Needs Opponent';
       const p1Formatted = formatPlayerOption(p1Label, creatorOption);
@@ -6987,9 +6990,6 @@ buffer/index.js:
       const tierBadgeClass = isVip 
         ? "bg-[#182230] text-black border-[#334155]" 
         : "bg-[#182230] text-neutral-800 border-[#334155]";
-
-      const shortCreator = duelData.creator ? (duelData.creator.slice(0, 6) + "..." + duelData.creator.slice(-4)) : "0xAnonymous";
-      const shortOpponent = duelData.opponent ? (duelData.opponent.slice(0, 6) + "..." + duelData.opponent.slice(-4)) : "Waiting Opponent";
 
       const resolvedQId = duelData.questionId || (duelData.questionText && String(duelData.questionText).toLowerCase().includes('solana') ? 2 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('basecat') ? 4 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('round #2') ? 3 : null)));
       const duelDeadline = getDuelEffectiveDeadline(duelData);
