@@ -3145,14 +3145,31 @@ buffer/index.js:
 
     async function getFastRecentBlockhash(conn) {
       const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed"));
-      try {
-        const res = await connection.getLatestBlockhash("confirmed");
-        _cachedBlockhash = res.blockhash;
-        _cachedBlockhashTime = Date.now();
-        return res;
-      } catch(e) {
-        if (_cachedBlockhash) return { blockhash: _cachedBlockhash, lastValidBlockHeight: 0 };
-        throw e;
+      // 1. If cached blockhash is fresh (less than 45s old), return immediately without RPC call to avoid 429
+      if (_cachedBlockhash && (Date.now() - _cachedBlockhashTime < 45000)) {
+        return { blockhash: _cachedBlockhash, lastValidBlockHeight: 0 };
+      }
+      // 2. Retry loop with backoff for rate-limiting protection
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const res = await connection.getLatestBlockhash("confirmed");
+          if (res && res.blockhash) {
+            _cachedBlockhash = res.blockhash;
+            _cachedBlockhashTime = Date.now();
+            return res;
+          }
+        } catch(e) {
+          console.warn("Blockhash attempt " + (attempt + 1) + " notice:", e.message);
+          if (_cachedBlockhash && (Date.now() - _cachedBlockhashTime < 90000)) {
+            return { blockhash: _cachedBlockhash, lastValidBlockHeight: 0 };
+          }
+          if (attempt < 2) {
+            await new Promise(r => setTimeout(r, 600 * (attempt + 1)));
+          } else {
+            if (_cachedBlockhash) return { blockhash: _cachedBlockhash, lastValidBlockHeight: 0 };
+            throw e;
+          }
+        }
       }
     }
     window.getFastRecentBlockhash = getFastRecentBlockhash;
@@ -5951,7 +5968,7 @@ buffer/index.js:
         }
 
         const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
-        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
+        const { blockhash, lastValidBlockHeight } = await getFastRecentBlockhash(connection);
         const senderPubkey = provider.publicKey;
 
         const transaction = new solanaWeb3.Transaction({
@@ -9008,7 +9025,7 @@ buffer/index.js:
     }
     window.loadOnchainQuestions = loadOnchainQuestions;
     // Auto load on init
-    loadOnchainQuestions(); setInterval(loadOnchainQuestions, 6000);
+    loadOnchainQuestions(); setInterval(loadOnchainQuestions, 15000);
 
     // =========================================================================
     // ⛓️ 100% DECENTRALIZED ON-CHAIN DUEL SYNCHRONIZATION ENGINE
@@ -9137,7 +9154,7 @@ buffer/index.js:
       }
     }
     window.loadOnchainDuels = loadOnchainDuels;
-    loadOnchainDuels(); setInterval(loadOnchainDuels, 5000);
+    loadOnchainDuels(); setInterval(loadOnchainDuels, 12000);
 
 
 window.handleCreateQuestion = async function(e) {
