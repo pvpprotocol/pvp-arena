@@ -3102,6 +3102,73 @@ buffer/index.js:
     let activeDuelsCount = 0;
 
     
+    
+    // SOLANA OPTIMIZATION & FAST BLOCKHASH HELPERS
+    let _cachedBlockhash = null;
+    let _cachedBlockhashTime = 0;
+
+    async function getFastBlockhash(conn) {
+      const now = Date.now();
+      if (_cachedBlockhash && (now - _cachedBlockhashTime < 4000)) {
+        return _cachedBlockhash;
+      }
+      const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed"));
+      try {
+        const { blockhash } = await connection.getLatestBlockhash("confirmed");
+        _cachedBlockhash = blockhash;
+        _cachedBlockhashTime = now;
+        return blockhash;
+      } catch(e) {
+        if (_cachedBlockhash) return _cachedBlockhash;
+        throw e;
+      }
+    }
+    window.getFastBlockhash = getFastBlockhash;
+
+    async function getFastRecentBlockhash(conn) {
+      const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed"));
+      try {
+        const res = await connection.getLatestBlockhash("confirmed");
+        _cachedBlockhash = res.blockhash;
+        _cachedBlockhashTime = Date.now();
+        return res;
+      } catch(e) {
+        if (_cachedBlockhash) return { blockhash: _cachedBlockhash, lastValidBlockHeight: 0 };
+        throw e;
+      }
+    }
+    window.getFastRecentBlockhash = getFastRecentBlockhash;
+
+    function addSolanaPriorityFee(transaction, microLamports = 150000) {
+      try {
+        if (window.solanaWeb3 && solanaWeb3.ComputeBudgetProgram) {
+          transaction.add(
+            solanaWeb3.ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
+          );
+        }
+      } catch(e) {
+        console.warn("addSolanaPriorityFee warn:", e);
+      }
+    }
+    window.addSolanaPriorityFee = addSolanaPriorityFee;
+
+    async function fastConfirmTransaction(connection, signature, maxWaitMs = 8000) {
+      try {
+        const start = Date.now();
+        while (Date.now() - start < maxWaitMs) {
+          const status = await connection.getSignatureStatus(signature);
+          if (status && status.value && (status.value.confirmationStatus === "confirmed" || status.value.confirmationStatus === "finalized")) {
+            return true;
+          }
+          await new Promise(r => setTimeout(r, 1000));
+        }
+      } catch(e) {
+        console.warn("fastConfirmTransaction warning:", e);
+      }
+      return false;
+    }
+    window.fastConfirmTransaction = fastConfirmTransaction;
+
     // ONCHAIN TRANSACTION EXECUTOR (SOLANA)
     var USDC_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDC on Solana
     var PVP_TOKEN_ADDRESS = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7"; // Native $PVP token
