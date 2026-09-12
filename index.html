@@ -953,11 +953,7 @@ buffer/index.js:
         <!-- Question Tabs: LIVE vs ENDED -->
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#334155] pb-3 mb-3">
           <div class="flex flex-wrap items-center gap-2">
-            <button id="q-tab-all-btn" onclick="switchQuestionTab('all')" class="status-tab-btn active px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 shadow-sm cursor-pointer">
-              <span>🌐 ALL CONTESTS</span>
-              <span id="q-badge-all" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">0</span>
-            </button>
-            <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="status-tab-btn px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 cursor-pointer">
+            <button id="q-tab-live-btn" onclick="switchQuestionTab('live')" class="status-tab-btn active px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 shadow-sm cursor-pointer">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50"></span><span>⚡ LIVE</span>
               <span id="q-badge-live" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold border">0</span>
             </button>
@@ -4858,7 +4854,7 @@ buffer/index.js:
     let selectedDuelQuestionId = 15;
     let selectedDuelTier = 1;
     let selectedDuelOption = "GREEN";
-    let activeQuestionTab = "all";
+    let activeQuestionTab = "live";
     let activeDuelCategory = "crypto"; // "crypto" | "football" | "nba"
 
     window.switchDuelCategory = function(cat) {
@@ -4878,14 +4874,12 @@ buffer/index.js:
 
 
     window.switchQuestionTab = function(tab) {
-      activeQuestionTab = tab;
-      const allBtn = document.getElementById("q-tab-all-btn");
+      activeQuestionTab = (tab === "ended") ? "ended" : "live";
       const liveBtn = document.getElementById("q-tab-live-btn");
       const endedBtn = document.getElementById("q-tab-ended-btn");
-      [allBtn, liveBtn, endedBtn].forEach(b => { if (b) b.classList.remove("active"); });
-      if (tab === "all" && allBtn) allBtn.classList.add("active");
-      else if (tab === "live" && liveBtn) liveBtn.classList.add("active");
-      else if (tab === "ended" && endedBtn) endedBtn.classList.add("active");
+      [liveBtn, endedBtn].forEach(b => { if (b) b.classList.remove("active"); });
+      if (activeQuestionTab === "live" && liveBtn) liveBtn.classList.add("active");
+      else if (activeQuestionTab === "ended" && endedBtn) endedBtn.classList.add("active");
       renderDuelQuestions();
     };
 
@@ -5449,8 +5443,6 @@ buffer/index.js:
       if (topicsBadge) {
         topicsBadge.textContent = `${liveQuestions.length} Active Topic${liveQuestions.length === 1 ? "" : "s"} Live`;
       }
-      const allBadge = document.getElementById("q-badge-all");
-      if (allBadge) allBadge.textContent = DUEL_QUESTIONS.length;
       const liveBadge = document.getElementById("q-badge-live");
       if (liveBadge) liveBadge.textContent = liveQuestions.length;
       const endedBadge = document.getElementById("q-badge-ended");
@@ -5460,14 +5452,13 @@ buffer/index.js:
       if (!grid) return;
       grid.innerHTML = "";
 
-      // STRICT ISOLATION: LIVE tab shows ONLY live questions. ENDED tab shows ONLY ended questions.
+      // STRICT ISOLATION: ONLY LIVE and ENDED tabs exist!
       let poolQuestions = [];
-      if (activeQuestionTab === "live") {
-        poolQuestions = liveQuestions.filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
-      } else if (activeQuestionTab === "ended") {
+      if (activeQuestionTab === "ended") {
         poolQuestions = endedQuestions.filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
       } else {
-        poolQuestions = DUEL_QUESTIONS.filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
+        activeQuestionTab = "live";
+        poolQuestions = liveQuestions.filter(q => isQuestionMatchingCategory(q, activeDuelCategory));
       }
 
       if (poolQuestions.length === 0) {
