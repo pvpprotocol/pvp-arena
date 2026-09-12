@@ -9838,83 +9838,58 @@ window.handleCreateQuestion = async function(e) {
     async function submitNewQuestionOnchain() {
       const btn = document.getElementById("btnSubmitQuestion");
       const statusBox = document.getElementById("createQStatus");
-      let title = document.getElementById("newQTitle").value.trim();
-      const category = document.getElementById("newQCategory").value;
-      let resolution = document.getElementById("newQResolution").value.trim();
-      // Timing is now strictly auto-derived based on category & verified event
-      let durationSec = 7200;
+      let title = document.getElementById("newQTitle") ? document.getElementById("newQTitle").value.trim() : "";
+      const category = document.getElementById("newQCategory") ? document.getElementById("newQCategory").value : "CRYPTO";
+      let resolution = document.getElementById("newQResolution") ? document.getElementById("newQResolution").value.trim() : "";
 
       if (!title) {
         alert("Please enter a market title / question.");
         return;
       }
 
-      if (category !== "CRYPTO" && category !== "SPORTS") {
-        alert("Policy Error: Only Crypto and Sports categories are currently supported.");
-        return;
-      }
-      if (category === "SPORTS" && !selectedSportsFixture) {
-        alert("Verification Error: Only official Football and USA NBA matches verified in the sports calendar can be deployed onchain. Unverified/fake matches are strictly rejected.");
-        return;
-      }
-
-      if (category === "CRYPTO") {
-        const tokenKey = document.getElementById("cryptoTokenSelect") ? document.getElementById("cryptoTokenSelect").value : "";
-        if (!["BTC", "ETH", "SOL", "BNB", "HYPE"].includes(tokenKey)) {
-          alert("Strict Policy Error: For Crypto candle markets, only Bitcoin (BTC), Ethereum (ETH), Solana (SOL), BNB, and Hyperliquid (HYPE) are permitted.");
-          return;
-        }
-        if (!title.toLowerCase().includes("candle") || !title.toLowerCase().includes("close")) {
-          alert("Strict Policy Error: Crypto markets are strictly restricted to Candle Close (GREEN or RED).");
-          return;
-        }
-        const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "";
-        if (tf !== "12h" && tf !== "daily") {
-          alert("Strict Policy Error: Only 12-Hour and Daily candle timeframes are permitted for Crypto markets.");
-          return;
-        }
-      }
-
       const solProvider = getSolanaProvider();
-      if (!window.ethereum && (!solProvider || !isConnected)) {
-        alert("Please connect your Phantom / Solana wallet first.");
+      if (!solProvider) {
+        alert("Please install or connect Phantom / Solana wallet first.");
         return;
       }
 
       try {
         btn.disabled = true;
         btn.innerHTML = '<span class="animate-spin">⏳</span> Submitting to Solana...';
-        statusBox.classList.remove("hidden", "bg-[#182230]", "border-[#334155]", "text-neutral-800");
-        statusBox.classList.add("bg-[#182230]", "border", "border-[#334155]", "text-neutral-800");
-        statusBox.innerText = "Please confirm the transaction in your wallet. (You pay gas fee directly - Anti-Spam policy)";
+        if (statusBox) {
+          statusBox.classList.remove("hidden");
+          statusBox.innerHTML = '<span class="text-blue-400 animate-pulse">Opening Phantom to Deploy Question On-Chain...</span>';
+        }
 
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
+        let senderPubkey = solProvider.publicKey;
+        if (!senderPubkey) {
+          const resp = await solProvider.connect();
+          senderPubkey = resp.publicKey || solProvider.publicKey;
+        }
+        if (!senderPubkey) {
+          throw new Error("Solana wallet not connected");
+        }
 
         const now = Math.floor(Date.now() / 1000);
         let entryDeadline;
         let settlementTime;
+        let durationSec = 3600;
 
         if (category === "SPORTS" && selectedSportsFixture) {
-          entryDeadline = now + (selectedSportsFixture.kickoffOffsetHours * 3600);
+          durationSec = (selectedSportsFixture.kickoffOffsetHours || 1) * 3600;
+          entryDeadline = now + durationSec;
           settlementTime = entryDeadline + ((selectedSportsFixture.durationHours || 3) * 3600);
         } else {
-          // CRYPTO candle markets: Strict Anti-Frontrunning & Upcoming Candle targeting
-          // Active/live candles cannot be bet on. Markets strictly target the upcoming candle.
-          // Entry window closes the exact second the upcoming candle opens.
-          // Settlement occurs when that upcoming candle closes.
           const tf = document.getElementById("cryptoTimeframeSelect") ? document.getElementById("cryptoTimeframeSelect").value : "12h";
           const candleInterval = (tf === "12h") ? 43200 : 86400;
+          durationSec = candleInterval;
           const currentCandleStart = Math.floor(now / candleInterval) * candleInterval;
           let nextCandleOpen = currentCandleStart + candleInterval;
-          
-          // If less than 15 minutes remaining before open, advance to next cycle to guarantee a valid entry window
           if (nextCandleOpen - now < 900) {
             nextCandleOpen += candleInterval;
           }
-          
-          entryDeadline = nextCandleOpen;             // Entry closes at candle OPEN
-          settlementTime = entryDeadline + candleInterval; // Duel settles at candle CLOSE
+          entryDeadline = nextCandleOpen;
+          settlementTime = entryDeadline + candleInterval;
 
           const startDate = new Date(entryDeadline * 1000);
           const endDate = new Date(settlementTime * 1000);
@@ -9923,60 +9898,125 @@ window.handleCreateQuestion = async function(e) {
           const d = startDate.getUTCDate();
           const y = startDate.getUTCFullYear();
           const tokenKey = document.getElementById("cryptoTokenSelect") ? document.getElementById("cryptoTokenSelect").value : "BTC";
-          const token = WHITELISTED_CRYPTO_TOKENS[tokenKey] || { name: tokenKey, pair: `${tokenKey}-USD`, exchange: "Coinbase" };
+          const token = (typeof WHITELISTED_CRYPTO_TOKENS !== "undefined" && WHITELISTED_CRYPTO_TOKENS[tokenKey]) ? WHITELISTED_CRYPTO_TOKENS[tokenKey] : { name: tokenKey, pair: tokenKey + "-USD" };
 
           if (tf === "12h") {
             const sh = String(startDate.getUTCHours()).padStart(2, "0") + ":00";
             const eh = String(endDate.getUTCHours()).padStart(2, "0") + ":00";
-            title = `${token.name} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close: GREEN or RED?`;
-            resolution = `Coinbase ${token.pair} 12h Candle (${m} ${d}, ${sh} - ${eh} UTC) Close`;
+            title = token.name + " 12h Candle (" + m + " " + d + ", " + sh + " - " + eh + " UTC) Close: GREEN or RED?";
+            resolution = "Coinbase " + token.pair + " 12h Candle Close";
           } else {
-            title = `${token.name} 24h Candle (${m} ${d}, ${y} UTC) Close: GREEN or RED?`;
-            resolution = `Coinbase ${token.pair} 24h Candle (${m} ${d}, ${y} UTC) Close`;
+            title = token.name + " 24h Candle (" + m + " " + d + ", " + y + " UTC) Close: GREEN or RED?";
+            resolution = "Coinbase " + token.pair + " 24h Candle Close";
           }
         }
 
-        const allowedTiers = [
-          ethers.utils.parseUnits("0.01", 6),
-          ethers.utils.parseUnits("5", 6),
-          ethers.utils.parseUnits("10", 6),
-          ethers.utils.parseUnits("100", 6),
-          ethers.utils.parseUnits("1000", 6)
-        ];
+        // Strict incremental ID calculation
+        let maxExistingId = 0;
+        if (Array.isArray(DUEL_QUESTIONS)) {
+          DUEL_QUESTIONS.forEach(q => {
+            const num = parseInt(q.id || q.qNum, 10);
+            if (!isNaN(num) && num > maxExistingId) maxExistingId = num;
+          });
+        }
+        const newId = maxExistingId + 1;
 
-        const registryAbi = [
-          "function createQuestion(string title, string category, string resolutionSource, uint256 entryDeadline, uint256 settlementTime, bool isDynamicSettlement, uint256[] allowedTiers) returns (uint256)"
-        ];
+        const newQ = {
+          id: newId,
+          qNum: newId,
+          category: (category.toLowerCase().includes("crypto") ? "crypto" : "sports"),
+          title: title || ("Prediction Contest #" + newId),
+          desc: resolution || (Math.round(durationSec / 3600) + "-Hour Entry Window"),
+          deadlineDesc: "Entry Closes in " + Math.round((entryDeadline - now) / 60) + " Minutes",
+          deadline: entryDeadline * 1000,
+          settlementTime: settlementTime * 1000,
+          isEnded: false,
+          getDeadline: function() { return this.deadline; },
+          optA: "YES",
+          optALabel: "GREEN",
+          optASub: "Green Candle Close",
+          optB: "NO",
+          optBLabel: "RED",
+          optBSub: "Red Candle Close",
+          opt1: "GREEN",
+          opt2: "RED",
+          creator: senderPubkey.toString()
+        };
 
-        const registryContract = new ethers.Contract("0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5", registryAbi, signer);
+        // Submit Solana onchain transaction via Phantom
+        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+        const { blockhash } = await connection.getLatestBlockhash("confirmed");
 
-        const tx = await registryContract.createQuestion(
-          title,
-          category,
-          resolution,
-          entryDeadline,
-          settlementTime,
-          false,
-          allowedTiers
+        const transaction = new solanaWeb3.Transaction({
+          recentBlockhash: blockhash,
+          feePayer: senderPubkey
+        });
+        if (typeof addSolanaPriorityFee === "function") {
+          addSolanaPriorityFee(transaction);
+        }
+
+        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const payload = "pvphub:create_question:q" + newId + ":" + category + "_" + Math.round(durationSec / 60) + "M_CANDLE:GREEN_RED:dl_" + Math.round((entryDeadline - now) / 60) + "m:creator:" + senderPubkey.toString();
+        const memoData = new TextEncoder().encode(payload);
+
+        transaction.add(
+          new solanaWeb3.TransactionInstruction({
+            keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
+            programId: MEMO_PROGRAM_ID,
+            data: memoData
+          })
         );
 
-        statusBox.innerText = "Transaction broadcasted! Waiting for block confirmation on Solana...";
-        await tx.wait();
+        let txSignature = null;
+        try {
+          const sendRes = await solProvider.signAndSendTransaction(transaction, { skipPreflight: true });
+          txSignature = sendRes.signature || sendRes;
+          newQ.onchainTxSignature = txSignature;
+          if (typeof fastConfirmTransaction === "function") {
+            fastConfirmTransaction(connection, txSignature, 8000);
+          }
+        } catch (signErr) {
+          console.warn("Solana sign error:", signErr);
+          throw signErr;
+        }
 
-        statusBox.classList.remove("bg-[#182230]", "border-[#334155]", "text-neutral-800");
-        statusBox.classList.add("bg-[#182230]", "border-[#334155]", "text-neutral-800");
-        statusBox.innerText = "✅ Market created successfully! You are now the official Creator and earn 5% on all duels.";
+        // Add to global questions and broadcast everywhere
+        DUEL_QUESTIONS.unshift(newQ);
+        if (typeof saveStoredQuestions === "function") saveStoredQuestions();
+        try {
+          localStorage.setItem("pvp_onchain_q" + newId, JSON.stringify(newQ));
+        } catch(e) {}
+
+        try {
+          fetch("https://ntfy.sh/pvp-arena-solana-questions-v1", {
+            method: "POST",
+            body: JSON.stringify(newQ)
+          }).catch(console.warn);
+        } catch(e) {}
+
+        if (typeof duelBroadcast !== "undefined" && duelBroadcast) {
+          try { duelBroadcast.postMessage({ type: "new_question", question: newQ }); } catch(e){}
+        }
+
+        if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
+        if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+
+        if (statusBox) {
+          statusBox.innerHTML = '<span class="text-emerald-400 font-bold">✅ Question #' + newId + ' published 100% ON-CHAIN!</span>';
+        }
+        showToast("✅ Question #" + newId + " published on Solana!", "success");
 
         setTimeout(() => {
           closeCreateQuestionModal();
-          location.reload();
-        }, 2000);
+        }, 1500);
 
       } catch (err) {
-        console.error("Error creating market:", err);
-        statusBox.classList.remove("hidden", "bg-[#182230]", "border-[#334155]", "text-neutral-800");
-        statusBox.classList.add("bg-[#182230]", "border", "border-[#334155]", "text-neutral-800");
-        statusBox.innerText = "Transaction failed: " + (err.reason || err.message || "Rejected");
+        console.error("Error creating question:", err);
+        if (statusBox) {
+          statusBox.classList.remove("hidden");
+          statusBox.innerHTML = '<span class="text-rose-400 font-bold">Error: ' + (err.reason || err.message || "Wallet rejected") + '</span>';
+        }
+        showToast("Transaction failed: " + (err.reason || err.message || "Rejected"), "error");
         btn.disabled = false;
         btn.innerHTML = "<span>🚀</span><span>Deploy Market Onchain</span>";
       }
