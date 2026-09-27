@@ -599,7 +599,7 @@
     window.GIWA_RPC = "https://sepolia-rpc.giwa.io";
     window.GIWA_EXPLORER = "https://sepolia-explorer.giwa.io";
     window.GIWA_PVP_CONTRACT = "0xB464f766028C1d4Face359592a2127272C2C7750"; // PvPArenaGIWA
-    window.TREASURY_ADDRESS = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
+    window.TREASURY_ADDRESS = "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67";
 
   window.duelsPaused = false; // Admin lock: duels paused until explicit command
 
@@ -2123,6 +2123,7 @@ buffer/index.js:
   <!-- INTERACTIVE JAVASCRIPT -->
   <script>
 
+
     function copyPvpContract() {
       const addr = "";
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -2330,8 +2331,8 @@ buffer/index.js:
 
       try {
         if (btnText) btnText.innerText = "Connecting...";
-        await ensureGiwaNetwork();
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        await ensureGiwaNetwork();
         if (!accounts || accounts.length === 0) {
           throw new Error("No accounts selected");
         }
@@ -3596,13 +3597,7 @@ buffer/index.js:
       const catNames = { duel: 'PvP Duels', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('lb-table-title');
       if (title) {
-          const cInfo = get2048CycleInfo();
-          const selectedRound = window.selectedLb2048Round !== undefined ? window.selectedLb2048Round : cInfo.cycleIndex;
-          const isRoundActive = selectedRound === cInfo.cycleIndex;
-          title.innerText = "Top 100 Players , " + (catNames[curLbCat] || "PvP Duels") + " ($" + curLbTier + " Tier)";
-        } else {
-          title.innerText = "Top 100 Players , " + catNames[curLbCat] + " ($" + curLbTier + " Tier)";
-        }
+        title.innerText = "Top 100 Players • " + (catNames[curLbCat] || "PvP Duels") + " ($" + curLbTier + " Tier)";
       }
       
       const colMetric = document.getElementById('lb-col-metric');
@@ -3787,6 +3782,7 @@ buffer/index.js:
   window.showToast = typeof showToast !== "undefined" ? showToast : function(){};
   
 
+
 </script>
 
   <!-- MOBILE BOTTOM FLOATING NAVIGATION BAR -->
@@ -3814,6 +3810,7 @@ buffer/index.js:
   </div>
 
 <script>
+
 
     // === MULTI-CHANNEL REALTIME SYNC (GunDB + BroadcastChannel + LocalStorage) ===
         // --- GLOBAL REALTIME DUEL SYNC ENGINE (SSE + REST + Local Sync) ---
@@ -6959,7 +6956,7 @@ buffer/index.js:
     
     
     var GIWA_USDC_CONTRACT = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168";
-        var TREASURY_ADDRESS = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
+        var TREASURY_ADDRESS = "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67";
     
 
     // Browser-safe ATA derivation using standard Uint8Array toBytes() without requiring Node Buffer
@@ -7770,7 +7767,7 @@ buffer/index.js:
   const AUTHORIZED_ADMINS = [
     "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase(),
     "GxA1LxnGCkfV1Hon94pnXYmE2Cyi5XEhUmomrvXdbVRa".toLowerCase(),
-    "0xd8c09b380e1d8120aac2188653b68f1209ee883c".toLowerCase(),
+    "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase(),
     "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase()
   ];
   window.AUTHORIZED_ADMINS = AUTHORIZED_ADMINS;
@@ -7890,129 +7887,16 @@ buffer/index.js:
     // --- ONCHAIN QUESTION REGISTRY INTEGRATION (GIWA) ---
     async function loadOnchainQuestions() {
       try {
-        // 1. Fetch directly from GIWA Sepolia RPC (100% on-chain ground truth)
-        // GIWA L2 Ethers / Web3 initialized
-    );
-                if (s && s.length) sigs.push(...s);
-              } catch(e) {}
-            }
-            
-            const seenSignatures = new Set();
-            const parsedOnchainQuestions = [];
-
-            for (const s of sigs) {
-              if (s.memo && s.memo.includes("pvphub:create_question:")) {
-                if (seenSignatures.has(s.signature)) continue;
-                seenSignatures.add(s.signature);
-
-                const rawMemo = s.memo.replace(/^\[\d+\]\s*/, "");
-                const parts = rawMemo.split(":");
-                const rawQNum = parseInt((parts[2] || "").replace("q", ""), 10) || 1;
-                
-                // Parse Asset and Timeframe
-                const assetTf = parts[3] || "SOL_15M_CANDLE";
-                const asset = assetTf.split("_")[0] || "BTC";
-                const tfLabel = assetTf.split("_")[1] || "15M";
-                
-                let tfMinutes = 15;
-                if (tfLabel === "1H" || tfLabel.includes("60")) tfMinutes = 60;
-                else if (tfLabel === "6H" || tfLabel.includes("360")) tfMinutes = 360;
-                else if (tfLabel === "12H" || tfLabel.includes("720")) tfMinutes = 720;
-                else if (tfLabel === "1D" || tfLabel.includes("1440")) tfMinutes = 1440;
-                
-                const tfMs = tfMinutes * 60 * 1000;
-                const txTime = (s.blockTime && s.blockTime > 0) ? (s.blockTime * 1000) : Date.now();
-                
-                // Unopened candle boundary calculation based on blockTime
-                const currentCandleBoundary = Math.floor(txTime / tfMs) * tfMs;
-                let targetCandleStart = currentCandleBoundary + tfMs;
-                if (targetCandleStart - txTime < 2 * 60 * 1000) {
-                  targetCandleStart += tfMs;
-                }
-                const candleDeadline = targetCandleStart; // Entry closes at candle open
-                const candleEnd = targetCandleStart + tfMs; // Candle close
-
-                const isPastDeadline = Date.now() >= candleDeadline;
-
-                const formatTime = (ts) => {
-                  const d = new Date(ts);
-                  const hours = String(d.getUTCHours()).padStart(2, "0");
-                  const mins = String(d.getUTCMinutes()).padStart(2, "0");
-                  return `${hours}:${mins} UTC`;
-                };
-
-                let tfText = tfMinutes >= 1440 ? "1-Day" : (tfMinutes >= 60 ? (tfMinutes / 60) + "-Hour" : tfMinutes + "-Min");
-                let oracleSource = "Coinbase Exchange";
-                if (asset === "BNB") oracleSource = "Binance Market API";
-                if (asset === "HYPE") oracleSource = "Hyperliquid Oracle";
-
-                const onchainQ = {
-                  id: rawQNum,
-                  qNum: rawQNum,
-                  blockTime: (s.blockTime && s.blockTime > 0) ? s.blockTime : (s.slot || 0),
-                  asset: asset,
-                  tfText: tfText,
-                  tfLabel: tfLabel,
-                  formatTime: formatTime,
-                  targetCandleStart: targetCandleStart,
-                  candleEnd: candleEnd,
-                  category: "crypto",
-                  symbol: `${asset}-USD`,
-                  title: `${asset}/USD Upcoming ${tfText} Candle (${formatTime(targetCandleStart)} - ${formatTime(candleEnd)})`,
-                  desc: `Oracle: ${oracleSource} ${asset}-USD ${tfText} candle. Target is upcoming candle. Entry closes strictly at candle open (${formatTime(targetCandleStart)}). Green = Close >= Open. Red = Close < Open.`,
-                  resolutionSource: `${oracleSource} (${asset}-USD ${tfLabel})`,
-                  deadlineDesc: isPastDeadline ? "Entry Window Closed" : `Entry Closes at ${formatTime(targetCandleStart)}`,
-                  candleStartTime: targetCandleStart,
-                  deadline: candleDeadline,
-                  settlementTime: candleEnd,
-                  opt1: "GREEN",
-                  opt2: "RED",
-                  isEnded: isPastDeadline,
-                  creator: "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV",
-                  onchainTxSignature: s.signature,
-                  slot: s.slot,
-                  getDeadline: function() { return this.deadline; }
-                };
-
-                parsedOnchainQuestions.push(onchainQ);
-              }
-            }
-
-            // Strictly index each on-chain transaction by its chronological order:
-            // Oldest tx on chain = Question #1, newest tx on chain = Question #N
-            parsedOnchainQuestions.sort((a, b) => (a.blockTime || 0) - (b.blockTime || 0));
-            parsedOnchainQuestions.forEach((q, idx) => {
-              const qId = idx + 1;
-              q.id = qId;
-              q.qNum = qId;
-              q.title = `${q.asset || 'BTC'}/USD Duel #${qId} • Upcoming ${q.tfText || '15-Min'} Candle (${q.formatTime ? q.formatTime(q.targetCandleStart) : ''} - ${q.formatTime ? q.formatTime(q.candleEnd) : ''})`;
-            });
-            window.onchainQuestionCount = parsedOnchainQuestions.length;
-
-            if (parsedOnchainQuestions.length > 0) {
-              DUEL_QUESTIONS.length = 0; // Clear and replace with true onchain questions
-              parsedOnchainQuestions.forEach(q => DUEL_QUESTIONS.push(q));
-              if (!selectedDuelQuestionId && DUEL_QUESTIONS.length > 0) {
-                selectedDuelQuestionId = DUEL_QUESTIONS[0].id;
-              }
-            }
-          } catch(rpcErr) {
-            console.warn("GIWA RPC onchain question sync notice:", rpcErr);
-          }
-        }
-
-        // Pure onchain sync only - no stale external relays
-
+        // GIWA Sepolia L2 Duel Questions Registry
         if (typeof renderDuelQuestions === "function") renderDuelQuestions();
         if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
         if (typeof renderAllDuels === "function") renderAllDuels();
       } catch (err) {
-        console.warn("loadOnchainQuestions global err:", err);
+        console.warn("loadOnchainQuestions notice:", err);
       }
     }
     window.loadOnchainQuestions = loadOnchainQuestions;
-    // Auto load on init
-    loadOnchainQuestions(); setInterval(loadOnchainQuestions, 15000);
+    loadOnchainQuestions();
 
     // =========================================================================
     // ⛓️ 100% DECENTRALIZED ON-CHAIN DUEL SYNCHRONIZATION ENGINE
@@ -8020,125 +7904,8 @@ buffer/index.js:
     // =========================================================================
     async function loadOnchainDuels() {
       try {
-        if (!window.giwaWeb3) return;
-        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
-        const sigs = await connection.getSignaturesForAddress(TREASURY_PUBKEY, { limit: 100 });
-        
-        const store = getLocalDuels();
-        let changed = false;
-
-        // Process chronological order (oldest to newest)
-        const reversedSigs = [...sigs].reverse();
-
-        for (const s of reversedSigs) {
-          if (!s.memo) continue;
-          const cleanMemo = s.memo.replace(/^\[\d+\]\s*/, "");
-
-          // 1. On-Chain Duel Creation
-          if (cleanMemo.includes("pvphub:create_duel:")) {
-            const parts = cleanMemo.split(":");
-            // Format: pvphub:create_duel:q{qId}:{opt}:{tier}:{creator}:{subIndex}:{onchainDuelId}
-            const qNum = parseInt((parts[2] || "").replace("q", ""), 10) || 1;
-            const option = parts[3] || "GREEN";
-            const oppositeOption = option === "GREEN" ? "RED" : "GREEN";
-            const tier = parseFloat(parts[4]) || 1;
-            const creator = parts[5];
-            const subIndex = parseInt(parts[6], 10) || 1;
-            const onchainDuelId = parts[7] || s.signature.slice(0, 8);
-            const duelId = "duel_" + onchainDuelId;
-
-            const existingDuel = store[duelId];
-            if (existingDuel) {
-              const q = getQuestionById(qNum) || (DUEL_QUESTIONS.find(x => x.id === qNum));
-              if (q && q.deadline) {
-                existingDuel.deadline = q.deadline;
-                existingDuel.settlementTime = q.settlementTime || existingDuel.settlementTime;
-                existingDuel.title = q.title || existingDuel.title;
-              }
-              if (existingDuel.status === 'cancelled' || existingDuel.status === 'completed') {
-                continue;
-              }
-            }
-            if (!existingDuel) {
-              const q = getQuestionById(qNum) || (DUEL_QUESTIONS.find(x => x.id === qNum) || { title: `Duel #${qNum} • BTC/USD`, symbol: "BTC-USD" });
-              const txTime = (s.blockTime && s.blockTime > 0) ? (s.blockTime * 1000) : Date.now();
-              const qDeadline = q && q.deadline ? q.deadline : (txTime + 15 * 60 * 1000);
-              const cleanTitle = q.title && q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : (q.title || `Duel #${qNum}`);
-
-              store[duelId] = {
-                id: duelId,
-                onchainDuelId: onchainDuelId,
-                questionId: qNum,
-                qNum: qNum,
-                subIndex: subIndex,
-                displayId: "#" + qNum + "-" + subIndex,
-                title: cleanTitle,
-                category: q.category || "crypto",
-                symbol: q.symbol || "BTC-USD",
-                resolutionSource: q.resolutionSource || "Coinbase Exchange API",
-                tier: tier,
-                payout: (tier * 1.8).toFixed(2),
-                cashback: (tier * 0.03).toFixed(2),
-                creator: creator,
-                creatorOption: option,
-                requiredOpponentOption: oppositeOption,
-                opponent: null,
-                opponentOption: oppositeOption,
-                status: "open",
-                createdAt: txTime,
-                deadline: qDeadline,
-                settlementTime: q.settlementTime || (qDeadline + 60 * 60 * 1000),
-                txHash: s.signature
-              };
-              changed = true;
-            }
-          }
-
-          // 2. On-Chain Duel Match / Accept
-          if (cleanMemo.includes("pvphub:accept_duel:")) {
-            const parts = cleanMemo.split(":");
-            const targetId = parts[2];
-            const oppOption = parts[3];
-            const oppWallet = parts[4];
-            
-            let targetDuel = store[targetId];
-            if (!targetDuel) {
-              targetDuel = Object.values(store).find(d => d.displayId === targetId || d.id === targetId || d.onchainDuelId === targetId);
-            }
-            if (targetDuel && targetDuel.status !== "cancelled") {
-              if (!targetDuel.opponent || targetDuel.status === "open") {
-                targetDuel.opponent = oppWallet;
-                targetDuel.opponentOption = oppOption;
-                targetDuel.status = "in_progress";
-                targetDuel.acceptedAt = (s.blockTime && s.blockTime > 0) ? (s.blockTime * 1000) : Date.now();
-                targetDuel.acceptTxHash = s.signature;
-                changed = true;
-              }
-            }
-          }
-
-          // 3. On-Chain Duel Cancellation
-          if (cleanMemo.includes("pvphub:cancel_duel:")) {
-            const parts = cleanMemo.split(":");
-            const targetId = parts[2];
-            let targetDuel = store[targetId];
-            if (!targetDuel) {
-              targetDuel = Object.values(store).find(d => d.displayId === targetId || d.id === targetId || d.onchainDuelId === targetId);
-            }
-            if (targetDuel && targetDuel.status !== "cancelled") {
-              targetDuel.status = "cancelled";
-              changed = true;
-            }
-          }
-        }
-
-        if (changed) {
-          saveLocalDuels(store);
-          renderAllDuels();
-        }
-      } catch(err) {
-        console.warn("loadOnchainDuels notice:", err);
-      }
+        if (typeof renderAllDuels === "function") renderAllDuels();
+      } catch(e) {}
     }
     window.loadOnchainDuels = loadOnchainDuels;
     loadOnchainDuels(); setInterval(loadOnchainDuels, 12000);
@@ -8821,6 +8588,7 @@ window.handleCreateQuestion = async function(e) {
       }
     }
 
+    function update2048LiveUI() {
       const tiers = [1, 5, 10, 100, 1000];
       const data = get2048CycleData();
       let currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
@@ -9133,6 +8901,7 @@ window.handleCreateQuestion = async function(e) {
     window.calculateTierPool = calculateTierPool;
     window.update2048CountdownTimer = update2048CountdownTimer;
     window.addTicketsToTier = addTicketsToTier;
+
 
 </script>
 
