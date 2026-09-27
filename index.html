@@ -6748,7 +6748,7 @@ buffer/index.js:
         const receipt = await tx.wait();
 
         showToast("⚔️ Duel created successfully on GIWA!", "success");
-        closeCreateDuelModal();
+        if (typeof closeCreateDuelModal === "function") closeCreateDuelModal();
 
         // Refresh UI
         if (typeof fetchOnchainDuels === 'function') fetchOnchainDuels();
@@ -8401,6 +8401,7 @@ window.handleCreateQuestion = async function(e) {
     }
     window.selectMarketCategory = selectMarketCategory;
 
+    window.closeCreateDuelModal = function() { const m = document.getElementById("createDuelModal"); if (m) m.classList.add("hidden"); };
     function openCreateQuestionModal() {
       const modal = document.getElementById("createQuestionModal");
       if (modal) {
