@@ -691,6 +691,28 @@
     window.GIWA_RPC = "https://sepolia-rpc.giwa.io";
     window.GIWA_EXPLORER = "https://sepolia-explorer.giwa.io";
     window.GIWA_PVP_CONTRACT = "0xB464f766028C1d4Face359592a2127272C2C7750"; // PvPArenaGIWA
+
+    window.GIWA_PVP_ABI = [
+      "function createDuel(address token, uint256 entryStake, uint256 targetPrice, bool isCreatorLong, uint256 entryDeadline, uint256 settlementTime, string marketSymbol) payable returns (uint256)",
+      "function joinDuel(uint256 duelId) payable",
+      "function cancelDuel(uint256 duelId)",
+      "function resolveDuel(uint256 duelId, address winner)",
+      "function emergencyRefund(uint256 duelId)",
+      "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 entryStake, uint256 targetPrice, bool isCreatorLong, uint256 entryDeadline, uint256 settlementTime, uint8 status, address winner, string marketSymbol)",
+      "function nextDuelId() view returns (uint256)",
+      "function owner() view returns (address)",
+      "function resolver() view returns (address)",
+      "function setResolver(address _resolver)",
+      "function setTreasury(address _treasury)",
+      "function treasury() view returns (address)",
+      "event DuelCreated(uint256 indexed duelId, address indexed creator, address token, uint256 entryStake, string marketSymbol)",
+      "event DuelJoined(uint256 indexed duelId, address indexed challenger)",
+      "event DuelCancelled(uint256 indexed duelId, address indexed creator)",
+      "event DuelResolved(uint256 indexed duelId, address winner, uint256 winnerPayout, uint256 loserCashback)",
+      "event DuelRefunded(uint256 indexed duelId)"
+    ];
+    var GIWA_PVP_ABI = window.GIWA_PVP_ABI;
+
     window.TREASURY_ADDRESS = "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67";
 
   window.duelsPaused = false; // Admin lock: duels paused until explicit command
@@ -6536,6 +6558,7 @@ buffer/index.js:
 
     // --- NON-CUSTODIAL ANCHOR ESCROW PROGRAM (0xB464f766028C1d4Face359592a2127272C2C7750) ---
     var GIWA_PVP_CONTRACT = window.GIWA_PVP_CONTRACT || "0xB464f766028C1d4Face359592a2127272C2C7750";
+    var GIWA_PVP_ABI = window.GIWA_PVP_ABI;
     const SYSVAR_RENT_PUBKEY = new giwaWeb3.PublicKey("SysvarRent111111111111111111111111111111111");
 
     function getAnchorDuelPda(creatorPubkey, numericDuelId) {
@@ -6698,7 +6721,7 @@ buffer/index.js:
 
         const ref = (typeof getStoredReferrer === 'function') ? getStoredReferrer() : null;
         let tx;
-        if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase()) {
+        if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase() && typeof contract.createDuelWithReferral === "function") {
           tx = await contract.createDuelWithReferral(
             usdcAddress,
             entryStake,
@@ -6794,7 +6817,7 @@ buffer/index.js:
 
           const ref = (typeof getStoredReferrer === 'function') ? getStoredReferrer() : null;
           let tx;
-          if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase()) {
+          if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase() && typeof contract.joinDuelWithReferral === "function") {
             tx = await contract.joinDuelWithReferral(duelId, ref);
           } else {
             tx = await contract.joinDuel(duelId);
