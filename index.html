@@ -3860,7 +3860,10 @@ window.addUsdcToWallet = addUsdcToWallet;
       const num = parseInt(qId, 10);
       if (isNaN(num)) return (typeof DUEL_QUESTIONS !== "undefined" && DUEL_QUESTIONS[0]) ? DUEL_QUESTIONS[0] : null;
       if (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS)) {
-        let q = DUEL_QUESTIONS.find(item => Number(item.id) === num || Number(item.qNum) === num);
+        let q = DUEL_QUESTIONS.find(item => item.id === num || item.qNum === num);
+        if (!q && num === 15) q = DUEL_QUESTIONS.find(item => item.id === 15);
+        if (!q && (num === 2 || num === 16)) q = DUEL_QUESTIONS.find(item => item.id === 16 || item.id === 2);
+        if (!q && (num === 3 || num === 17)) q = DUEL_QUESTIONS.find(item => item.id === 17 || item.id === 3);
         if (q) return q;
       }
       return null;
@@ -5004,107 +5007,6 @@ window.addUsdcToWallet = addUsdcToWallet;
 
       return "completed";
     }
-    
-    // ══════════════════════════════════════════════════════════════════════
-    // 100% ON-CHAIN QUESTION & DUEL SYNCHRONIZATION FROM GIWA BLOCKCHAIN
-    // ══════════════════════════════════════════════════════════════════════
-    const GIWA_ADMIN_WALLET = "0x7290ac43C0f50E18B7059f11dD1973028D9B67d6".toLowerCase();
-
-    async function syncOnchainQuestionsFromExplorer() {
-      try {
-        const url = "https://sepolia-explorer.giwa.io/api?module=account&action=txlist&address=" + GIWA_ADMIN_WALLET;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (!data || !Array.isArray(data.result)) return;
-
-        const questionTxs = [];
-        data.result.forEach(tx => {
-          if (tx.input && tx.input.startsWith("0x") && tx.input.length > 10) {
-            try {
-              const hex = tx.input.slice(2);
-              let str = "";
-              for (let i = 0; i < hex.length; i += 2) {
-                str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-              }
-              if (str.includes("pvphub:create_question")) {
-                questionTxs.push({
-                  hash: tx.hash,
-                  blockNumber: parseInt(tx.blockNumber, 10),
-                  timeStamp: parseInt(tx.timeStamp, 10),
-                  text: str
-                });
-              }
-            } catch(e) {}
-          }
-        });
-
-        if (questionTxs.length === 0) return;
-
-        // Sort in ascending order of block numbers (Block 37188010 -> #1, Block 37189217 -> #2, ...)
-        questionTxs.sort((a, b) => a.blockNumber - b.blockNumber);
-
-        let questionsChanged = false;
-        questionTxs.forEach((qTx, index) => {
-          const qNum = index + 1;
-          const parts = qTx.text.split(":");
-          let asset = "BTC";
-          let tf = "1H";
-          parts.forEach(p => {
-            if (p.includes("_CANDLE")) {
-              const segs = p.replace("_CANDLE", "").split("_");
-              asset = segs[0] || "BTC";
-              tf = segs[1] || "1H";
-            }
-          });
-
-          const title = asset + " " + tf;
-          const existing = DUEL_QUESTIONS.find(q => Number(q.id) === qNum);
-          if (!existing) {
-            const newQ = {
-              id: qNum,
-              qNum: qNum,
-              symbol: asset,
-              timeframe: tf,
-              title: title,
-              opt1: "GREEN",
-              opt2: "RED",
-              category: "CRYPTO " + tf,
-              status: "live",
-              oracle: "Coinbase / Pyth",
-              targetPrice: 0,
-              isConfirmedOnchain: true,
-              onchainTxSignature: qTx.hash,
-              blockNumber: qTx.blockNumber,
-              deadline: Date.now() + 86400000,
-              settlementTime: Date.now() + 86400000 + 3600000,
-              getDeadline: function() { return this.deadline; }
-            };
-            DUEL_QUESTIONS.push(newQ);
-            questionsChanged = true;
-          } else {
-            existing.title = title;
-            existing.symbol = asset;
-            existing.timeframe = tf;
-            existing.isConfirmedOnchain = true;
-            existing.onchainTxSignature = qTx.hash;
-            existing.blockNumber = qTx.blockNumber;
-            existing.isEnded = false;
-          }
-        });
-
-        DUEL_QUESTIONS.sort((a, b) => Number(a.id) - Number(b.id));
-
-        if (!selectedDuelQuestionId && DUEL_QUESTIONS.length > 0) {
-          selectedDuelQuestionId = DUEL_QUESTIONS[0].id;
-        }
-
-        if (typeof renderDuelQuestions === "function") renderDuelQuestions();
-        if (typeof renderAllDuels === "function") renderAllDuels();
-      } catch(err) {
-        console.warn("syncOnchainQuestionsFromExplorer error:", err);
-      }
-    }
-
     async function syncOnchainDuelsFromContract() {
       try {
         const rpcUrl = "https://sepolia-rpc.giwa.io";
@@ -5123,8 +5025,9 @@ window.addUsdcToWallet = addUsdcToWallet;
           const nextId = Number(rawNext);
           if (nextId <= 1) return;
 
-          // Ensure Question #1 exists in DUEL_QUESTIONS
+          // Ensure Question #1 exists in DUEL_QUESTIONS with valid future deadline
           if (!DUEL_QUESTIONS || DUEL_QUESTIONS.length === 0) {
+            const now = Date.now();
             DUEL_QUESTIONS.push({
               id: 1,
               title: "BTC 1-Hour Candle Close",
@@ -5137,7 +5040,9 @@ window.addUsdcToWallet = addUsdcToWallet;
               oracle: "Coinbase / Pyth",
               targetPrice: 0,
               isConfirmedOnchain: true,
-              getDeadline: function() { return Date.now() + 3600000; }
+              deadline: now + 3600000,
+              settlementTime: now + 7200000,
+              getDeadline: function() { return this.deadline; }
             });
           }
           if (!selectedDuelQuestionId && DUEL_QUESTIONS.length > 0) {
@@ -5161,7 +5066,7 @@ window.addUsdcToWallet = addUsdcToWallet;
             const challenger = d.challenger ? d.challenger.toLowerCase() : "";
             const hasChallenger = challenger && challenger !== "0x0000000000000000000000000000000000000000";
             
-            // Wager
+            // Wager in USDC (6 decimals)
             let tierStr = "1";
             try {
               tierStr = String(Math.round(Number(ethers.utils.formatUnits(d.wagerAmount, 6))));
@@ -5194,6 +5099,7 @@ window.addUsdcToWallet = addUsdcToWallet;
                 onchainDuelId: dId.toString(),
                 questionId: qId,
                 questionText: qId === 2 ? "ETH 1H" : "BTC 1H",
+                topic: qId === 2 ? "ETH 1H" : "BTC 1H",
                 creatorOption: choice,
                 requiredOpponentOption: reqChoice,
                 tier: tierStr,
@@ -5210,12 +5116,13 @@ window.addUsdcToWallet = addUsdcToWallet;
             }
           });
 
-          if (updated) {
+          if (updated || Object.keys(store).length > 0) {
             try {
               localStorage.setItem("pvp_duels_store", JSON.stringify(store));
             } catch(e) {}
             if (typeof renderAllDuels === "function") renderAllDuels();
             if (typeof updateOptionButtonsUI === "function") updateOptionButtonsUI();
+            if (typeof updateAdminOnchainMetrics === "function") updateAdminOnchainMetrics();
           }
         }).catch(err => console.warn("syncOnchainDuels error:", err));
       } catch(e) {
