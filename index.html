@@ -5292,7 +5292,7 @@ window.addUsdcToWallet = addUsdcToWallet;
             const qId = getDuelQuestionId(item);
             const safeTier = (item.tier !== undefined && item.tier !== null) ? Number(item.tier) : 1;
             const creatorOption = (item.creatorOption || 'YES').toUpperCase();
-            const groupKey = qId + "_" + safeTier + "_" + creatorOption;
+            const groupKey = qId + "_" + safeTier;
 
             if (!groups[groupKey]) {
               groups[groupKey] = {
@@ -6007,68 +6007,136 @@ window.addUsdcToWallet = addUsdcToWallet;
       const qIdx = rawQText.indexOf("?");
       const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
 
-      const creatorOption = group.creatorOption || "YES";
-      const requiredOpponentOption = repDuel.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
+      // Filter Green and Red duels in this pool
+      const greenDuels = group.duels.filter(d => {
+        const opt = (d.creatorOption || "YES").toUpperCase();
+        return opt === "GREEN" || opt === "YES";
+      });
+      const redDuels = group.duels.filter(d => {
+        const opt = (d.creatorOption || "YES").toUpperCase();
+        return opt === "RED" || opt === "NO";
+      });
 
-      const currentAddr = (typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null);
-      const myDuels = group.duels.filter(d => currentAddr && d.creator && (d.creator.toLowerCase() === currentAddr.toLowerCase()));
-      const myCount = myDuels.length;
-      const isCreatorOfSome = myCount > 0;
-      const isCreatorOfAll = myCount === count;
+      const currentAddr = (typeof userAddress !== "undefined" && userAddress) ? userAddress.toLowerCase() : (window.userAddress ? window.userAddress.toLowerCase() : null);
 
-      const p1Label = isCreatorOfAll ? "You" : (isCreatorOfSome ? "You & Others" : "Various Players");
-      const p1Formatted = formatPlayerOption(p1Label, creatorOption);
-      const p2Formatted = formatPlayerOption("Needs Opponent", requiredOpponentOption);
+      const myGreenDuels = greenDuels.filter(d => currentAddr && d.creator && d.creator.toLowerCase() === currentAddr);
+      const myRedDuels = redDuels.filter(d => currentAddr && d.creator && d.creator.toLowerCase() === currentAddr);
+      const myTotalCount = myGreenDuels.length + myRedDuels.length;
+
+      const opponentGreenDuels = greenDuels.filter(d => !currentAddr || !d.creator || d.creator.toLowerCase() !== currentAddr);
+      const opponentRedDuels = redDuels.filter(d => !currentAddr || !d.creator || d.creator.toLowerCase() !== currentAddr);
 
       // Card Badges
-      const countBadge = '<span class="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-400 font-black text-xs border border-amber-500/30 flex items-center gap-1.5 shadow-sm"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> ' + count + ' Requests Available (' + totalPoolStake + ' USDC Total)</span>';
+      let poolBadge = '<span class="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-400 font-black text-xs border border-amber-500/30 flex items-center gap-1.5 shadow-sm"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> ' + count + ' Requests (' + totalPoolStake + ' USDC Total)</span>';
 
-      const userRoleBadge = isCreatorOfSome 
-        ? '<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#182230] text-[#f8fafc] border border-[#334155] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#182230] animate-pulse"></span> ⚡ YOUR REQUESTS (' + myCount + ' of ' + count + ')</span>'
-        : '';
-
-      // Action Area
-      let actionSection = '';
-      if (isCreatorOfSome) {
-        const nextCancelDuel = myDuels[0];
-        actionSection = '<div class="flex items-center gap-2 flex-wrap">' +
-          '<span class="px-3 py-1.5 rounded-xl bg-[#182230] text-[#cbd5e1] font-bold border border-[#334155] text-xs flex items-center gap-2">WAITING OPPONENTS</span>' +
-          '<button onclick="cancelDuel(\'" + String(nextCancelDuel.id).replace(/'/g, "\\\x27") + "\', " + safeTier + ")" class="px-3.5 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-500/40 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
-            '❌ CANCEL 1 (' + safeTier + ' USDC)' +
-          '</button>' +
-          '<button onclick="toggleGroupDetails(\'" + String(group.groupKey).replace(/'/g, "\\\x27") + "\')" class="px-2.5 py-2 rounded-xl bg-[#182230] hover:bg-[#1e293b] text-sky-400 border border-[#334155] text-xs font-mono transition-all cursor-pointer">' +
-            '🔍 Show ' + count + ' IDs' +
-          '</button>' +
-        '</div>';
-      } else {
-        const openOpponentDuel = group.duels.find(d => !currentAddr || !d.creator || d.creator.toLowerCase() !== currentAddr.toLowerCase()) || repDuel;
-        actionSection = '<div class="flex items-center gap-2">' +
-          '<button onclick="acceptDuel(\'" + String(openOpponentDuel.id).replace(/'/g, "\\\x27") + "\', " + safeTier + ")" class="px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-black text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-1.5 cursor-pointer">' +
-            '⚔️ ACCEPT 1 DUEL: TAKE [' + requiredOpponentOption + '] (' + safeTier + ' USDC)' +
-          '</button>' +
-        '</div>';
+      let sideBreakdown = '';
+      if (greenDuels.length > 0 && redDuels.length > 0) {
+        sideBreakdown = '<span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold">🟢 ' + greenDuels.length + ' GREEN</span> ' +
+          '<span class="px-2 py-0.5 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold">🔴 ' + redDuels.length + ' RED</span>';
+      } else if (greenDuels.length > 0) {
+        sideBreakdown = '<span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold">🟢 ' + greenDuels.length + ' GREEN</span>';
+      } else if (redDuels.length > 0) {
+        sideBreakdown = '<span class="px-2 py-0.5 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold">🔴 ' + redDuels.length + ' RED</span>';
       }
 
-      // Individual sub-list for inspection or targeted cancellation
+      let userRoleBadge = '';
+      if (myTotalCount > 0) {
+        const parts = [];
+        if (myGreenDuels.length > 0) parts.push(myGreenDuels.length + ' 🟢 GREEN');
+        if (myRedDuels.length > 0) parts.push(myRedDuels.length + ' 🔴 RED');
+        userRoleBadge = '<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#182230] text-[#f8fafc] border border-[#334155] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#182230] animate-pulse"></span> ⚡ YOUR REQUESTS (' + parts.join(', ') + ')</span>';
+      }
+
+      // Action Area:
+      // If user has both Green and Red requests, show TWO cancel buttons (one Green, one Red)!
+      let actionButtons = [];
+
+      if (myGreenDuels.length > 0) {
+        const targetId = String(myGreenDuels[0].id || ("duel_" + myGreenDuels[0].onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "");
+        actionButtons.push(
+          '<button onclick="cancelDuel(\'' + targetId + '\', ' + safeTier + ')" class="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
+            '❌ CANCEL GREEN (' + safeTier + ' USDC)' +
+          '</button>'
+        );
+      }
+
+      if (myRedDuels.length > 0) {
+        const targetId = String(myRedDuels[0].id || ("duel_" + myRedDuels[0].onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "");
+        actionButtons.push(
+          '<button onclick="cancelDuel(\'' + targetId + '\', ' + safeTier + ')" class="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
+            '❌ CANCEL RED (' + safeTier + ' USDC)' +
+          '</button>'
+        );
+      }
+
+      // If there are duels from other players waiting to be matched:
+      if (opponentGreenDuels.length > 0) {
+        const targetId = String(opponentGreenDuels[0].id || ("duel_" + opponentGreenDuels[0].onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "");
+        actionButtons.push(
+          '<button onclick="acceptDuel(\'' + targetId + '\', ' + safeTier + ')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-1.5 cursor-pointer">' +
+            '⚔️ TAKE RED (' + safeTier + ' USDC)' +
+          '</button>'
+        );
+      }
+
+      if (opponentRedDuels.length > 0) {
+        const targetId = String(opponentRedDuels[0].id || ("duel_" + opponentRedDuels[0].onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "");
+        actionButtons.push(
+          '<button onclick="acceptDuel(\'' + targetId + '\', ' + safeTier + ')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-black text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-1.5 cursor-pointer">' +
+            '⚔️ TAKE GREEN (' + safeTier + ' USDC)' +
+          '</button>'
+        );
+      }
+
+      // Add inspect IDs toggle
+      const safeGroupKey = String(group.groupKey).replace(/[^a-zA-Z0-9_]/g, "");
+      actionButtons.push(
+        '<button onclick="toggleGroupDetails(\'' + safeGroupKey + '\')" class="px-2.5 py-2 rounded-xl bg-[#182230] hover:bg-[#1e293b] text-sky-400 border border-[#334155] text-xs font-mono transition-all cursor-pointer">' +
+          '🔍 Show ' + count + ' IDs' +
+        '</button>'
+      );
+
+      // Sub-list of individual duels
       const subListHtml = group.duels.map((d, i) => {
-        const dId = d.id || ("duel_" + d.onchainDuelId);
-        const isMine = currentAddr && d.creator && (d.creator.toLowerCase() === currentAddr.toLowerCase());
+        const dId = String(d.id || ("duel_" + d.onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "");
+        const isMine = currentAddr && d.creator && (d.creator.toLowerCase() === currentAddr);
         const dNum = d.onchainDuelId || (i + 1);
+        const opt = (d.creatorOption || "YES").toUpperCase();
+        const isGreen = opt === "GREEN" || opt === "YES";
         const playerLabel = isMine ? '<span class="text-amber-300 font-bold">You</span>' : (d.creator ? d.creator.slice(0, 6) + "..." + d.creator.slice(-4) : "Player");
-        const actionBtn = isMine 
-          ? ('<button onclick="cancelDuel(\'" + String(dId).replace(/'/g, "\\\x27") + "\', " + safeTier + ")" class="text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-0.5 rounded bg-red-950/40 border border-red-500/30 cursor-pointer">Cancel</button>')
-          : ('<button onclick="acceptDuel(\'" + String(dId).replace(/'/g, "\\\x27") + "\', " + safeTier + ")" class="text-emerald-400 hover:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/30 cursor-pointer">Accept</button>');
+        const optBadge = isGreen 
+          ? '<span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold text-[10px] border border-emerald-500/30">🟢 GREEN</span>'
+          : '<span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold text-[10px] border border-rose-500/30">🔴 RED</span>';
+
+        let btn = "";
+        if (isMine) {
+          if (isGreen) {
+            btn = '<button onclick="cancelDuel(\'' + dId + '\', ' + safeTier + ')" class="text-emerald-300 hover:text-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40 cursor-pointer">Cancel GREEN</button>';
+          } else {
+            btn = '<button onclick="cancelDuel(\'' + dId + '\', ' + safeTier + ')" class="text-rose-300 hover:text-rose-200 text-[10px] font-bold px-2 py-0.5 rounded bg-rose-950/60 border border-rose-500/40 cursor-pointer">Cancel RED</button>';
+          }
+        } else {
+          if (isGreen) {
+            btn = '<button onclick="acceptDuel(\'' + dId + '\', ' + safeTier + ')" class="text-rose-300 hover:text-rose-200 text-[10px] font-bold px-2 py-0.5 rounded bg-rose-950/60 border border-rose-500/40 cursor-pointer">Take RED</button>';
+          } else {
+            btn = '<button onclick="acceptDuel(\'' + dId + '\', ' + safeTier + ')" class="text-emerald-300 hover:text-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40 cursor-pointer">Take GREEN</button>';
+          }
+        }
 
         return '<div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1520] border border-[#202c3d] text-[11px] font-mono">' +
-          '<span class="text-slate-300">#' + dNum + ' • ' + playerLabel + '</span>' +
+          '<div class="flex items-center gap-2">' +
+            '<span class="text-slate-300">#' + dNum + '</span>' +
+            optBadge +
+            '<span class="text-slate-400">• ' + playerLabel + '</span>' +
+          '</div>' +
           '<div class="flex items-center gap-2">' +
             '<span class="text-slate-400">' + safeTier + ' USDC</span>' +
-            actionBtn +
+            btn +
           '</div>' +
         '</div>';
       }).join("");
 
-      const cardHtml = '<div id="duel-group-' + group.groupKey + '" class="p-4 rounded-2xl border bg-white border-[#334155] shadow-md transition-all flex flex-col gap-3">' +
+      const cardHtml = '<div id="duel-group-' + safeGroupKey + '" class="p-4 rounded-2xl border bg-white border-[#334155] shadow-md transition-all flex flex-col gap-3">' +
         '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">' +
           '<div class="flex items-center gap-3">' +
             '<div class="w-12 h-12 rounded-xl bg-[#131b27] border border-[#334155] flex flex-col items-center justify-center shrink-0">' +
@@ -6081,23 +6149,22 @@ window.addUsdcToWallet = addUsdcToWallet;
                   qId +
                 '</span>' +
                 '<span class="text-xs font-mono font-bold text-[#f8fafc]">' + questionText + '</span>' +
-                countBadge +
+                poolBadge +
+                sideBreakdown +
                 userRoleBadge +
               '</div>' +
               '<div class="text-xs font-mono text-slate-400 mt-1 flex items-center gap-2 flex-wrap">' +
-                '<span>' + p1Formatted + '</span>' +
-                '<span class="text-slate-600 font-bold text-[11px]">VS</span>' +
-                '<span>' + p2Formatted + '</span>' +
+                '<span>Pool: ' + count + ' Duels</span>' +
                 '<span class="text-slate-500">•</span>' +
-                '<span class="text-[#cbd5e1] font-semibold">Prize: ' + safePayout + ' USDC each</span>' +
+                '<span class="text-[#cbd5e1] font-semibold">Prize: ' + safePayout + ' USDC per match</span>' +
               '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="shrink-0 flex items-center gap-2">' +
-            actionSection +
+          '<div class="shrink-0 flex items-center gap-2 flex-wrap">' +
+            actionButtons.join("") +
           '</div>' +
         '</div>' +
-        '<div id="group-details-' + group.groupKey + '" class="hidden border-t border-[#334155] pt-2 space-y-1.5">' +
+        '<div id="group-details-' + safeGroupKey + '" class="hidden border-t border-[#334155] pt-2 space-y-1.5">' +
           '<div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-1">Queue of ' + count + ' Active Requests in this Pool:</div>' +
           subListHtml +
         '</div>' +
@@ -6105,6 +6172,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
       container.insertAdjacentHTML("beforeend", cardHtml);
     }
+
   
 function renderDuelCard(duelData) {
       const container = document.getElementById("duels-list-container");
@@ -6192,7 +6260,10 @@ function renderDuelCard(duelData) {
           actionSection = `
             <div class="flex items-center gap-2">
               ${statusBadge}
-              <button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3.5 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-500/40 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">❌ CANCEL & RECLAIM (${safeTier} USDC)</button>
+              ${(creatorOption === "GREEN" || creatorOption === "YES")
+  ? `<button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">❌ CANCEL GREEN (${safeTier} USDC)</button>`
+  : `<button onclick="cancelDuel('${duelData.id}', ${safeTier})" class="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">❌ CANCEL RED (${safeTier} USDC)</button>`
+}
             </div>
           `;
         } else {
@@ -6692,8 +6763,8 @@ function renderDuelCard(duelData) {
           }
         }
 
-        const selectedSide = window.selectedDuelDirection || 'LONG';
-        const isLong = selectedSide.toUpperCase() === 'LONG';
+        const curOpt = (typeof selectedDuelOption !== "undefined" ? selectedDuelOption : (window.selectedDuelOption || (window.selectedDuelDirection === "SHORT" ? "RED" : "GREEN"))).toUpperCase();
+        const isLong = (curOpt === "GREEN" || curOpt === "YES" || curOpt === "LONG");
         const targetPriceVal = Math.floor(Number(window.targetPrice || 0) * 100);
         const symbol = window.selectedDuelSymbol || 'BTC';
         const stakeUsd = Number(window.selectedDuelTier || window.selectedTier || (typeof selectedDuelTier !== 'undefined' ? selectedDuelTier : 1));
@@ -6776,8 +6847,8 @@ function renderDuelCard(duelData) {
             onchainDuelId: newDuelId.toString(),
             questionId: 1,
             questionText: "Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
-            creatorOption: isLong ? "YES" : "NO",
-            requiredOpponentOption: isLong ? "NO" : "YES",
+            creatorOption: isLong ? "GREEN" : "RED",
+            requiredOpponentOption: isLong ? "RED" : "GREEN",
             tier: stakeUsd.toString(),
             creator: userAddress.toLowerCase(),
             opponent: null,
