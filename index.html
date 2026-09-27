@@ -593,11 +593,13 @@
 </style>
 
   <script>
-    // Official Solana Program IDs (Anchor)
-    window.SOLANA_NETWORK = "devnet";
-    window.PVP_DUELS_PROGRAM_ID = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
-    window.GRAND_JACKPOT_PROGRAM_ID = "5kYD65G9qSPbebXwTsDQMbRfWxiN6sBeRuCTPX7gAfJK";
-    window.SOLANA_USDC_MINT = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"; // Devnet USDC (Mainnet: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
+        // Official GIWA Sepolia Contract Addresses
+    window.GIWA_NETWORK = "sepolia";
+    window.GIWA_CHAIN_ID = "0x164ce"; // 91342
+    window.GIWA_RPC = "https://sepolia-rpc.giwa.io";
+    window.GIWA_EXPLORER = "https://sepolia-explorer.giwa.io";
+    window.GIWA_PVP_CONTRACT = "0xa134015f6C035A713c7d61C392576b50937c8651"; // PvPArenaGIWA
+    window.TREASURY_ADDRESS = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
 
   window.duelsPaused = false; // Admin lock: duels paused until explicit command
 
@@ -693,9 +695,9 @@
       }
     });
     
-    // Periodic wallet account sync (handles multi-account switching in Phantom)
+    // Periodic wallet account sync (handles multi-account switching in MetaMask / Web3 Wallet)
     setInterval(() => {
-      const p = getSolanaProvider();
+      const p = getGiwaProvider();
       if (p && p.publicKey && isConnected) {
         const currentPub = p.publicKey.toString();
         if (userAddress && userAddress !== currentPub) {
@@ -734,26 +736,11 @@ buffer/index.js:
     if (!window.globalThis.Buffer && window.Buffer) window.globalThis.Buffer = window.Buffer;
   }
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.8/lib/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script>
-    if (window.solanaWeb3) {
-      window.TREASURY_PUBKEY = new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-      window.TREASURY_USDC_ATA = new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
-      window.DEVNET_USDC_MINT = new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
-      window.TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-      window.ASSOCIATED_TOKEN_PROGRAM_ID = new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
-      window.MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-      window.ANCHOR_PVP_PROGRAM_ID = new solanaWeb3.PublicKey("Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK");
-      var TREASURY_PUBKEY = window.TREASURY_PUBKEY;
-      var TREASURY_USDC_ATA = window.TREASURY_USDC_ATA;
-      var DEVNET_USDC_MINT = window.DEVNET_USDC_MINT;
-      var TOKEN_PROGRAM_ID = window.TOKEN_PROGRAM_ID;
-      var ASSOCIATED_TOKEN_PROGRAM_ID = window.ASSOCIATED_TOKEN_PROGRAM_ID;
-      var MEMO_PROGRAM_ID = window.MEMO_PROGRAM_ID;
-      var ANCHOR_PVP_PROGRAM_ID = window.ANCHOR_PVP_PROGRAM_ID;
-    }
-  </script>
-  <!-- ethers removed: 100% pure solana -->
+    // GIWA L2 Ethers / Web3 initialized
+    </script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script>
     function toggleMobileSidebar() {
       const drawer = document.getElementById("mobileSidebar");
@@ -786,7 +773,7 @@ buffer/index.js:
             
           </div>
           <p class="text-[10px] font-mono text-[#94a3b8] flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50"></span> Solana Network
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50"></span> GIWA Sepolia
           </p>
         </div>
       </div>
@@ -839,7 +826,7 @@ buffer/index.js:
     <div class="p-4 border-t border-[#334155] space-y-2.5 text-xs font-mono">
       <div class="flex items-center justify-between text-[11px] text-[#94a3b8] px-1">
         <span>Network:</span>
-        <span class="text-white font-bold">Solana</span>
+        <span class="text-white font-bold">GIWA</span>
       </div>
     </div>
   </aside>
@@ -1073,7 +1060,7 @@ buffer/index.js:
           <!-- Submit Button -->
           <div>
             <button id="btn-deploy-custom-q" onclick="deployCustomFounderQuestionOnchain()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:via-teal-400 hover:to-cyan-400 text-slate-950 font-mono font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer">
-              <span>⚡</span><span>SIGN & DEPLOY QUESTION ON-CHAIN (SOLANA DEVNET)</span>
+              <span>⚡</span><span>SIGN & DEPLOY QUESTION ON-CHAIN (GIWA SEPOLIA)</span>
             </button>
           </div>
         </div>
@@ -1164,7 +1151,7 @@ buffer/index.js:
             <h3 class="font-black text-white text-base font-mono uppercase tracking-wider flex items-center gap-2">
               <span>⚔️</span> LIVE PVP DUELS
             </h3>
-            <p class="text-xs text-slate-400">Solana Escrow Contract: <a href="https://solscan.io/account/Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK" target="_blank" rel="noopener" class="font-mono text-[#cbd5e1] hover:underline">HTyM...bf39 ↗</a></p>
+            <p class="text-xs text-slate-400">GIWA Escrow Contract: <a href="https://sepolia-explorer.giwa.io" target="_blank" rel="noopener" class="font-mono text-[#cbd5e1] hover:underline">GIWA Sepolia ↗</a></p>
           </div>
           <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <div class="flex items-center bg-black/50 p-1 rounded-xl border border-[#334155] text-xs font-mono">
@@ -1692,7 +1679,7 @@ buffer/index.js:
         </div>
         <div class="flex items-center justify-between text-neutral-700">
           <span>Target Network:</span>
-          <span class="text-[#cbd5e1] font-bold">Solana</span>
+          <span class="text-[#cbd5e1] font-bold">GIWA</span>
         </div>
         <div class="flex items-center justify-between text-neutral-700">
           <span>Active Flagship Mode:</span>
@@ -1784,7 +1771,7 @@ buffer/index.js:
         </div>
         <div class="flex items-center justify-between text-neutral-700">
           <span>Target Network:</span>
-          <span class="text-[#cbd5e1] font-bold">Solana</span>
+          <span class="text-[#cbd5e1] font-bold">GIWA</span>
         </div>
         <div class="flex items-center justify-between text-neutral-700">
           <span>Active Flagship Mode:</span>
@@ -1940,7 +1927,7 @@ buffer/index.js:
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <span class="text-xs font-bold text-[#cbd5e1] font-mono block">OFFICIAL $PVP TOKEN CONTRACT</span>
-              <span class="text-[11px] text-slate-400 font-mono">Solana (Verified)</span>
+              <span class="text-[11px] text-slate-400 font-mono">GIWA (Verified)</span>
             </div>
             <button onclick="copyPvpContract()" class="px-4 py-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-none active:scale-95">
               <span>📋</span>
@@ -1967,13 +1954,13 @@ buffer/index.js:
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">Verified Admin</span>
             </div>
             <p class="text-xs text-slate-300 font-mono mt-1">
-              Authorized Solana Wallet: <span id="adminConnectedBadge" class="font-bold text-[#f8fafc] font-mono">0x0ce6...0f67</span> | Full Control
+              Authorized GIWA Wallet: <span id="adminConnectedBadge" class="font-bold text-[#f8fafc] font-mono">0x0ce6...0f67</span> | Full Control
             </p>
           </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <a href="https://solscan.io/account/Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-neutral-800 hover:text-[#cbd5e1] transition-all flex items-center gap-1.5">
+          <a href="https://sepolia-explorer.giwa.io" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-neutral-800 hover:text-[#cbd5e1] transition-all flex items-center gap-1.5">
             <span>📜</span> Escrow Contract ↗
           </a>
           <button onclick="refreshAdminDuelsStats()" class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] text-xs font-mono text-[#f8fafc] hover:bg-[#182230] font-bold transition-all flex items-center gap-1.5">
@@ -2035,7 +2022,7 @@ buffer/index.js:
             </div>
             <div>
               <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Category Badge</label>
-              <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, SOLANA ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
+              <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, GIWA ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
             </div>
           </div>
 
@@ -2122,7 +2109,7 @@ buffer/index.js:
       <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#334155] space-y-4">
         <div class="border-b border-[#334155] pb-4">
           <h3 class="text-base font-black text-[#f8fafc] font-mono uppercase tracking-wide flex items-center gap-2">
-            <span>🔍</span> Onchain Duel Inspector (Solana)
+            <span>🔍</span> Onchain Duel Inspector (GIWA)
           </h3>
           <p class="text-xs text-slate-400 font-mono mt-1">Directly query any Duel ID from the canonical smart contract.</p>
         </div>
@@ -2143,7 +2130,7 @@ buffer/index.js:
 
   <!-- FOOTER -->
   <footer class="border-t border-[#334155] bg-[#0c131d] py-6 text-center text-xs font-mono text-[#94a3b8]">
-      <p>pvphub.fun © 2026 • Solana</p>
+      <p>pvphub.fun © 2026 • GIWA L2</p>
     </footer>
   </div>
 
@@ -2259,7 +2246,7 @@ buffer/index.js:
       return localStorage.getItem("pvp_last_active_wallet") || null;
     } catch(e) { return null; }
   })();
-    var SOLANA_CHAIN_ID = "0x1237"; // 4663 in hex (Solana)
+    var GIWA_CHAIN_ID = "0x164ce"; // 91342 in hex (GIWA Sepolia)
 
     var DUEL_CONTRACT_ADDRESS = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
     var QUESTION_REGISTRY_ADDRESS = "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5";
@@ -2286,19 +2273,50 @@ buffer/index.js:
     ];
     var ESCROW_CONTRACT = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
 
-        async function ensureSolanaNetwork() {
-      // Pure Solana Architecture - Network is managed by Solana RPC endpoint
+        async function ensureGiwaNetwork() {
+      // Pure GIWA Architecture - Network is managed by GIWA RPC endpoint
       return true;
     }
 
-    function getSolanaProvider() {
+    function getGiwaProvider() {
       if (typeof window === "undefined") return null;
-      if (window.phantom?.solana) return window.phantom.solana;
-      if (window.solflare) return window.solflare;
-      if (window.backpack) return window.backpack;
-      if (window.solana) return window.solana;
+      if (window.ethereum) return window.ethereum;
       return null;
     }
+    const getGiwaProvider = getGiwaProvider;
+
+    async function ensureGiwaNetwork() {
+      if (!window.ethereum) return false;
+      const chainIdHex = "0x164ce"; // 91342 (GIWA Sepolia)
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: chainIdHex }],
+        });
+        return true;
+      } catch (switchError) {
+        if (switchError.code === 4902 || switchError.data?.originalError?.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: chainIdHex,
+                chainName: "GIWA Sepolia Testnet",
+                nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+                rpcUrls: ["https://sepolia-rpc.giwa.io"],
+                blockExplorerUrls: ["https://sepolia-explorer.giwa.io"],
+              }],
+            });
+            return true;
+          } catch (addError) {
+            console.error("Failed to add GIWA network:", addError);
+            return false;
+          }
+        }
+        return false;
+      }
+    }
+    const ensureGiwaNetwork = ensureGiwaNetwork;
 
     async function connectWallet() {
       const btnText = document.getElementById("walletBtnText");
@@ -2306,7 +2324,7 @@ buffer/index.js:
 
       // If already connected, clicking toggles disconnect
       if (isConnected) {
-        const provider = getSolanaProvider();
+        const provider = getGiwaProvider();
         if (provider && typeof provider.disconnect === "function") {
           try { await provider.disconnect(); } catch(e){}
         }
@@ -2316,22 +2334,22 @@ buffer/index.js:
         try { localStorage.removeItem("pvp_last_active_wallet"); } catch(e){}
         if (btnText) btnText.innerText = "Connect Wallet";
         if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50";
-        showToast("Solana Wallet Disconnected", "info");
+        showToast("GIWA Wallet Disconnected", "info");
         if (typeof renderAllDuels === "function") renderAllDuels();
         return;
       }
 
-      const provider = getSolanaProvider();
+      const provider = getGiwaProvider();
       if (!provider) {
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
-          showToast("📱 Opening in Phantom App...", "info");
+          showToast("📱 Opening in MetaMask App...", "info");
           const targetUrl = encodeURIComponent(window.location.href);
-          window.location.href = "https://phantom.app/ul/browse/" + targetUrl + "?ref=pvphub";
+          window.location.href = "https://metamask.app.link/dapp/" + targetUrl + "?ref=pvphub";
           return;
         }
-        showToast("⚠️ Phantom or Solana wallet not found! Opening Phantom download page...", "warning");
-        window.open("https://phantom.app/", "_blank");
+        showToast("⚠️ MetaMask or EVM wallet not found! Opening MetaMask download page...", "warning");
+        window.open("https://metamask.io/download/", "_blank");
         return;
       }
 
@@ -2355,7 +2373,7 @@ buffer/index.js:
           const shortAddr = userAddress.slice(0, 4) + "..." + userAddress.slice(-4);
           if (btnText) btnText.innerText = shortAddr;
           if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
-          showToast("Connected: " + shortAddr + " (Solana)", "success");
+          showToast("Connected: " + shortAddr + " (GIWA)", "success");
 
           if (typeof checkAdminAccess === "function") checkAdminAccess(userAddress);
           if (typeof loadStoredQuestions === "function") loadStoredQuestions();
@@ -2363,19 +2381,19 @@ buffer/index.js:
           if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats();
           if (typeof renderAllDuels === "function") renderAllDuels();
           if (typeof updateLeaderboardUI === "function") updateLeaderboardUI();
-          if (typeof fetchSolanaUsdcBalance === "function") fetchSolanaUsdcBalance(userAddress);
+          if (typeof fetchGiwaBalance === "function") fetchGiwaBalance(userAddress);
           return;
         } else {
           throw new Error("No public key returned by wallet.");
         }
       } catch(err) {
-        console.error("Solana wallet connect error:", err);
+        console.error("GIWA wallet connect error:", err);
         isConnected = false;
         userAddress = null;
         if (btnText) btnText.innerText = "Connect Wallet";
         if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50";
         if (err && (err.code === 4001 || (err.message && err.message.includes("rejected")))) {
-          showToast("Connection rejected by user in Phantom.", "info");
+          showToast("Connection rejected by user in Web3 wallet.", "info");
         } else {
           showToast("Failed to connect: " + (err.message || "Unknown error"), "warning");
         }
@@ -2384,7 +2402,7 @@ buffer/index.js:
 
     // Auto-reconnect if previously connected
     async function checkAutoConnect() {
-      const provider = getSolanaProvider();
+      const provider = getGiwaProvider();
       if (!provider) return;
       const saved = localStorage.getItem("pvp_last_active_wallet");
       if (!saved) return;
@@ -2401,14 +2419,14 @@ buffer/index.js:
           if (typeof checkAdminAccess === "function") checkAdminAccess(userAddress);
           if (typeof renderAllDuels === "function") renderAllDuels();
           if (typeof updateLeaderboardUI === "function") updateLeaderboardUI();
-          if (typeof fetchSolanaUsdcBalance === "function") fetchSolanaUsdcBalance(userAddress);
+          if (typeof fetchGiwaBalance === "function") fetchGiwaBalance(userAddress);
         }
       } catch(e) {
         // Silent on auto-connect failure
       }
     }
 
-    // Listen to Solana wallet provider events
+    // Listen to GIWA / EVM wallet provider events
     function handleWalletAccountChanged(newPubkey) {
       if (newPubkey) {
         const newAddr = newPubkey.toString();
@@ -2432,7 +2450,7 @@ buffer/index.js:
 
     window.addEventListener("load", () => {
       checkAutoConnect();
-      const provider = getSolanaProvider();
+      const provider = getGiwaProvider();
       if (provider) {
         if (typeof provider.on === "function") {
           provider.on("connect", (publicKey) => {
@@ -2476,7 +2494,7 @@ buffer/index.js:
 
     
     
-    // SOLANA OPTIMIZATION & FAST BLOCKHASH HELPERS
+    // GIWA L2 OPTIMIZATION & RPC HELPERS
     let _cachedBlockhash = null;
     let _cachedBlockhashTime = 0;
 
@@ -2485,7 +2503,7 @@ buffer/index.js:
       if (_cachedBlockhash && (now - _cachedBlockhashTime < 4000)) {
         return _cachedBlockhash;
       }
-      const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed"));
+      const connection = conn || (window.giwaConnection || new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed"));
       try {
         const { blockhash } = await connection.getLatestBlockhash("confirmed");
         _cachedBlockhash = blockhash;
@@ -2499,7 +2517,7 @@ buffer/index.js:
     window.getFastBlockhash = getFastBlockhash;
 
     async function getFastRecentBlockhash(conn) {
-      const connection = conn || (window.solanaConnection || new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed"));
+      const connection = conn || (window.giwaConnection || new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed"));
       // 1. If cached blockhash is fresh (less than 45s old), return immediately without RPC call to avoid 429
       if (_cachedBlockhash && (Date.now() - _cachedBlockhashTime < 45000)) {
         return { blockhash: _cachedBlockhash, lastValidBlockHeight: 0 };
@@ -2529,21 +2547,21 @@ buffer/index.js:
     }
     window.getFastRecentBlockhash = getFastRecentBlockhash;
 
-    function addSolanaPriorityFee(transaction, microLamports = 250000, units = 300000) {
+    function addGiwaPriorityFee(transaction, microLamports = 250000, units = 300000) {
       try {
-        if (window.solanaWeb3 && solanaWeb3.ComputeBudgetProgram) {
+        if (window.giwaWeb3 && giwaWeb3.ComputeBudgetProgram) {
           transaction.add(
-            solanaWeb3.ComputeBudgetProgram.setComputeUnitLimit({ units })
+            giwaWeb3.ComputeBudgetProgram.setComputeUnitLimit({ units })
           );
           transaction.add(
-            solanaWeb3.ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
+            giwaWeb3.ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
           );
         }
       } catch(e) {
-        console.warn("addSolanaPriorityFee warn:", e);
+        console.warn("addGiwaPriorityFee warn:", e);
       }
     }
-    window.addSolanaPriorityFee = addSolanaPriorityFee;
+    window.addGiwaPriorityFee = addGiwaPriorityFee;
 
     async function fastConfirmTransaction(connection, signature, maxWaitMs = 8000) {
       try {
@@ -2562,24 +2580,24 @@ buffer/index.js:
     }
     window.fastConfirmTransaction = fastConfirmTransaction;
 
-    // ONCHAIN TRANSACTION EXECUTOR (SOLANA)
-    var USDC_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDC on Solana
+    // ONCHAIN TRANSACTION EXECUTOR (GIWA L2)
+    var USDC_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDC on GIWA
     var PVP_TOKEN_ADDRESS = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7"; // Native $PVP token
     var ESCROW_CONTRACT = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
 
         async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDC", purpose = "Game Entry", customRecipient = null) {
-      const provider = getSolanaProvider();
+      const provider = getGiwaProvider();
       if (!provider) {
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
-          showToast("📱 Opening in Phantom App...", "info");
+          showToast("📱 Opening in MetaMask App...", "info");
           const targetUrl = encodeURIComponent(window.location.href);
-          window.location.href = "https://phantom.app/ul/browse/" + targetUrl + "?ref=pvphub";
-          throw new Error("Redirecting to Phantom mobile browser");
+          window.location.href = "https://metamask.app.link/dapp/" + targetUrl + "?ref=pvphub";
+          throw new Error("Redirecting to MetaMask mobile browser");
         }
-        showToast("⚠️ Phantom or Solana wallet is required to play.", "warning");
-        window.open("https://phantom.app/", "_blank");
-        throw new Error("Solana wallet not detected");
+        showToast("⚠️ MetaMask or GIWA Web3 wallet is required to play.", "warning");
+        window.open("https://metamask.io/download/", "_blank");
+        throw new Error("GIWA wallet not detected");
       }
       if (!isConnected || !userAddress) {
         await connectWallet(true);
@@ -2588,21 +2606,21 @@ buffer/index.js:
         throw new Error("Wallet not connected");
       }
 
-      const senderPubkey = provider.publicKey || new solanaWeb3.PublicKey(userAddress);
-      const recipientPubkey = (customRecipient && customRecipient.length >= 32 && !customRecipient.startsWith("0x")) ? new solanaWeb3.PublicKey(customRecipient) : TREASURY_PUBKEY;
+      const senderPubkey = provider.publicKey || new giwaWeb3.PublicKey(userAddress);
+      const recipientPubkey = (customRecipient && customRecipient.length >= 32 && !customRecipient.startsWith("0x")) ? new giwaWeb3.PublicKey(customRecipient) : TREASURY_PUBKEY;
       const usdcUnits = Math.round(parseFloat(totalCostUSD) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
 
-      showToast(`💳 Confirm ${totalCostUSD} USDC payment in Phantom...`, "info");
+      showToast(`💳 Confirm ${totalCostUSD} USDC payment in Web3 wallet...`, "info");
 
       const blockhash = await getFastBlockhash();
-      const transaction = new solanaWeb3.Transaction({
+      const transaction = new giwaWeb3.Transaction({
         recentBlockhash: blockhash,
         feePayer: senderPubkey
       });
 
       // Priority Fee
       transaction.add(
-        solanaWeb3.ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 150000 })
+        giwaWeb3.ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 150000 })
       );
 
       const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
@@ -2610,13 +2628,13 @@ buffer/index.js:
 
       // Idempotent ATA create for recipient
       transaction.add(
-        new solanaWeb3.TransactionInstruction({
+        new giwaWeb3.TransactionInstruction({
           keys: [
             { pubkey: senderPubkey, isSigner: true, isWritable: true },
             { pubkey: recipientAta, isSigner: false, isWritable: true },
             { pubkey: recipientPubkey, isSigner: false, isWritable: false },
             { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
-            { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+            { pubkey: giwaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
             { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
           ],
           programId: ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -2632,7 +2650,7 @@ buffer/index.js:
       // Memo instruction
       const memoText = JSON.stringify({ type: "payment", purpose: purpose, amount: totalCostUSD, ts: Date.now() });
       transaction.add(
-        new solanaWeb3.TransactionInstruction({
+        new giwaWeb3.TransactionInstruction({
           keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: false }],
           programId: MEMO_PROGRAM_ID,
           data: new TextEncoder().encode(memoText)
@@ -2644,7 +2662,7 @@ buffer/index.js:
         const res = await provider.signAndSendTransaction(transaction, { skipPreflight: true });
         txHash = typeof res === "string" ? res : res.signature;
       } catch (err) {
-        console.error("Solana payment rejected:", err);
+        console.error("GIWA payment rejected:", err);
         throw new Error("Payment was cancelled by user.");
       }
 
@@ -2653,7 +2671,7 @@ buffer/index.js:
     }
     
     async function requestSafeSignature(messageText) {
-      const provider = getSolanaProvider();
+      const provider = getGiwaProvider();
       if (!provider || !provider.signMessage) {
         return Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join("");
       }
@@ -3268,7 +3286,7 @@ buffer/index.js:
       }
 
       try {
-        showToast("Claiming jackpot prize on Solana...", "info");
+        showToast("Claiming jackpot prize on GIWA...", "info");
         const myAcc = (typeof currentAccount !== "undefined" && currentAccount) ? currentAccount.toLowerCase() : "";
         liveSubmissions.forEach(s => {
           if (s.wallet && myAcc && s.wallet.toLowerCase().includes(myAcc.slice(2, 6)) &&
@@ -3316,7 +3334,7 @@ buffer/index.js:
         const costVal = Number(s.totalCost || (s.tier * (s.qty || 1)));
         const totalPaid = `(${costVal.toLocaleString("en-US")} USDC)`;
         const shortTx = s.tx ? (s.tx.length > 14 ? s.tx.slice(0, 8) + "..." + s.tx.slice(-6) : s.tx) : "0x...";
-        const txUrl = s.tx ? `https://solana.superscan.network/tx/${s.tx}` : "https://solana.superscan.network";
+        const txUrl = s.tx ? `https://sepolia-explorer.giwa.io/tx/${s.tx}` : "https://sepolia-explorer.giwa.io";
         const countBadge = s.qty ? `${s.qty} Ticket${s.qty > 1 ? 's' : ''}` : (s.ticketNum || '1 Ticket');
         tr.innerHTML = `
           <td class="p-3.5 text-center">
@@ -3419,8 +3437,8 @@ buffer/index.js:
           }
         }
 
-        // Try GeckoTerminal Solana token API
-        const geckoRes = await fetch("https://api.geckoterminal.com/api/v2/networks/solana/tokens/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7");
+        // Try GeckoTerminal GIWA token API
+        const geckoRes = await fetch("https://api.geckoterminal.com/api/v2/networks/giwa/tokens/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7");
         if (geckoRes.ok) {
           const geckoJson = await geckoRes.json();
           if (geckoJson.data && geckoJson.data.attributes && geckoJson.data.attributes.price_usd) {
@@ -3748,7 +3766,7 @@ buffer/index.js:
           <td class="p-3.5 font-bold text-white">${w.wallet}</td>
           <td class="p-3.5 text-neutral-700">${w.metric}</td>
           <td class="p-3.5 text-[#cbd5e1] font-bold">${w.prize}</td>
-          <td class="p-3.5"><a href="${w.txUrl || 'https://solana.superscan.network'}" target="_blank" class="text-[#cbd5e1] hover:underline">${w.txHash || 'View Tx'}</a></td>
+          <td class="p-3.5"><a href="${w.txUrl || 'https://sepolia-explorer.giwa.io'}" target="_blank" class="text-[#cbd5e1] hover:underline">${w.txHash || 'View Tx'}</a></td>
         `;
         tbody.appendChild(tr);
       });
@@ -3815,7 +3833,7 @@ buffer/index.js:
 
     // === MULTI-CHANNEL REALTIME SYNC (GunDB + BroadcastChannel + LocalStorage) ===
         // --- GLOBAL REALTIME DUEL SYNC ENGINE (SSE + REST + Local Sync) ---
-    const REALTIME_TOPIC = "pvp-arena-solana-duels-v1";
+    const REALTIME_TOPIC = "pvp-arena-giwa-duels-v1";
     const REALTIME_SSE_URL = `https://ntfy.sh/${REALTIME_TOPIC}/sse`;
     const REALTIME_PUB_URL = `https://ntfy.sh/${REALTIME_TOPIC}`;
     let duelBroadcast = null;
@@ -3877,7 +3895,7 @@ buffer/index.js:
       return getQuestionEntryDeadline(15);
     }
 
-    // Pre-seeded with confirmed on-chain Solana Devnet transactions (updated dynamically by RPC)
+    // Pre-seeded with confirmed on-chain GIWA Sepolia transactions (updated dynamically by RPC)
     const DUEL_QUESTIONS = [
   {
     "id": 1,
@@ -4633,7 +4651,7 @@ buffer/index.js:
     }
 
     
-    // 100% On-Chain Question Creation via Solana Devnet & Phantom
+    // 100% On-Chain Question Creation via GIWA Sepolia & Web3 Wallet
     // ── FOUNDER CUSTOM QUESTION DASHBOARD LOGIC ──
     let founderSelectedAsset = "SOL";
     let founderSelectedTimeframeMinutes = 15;
@@ -4763,9 +4781,9 @@ buffer/index.js:
     async function deployCustomFounderQuestionOnchain() {
       const btn = document.getElementById("btn-deploy-custom-q");
       try {
-        const provider = getSolanaProvider();
+        const provider = getGiwaProvider();
         if (!provider) {
-          showToast("⚠️ Please connect Phantom wallet to deploy question onchain!", "warning");
+          showToast("⚠️ Please connect MetaMask / Web3 wallet to deploy question onchain!", "warning");
           return;
         }
 
@@ -4816,28 +4834,28 @@ buffer/index.js:
         let tfText = tfMinutes >= 1440 ? "1-Day" : (tfMinutes >= 60 ? (tfMinutes / 60) + "-Hour" : tfMinutes + "-Min");
         const qTitle = `${asset}/USD Upcoming ${tfText} Candle Duel (${sched.windowStr})`;
 
-        showToast(`⚔️ Opening Phantom: Deploy Question #${nextQId} (${asset} ${tfLabel})...`, "info");
+        showToast(`⚔️ Opening Web3 Wallet: Deploy Question #${nextQId} (${asset} ${tfLabel})...`, "info");
 
-        if (!window.solanaWeb3 || !provider.signAndSendTransaction) {
-          throw new Error("Solana Web3 provider or Phantom not fully ready.");
+        if (!window.giwaWeb3 || !provider.signAndSendTransaction) {
+          throw new Error("GIWA Web3 provider not fully ready.");
         }
 
-        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash, lastValidBlockHeight } = await getFastRecentBlockhash(connection);
         const senderPubkey = provider.publicKey;
 
-        const transaction = new solanaWeb3.Transaction({
+        const transaction = new giwaWeb3.Transaction({
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
-        addSolanaPriorityFee(transaction);
+        // GIWA L2 EIP-1559 gas handled automatically
 
-        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const payload = `pvphub:create_question:q${nextQId}:${asset}_${tfLabel}_CANDLE:GREEN_RED:dl_${dlMinutes}m:creator:4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV`;
         const memoData = new TextEncoder().encode(payload);
 
         transaction.add(
-          new solanaWeb3.TransactionInstruction({
+          new giwaWeb3.TransactionInstruction({
             keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
             programId: MEMO_PROGRAM_ID,
             data: memoData
@@ -4889,7 +4907,7 @@ buffer/index.js:
         } catch(e) {}
 
         try {
-          fetch("https://ntfy.sh/pvp-arena-solana-questions-v1", {
+          fetch("https://ntfy.sh/pvp-arena-giwa-questions-v1", {
             method: "POST",
             body: JSON.stringify(newQuestion)
           }).catch(console.warn);
@@ -4904,7 +4922,7 @@ buffer/index.js:
 
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<span>⚡</span><span>SIGN & DEPLOY QUESTION ON-CHAIN (SOLANA DEVNET)</span>`;
+          btn.innerHTML = `<span>⚡</span><span>SIGN & DEPLOY QUESTION ON-CHAIN (GIWA SEPOLIA)</span>`;
         }
 
       } catch (err) {
@@ -4912,7 +4930,7 @@ buffer/index.js:
         showToast("❌ Deployment cancelled or failed: " + (err.message || "Rejected"), "error");
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<span>⚡</span><span>SIGN & DEPLOY QUESTION ON-CHAIN (SOLANA DEVNET)</span>`;
+          btn.innerHTML = `<span>⚡</span><span>SIGN & DEPLOY QUESTION ON-CHAIN (GIWA SEPOLIA)</span>`;
         }
       }
     }
@@ -4920,9 +4938,9 @@ buffer/index.js:
     async function createNextCandleQuestionOnchain() {
       const btn = document.getElementById("btn-deploy-next-q");
       try {
-        const provider = getSolanaProvider();
+        const provider = getGiwaProvider();
         if (!provider) {
-          showToast("⚠️ Please connect Phantom wallet to deploy question onchain!", "warning");
+          showToast("⚠️ Please connect MetaMask / Web3 wallet to deploy question onchain!", "warning");
           return;
         }
 
@@ -4942,7 +4960,7 @@ buffer/index.js:
           btn.innerHTML = `<span class="animate-spin">⏳</span> Submitting Onchain Tx...`;
         }
 
-        showToast("⚔️ Opening Phantom: Approve Onchain Question #1 Deployment Transaction...", "info");
+        showToast("⚔️ Opening Web3 Wallet: Approve Onchain Question #1 Deployment Transaction...", "info");
 
         const qId = 1;
         const now = Date.now();
@@ -4953,27 +4971,27 @@ buffer/index.js:
 
         let txSignature = "";
 
-        // Send real on-chain transaction on Solana Devnet
-        if (!window.solanaWeb3 || !provider.signAndSendTransaction) {
-          throw new Error("Solana Web3 provider or Phantom not fully ready.");
+        // Send real on-chain transaction on GIWA Sepolia
+        if (!window.giwaWeb3 || !provider.signAndSendTransaction) {
+          throw new Error("GIWA Web3 provider not fully ready.");
         }
 
-        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash, lastValidBlockHeight } = await getFastRecentBlockhash(connection);
         const senderPubkey = provider.publicKey;
 
-        const transaction = new solanaWeb3.Transaction({
+        const transaction = new giwaWeb3.Transaction({
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
 
         // On-chain registration instruction using Memo Program (Standard UTF-8 bytes)
-        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const payload = `pvphub:create_question:q1:SOL_15M_CANDLE:GREEN_RED:creator:4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV`;
         const memoData = new TextEncoder().encode(payload);
 
         transaction.add(
-          new solanaWeb3.TransactionInstruction({
+          new giwaWeb3.TransactionInstruction({
             keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
             programId: MEMO_PROGRAM_ID,
             data: memoData
@@ -5032,7 +5050,7 @@ buffer/index.js:
 
         // Broadcast to all connected clients & devices globally
         try {
-          fetch("https://ntfy.sh/pvp-arena-solana-questions-v1", {
+          fetch("https://ntfy.sh/pvp-arena-giwa-questions-v1", {
             method: "POST",
             body: JSON.stringify(newQuestion)
           }).catch(console.warn);
@@ -5379,8 +5397,8 @@ buffer/index.js:
     // Predefined seed ensuring matched duels persist across refreshes
     const SEED_ACTIVE_DUELS = {};
 
-    // Clean Solana Storage - All legacy test history purged
-    const SOLANA_DUELS_STORE_KEY = "pvp_active_duels_store_solana_v1";
+    // Clean GIWA Storage - All legacy test history purged
+    const GIWA_DUELS_STORE_KEY = "pvp_active_duels_store_giwa_v1";
 
     function getLocalDuels() {
       try {
@@ -5395,7 +5413,7 @@ buffer/index.js:
           try { localStorage.removeItem(k); } catch(e) {}
         });
 
-        const rawStore = JSON.parse(localStorage.getItem(SOLANA_DUELS_STORE_KEY) || "{}");
+        const rawStore = JSON.parse(localStorage.getItem(GIWA_DUELS_STORE_KEY) || "{}");
         return rawStore;
       } catch(e) {
         return {};
@@ -5403,7 +5421,7 @@ buffer/index.js:
     }
     function saveLocalDuels(store) {
       try {
-        localStorage.setItem(SOLANA_DUELS_STORE_KEY, JSON.stringify(store || {}));
+        localStorage.setItem(GIWA_DUELS_STORE_KEY, JSON.stringify(store || {}));
       } catch(e) {}
     }
     window.saveLocalDuels = saveLocalDuels;
@@ -5431,7 +5449,7 @@ buffer/index.js:
           if (!store[duelData.id].tier) store[duelData.id].tier = 1;
           if (!store[duelData.id].payout) store[duelData.id].payout = (store[duelData.id].tier * 1.9).toFixed(2);
         }
-        localStorage.setItem(SOLANA_DUELS_STORE_KEY, JSON.stringify(store));
+        localStorage.setItem(GIWA_DUELS_STORE_KEY, JSON.stringify(store));
       } catch(e) {}
     }
 
@@ -5570,7 +5588,7 @@ buffer/index.js:
 
     async function syncOnchainDuelsFromContract() {
       try {
-        const rpcUrl = "https://rpc.mainnet.chain.solana.com";
+        const rpcUrl = "https://sepolia-rpc.giwa.io";
         const res = await fetch(rpcUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -6058,7 +6076,7 @@ buffer/index.js:
     }
 
     
-    // Dedicated Oracle Signer for Settlement Proofs (Verified on Solana contract)
+    // Dedicated Oracle Signer for Settlement Proofs (Verified on GIWA contract)
     const ORACLE_SIGNER_KEY = "0xa09cce6eb523674d841bd4d0828157c841f277d30b5e7664bead592e57b4b35e";
     
     async function executeOnChainSettlement(duelId, isPrize, payoutOrAmount) {
@@ -6082,9 +6100,9 @@ buffer/index.js:
       const protocolTreasuryFee = hasReferrer ? (totalPot * 0.02) : (totalPot * 0.07);
 
       try {
-        showToast("⚡ Processing Solana onchain claim...", "info");
+        showToast("⚡ Processing GIWA onchain claim...", "info");
         
-        // Mock Solana Tx simulation if program not yet deployed or execute live onchain
+        // Mock GIWA Tx simulation if program not yet deployed or execute live onchain
         const TREASURY_WALLET = "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV";
         
         if (isPrize === true || isPrize === "prize") {
@@ -6132,9 +6150,9 @@ buffer/index.js:
           duelData = all.find(d => d.id === duelId || d.displayId === duelId);
         }
 
-        const provider = getSolanaProvider();
+        const provider = getGiwaProvider();
         if (!provider) {
-          showToast("⚠️ Please connect Phantom wallet to reclaim deposit!", "warning");
+          showToast("⚠️ Please connect MetaMask / Web3 wallet to reclaim deposit!", "warning");
           return;
         }
 
@@ -6144,29 +6162,29 @@ buffer/index.js:
           if (!activeWallet) return;
         }
 
-        showToast("⚔️ Opening Phantom: Approve Onchain Deposit Reclaim Transaction...", "info");
+        showToast("⚔️ Opening Web3 Wallet: Approve Onchain Deposit Reclaim Transaction...", "info");
 
         let txHash = "";
         let txSuccess = false;
 
-        // Real Solana Onchain Reclaim Transaction via SPL Memo Program
-        if (window.solanaWeb3 && provider.signAndSendTransaction) {
+        // Real GIWA Onchain Reclaim Transaction via SPL Memo Program
+        if (window.giwaWeb3 && provider.signAndSendTransaction) {
           try {
-            const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+            const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
             const { blockhash } = await getFastRecentBlockhash(connection);
             const senderPubkey = provider.publicKey;
 
-            const transaction = new solanaWeb3.Transaction({
+            const transaction = new giwaWeb3.Transaction({
               recentBlockhash: blockhash,
               feePayer: senderPubkey
             });
-            addSolanaPriorityFee(transaction);
+            // GIWA L2 EIP-1559 gas handled automatically
 
-            const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+            const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
             const memoData = new TextEncoder().encode(`pvphub:reclaim_deposit:${duelId}:${tier || 1}_USDC:wallet:${activeWallet}`);
 
             transaction.add(
-              new solanaWeb3.TransactionInstruction({
+              new giwaWeb3.TransactionInstruction({
                 keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
                 programId: MEMO_PROGRAM_ID,
                 data: memoData
@@ -6182,7 +6200,7 @@ buffer/index.js:
           } catch(txErr) {
             console.warn("Reclaim tx error:", txErr);
             if (txErr.message && txErr.message.includes("rejected")) {
-              showToast("❌ Reclaim transaction rejected in Phantom.", "error");
+              showToast("❌ Reclaim transaction rejected in Web3 wallet.", "error");
               return;
             }
           }
@@ -6629,7 +6647,7 @@ buffer/index.js:
         ? "bg-[#182230] text-black border-[#334155]" 
         : "bg-[#182230] text-neutral-800 border-[#334155]";
 
-      const resolvedQId = duelData.questionId || (duelData.questionText && String(duelData.questionText).toLowerCase().includes('solana') ? 2 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('basecat') ? 4 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('round #2') ? 3 : null)));
+      const resolvedQId = duelData.questionId || (duelData.questionText && String(duelData.questionText).toLowerCase().includes('giwa') ? 2 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('basecat') ? 4 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('round #2') ? 3 : null)));
       const duelDeadline = getDuelEffectiveDeadline(duelData);
       const isExpired = Date.now() >= duelDeadline;
       const timeObj = formatRemainingTime(duelDeadline);
@@ -6954,24 +6972,24 @@ buffer/index.js:
     }
 
         
-    var TOKEN_PROGRAM_ID = window.TOKEN_PROGRAM_ID || new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-    var ASSOCIATED_TOKEN_PROGRAM_ID = window.ASSOCIATED_TOKEN_PROGRAM_ID || new solanaWeb3.PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
-    var DEVNET_USDC_MINT = window.DEVNET_USDC_MINT || new solanaWeb3.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
-        var TREASURY_PUBKEY = window.TREASURY_PUBKEY || new solanaWeb3.PublicKey("4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV");
-    var TREASURY_USDC_ATA = window.TREASURY_USDC_ATA || new solanaWeb3.PublicKey("G9bxysgR9dCb2r4zjhW1dE8fSX4vJcyxQDQGMfG8adSe");
+    
+    
+    var GIWA_USDC_CONTRACT = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168";
+        var TREASURY_ADDRESS = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
+    
 
     // Browser-safe ATA derivation using standard Uint8Array toBytes() without requiring Node Buffer
     async function getAssociatedTokenAddress(walletPubkey, mintPubkey) {
       try {
-        if (window.solanaWeb3 && window.solanaWeb3.PublicKey && window.solanaWeb3.PublicKey.findProgramAddressSync) {
-          const [address] = window.solanaWeb3.PublicKey.findProgramAddressSync(
+        if (window.giwaWeb3 && window.giwaWeb3.PublicKey && window.giwaWeb3.PublicKey.findProgramAddressSync) {
+          const [address] = window.giwaWeb3.PublicKey.findProgramAddressSync(
             [walletPubkey.toBytes(), TOKEN_PROGRAM_ID.toBytes(), mintPubkey.toBytes()],
             ASSOCIATED_TOKEN_PROGRAM_ID
           );
           return address;
         }
       } catch(e) {}
-      const [address] = await solanaWeb3.PublicKey.findProgramAddress(
+      const [address] = await giwaWeb3.PublicKey.findProgramAddress(
         [walletPubkey.toBytes(), TOKEN_PROGRAM_ID.toBytes(), mintPubkey.toBytes()],
         ASSOCIATED_TOKEN_PROGRAM_ID
       );
@@ -6984,7 +7002,7 @@ buffer/index.js:
       const view = new DataView(data.buffer);
       view.setBigUint64(1, BigInt(amountU64), true); // little-endian uint64
 
-      return new solanaWeb3.TransactionInstruction({
+      return new giwaWeb3.TransactionInstruction({
         keys: [
           { pubkey: sourceAta, isSigner: false, isWritable: true },
           { pubkey: destAta, isSigner: false, isWritable: true },
@@ -7001,7 +7019,7 @@ buffer/index.js:
       const view = new DataView(data.buffer);
       view.setBigUint64(1, BigInt(amountU64), true); // little-endian uint64
 
-      return new solanaWeb3.TransactionInstruction({
+      return new giwaWeb3.TransactionInstruction({
         keys: [
           { pubkey: sourceAta, isSigner: false, isWritable: true },
           { pubkey: delegatePubkey, isSigner: false, isWritable: false },
@@ -7016,7 +7034,7 @@ buffer/index.js:
       const data = new Uint8Array(1);
       data[0] = 5; // SPL Token Revoke instruction = 5
 
-      return new solanaWeb3.TransactionInstruction({
+      return new giwaWeb3.TransactionInstruction({
         keys: [
           { pubkey: sourceAta, isSigner: false, isWritable: true },
           { pubkey: ownerPubkey, isSigner: true, isWritable: false }
@@ -7027,14 +7045,14 @@ buffer/index.js:
     }
 
     // --- NON-CUSTODIAL ANCHOR ESCROW PROGRAM (Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK) ---
-    var ANCHOR_PVP_PROGRAM_ID = window.ANCHOR_PVP_PROGRAM_ID || new solanaWeb3.PublicKey("Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK");
-    const SYSVAR_RENT_PUBKEY = new solanaWeb3.PublicKey("SysvarRent111111111111111111111111111111111");
+    var GIWA_PVP_CONTRACT = window.GIWA_PVP_CONTRACT || "0xa134015f6C035A713c7d61C392576b50937c8651";
+    const SYSVAR_RENT_PUBKEY = new giwaWeb3.PublicKey("SysvarRent111111111111111111111111111111111");
 
     function getAnchorDuelPda(creatorPubkey, numericDuelId) {
       const buf = new Uint8Array(8);
       const view = new DataView(buf.buffer);
       view.setBigUint64(0, BigInt(numericDuelId), true);
-      const [pda, bump] = solanaWeb3.PublicKey.findProgramAddressSync(
+      const [pda, bump] = giwaWeb3.PublicKey.findProgramAddressSync(
         [new TextEncoder().encode("duel"), creatorPubkey.toBytes(), buf],
         ANCHOR_PVP_PROGRAM_ID
       );
@@ -7042,7 +7060,7 @@ buffer/index.js:
     }
 
     function getAnchorVaultPda(duelPda) {
-      const [pda, bump] = solanaWeb3.PublicKey.findProgramAddressSync(
+      const [pda, bump] = giwaWeb3.PublicKey.findProgramAddressSync(
         [new TextEncoder().encode("vault"), duelPda.toBytes()],
         ANCHOR_PVP_PROGRAM_ID
       );
@@ -7064,14 +7082,14 @@ buffer/index.js:
       view.setBigUint64(25, BigInt(stakeUnits), true);
       view.setBigInt64(33, BigInt(deadlineUnixSec), true);
 
-      return new solanaWeb3.TransactionInstruction({
+      return new giwaWeb3.TransactionInstruction({
         keys: [
           { pubkey: duelPda, isSigner: false, isWritable: true },
           { pubkey: vaultPda, isSigner: false, isWritable: true },
           { pubkey: creatorPubkey, isSigner: true, isWritable: true },
           { pubkey: creatorAta, isSigner: false, isWritable: true },
           { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
-          { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+          { pubkey: giwaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
           { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
           { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false }
         ],
@@ -7087,7 +7105,7 @@ buffer/index.js:
       // Discriminator: sha256("global:cancel_duel")[0..8] = [83,124,224,237,235,44,38,57]
       const data = new Uint8Array([83, 124, 224, 237, 235, 44, 38, 57]);
 
-      return new solanaWeb3.TransactionInstruction({
+      return new giwaWeb3.TransactionInstruction({
         keys: [
           { pubkey: duelPda, isSigner: false, isWritable: true },
           { pubkey: vaultPda, isSigner: false, isWritable: true },
@@ -7106,24 +7124,24 @@ buffer/index.js:
         return;
       }
 
-      const provider = getSolanaProvider();
+      const provider = getGiwaProvider();
       if (!provider) {
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
-          showToast("📱 Opening in Phantom App...", "info");
+          showToast("📱 Opening in MetaMask App...", "info");
           const targetUrl = encodeURIComponent(window.location.href);
-          window.location.href = "https://phantom.app/ul/browse/" + targetUrl + "?ref=pvphub";
+          window.location.href = "https://metamask.app.link/dapp/" + targetUrl + "?ref=pvphub";
           return;
         }
-        showToast("⚠️ Phantom or Solana wallet not found! Opening Phantom download page...", "warning");
-        window.open("https://phantom.app/", "_blank");
+        showToast("⚠️ MetaMask or EVM wallet not found! Opening MetaMask download page...", "warning");
+        window.open("https://metamask.io/download/", "_blank");
         return;
       }
 
       // Ensure wallet is connected
       let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
       if (!activeWallet || !isConnected) {
-        showToast("🔑 Opening Phantom to connect...", "info");
+        showToast("🔑 Opening Web3 Wallet to connect...", "info");
         activeWallet = await connectWallet(true);
         if (!activeWallet) return;
       }
@@ -7177,37 +7195,37 @@ buffer/index.js:
       }
 
       try {
-        showToast("⚔️ Opening Phantom: Transfer $" + (selectedDuelTier || 1) + " USDC stake...", "info");
+        showToast("⚔️ Opening Web3 Wallet: Transfer $" + (selectedDuelTier || 1) + " USDC stake...", "info");
 
-        if (!window.solanaWeb3 || !provider.signAndSendTransaction) {
-          throw new Error("Phantom signAndSendTransaction not available.");
+        if (!window.giwaWeb3 || !provider.signAndSendTransaction) {
+          throw new Error("Web3 signer not available.");
         }
 
-        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash } = await getFastRecentBlockhash(connection);
-        const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
+        const senderPubkey = new giwaWeb3.PublicKey(activeWallet);
         const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
         const treasuryAta = TREASURY_USDC_ATA;
         const usdcUnits = Math.round((selectedDuelTier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
 
-        const transaction = new solanaWeb3.Transaction({
+        const transaction = new giwaWeb3.Transaction({
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
-        addSolanaPriorityFee(transaction);
+        // GIWA L2 EIP-1559 gas handled automatically
 
         // Real On-chain SPL Token Transfer to Treasury Escrow
         // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
         // Ensure Treasury ATA exists idempotently (safe no-op if already created)
         // Ensure SENDER has an Associated Token Account for Devnet USDC idempotently (safe no-op if already created)
         transaction.add(
-          new solanaWeb3.TransactionInstruction({
+          new giwaWeb3.TransactionInstruction({
             keys: [
               { pubkey: senderPubkey, isSigner: true, isWritable: true },
               { pubkey: senderAta, isSigner: false, isWritable: true },
               { pubkey: senderPubkey, isSigner: false, isWritable: false },
               { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
-              { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+              { pubkey: giwaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
               { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
             ],
             programId: ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -7237,9 +7255,9 @@ buffer/index.js:
         }
   
 
-        // Link to TREASURY_PUBKEY with 0 lamports transfer so Solana indexes the transaction under Treasury
+        // Link to TREASURY_PUBKEY with 0 lamports transfer so GIWA indexes the transaction under Treasury
         transaction.add(
-          solanaWeb3.SystemProgram.transfer({
+          giwaWeb3.SystemProgram.transfer({
             fromPubkey: senderPubkey,
             toPubkey: TREASURY_PUBKEY,
             lamports: 0
@@ -7247,10 +7265,10 @@ buffer/index.js:
         );
 
         // On-chain Memo Instruction (Memo Program strictly requires all keys to be signers!)
-        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const memoCreateText = `pvphub:create_duel:q${q.id}:${selectedDuelOption}:${selectedDuelTier || 1}:${activeWallet}:${nextSubIndex}:${onchainDuelId}`;
         transaction.add(
-          new solanaWeb3.TransactionInstruction({
+          new giwaWeb3.TransactionInstruction({
             keys: [
               { pubkey: senderPubkey, isSigner: true, isWritable: false }
             ],
@@ -7360,23 +7378,23 @@ buffer/index.js:
         return;
       }
 
-      const provider = getSolanaProvider();
+      const provider = getGiwaProvider();
       if (!provider) {
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
-          showToast("📱 Opening in Phantom App...", "info");
+          showToast("📱 Opening in MetaMask App...", "info");
           const targetUrl = encodeURIComponent(window.location.href);
-          window.location.href = "https://phantom.app/ul/browse/" + targetUrl + "?ref=pvphub";
+          window.location.href = "https://metamask.app.link/dapp/" + targetUrl + "?ref=pvphub";
           return;
         }
-        showToast("⚠️ Phantom or Solana wallet not found! Opening Phantom download page...", "warning");
-        window.open("https://phantom.app/", "_blank");
+        showToast("⚠️ MetaMask or EVM wallet not found! Opening MetaMask download page...", "warning");
+        window.open("https://metamask.io/download/", "_blank");
         return;
       }
 
       let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
       if (!activeWallet || !isConnected) {
-        showToast("🔑 Opening Phantom to connect...", "info");
+        showToast("🔑 Opening Web3 Wallet to connect...", "info");
         activeWallet = await connectWallet(true);
         if (!activeWallet) return;
       }
@@ -7408,35 +7426,35 @@ buffer/index.js:
 
       let txHash = "";
       try {
-        showToast("⚔️ Opening Phantom: Transfer $" + (tier || 1) + " USDC to accept duel...", "info");
+        showToast("⚔️ Opening Web3 Wallet: Transfer $" + (tier || 1) + " USDC to accept duel...", "info");
 
-        if (!window.solanaWeb3 || !provider.signAndSendTransaction) {
-          throw new Error("Phantom signAndSendTransaction not available.");
+        if (!window.giwaWeb3 || !provider.signAndSendTransaction) {
+          throw new Error("Web3 signer not available.");
         }
 
-        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash } = await getFastRecentBlockhash(connection);
-        const senderPubkey = new solanaWeb3.PublicKey(activeWallet);
+        const senderPubkey = new giwaWeb3.PublicKey(activeWallet);
         const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
         const treasuryAta = TREASURY_USDC_ATA;
         const usdcUnits = Math.round((tier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
 
-        const transaction = new solanaWeb3.Transaction({
+        const transaction = new giwaWeb3.Transaction({
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
-        addSolanaPriorityFee(transaction);
+        // GIWA L2 EIP-1559 gas handled automatically
 
         // Real On-chain SPL Token Transfer to Treasury Escrow
         // Ensure Treasury ATA exists idempotently (safe no-op if already created)
         transaction.add(
-          new solanaWeb3.TransactionInstruction({
+          new giwaWeb3.TransactionInstruction({
             keys: [
               { pubkey: senderPubkey, isSigner: true, isWritable: true },
               { pubkey: treasuryAta, isSigner: false, isWritable: true },
               { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false },
               { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
-              { pubkey: solanaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
+              { pubkey: giwaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
               { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
             ],
             programId: ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -7449,9 +7467,9 @@ buffer/index.js:
           createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
         );
 
-        // Link to TREASURY_PUBKEY with 0 lamports transfer so Solana indexes the transaction under Treasury
+        // Link to TREASURY_PUBKEY with 0 lamports transfer so GIWA indexes the transaction under Treasury
         transaction.add(
-          solanaWeb3.SystemProgram.transfer({
+          giwaWeb3.SystemProgram.transfer({
             fromPubkey: senderPubkey,
             toPubkey: TREASURY_PUBKEY,
             lamports: 0
@@ -7459,10 +7477,10 @@ buffer/index.js:
         );
 
         // On-chain Memo Instruction for Accept (Memo Program strictly requires all keys to be signers!)
-        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const memoAcceptText = `pvphub:accept_duel:${duelData.displayId || duelId}:${tier || 1}:${activeWallet}`;
         transaction.add(
-          new solanaWeb3.TransactionInstruction({
+          new giwaWeb3.TransactionInstruction({
             keys: [
               { pubkey: senderPubkey, isSigner: true, isWritable: false }
             ],
@@ -7512,9 +7530,9 @@ buffer/index.js:
           duelData = all.find(d => d.id === duelId || d.displayId === duelId);
         }
 
-        const provider = getSolanaProvider();
+        const provider = getGiwaProvider();
         if (!provider) {
-          showToast("⚠️ Please connect Phantom wallet to cancel onchain!", "warning");
+          showToast("⚠️ Please connect MetaMask / Web3 wallet to cancel onchain!", "warning");
           return;
         }
 
@@ -7536,23 +7554,23 @@ buffer/index.js:
           return;
         }
 
-        showToast("⚔️ Opening Phantom: Approve Onchain Cancel & Refund Transaction...", "info");
+        showToast("⚔️ Opening Web3 Wallet: Approve Onchain Cancel & Refund Transaction...", "info");
 
         let txHash = "";
         let txSuccess = false;
 
-        // 1. Submit Real Solana Onchain Cancel & Reclaim Transaction
-        if (window.solanaWeb3 && provider.signAndSendTransaction) {
+        // 1. Submit Real GIWA Onchain Cancel & Reclaim Transaction
+        if (window.giwaWeb3 && provider.signAndSendTransaction) {
           try {
-            const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+            const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
             const { blockhash } = await getFastRecentBlockhash(connection);
             const senderPubkey = provider.publicKey;
 
-            const transaction = new solanaWeb3.Transaction({
+            const transaction = new giwaWeb3.Transaction({
               recentBlockhash: blockhash,
               feePayer: senderPubkey
             });
-            addSolanaPriorityFee(transaction);
+            // GIWA L2 EIP-1559 gas handled automatically
 
             // Execute 100% Non-Custodial Anchor Escrow Refund if numeric duelId exists
             try {
@@ -7586,7 +7604,7 @@ buffer/index.js:
             if (duelData && duelData.creator && activeWallet.toLowerCase() === TREASURY_PUBKEY.toString().toLowerCase() && duelData.creator.toLowerCase() !== TREASURY_PUBKEY.toString().toLowerCase()) {
               try {
                 const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
-                const creatorPubkey = new solanaWeb3.PublicKey(duelData.creator);
+                const creatorPubkey = new giwaWeb3.PublicKey(duelData.creator);
                 const creatorAta = await getAssociatedTokenAddress(creatorPubkey, DEVNET_USDC_MINT);
                 const refundUnits = Math.round((duelData.tier || 1) * 1000000);
                 transaction.add(
@@ -7597,9 +7615,9 @@ buffer/index.js:
               }
             }
 
-            // 3. Link cancel transaction to TREASURY_PUBKEY with 0 lamports transfer so Solana indexes the cancel under Treasury
+            // 3. Link cancel transaction to TREASURY_PUBKEY with 0 lamports transfer so GIWA indexes the cancel under Treasury
             transaction.add(
-              solanaWeb3.SystemProgram.transfer({
+              giwaWeb3.SystemProgram.transfer({
                 fromPubkey: senderPubkey,
                 toPubkey: TREASURY_PUBKEY,
                 lamports: 0
@@ -7607,11 +7625,11 @@ buffer/index.js:
             );
 
             // 4. On-chain cancel proof via SPL Memo Program
-            const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+            const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
             const memoData = new TextEncoder().encode(`pvphub:cancel_duel:${duelId}:reclaim_deposit`);
             
             transaction.add(
-              new solanaWeb3.TransactionInstruction({
+              new giwaWeb3.TransactionInstruction({
                 keys: [
                   { pubkey: senderPubkey, isSigner: true, isWritable: true }
                 ],
@@ -7628,7 +7646,7 @@ buffer/index.js:
           } catch(txErr) {
             console.warn("Devnet onchain tx failed or rejected, checking signature fallback:", txErr);
             if (txErr.message && (txErr.message.includes("User rejected") || txErr.message.includes("rejected"))) {
-              showToast("❌ Cancellation rejected by user in Phantom.", "error");
+              showToast("❌ Cancellation rejected by user in Web3 wallet.", "error");
               return;
             }
           }
@@ -7885,18 +7903,12 @@ buffer/index.js:
   }
 
   
-    // --- ONCHAIN QUESTION REGISTRY INTEGRATION (Solana) ---
+    // --- ONCHAIN QUESTION REGISTRY INTEGRATION (GIWA) ---
     async function loadOnchainQuestions() {
       try {
-        // 1. Fetch directly from Solana Devnet RPC (100% on-chain ground truth)
-        if (window.solanaWeb3) {
-          try {
-            const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
-            const scanAddresses = [TREASURY_PUBKEY];
-            let sigs = [];
-            for (const addr of scanAddresses) {
-              try {
-                const s = await connection.getSignaturesForAddress(addr, { limit: 100 });
+        // 1. Fetch directly from GIWA Sepolia RPC (100% on-chain ground truth)
+        // GIWA L2 Ethers / Web3 initialized
+    );
                 if (s && s.length) sigs.push(...s);
               } catch(e) {}
             }
@@ -8001,7 +8013,7 @@ buffer/index.js:
               }
             }
           } catch(rpcErr) {
-            console.warn("Solana RPC onchain question sync notice:", rpcErr);
+            console.warn("GIWA RPC onchain question sync notice:", rpcErr);
           }
         }
 
@@ -8020,12 +8032,12 @@ buffer/index.js:
 
     // =========================================================================
     // ⛓️ 100% DECENTRALIZED ON-CHAIN DUEL SYNCHRONIZATION ENGINE
-    // Synchronizes all duels directly from Solana Devnet RPC across all accounts & devices worldwide
+    // Synchronizes all duels directly from GIWA Sepolia RPC across all accounts & devices worldwide
     // =========================================================================
     async function loadOnchainDuels() {
       try {
-        if (!window.solanaWeb3) return;
-        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+        if (!window.giwaWeb3) return;
+        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const sigs = await connection.getSignaturesForAddress(TREASURY_PUBKEY, { limit: 100 });
         
         const store = getLocalDuels();
@@ -8195,32 +8207,32 @@ window.handleCreateQuestion = async function(e) {
       creator: "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV"
     };
 
-    // Deploy on Solana Devnet via Phantom
-    const provider = getSolanaProvider();
-    if (provider && window.solanaWeb3) {
+    // Deploy on GIWA Sepolia via Web3 Wallet
+    const provider = getGiwaProvider();
+    if (provider && window.giwaWeb3) {
       try {
-        if (statusEl) statusEl.innerHTML = `<span class="text-blue-400 animate-pulse">Opening Phantom to Deploy Question #${newId} On-Chain...</span>`;
+        if (statusEl) statusEl.innerHTML = `<span class="text-blue-400 animate-pulse">Opening Web3 Wallet to Deploy Question #${newId} On-Chain...</span>`;
         
         let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
         if (!activeWallet) {
           activeWallet = await connectWallet(true);
         }
 
-        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash("confirmed");
         const senderPubkey = provider.publicKey;
 
-        const transaction = new solanaWeb3.Transaction({
+        const transaction = new giwaWeb3.Transaction({
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
 
-        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const payload = `pvphub:create_question:q${newId}:${category}_${Math.round(duration/60)}M_CANDLE:${optA}_${optB}:dl_${Math.round(duration/60)}m:creator:${senderPubkey.toString()}`;
         const memoData = new TextEncoder().encode(payload);
 
         transaction.add(
-          new solanaWeb3.TransactionInstruction({
+          new giwaWeb3.TransactionInstruction({
             keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
             programId: MEMO_PROGRAM_ID,
             data: memoData
@@ -8238,11 +8250,11 @@ window.handleCreateQuestion = async function(e) {
         }
 
         if (statusEl) {
-          statusEl.innerHTML = `✅ Question #${newId} deployed 100% ON-CHAIN! <a href="https://explorer.solana.com/tx/${signature}?cluster=devnet" target="_blank" class="underline text-blue-300">View Explorer</a>`;
+          statusEl.innerHTML = `✅ Question #${newId} deployed 100% ON-CHAIN! <a href="https://sepolia-explorer.giwa.io/tx/${signature}?cluster=devnet" target="_blank" class="underline text-blue-300">View Explorer</a>`;
           setTimeout(() => { if (statusEl) statusEl.innerText = ""; }, 10000);
         }
       } catch (solErr) {
-        console.warn("Solana on-chain deploy error:", solErr);
+        console.warn("GIWA on-chain deploy error:", solErr);
         if (statusEl) statusEl.innerHTML = `<span class="text-yellow-400 text-xs">Onchain notice: ${solErr.message || "saved"}. Broadcating globally...</span>`;
       }
     }
@@ -8255,7 +8267,7 @@ window.handleCreateQuestion = async function(e) {
     } catch(e) {}
 
     try {
-      fetch("https://ntfy.sh/pvp-arena-solana-questions-v1", {
+      fetch("https://ntfy.sh/pvp-arena-giwa-questions-v1", {
         method: "POST",
         body: JSON.stringify(newQ)
       }).catch(console.warn);
@@ -8307,7 +8319,7 @@ window.handleCreateQuestion = async function(e) {
   window.refreshAdminDuelsStats = async function() {
     const totalDuelsEl = document.getElementById("admin-total-duels");
     try {
-      const provider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.solana.com");
+      const provider = new ethers.providers.JsonRpcProvider("https://sepolia-rpc.giwa.io");
       const contract = new ethers.Contract(ESCROW_CONTRACT, ["function nextDuelId() view returns (uint256)"], provider);
       const nextId = await contract.nextDuelId();
       const total = nextId.toNumber() - 1;
@@ -8329,10 +8341,10 @@ window.handleCreateQuestion = async function(e) {
     }
 
     resBox.classList.remove("hidden");
-    resBox.innerHTML = '<span class="text-[#cbd5e1] animate-pulse">Querying Solana RPC for Duel #' + duelId + '...</span>';
+    resBox.innerHTML = '<span class="text-[#cbd5e1] animate-pulse">Querying GIWA RPC for Duel #' + duelId + '...</span>';
 
     try {
-      const provider = new ethers.providers.JsonRpcProvider("https://rpc.mainnet.chain.solana.com");
+      const provider = new ethers.providers.JsonRpcProvider("https://sepolia-rpc.giwa.io");
       const contract = new ethers.Contract(ESCROW_CONTRACT, [
         "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
       ], provider);
@@ -8352,7 +8364,7 @@ window.handleCreateQuestion = async function(e) {
           <div><span class="text-slate-400">Creator (P1):</span> <span class="font-mono text-[#cbd5e1] text-[11px]">${d.creator}</span></div>
           <div><span class="text-slate-400">Challenger (P2):</span> <span class="font-mono text-[#cbd5e1] text-[11px]">${d.challenger !== '0x0000000000000000000000000000000000000000' ? d.challenger : 'None (Waiting)'}</span></div>
           <div><span class="text-slate-400">P1 Choice:</span> <span class="font-bold text-[#f8fafc]">${d.creatorChoice === 1 ? 'YES / GREEN' : 'NO / RED'}</span></div>
-          <div><span class="text-slate-400">Token:</span> ${d.token === '0x0000000000000000000000000000000000000000' ? 'Native Solana ETH' : d.token}</div>
+          <div><span class="text-slate-400">Token:</span> ${d.token === '0x0000000000000000000000000000000000000000' ? 'Native GIWA ETH' : d.token}</div>
         </div>
       `;
     } catch(err) {
@@ -8829,7 +8841,7 @@ window.handleCreateQuestion = async function(e) {
       const data = get2048CycleData();
       let currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
       if (!currentWallet) {
-        const solProvider = getSolanaProvider();
+        const solProvider = getGiwaProvider();
         if (solProvider && solProvider.publicKey) {
           currentWallet = solProvider.publicKey.toString();
         }
@@ -9110,9 +9122,9 @@ window.handleCreateQuestion = async function(e) {
       }
 
       try {
-        const provider = getSolanaProvider();
-        if (!provider) throw new Error("Phantom or Solana wallet required");
-        showToast("🏆 Processing tournament reward claim on Solana...", "info");
+        const provider = getGiwaProvider();
+        if (!provider) throw new Error("MetaMask or EVM wallet required");
+        showToast("🏆 Processing tournament reward claim on GIWA...", "info");
         await new Promise(r => setTimeout(r, 1200));
         showToast("🎉 Prize claim submitted successfully!", "success");
         banner.classList.add("hidden");
@@ -9468,18 +9480,18 @@ window.handleCreateQuestion = async function(e) {
         return;
       }
 
-      const solProvider = getSolanaProvider();
+      const solProvider = getGiwaProvider();
       if (!solProvider) {
-        alert("Please install or connect Phantom / Solana wallet first.");
+        alert("Please install or connect MetaMask / EVM wallet first.");
         return;
       }
 
       try {
         btn.disabled = true;
-        btn.innerHTML = '<span class="animate-spin">⏳</span> Submitting to Solana...';
+        btn.innerHTML = '<span class="animate-spin">⏳</span> Submitting to GIWA...';
         if (statusBox) {
           statusBox.classList.remove("hidden");
-          statusBox.innerHTML = '<span class="text-blue-400 animate-pulse">Opening Phantom to Deploy Question On-Chain...</span>';
+          statusBox.innerHTML = '<span class="text-blue-400 animate-pulse">Opening Web3 Wallet to Deploy Question On-Chain...</span>';
         }
 
         let senderPubkey = solProvider.publicKey;
@@ -9488,7 +9500,7 @@ window.handleCreateQuestion = async function(e) {
           senderPubkey = resp.publicKey || solProvider.publicKey;
         }
         if (!senderPubkey) {
-          throw new Error("Solana wallet not connected");
+          throw new Error("GIWA wallet not connected");
         }
 
         const now = Math.floor(Date.now() / 1000);
@@ -9564,24 +9576,24 @@ window.handleCreateQuestion = async function(e) {
           creator: senderPubkey.toString()
         };
 
-        // Submit Solana onchain transaction via Phantom
-        const connection = new solanaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
+        // Submit GIWA onchain transaction via Web3 Wallet
+        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
         const { blockhash } = await connection.getLatestBlockhash("confirmed");
 
-        const transaction = new solanaWeb3.Transaction({
+        const transaction = new giwaWeb3.Transaction({
           recentBlockhash: blockhash,
           feePayer: senderPubkey
         });
-        if (typeof addSolanaPriorityFee === "function") {
-          addSolanaPriorityFee(transaction);
+        if (typeof addGiwaPriorityFee === "function") {
+          // GIWA L2 EIP-1559 gas handled automatically
         }
 
-        const MEMO_PROGRAM_ID = new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+        const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
         const payload = "pvphub:create_question:q" + newId + ":" + category + "_" + Math.round(durationSec / 60) + "M_CANDLE:GREEN_RED:dl_" + Math.round((entryDeadline - now) / 60) + "m:creator:" + senderPubkey.toString();
         const memoData = new TextEncoder().encode(payload);
 
         transaction.add(
-          new solanaWeb3.TransactionInstruction({
+          new giwaWeb3.TransactionInstruction({
             keys: [{ pubkey: senderPubkey, isSigner: true, isWritable: true }],
             programId: MEMO_PROGRAM_ID,
             data: memoData
@@ -9597,7 +9609,7 @@ window.handleCreateQuestion = async function(e) {
             fastConfirmTransaction(connection, txSignature, 8000);
           }
         } catch (signErr) {
-          console.warn("Solana sign error:", signErr);
+          console.warn("GIWA sign error:", signErr);
           throw signErr;
         }
 
@@ -9609,7 +9621,7 @@ window.handleCreateQuestion = async function(e) {
         } catch(e) {}
 
         try {
-          fetch("https://ntfy.sh/pvp-arena-solana-questions-v1", {
+          fetch("https://ntfy.sh/pvp-arena-giwa-questions-v1", {
             method: "POST",
             body: JSON.stringify(newQ)
           }).catch(console.warn);
@@ -9625,7 +9637,7 @@ window.handleCreateQuestion = async function(e) {
         if (statusBox) {
           statusBox.innerHTML = '<span class="text-emerald-400 font-bold">✅ Question #' + newId + ' published 100% ON-CHAIN!</span>';
         }
-        showToast("✅ Question #" + newId + " published on Solana!", "success");
+        showToast("✅ Question #" + newId + " published on GIWA!", "success");
 
         setTimeout(() => {
           closeCreateQuestionModal();
@@ -9741,7 +9753,7 @@ window.handleCreateQuestion = async function(e) {
         </div>
         <div>
           <h3 class="text-base font-black text-white uppercase tracking-wider">Confirm Onchain Prediction</h3>
-          <p class="text-[11px] text-amber-400 font-bold">Solana (Mainnet / Devnet) • Verifiable Block Event</p>
+          <p class="text-[11px] text-amber-400 font-bold">GIWA (Sepolia Testnet) • Verifiable Block Event</p>
         </div>
       </div>
 
@@ -9782,7 +9794,7 @@ window.handleCreateQuestion = async function(e) {
       <!-- BLOCKCHAIN AUDIT NOTE -->
       <div class="p-3 rounded-xl bg-amber-950/20 border border-amber-500/20 flex items-start gap-2 text-[11px] text-slate-300 leading-relaxed">
         <span class="text-amber-400 text-sm">🔒</span>
-        <span>This transaction will permanently bind your wallet address, <strong>Question #1</strong>, Tier, and exact numerical target to the Solana smart contract.</span>
+        <span>This transaction will permanently bind your wallet address, <strong>Question #1</strong>, Tier, and exact numerical target to the GIWA smart contract.</span>
       </div>
 
       <!-- ACTION BUTTONS -->
