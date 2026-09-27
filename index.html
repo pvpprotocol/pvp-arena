@@ -1996,7 +1996,97 @@ window.addUsdcToWallet = addUsdcToWallet;
         </div>
       </div>
 
-      <!-- KEY METRICS ROW -->
+      
+      <!-- FOUNDER CUSTOM QUESTION DEPLOYMENT DASHBOARD -->
+      <div id="founder-question-panel" class="p-5 rounded-2xl border-2 border-emerald-500/60 bg-[#101726] space-y-4 relative overflow-hidden shadow-2xl shadow-emerald-950/40">
+        <!-- Top Header -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-400 font-mono text-xs font-black border border-emerald-500/40 flex items-center gap-1.5 shadow-sm">
+              <span>👑</span><span>FOUNDER DASHBOARD</span>
+            </span>
+            <span class="text-xs font-mono text-slate-400 font-bold hidden sm:inline">CREATE DUEL QUESTION</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="founder-auth-status-badge" class="text-[11px] font-mono text-emerald-400 font-bold flex items-center gap-1 bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>FOUNDER AUTHENTICATED
+            </span>
+          </div>
+        </div>
+
+        <!-- Simplified 2-Column Controls (Asset Buttons & Timeframe Dropdown) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono">
+          <!-- 1. Crypto Asset Selection: BTC, ETH, SOL, BNB -->
+          <div class="p-3.5 rounded-xl bg-[#151f30] border border-slate-700/60 space-y-2.5">
+            <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+              <span>1. Select Asset</span>
+              <span id="selected-asset-display" class="text-emerald-400 font-black">BTC</span>
+            </label>
+            <div class="grid grid-cols-4 gap-2" id="founder-asset-buttons">
+              <button type="button" onclick="setFounderAsset('BTC')" class="founder-asset-btn active-founder-btn px-2 py-2.5 rounded-xl text-xs font-bold border-2 border-emerald-500 bg-emerald-500/20 text-emerald-300 transition-all flex items-center justify-center gap-1 cursor-pointer">
+                <span>₿</span><span>BTC</span>
+              </button>
+              <button type="button" onclick="setFounderAsset('ETH')" class="founder-asset-btn px-2 py-2.5 rounded-xl text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1 cursor-pointer">
+                <span>⟠</span><span>ETH</span>
+              </button>
+              <button type="button" onclick="setFounderAsset('SOL')" class="founder-asset-btn px-2 py-2.5 rounded-xl text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1 cursor-pointer">
+                <span>◎</span><span>SOL</span>
+              </button>
+              <button type="button" onclick="setFounderAsset('BNB')" class="founder-asset-btn px-2 py-2.5 rounded-xl text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1 cursor-pointer">
+                <span>🔶</span><span>BNB</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Candle Close Timeframe Selection (Dropdown / کشویی) -->
+          <div class="p-3.5 rounded-xl bg-[#151f30] border border-slate-700/60 space-y-2.5">
+            <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+              <span>2. Select Timeframe (Candle Duration)</span>
+              <span id="selected-timeframe-display" class="text-teal-400 font-black">15M</span>
+            </label>
+            <div class="relative">
+              <select id="founder-timeframe-select" onchange="onFounderTimeframeSelectChange(this.value)" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1c283c] border border-slate-700 text-teal-300 font-mono text-xs font-bold focus:outline-none focus:border-teal-500 cursor-pointer appearance-none">
+                <option value="15" selected>⏱️ 15 Minutes (15m Candle)</option>
+                <option value="60">⏱️ 1 Hour (1h Candle)</option>
+                <option value="360">⏱️ 6 Hours (6h Candle)</option>
+                <option value="720">⏱️ 12 Hours (12h Candle)</option>
+                <option value="1440">⏱️ 24 Hours (1 Day Candle)</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-teal-400">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Preview Box -->
+        <div class="p-3.5 rounded-xl bg-[#0c131f] border border-slate-700/80 font-mono space-y-2">
+          <div class="flex items-center justify-between text-[11px] text-slate-400 font-bold uppercase">
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>LIVE PREVIEW</span>
+            <span id="preview-q-oracle" class="text-slate-400">Oracle: Coinbase Exchange</span>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h4 id="preview-q-title" class="text-sm font-bold text-white">BTC/USD 15-Min Candle Duel</h4>
+              <p id="preview-q-desc" class="text-xs text-slate-400 mt-0.5">Will the next 15-minute candle close GREEN (Bullish) or RED (Bearish)?</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/30">GREEN</span>
+              <span class="text-xs text-slate-500 font-bold">vs</span>
+              <span class="px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 text-xs font-bold border border-red-500/30">RED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button id="btn-deploy-custom-q" onclick="deployCustomFounderQuestionOnchain()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:via-teal-400 hover:to-cyan-400 text-slate-950 font-mono font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer">
+            <span>⚡</span><span>SIGN & DEPLOY QUESTION ON-CHAIN (GIWA SEPOLIA)</span>
+          </button>
+        </div>
+      </div>
+
+<!-- KEY METRICS ROW -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
           <div>
