@@ -3884,25 +3884,33 @@ window.addUsdcToWallet = addUsdcToWallet;
 
     // Pre-seeded with confirmed on-chain GIWA Sepolia transactions (updated dynamically by RPC)
     const DUEL_QUESTIONS = (function() {
-      // 100% On-Chain Architecture: 0 pre-seeded / mock questions!
-      // Questions ONLY exist when deployed on-chain by the Admin.
-      try {
-        localStorage.removeItem("pvp_onchain_q1");
-        localStorage.removeItem("pvp_onchain_q2");
-        localStorage.removeItem("pvp_custom_q1");
-        localStorage.removeItem("pvp_custom_q2");
-      } catch(e) {}
+      // Direct On-Chain Architecture
+      const defaultQ1 = {
+        id: 1,
+        title: "BTC 1H",
+        symbol: "BTC",
+        timeframe: "1H",
+        opt1: "GREEN",
+        opt2: "RED",
+        category: "CRYPTO 1H",
+        status: "live",
+        oracle: "Coinbase / Pyth",
+        targetPrice: 0,
+        isConfirmedOnchain: true,
+        getDeadline: function() { return Date.now() + 3600000; }
+      };
 
-      const list = [];
+      const list = [defaultQ1];
       try {
-        for (let i = 1; i <= 200; i++) {
+        for (let i = 2; i <= 200; i++) {
           const stored = localStorage.getItem("pvp_onchain_q" + i);
           if (stored) {
             const parsed = JSON.parse(stored);
             if (parsed && (parsed.onchainTxSignature || parsed.isConfirmedOnchain)) {
               list.push({
                 ...parsed,
-                getDeadline: function() { return this.deadline; }
+                title: parsed.title || ((parsed.symbol || "BTC") + " " + (parsed.timeframe || "1H")),
+                getDeadline: function() { return this.deadline || (Date.now() + 3600000); }
               });
             }
           }
@@ -4484,7 +4492,7 @@ window.addUsdcToWallet = addUsdcToWallet;
     // Clear any legacy unconfirmed local items
     try {
       // localStorage.clear(); kept safe
-      localStorage.removeItem("pvp_onchain_q2");
+      
       localStorage.removeItem("pvp_arena_questions_v1");
       localStorage.removeItem("pvp_questions_devnet");
     } catch(e) {}
@@ -4680,28 +4688,47 @@ window.addUsdcToWallet = addUsdcToWallet;
       const container = document.getElementById("duel-options-container");
       const subTitle = document.getElementById("duel-options-subtitle");
       if (!container) return;
-
       if (subTitle) { subTitle.textContent = ""; }
 
+      // Read current open duels for this question (and tier if selected)
+      const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
+      const openDuels = Object.values(store).filter(d => {
+        if (!d || d.status !== "open") return false;
+        const dQId = (typeof getDuelQuestionId === "function") ? getDuelQuestionId(d) : (d.questionId || 1);
+        if (String(dQId) !== String(selectedDuelQuestionId)) return false;
+        return true;
+      });
+
+      // Duels where creator chose YES / GREEN are waiting for an opponent to take NO / RED
+      const needRedDuels = openDuels.filter(d => (d.creatorOption === "YES" || d.creatorOption === "GREEN"));
+      // Duels where creator chose NO / RED are waiting for an opponent to take YES / GREEN
+      const needGreenDuels = openDuels.filter(d => (d.creatorOption === "NO" || d.creatorOption === "RED"));
+
       let options = [];
-      if (!q) {
-        // Active fallback when waiting for on-chain questions
+      if (needRedDuels.length > 0 && needGreenDuels.length === 0) {
+        // Only RED is needed to match waiting GREEN duels
+        options = [
+          { key: "RED", label: "🔴 RED", sub: "Take RED (" + needRedDuels.length + " Waiting)", colorType: "red" }
+        ];
+        container.className = "grid grid-cols-1 gap-3 pt-1";
+      } else if (needGreenDuels.length > 0 && needRedDuels.length === 0) {
+        // Only GREEN is needed to match waiting RED duels
+        options = [
+          { key: "GREEN", label: "🟢 GREEN", sub: "Take GREEN (" + needGreenDuels.length + " Waiting)", colorType: "green" }
+        ];
+        container.className = "grid grid-cols-1 gap-3 pt-1";
+      } else if (needRedDuels.length > 0 && needGreenDuels.length > 0) {
+        // Both sides are needed
+        options = [
+          { key: "GREEN", label: "🟢 GREEN", sub: "Take GREEN (" + needGreenDuels.length + " Waiting)", colorType: "green" },
+          { key: "RED", label: "🔴 RED", sub: "Take RED (" + needRedDuels.length + " Waiting)", colorType: "red" }
+        ];
+        container.className = "grid grid-cols-2 gap-3 pt-1";
+      } else {
+        // No open requests: both options open to start a fresh duel
         options = [
           { key: "GREEN", label: "🟢 GREEN", sub: "Close ≥ Open", colorType: "green" },
           { key: "RED", label: "🔴 RED", sub: "Close < Open", colorType: "red" }
-        ];
-        container.className = "grid grid-cols-2 gap-3 pt-1";
-      } else if (q.isThreeWay) {
-        options = [
-          { key: q.opt1 || "Barcelona", label: q.opt1 || "Barcelona", sub: "Choice 1", colorType: "green" },
-          { key: q.opt2 || "Draw", label: q.opt2 || "Draw", sub: "Choice 2", colorType: "blue" },
-          { key: q.opt3 || "Chelsea", label: q.opt3 || "Chelsea", sub: "Choice 3", colorType: "red" }
-        ];
-        container.className = "grid grid-cols-3 gap-2.5 pt-1";
-      } else {
-        options = [
-          { key: q.opt1 || "GREEN", label: "🟢 " + (q.opt1 || "GREEN"), sub: "Close ≥ Open", colorType: "green" },
-          { key: q.opt2 || "RED", label: "🔴 " + (q.opt2 || "RED"), sub: "Close < Open", colorType: "red" }
         ];
         container.className = "grid grid-cols-2 gap-3 pt-1";
       }
@@ -4709,6 +4736,7 @@ window.addUsdcToWallet = addUsdcToWallet;
       if (!options.some(o => o.key === selectedDuelOption)) {
         selectedDuelOption = options[0].key;
       }
+      window.selectedDuelDirection = (selectedDuelOption === "RED" || selectedDuelOption === "NO" || selectedDuelOption === "SHORT") ? "SHORT" : "LONG";
 
       container.innerHTML = options.map((opt) => {
         const isSelected = opt.key === selectedDuelOption;
@@ -4718,7 +4746,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
         if (opt.colorType === "green") {
           if (isSelected) {
-            btnCls = "opt-btn p-3.5 rounded-xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/35 transition-all cursor-pointer scale-[1.03]";
+            btnCls = "opt-btn p-3.5 rounded-xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-emerald-500/35 transition-all cursor-pointer scale-[1.02]";
             textCls = "text-white";
             subCls = "text-emerald-100";
           } else {
@@ -4728,7 +4756,7 @@ window.addUsdcToWallet = addUsdcToWallet;
           }
         } else if (opt.colorType === "red") {
           if (isSelected) {
-            btnCls = "opt-btn p-3.5 rounded-xl border-2 border-rose-400 bg-gradient-to-r from-rose-600 to-red-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/35 transition-all cursor-pointer scale-[1.03]";
+            btnCls = "opt-btn p-3.5 rounded-xl border-2 border-rose-400 bg-gradient-to-r from-rose-600 to-red-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-rose-500/35 transition-all cursor-pointer scale-[1.02]";
             textCls = "text-white";
             subCls = "text-rose-100";
           } else {
@@ -4736,28 +4764,37 @@ window.addUsdcToWallet = addUsdcToWallet;
             textCls = "text-rose-400";
             subCls = "text-rose-300/70";
           }
-        } else {
-          if (isSelected) {
-            btnCls = "opt-btn p-3.5 rounded-xl border-2 border-sky-400 bg-gradient-to-r from-sky-600 to-blue-600 text-white font-mono font-black text-sm flex flex-col items-center justify-center gap-1 shadow-lg shadow-sky-500/35 transition-all cursor-pointer scale-[1.03]";
-            textCls = "text-white";
-            subCls = "text-sky-100";
-          } else {
-            btnCls = "opt-btn p-3.5 rounded-xl border border-sky-500/40 bg-[#131b27] text-sky-400 hover:border-sky-400 hover:bg-sky-500/10 font-mono font-black text-sm flex flex-col items-center justify-center gap-1 transition-all cursor-pointer";
-            textCls = "text-sky-400";
-            subCls = "text-sky-300/70";
-          }
         }
 
-        const safeKey = opt.key.replace(/'/g, "\'");
-        return `<button onclick="selectDuelOption('${safeKey}', false)" class="${btnCls}">
-          <span class="text-sm md:text-base font-black tracking-wider ${textCls}">${opt.label}</span>
-          <span class="text-[10px] font-mono font-medium ${subCls}">${opt.sub}</span>
-        </button>`;
+        const safeKey = opt.key.replace(/'/g, "\\x27");
+        return "<button onclick=\"selectDuelOption(\'" + safeKey + "\', false)\" class=\"" + btnCls + "\">" +
+          "<span class=\"text-sm md:text-base font-black tracking-wider " + textCls + "\">" + opt.label + "</span>" +
+          "<span class=\"text-[10px] font-mono font-medium " + subCls + "\">" + opt.sub + "</span>" +
+        "</button>";
       }).join("");
+
+      // Update main CTA button text dynamically
+      const mainBtn = document.getElementById("create-duel-btn");
+      if (mainBtn) {
+        const curAddr = (typeof userAddress !== "undefined" && userAddress) ? userAddress.toLowerCase() : (window.userAddress ? window.userAddress.toLowerCase() : "");
+        let matchableDuel = null;
+        if (selectedDuelOption === "RED" || selectedDuelOption === "NO") {
+          matchableDuel = needRedDuels.find(d => !curAddr || !d.creator || d.creator.toLowerCase() !== curAddr);
+        } else {
+          matchableDuel = needGreenDuels.find(d => !curAddr || !d.creator || d.creator.toLowerCase() !== curAddr);
+        }
+
+        if (matchableDuel) {
+          mainBtn.innerHTML = "<span>⚔️</span> ACCEPT & MATCH DUEL (" + selectedDuelOption + ")";
+        } else {
+          mainBtn.innerHTML = "<span>⚔️</span> CREATE DUEL (" + selectedDuelOption + ")";
+        }
+      }
     }
 
     async function selectDuelOption(opt, triggerOnchain = false) {
       selectedDuelOption = opt;
+      window.selectedDuelDirection = (opt === "RED" || opt === "NO" || opt === "SHORT") ? "SHORT" : "LONG";
       updateOptionButtonsUI();
       updateDuelSummary();
       if (triggerOnchain) {
@@ -4995,122 +5032,108 @@ window.addUsdcToWallet = addUsdcToWallet;
         const rpcUrl = "https://sepolia-rpc.giwa.io";
         const contractAddr = (typeof GIWA_PVP_CONTRACT !== "undefined" ? GIWA_PVP_CONTRACT : "0xB464f766028C1d4Face359592a2127272C2C7750");
 
-        // 1. Get current block number
-        fetch(rpcUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] })
-        })
-        .then(r => r.json())
-        .then(bData => {
-          if (!bData || !bData.result) return;
-          const currentBlock = parseInt(bData.result, 16);
-          const fromBlock = "0x" + Math.max(0, currentBlock - 5000).toString(16);
+        if (typeof ethers === "undefined") return;
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
 
-          // 2. Fetch logs with safe block range (<= 5000)
-          return fetch(rpcUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              jsonrpc: "2.0",
-              id: Date.now(),
-              method: "eth_getLogs",
-              params: [{
-                address: contractAddr,
-                fromBlock: fromBlock,
-                toBlock: "latest"
-              }]
-            })
+        const iface = new ethers.utils.Interface([
+          "function nextDuelId() view returns (uint256)",
+          "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 entryStake, uint256 targetPrice, bool isCreatorLong, uint256 entryDeadline, uint256 settlementTime, uint8 status, address winner, string marketSymbol)"
+        ]);
+        const contract = new ethers.Contract(contractAddr, iface, provider);
+
+        let nextId = 1;
+        try {
+          const rawNext = await contract.nextDuelId();
+          nextId = Number(rawNext);
+        } catch(e) {
+          console.warn("Error fetching nextDuelId:", e);
+          return;
+        }
+
+        if (nextId <= 1) return;
+
+        // Ensure Question #1 exists in DUEL_QUESTIONS
+        if (!DUEL_QUESTIONS || DUEL_QUESTIONS.length === 0) {
+          DUEL_QUESTIONS.push({
+            id: 1,
+            title: "BTC 1H",
+            symbol: "BTC",
+            timeframe: "1H",
+            opt1: "GREEN",
+            opt2: "RED",
+            category: "CRYPTO 1H",
+            status: "live",
+            oracle: "Coinbase / Pyth",
+            targetPrice: 0,
+            isConfirmedOnchain: true,
+            getDeadline: function() { return Date.now() + 3600000; }
           });
-        })
-        .then(r => r ? r.json() : null)
-        .then(rpcData => {
-          if (rpcData && rpcData.result && Array.isArray(rpcData.result)) {
-            const store = getLocalDuels();
-            let updated = false;
+        }
+        if (!selectedDuelQuestionId && DUEL_QUESTIONS.length > 0) {
+          selectedDuelQuestionId = DUEL_QUESTIONS[0].id;
+        }
 
-            rpcData.result.forEach(log => {
-              try {
-                const topic0 = log.topics[0];
-                // Event 1: DuelCreated topic: 0x4be3680c2c544d8262bb544fafa8baa1619aea4c93585fae6da5dcf3d64c393f or legacy
-                if (topic0 === "0x4be3680c2c544d8262bb544fafa8baa1619aea4c93585fae6da5dcf3d64c393f" || topic0 === "0x47fa409e45059ca4351d26c2b17c41f29d4500f90684401d0bdf7d2952bf9a32") {
-                  const dId = parseInt(log.topics[1], 16);
-                  const creator = "0x" + log.topics[2].slice(26).toLowerCase();
-                  
-                  let token = "0x3471010ad619f2ed0f897dc5c7cca8fdd25a8172";
-                  let wagerRaw = 1000000;
-                  let marketSymbol = "BTC";
+        // Fetch all duels in parallel directly from on-chain block
+        const promises = [];
+        for (let i = 1; i < nextId; i++) {
+          promises.push(contract.duels(i).catch(err => null));
+        }
+        const duelResults = await Promise.all(promises);
 
-                  if (log.data && log.data.length >= 130) {
-                    token = "0x" + log.data.slice(26, 66).toLowerCase();
-                    wagerRaw = parseInt(log.data.slice(66, 130), 16);
-                  }
+        const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
+        let updated = false;
 
-                  const isUsdc = (token.toLowerCase() === "0x3471010ad619f2ed0f897dc5c7cca8fdd25a8172");
-                  const tierStr = isUsdc ? (wagerRaw / 1000000).toString() : "1";
+        duelResults.forEach((d, index) => {
+          if (!d) return;
+          const dId = index + 1;
+          const duelKey = "duel_" + dId;
+          const creator = d.creator ? d.creator.toLowerCase() : "";
+          const tierStr = (Number(ethers.utils.formatUnits(d.entryStake, 6))).toString();
+          const symbol = d.marketSymbol || "BTC";
+          const isLong = !!d.isCreatorLong;
+          const statusNum = Number(d.status);
 
-                  const duelKey = "duel_" + dId;
-                  // If no questions exist, do not inject orphan duels
-                  if (!DUEL_QUESTIONS || DUEL_QUESTIONS.length === 0) return;
-                  const matchedQ = DUEL_QUESTIONS.find(q => q.symbol && q.symbol.includes(marketSymbol)) || DUEL_QUESTIONS[0];
-                  if (!matchedQ) return;
-                  const qIdAssigned = matchedQ.id;
-                  const qTitleAssigned = matchedQ.title;
+          let statusStr = "open";
+          if (statusNum === 1) statusStr = "in_progress";
+          else if (statusNum === 2) statusStr = "settled";
+          else if (statusNum === 3) statusStr = "cancelled";
 
-                  if (!store[duelKey]) {
-                    store[duelKey] = {
-                      id: duelKey,
-                      onchainDuelId: dId.toString(),
-                      questionId: qIdAssigned,
-                      questionText: qTitleAssigned,
-                      creatorOption: "YES",
-                      requiredOpponentOption: "NO",
-                      tier: tierStr,
-                      creator: creator,
-                      opponent: null,
-                      status: "open",
-                      createdAt: Date.now(),
-                      deadline: Date.now() + 3600000,
-                      expiresAt: Date.now() + 3600000,
-                      tokenType: isUsdc ? "USDC" : "ETH",
-                      tokenAddress: token,
-                      onChain: true
-                    };
-                    updated = true;
-                  }
-                }
-                // Event 2: DuelJoined
-                else if (topic0 === "0xc12a9a753ba5697e032f6fa08aaaf85f4ff76d6ea4e6f78767af34cb9c55f842" || topic0 === "0xa886c9eead9ee20297bb5bb6697b0a37de5066a3ae2db080ae299538c5b96792") {
-                  const dId = parseInt(log.topics[1], 16);
-                  const challenger = "0x" + log.topics[2].slice(26).toLowerCase();
-                  const duelKey = "duel_" + dId;
-                  if (store[duelKey] && store[duelKey].status !== "in_progress") {
-                    store[duelKey].status = "in_progress";
-                    store[duelKey].opponent = challenger;
-                    updated = true;
-                  }
-                }
-                // Event 3: DuelCancelled
-                else if (topic0 === "0x12fbd4d0ced605187ec0aec913abe6b5b06912ae3b634c6add28e9a92d1f2d0a") {
-                  const dId = parseInt(log.topics[1], 16);
-                  const duelKey = "duel_" + dId;
-                  if (store[duelKey] && store[duelKey].status !== "cancelled") {
-                    store[duelKey].status = "cancelled";
-                    updated = true;
-                  }
-                }
-              } catch (err) {}
-            });
+          const deadlineMs = Number(d.entryDeadline) * 1000;
+          const settlementMs = Number(d.settlementTime) * 1000;
 
-            if (updated) {
-              saveLocalDuels(store);
-              if (typeof renderAllDuels === "function") renderAllDuels();
-            }
+          const existing = store[duelKey];
+          if (!existing || existing.status !== statusStr || existing.onchainDuelId !== dId.toString()) {
+            store[duelKey] = {
+              id: duelKey,
+              onchainDuelId: dId.toString(),
+              questionId: 1,
+              questionText: symbol + " 1H",
+              creatorOption: isLong ? "GREEN" : "RED",
+              requiredOpponentOption: isLong ? "RED" : "GREEN",
+              tier: tierStr,
+              creator: creator,
+              opponent: (d.challenger && d.challenger !== ethers.constants.AddressZero) ? d.challenger.toLowerCase() : null,
+              status: statusStr,
+              createdAt: deadlineMs - 3600000,
+              deadline: deadlineMs,
+              expiresAt: deadlineMs,
+              settlementTime: settlementMs,
+              tokenType: "USDC",
+              tokenAddress: d.token,
+              onChain: true
+            };
+            updated = true;
           }
-        })
-        .catch(e => console.warn("syncOnchainDuels error:", e));
-      } catch (e) {
-        console.warn("syncOnchainDuelsFromContract failed:", e);
+        });
+
+        if (updated) {
+          if (typeof saveLocalDuels === "function") saveLocalDuels(store);
+          if (typeof renderAllDuels === "function") renderAllDuels();
+          if (typeof updateOptionButtonsUI === "function") updateOptionButtonsUI();
+          if (typeof renderDuelQuestions === "function") renderDuelQuestions();
+        }
+      } catch (err) {
+        console.warn("syncOnchainDuelsFromContract direct RPC sync:", err);
       }
     }
     
@@ -6010,17 +6033,17 @@ window.addUsdcToWallet = addUsdcToWallet;
         const nextCancelDuel = myDuels[0];
         actionSection = '<div class="flex items-center gap-2 flex-wrap">' +
           '<span class="px-3 py-1.5 rounded-xl bg-[#182230] text-[#cbd5e1] font-bold border border-[#334155] text-xs flex items-center gap-2">WAITING OPPONENTS</span>' +
-          '<button onclick="cancelDuel(' + JSON.stringify(String(nextCancelDuel.id)) + ', ' + safeTier + ')" class="px-3.5 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-500/40 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
+          '<button onclick="cancelDuel(\'" + String(nextCancelDuel.id).replace(/'/g, "\\\x27") + "\', " + safeTier + ")" class="px-3.5 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-500/40 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
             '❌ CANCEL 1 (' + safeTier + ' USDC)' +
           '</button>' +
-          '<button onclick="toggleGroupDetails(' + JSON.stringify(String(group.groupKey)) + ')" class="px-2.5 py-2 rounded-xl bg-[#182230] hover:bg-[#1e293b] text-sky-400 border border-[#334155] text-xs font-mono transition-all cursor-pointer">' +
+          '<button onclick="toggleGroupDetails(\'" + String(group.groupKey).replace(/'/g, "\\\x27") + "\')" class="px-2.5 py-2 rounded-xl bg-[#182230] hover:bg-[#1e293b] text-sky-400 border border-[#334155] text-xs font-mono transition-all cursor-pointer">' +
             '🔍 Show ' + count + ' IDs' +
           '</button>' +
         '</div>';
       } else {
         const openOpponentDuel = group.duels.find(d => !currentAddr || !d.creator || d.creator.toLowerCase() !== currentAddr.toLowerCase()) || repDuel;
         actionSection = '<div class="flex items-center gap-2">' +
-          '<button onclick="acceptDuel(' + JSON.stringify(String(openOpponentDuel.id)) + ', ' + safeTier + ')" class="px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-black text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-1.5 cursor-pointer">' +
+          '<button onclick="acceptDuel(\'" + String(openOpponentDuel.id).replace(/'/g, "\\\x27") + "\', " + safeTier + ")" class="px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-black text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 flex items-center gap-1.5 cursor-pointer">' +
             '⚔️ ACCEPT 1 DUEL: TAKE [' + requiredOpponentOption + '] (' + safeTier + ' USDC)' +
           '</button>' +
         '</div>';
@@ -6033,8 +6056,8 @@ window.addUsdcToWallet = addUsdcToWallet;
         const dNum = d.onchainDuelId || (i + 1);
         const playerLabel = isMine ? '<span class="text-amber-300 font-bold">You</span>' : (d.creator ? d.creator.slice(0, 6) + "..." + d.creator.slice(-4) : "Player");
         const actionBtn = isMine 
-          ? ('<button onclick="cancelDuel(' + JSON.stringify(String(dId)) + ', ' + safeTier + ')" class="text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-0.5 rounded bg-red-950/40 border border-red-500/30 cursor-pointer">Cancel</button>')
-          : ('<button onclick="acceptDuel(' + JSON.stringify(String(dId)) + ', ' + safeTier + ')" class="text-emerald-400 hover:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/30 cursor-pointer">Accept</button>');
+          ? ('<button onclick="cancelDuel(\'" + String(dId).replace(/'/g, "\\\x27") + "\', " + safeTier + ")" class="text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-0.5 rounded bg-red-950/40 border border-red-500/30 cursor-pointer">Cancel</button>')
+          : ('<button onclick="acceptDuel(\'" + String(dId).replace(/'/g, "\\\x27") + "\', " + safeTier + ")" class="text-emerald-400 hover:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/30 cursor-pointer">Accept</button>');
 
         return '<div class="flex items-center justify-between p-2 rounded-lg bg-[#0d1520] border border-[#202c3d] text-[11px] font-mono">' +
           '<span class="text-slate-300">#' + dNum + ' • ' + playerLabel + '</span>' +
