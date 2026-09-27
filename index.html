@@ -2702,7 +2702,7 @@ buffer/index.js:
           badge: "⚡ COINBASE (UTC)"
         },
         {
-          id: "crypto-sol",
+          id: "crypto-btc",
           title: "BTC 12H Candle Close",
           sub: "Official Close via Coinbase (UTC)",
           targetDesc: "Official Close via Coinbase (UTC)",
@@ -4626,7 +4626,7 @@ buffer/index.js:
     function isQuestionMatchingCategory(q, cat) {
       const c = ((q.category || "") + " " + (q.title || "")).toLowerCase();
       if (cat === "crypto") {
-        return c.includes("crypto") || c.includes("12h") || c.includes("btc") || c.includes("eth") || c.includes("sol") || c.includes("bnb") || c.includes("hype") || c.includes("candle");
+        return c.includes("crypto") || c.includes("12h") || c.includes("btc") || c.includes("eth") || c.includes("bnb") || c.includes("hype") || c.includes("candle");
       }
       if (cat === "sports") {
         return c.includes("sport") || c.includes("football") || c.includes("soccer") || c.includes("epl") || c.includes("premier") || c.includes("la liga") || c.includes("bundesliga") || c.includes("serie") || c.includes("ligue") || c.includes("nba") || c.includes("basketball") || c.includes("lakers") || c.includes("celtics") || c.includes("warriors");
