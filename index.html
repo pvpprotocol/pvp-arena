@@ -598,7 +598,7 @@
     window.GIWA_CHAIN_ID = "0x164ce"; // 91342
     window.GIWA_RPC = "https://sepolia-rpc.giwa.io";
     window.GIWA_EXPLORER = "https://sepolia-explorer.giwa.io";
-    window.GIWA_PVP_CONTRACT = "0xa134015f6C035A713c7d61C392576b50937c8651"; // PvPArenaGIWA
+    window.GIWA_PVP_CONTRACT = "0xB464f766028C1d4Face359592a2127272C2C7750"; // PvPArenaGIWA
     window.TREASURY_ADDRESS = "0xd8c09b380e1d8120aac2188653b68f1209ee883c";
 
   window.duelsPaused = false; // Admin lock: duels paused until explicit command
@@ -1935,7 +1935,7 @@ buffer/index.js:
             </button>
           </div>
           <div class="p-3 rounded-xl bg-black/60 border border-[#334155] font-mono text-xs text-[#cbd5e1] break-all select-all flex items-center justify-between">
-            <span id="pvp-contract-address">Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK</span>
+            <span id="pvp-contract-address">0xB464f766028C1d4Face359592a2127272C2C7750</span>
           </div>
         </div>
       </div>
@@ -2248,7 +2248,7 @@ buffer/index.js:
   })();
     var GIWA_CHAIN_ID = "0x164ce"; // 91342 in hex (GIWA Sepolia)
 
-    var DUEL_CONTRACT_ADDRESS = window.GIWA_PVP_CONTRACT || "0xa134015f6C035A713c7d61C392576b50937c8651";
+    var DUEL_CONTRACT_ADDRESS = window.GIWA_PVP_CONTRACT || "0xB464f766028C1d4Face359592a2127272C2C7750";
     var QUESTION_REGISTRY_ADDRESS = "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5";
     var QUESTION_REGISTRY_ABI = [
       "function owner() view returns (address)",
@@ -2271,7 +2271,7 @@ buffer/index.js:
       "function settleDuelWithProof(uint256 duelId, uint8 winningOutcome, uint256 deadline, bytes32 nonce, bytes signature) external",
       "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint8 winningOutcome, uint8 status, uint256 createdAt, uint256 expiresAt, string topic)"
     ];
-    var ESCROW_CONTRACT = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
+    var ESCROW_CONTRACT = "0xB464f766028C1d4Face359592a2127272C2C7750";
 
         async function ensureGiwaNetwork() {
       // Pure GIWA Architecture - Network is managed by GIWA RPC endpoint
@@ -2583,7 +2583,7 @@ buffer/index.js:
     // ONCHAIN TRANSACTION EXECUTOR (GIWA L2)
     var USDC_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDC on GIWA
     var PVP_TOKEN_ADDRESS = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7"; // Native $PVP token
-    var ESCROW_CONTRACT = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
+    var ESCROW_CONTRACT = "0xB464f766028C1d4Face359592a2127272C2C7750";
 
         async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDC", purpose = "Game Entry", customRecipient = null) {
       const provider = getGiwaProvider();
@@ -7044,8 +7044,8 @@ buffer/index.js:
       });
     }
 
-    // --- NON-CUSTODIAL ANCHOR ESCROW PROGRAM (Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK) ---
-    var GIWA_PVP_CONTRACT = window.GIWA_PVP_CONTRACT || "0xa134015f6C035A713c7d61C392576b50937c8651";
+    // --- NON-CUSTODIAL ANCHOR ESCROW PROGRAM (0xB464f766028C1d4Face359592a2127272C2C7750) ---
+    var GIWA_PVP_CONTRACT = window.GIWA_PVP_CONTRACT || "0xB464f766028C1d4Face359592a2127272C2C7750";
     const SYSVAR_RENT_PUBKEY = new giwaWeb3.PublicKey("SysvarRent111111111111111111111111111111111");
 
     function getAnchorDuelPda(creatorPubkey, numericDuelId) {
