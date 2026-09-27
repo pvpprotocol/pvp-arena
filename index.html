@@ -6608,253 +6608,126 @@ buffer/index.js:
         return;
       }
 
-      const provider = getGiwaProvider();
-      if (!provider) {
+      if (!window.ethereum) {
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
-          showToast("📱 Opening in MetaMask App...", "info");
-          const targetUrl = encodeURIComponent(window.location.href);
-          window.location.href = "https://metamask.app.link/dapp/" + targetUrl + "?ref=pvphub";
-          return;
+          window.location.href = "https://metamask.app.link/dapp/" + window.location.host + window.location.pathname;
+        } else {
+          showToast("🦊 MetaMask not detected. Please install MetaMask to create a duel.", "error");
         }
-        showToast("⚠️ MetaMask or EVM wallet not found! Opening MetaMask download page...", "warning");
-        window.open("https://metamask.io/download/", "_blank");
         return;
       }
 
-      // Ensure wallet is connected
-      let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
-      if (!activeWallet || !isConnected) {
-        showToast("🔑 Opening Web3 Wallet to connect...", "info");
-        activeWallet = await connectWallet(true);
-        if (!activeWallet) return;
-      }
-
-      const q = DUEL_QUESTIONS.find(x => String(x.id) === String(selectedDuelQuestionId)) || DUEL_QUESTIONS.find(x => !x.isEnded && Date.now() < getQuestionDeadline(x.id)) || DUEL_QUESTIONS[0];
-      if (!q) {
-        showToast("⚠️ No active question selected! Please pick an active question.", "warning");
-        return;
-      }
-      const qDeadline = getQuestionDeadline(q.id);
-
-      if (Date.now() >= qDeadline || q.isEnded) {
-        showToast("⚠️ Submissions closed for this question! Entry window has closed.", "warning");
+      const activeWallet = window.selectedAccount || window.currentAccount || (window.ethereum.selectedAddress);
+      if (!activeWallet) {
+        showToast("⚠️ Please connect your MetaMask wallet first.", "warning");
+        try { await connectWallet(); } catch(e) {}
         return;
       }
 
-      const btn = document.getElementById("create-duel-btn");
-      if (btn) btn.disabled = true;
+      const btn = document.getElementById("confirm-create-duel-btn");
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Confirming on GIWA...';
+      }
 
-      const oppositeOption = selectedDuelOption === "GREEN" ? "RED" : "GREEN";
-      let txHash = "";
-      const numericDuelId = Math.floor(100000 + Math.random() * 900000);
-      const onchainDuelId = "sol_" + numericDuelId;
-
-      // Compute nextSubIndex BEFORE building the transaction & memo
-      let nextSubIndex = 1;
       try {
-        const qIdKey = q.id || 1;
-        const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
-        let maxExisting = 0;
-        Object.values(store).forEach(d => {
-          if (d && getDuelQuestionId(d) === qIdKey) {
-            if (typeof d.subIndex === "number" && d.subIndex > maxExisting) {
-              maxExisting = d.subIndex;
-            }
-            if (d.displayId) {
-              const m = d.displayId.match(/-(\d+)/);
-              if (m) {
-                const val = parseInt(m[1], 10);
-                if (val > maxExisting) maxExisting = val;
-              }
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const userAddress = await signer.getAddress();
+
+        const network = await provider.getNetwork();
+        if (network.chainId !== 91342) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x164ce' }],
+            });
+          } catch (switchError) {
+            if (switchError.code === 4902) {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: '0x164ce',
+                  chainName: 'GIWA Sepolia',
+                  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+                  rpcUrls: ['https://sepolia-rpc.giwa.io'],
+                  blockExplorerUrls: ['https://sepolia-explorer.giwa.io']
+                }],
+              });
             }
           }
-        });
-        const seqKey = "duel_seq_counter_q_" + qIdKey;
-        let storedCounter = parseInt(localStorage.getItem(seqKey) || "0", 10);
-        nextSubIndex = Math.max(maxExisting, storedCounter) + 1;
-        localStorage.setItem(seqKey, nextSubIndex.toString());
-      } catch(e) {
-        nextSubIndex = 1;
-      }
-
-      try {
-        showToast("⚔️ Opening Web3 Wallet: Transfer $" + (selectedDuelTier || 1) + " USDC stake...", "info");
-
-        if (!window.giwaWeb3 || !provider.signAndSendTransaction) {
-          throw new Error("Web3 signer not available.");
         }
 
-        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
-        const { blockhash } = await getFastRecentBlockhash(connection);
-        const senderPubkey = new giwaWeb3.PublicKey(activeWallet);
-        const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
-        const treasuryAta = TREASURY_USDC_ATA;
-        const usdcUnits = Math.round((selectedDuelTier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
+        const selectedSide = window.selectedDuelDirection || 'LONG';
+        const isLong = selectedSide.toUpperCase() === 'LONG';
+        const targetPriceVal = Math.floor(Number(window.targetPrice || 0) * 100);
+        const symbol = window.selectedDuelSymbol || 'BTC';
+        const stakeUsd = Number(selectedTier || window.selectedTier || 1);
 
-        const transaction = new giwaWeb3.Transaction({
-          recentBlockhash: blockhash,
-          feePayer: senderPubkey
-        });
-        // GIWA L2 EIP-1559 gas handled automatically
+        // Calculate ETH stake (approximate testnet conversion: 1 ETH = 2500 USD)
+        const ethPrice = 2500;
+        const stakeEth = (stakeUsd / ethPrice).toFixed(6);
+        const stakeWei = ethers.utils.parseEther(stakeEth);
 
-        // Real On-chain SPL Token Transfer to Treasury Escrow
-        // Deducts the chosen wager amount (e.g. 1 USDC) directly from the user's wallet
-        // Ensure Treasury ATA exists idempotently (safe no-op if already created)
-        // Ensure SENDER has an Associated Token Account for Devnet USDC idempotently (safe no-op if already created)
-        transaction.add(
-          new giwaWeb3.TransactionInstruction({
-            keys: [
-              { pubkey: senderPubkey, isSigner: true, isWritable: true },
-              { pubkey: senderAta, isSigner: false, isWritable: true },
-              { pubkey: senderPubkey, isSigner: false, isWritable: false },
-              { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
-              { pubkey: giwaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
-              { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
-            ],
-            programId: ASSOCIATED_TOKEN_PROGRAM_ID,
-            data: new Uint8Array([1])
-          })
-        );
+        const nowSec = Math.floor(Date.now() / 1000);
+        const entryDeadline = nowSec + (window.selectedEntryDurationSec || 900);
+        const settlementTime = nowSec + (window.selectedDurationSec || 3600);
 
-        // 1. Non-Custodial Anchor Escrow PDA Deposit (100% On-Chain Escrow)
-        // Tokens are transferred directly into the Program-controlled Escrow Vault PDA (NOT Treasury)
-        // This ensures cancelDuel can autonomously refund 100% of USDC back to the creator without any admin/private key
-        try {
-          const optCode = (selectedDuelOption === "GREEN" || selectedDuelOption === "YES") ? 1 : 2;
-          const deadlineSec = Math.floor(qDeadline / 1000);
-          const anchorCreateIx = createAnchorCreateDuelInstruction(
-            senderPubkey,
-            senderAta,
-            numericDuelId,
-            q.id || 1,
-            optCode,
-            usdcUnits,
-            deadlineSec
+        showToast("🦊 Confirm transaction in MetaMask...", "info");
+        const contract = new ethers.Contract(GIWA_PVP_CONTRACT, GIWA_PVP_ABI, signer);
+
+        const ref = getStoredReferrer ? getStoredReferrer() : null;
+        let tx;
+        if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase()) {
+          tx = await contract.createDuelWithReferral(
+            ethers.constants.AddressZero,
+            stakeWei,
+            targetPriceVal,
+            isLong,
+            entryDeadline,
+            settlementTime,
+            symbol,
+            ref,
+            { value: stakeWei }
           );
-          transaction.add(anchorCreateIx);
-        } catch (anchorErr) {
-          console.error("Critical Anchor PDA instruction error:", anchorErr);
-          throw new Error("Failed to construct Anchor Escrow deposit: " + anchorErr.message);
+        } else {
+          tx = await contract.createDuel(
+            ethers.constants.AddressZero,
+            stakeWei,
+            targetPriceVal,
+            isLong,
+            entryDeadline,
+            settlementTime,
+            symbol,
+            { value: stakeWei }
+          );
         }
-  
 
-        // Link to TREASURY_PUBKEY with 0 lamports transfer so GIWA indexes the transaction under Treasury
-        transaction.add(
-          giwaWeb3.SystemProgram.transfer({
-            fromPubkey: senderPubkey,
-            toPubkey: TREASURY_PUBKEY,
-            lamports: 0
-          })
-        );
+        showToast("🚀 Transaction submitted: " + tx.hash.slice(0, 10) + "...", "info");
+        const receipt = await tx.wait();
 
-        // On-chain Memo Instruction (Memo Program strictly requires all keys to be signers!)
-        const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-        const memoCreateText = `pvphub:create_duel:q${q.id}:${selectedDuelOption}:${selectedDuelTier || 1}:${activeWallet}:${nextSubIndex}:${onchainDuelId}`;
-        transaction.add(
-          new giwaWeb3.TransactionInstruction({
-            keys: [
-              { pubkey: senderPubkey, isSigner: true, isWritable: false }
-            ],
-            programId: MEMO_PROGRAM_ID,
-            data: new TextEncoder().encode(memoCreateText)
-          })
-        );
+        showToast("⚔️ Duel created successfully on GIWA!", "success");
+        closeCreateDuelModal();
 
-        const res = await provider.signAndSendTransaction(transaction, { skipPreflight: true });
-        txHash = res.signature || res;
-        fastConfirmTransaction(connection, txHash, 8000);
-        console.log("Real Devnet Tx Signature:", txHash);
-        showToast("✅ On-chain Tx confirmed! $" + (selectedDuelTier || 1) + " USDC deducted.", "success");
+        // Refresh UI
+        if (typeof fetchOnchainDuels === 'function') fetchOnchainDuels();
+        if (typeof renderAllDuels === 'function') renderAllDuels();
 
       } catch (err) {
-        console.error("Create duel failed:", err);
-        showToast("❌ Transfer failed or cancelled: " + (err.message || "Rejected"), "error");
-        if (btn) btn.disabled = false;
-        return;
-      }
-
-      const duelId = "duel_" + onchainDuelId;
-      const qNum = (q && (q.qNum || q.id)) ? (q.qNum || q.id) : 1;
-
-            // Dynamic Question Auto-Registration:
-            // If this on-chain duel belongs to a question ID not yet present in DUEL_QUESTIONS,
-            // dynamically register the question so that ALL accounts, browsers, and devices immediately see it!
-            if (!DUEL_QUESTIONS.find(function(item) { return item.id === qNum; })) {
-              DUEL_QUESTIONS.push({
-                id: qNum,
-                qNum: qNum,
-                category: "CRYPTO",
-                title: "Will Crypto close GREEN or RED?",
-                desc: "Official On-Chain Market #" + qNum,
-                deadlineDesc: "12-Hour Entry Window",
-                deadline: Date.now() + 86400000,
-                settlementTime: Date.now() + 172800000,
-                isEnded: false,
-                getDeadline: function() { return this.deadline; },
-                optA: "GREEN",
-                optALabel: "GREEN (Up)",
-                optASub: "Bullish Close",
-                optB: "RED",
-                optBLabel: "RED (Down)",
-                optBSub: "Bearish Close"
-              });
-              DUEL_QUESTIONS.sort(function(a, b) { return (a.id || 0) - (b.id || 0); });
-              try { renderDuelQuestions(); } catch(e) {}
-            }
-      const cleanTitle = q.title.indexOf("?") !== -1 ? q.title.slice(0, q.title.indexOf("?") + 1) : q.title;
-
-      const newDuel = {
-        id: duelId,
-        onchainDuelId: onchainDuelId,
-        numericDuelId: numericDuelId,
-        questionId: q.id,
-        qNum: q.qNum || q.id,
-        subIndex: nextSubIndex,
-        displayId: "#" + (q.qNum || q.id) + "-" + nextSubIndex,
-        title: cleanTitle,
-        category: q.category || "crypto",
-        symbol: q.symbol || "BTC-USD",
-        resolutionSource: q.resolutionSource || "Coinbase Exchange API",
-        tier: parseFloat(selectedDuelTier || 1),
-        payout: (parseFloat(selectedDuelTier || 1) * 1.8).toFixed(2),
-        cashback: (parseFloat(selectedDuelTier || 1) * 0.03).toFixed(2),
-        creator: activeWallet,
-        creatorOption: selectedDuelOption,
-        requiredOpponentOption: oppositeOption,
-        opponent: null,
-        opponentOption: oppositeOption,
-        status: "open",
-        createdAt: Date.now(),
-        deadline: qDeadline,
-        settlementTime: q.settlementTime || (qDeadline + 60 * 60 * 1000),
-        txHash: txHash
-      };
-
-      const store = getLocalDuels();
-      store[duelId] = newDuel;
-      saveLocalDuels(store);
-
-      // Broadcast globally to all other wallets and devices
-      try {
-        broadcastDuel(newDuel);
-      } catch(bErr) {
-        console.warn("broadcast error:", bErr);
-      }
-
-      try {
-        let myCreated = JSON.parse(localStorage.getItem("my_created_duel_ids") || "[]");
-        if (!myCreated.includes(duelId)) {
-          myCreated.push(duelId);
-          localStorage.setItem("my_created_duel_ids", JSON.stringify(myCreated));
+        console.error("Create duel error:", err);
+        const msg = err.reason || err.message || "Transaction failed";
+        showToast("❌ " + msg, "error");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '⚔️ Create Duel';
         }
-      } catch(e) {}
-
-      if (btn) btn.disabled = false;
-      renderAllDuels();
-      if (typeof renderMyDuels === "function") renderMyDuels();
-      showToast("✅ Duel #" + (q.qNum || q.id) + "-" + nextSubIndex + " created on-chain! $" + (selectedDuelTier || 1) + " USDC deposited.", "success");
+      }
     }
+
+    
 
     async function acceptDuel(duelId, tier) {
       if (window.duelsPaused) {
@@ -6862,329 +6735,84 @@ buffer/index.js:
         return;
       }
 
-      const provider = getGiwaProvider();
-      if (!provider) {
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-          showToast("📱 Opening in MetaMask App...", "info");
-          const targetUrl = encodeURIComponent(window.location.href);
-          window.location.href = "https://metamask.app.link/dapp/" + targetUrl + "?ref=pvphub";
-          return;
-        }
-        showToast("⚠️ MetaMask or EVM wallet not found! Opening MetaMask download page...", "warning");
-        window.open("https://metamask.io/download/", "_blank");
+      if (!window.ethereum) {
+        showToast("🦊 MetaMask not detected.", "error");
         return;
       }
 
-      let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
-      if (!activeWallet || !isConnected) {
-        showToast("🔑 Opening Web3 Wallet to connect...", "info");
-        activeWallet = await connectWallet(true);
-        if (!activeWallet) return;
-      }
-
-      const store = getLocalDuels();
-      let duelData = store[duelId];
-
-      if (!duelData) {
-        showToast("⚠️ Duel not found!", "error");
+      const activeWallet = window.selectedAccount || window.currentAccount || (window.ethereum.selectedAddress);
+      if (!activeWallet) {
+        showToast("⚠️ Please connect your MetaMask wallet first.", "warning");
+        try { await connectWallet(); } catch(e) {}
         return;
       }
 
-      const parentQId = getDuelQuestionId(duelData);
-      const parentQDeadline = getQuestionDeadline(parentQId);
-      if (Date.now() >= parentQDeadline || Date.now() >= duelData.deadline) {
-        showToast("⚠️ Entry window for this question has closed! Duels are no longer joinable.", "warning");
-        return;
-      }
-
-      if (duelData.status !== "open") {
-        showToast("⚠️ This duel has already been accepted or resolved!", "warning");
-        return;
-      }
-
-      if (duelData.creator && activeWallet && duelData.creator.toLowerCase() === activeWallet.toLowerCase()) {
-        showToast("⚠️ You cannot accept your own duel! Test accept from a secondary wallet.", "warning");
-        return;
-      }
-
-      let txHash = "";
       try {
-        showToast("⚔️ Opening Web3 Wallet: Transfer $" + (tier || 1) + " USDC to accept duel...", "info");
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const userAddress = await signer.getAddress();
 
-        if (!window.giwaWeb3 || !provider.signAndSendTransaction) {
-          throw new Error("Web3 signer not available.");
+        const stakeUsd = Number(tier || 1);
+        const ethPrice = 2500;
+        const stakeEth = (stakeUsd / ethPrice).toFixed(6);
+        const stakeWei = ethers.utils.parseEther(stakeEth);
+
+        showToast("🦊 Confirm join transaction in MetaMask...", "info");
+        const contract = new ethers.Contract(GIWA_PVP_CONTRACT, GIWA_PVP_ABI, signer);
+
+        const ref = getStoredReferrer ? getStoredReferrer() : null;
+        let tx;
+        if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase()) {
+          tx = await contract.joinDuelWithReferral(duelId, ref, { value: stakeWei });
+        } else {
+          tx = await contract.joinDuel(duelId, { value: stakeWei });
         }
 
-        const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
-        const { blockhash } = await getFastRecentBlockhash(connection);
-        const senderPubkey = new giwaWeb3.PublicKey(activeWallet);
-        const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
-        const treasuryAta = TREASURY_USDC_ATA;
-        const usdcUnits = Math.round((tier || 1) * 1000000); // 1 USDC = 1,000,000 units (6 decimals)
+        showToast("🚀 Joining duel: " + tx.hash.slice(0, 10) + "...", "info");
+        await tx.wait();
 
-        const transaction = new giwaWeb3.Transaction({
-          recentBlockhash: blockhash,
-          feePayer: senderPubkey
-        });
-        // GIWA L2 EIP-1559 gas handled automatically
-
-        // Real On-chain SPL Token Transfer to Treasury Escrow
-        // Ensure Treasury ATA exists idempotently (safe no-op if already created)
-        transaction.add(
-          new giwaWeb3.TransactionInstruction({
-            keys: [
-              { pubkey: senderPubkey, isSigner: true, isWritable: true },
-              { pubkey: treasuryAta, isSigner: false, isWritable: true },
-              { pubkey: TREASURY_PUBKEY, isSigner: false, isWritable: false },
-              { pubkey: DEVNET_USDC_MINT, isSigner: false, isWritable: false },
-              { pubkey: giwaWeb3.SystemProgram.programId, isSigner: false, isWritable: false },
-              { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
-            ],
-            programId: ASSOCIATED_TOKEN_PROGRAM_ID,
-            data: new Uint8Array([1])
-          })
-        );
-
-        // SPL Token Transfer Instruction
-        transaction.add(
-          createSplTransferInstruction(senderAta, treasuryAta, senderPubkey, usdcUnits)
-        );
-
-        // Link to TREASURY_PUBKEY with 0 lamports transfer so GIWA indexes the transaction under Treasury
-        transaction.add(
-          giwaWeb3.SystemProgram.transfer({
-            fromPubkey: senderPubkey,
-            toPubkey: TREASURY_PUBKEY,
-            lamports: 0
-          })
-        );
-
-        // On-chain Memo Instruction for Accept (Memo Program strictly requires all keys to be signers!)
-        const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-        const memoAcceptText = `pvphub:accept_duel:${duelData.displayId || duelId}:${tier || 1}:${activeWallet}`;
-        transaction.add(
-          new giwaWeb3.TransactionInstruction({
-            keys: [
-              { pubkey: senderPubkey, isSigner: true, isWritable: false }
-            ],
-            programId: MEMO_PROGRAM_ID,
-            data: new TextEncoder().encode(memoAcceptText)
-          })
-        );
-
-        const res = await provider.signAndSendTransaction(transaction);
-        txHash = res.signature || res;
-        showToast("⚔️ Match Tx confirmed on Devnet! $" + (tier || 1) + " USDC deducted.", "success");
+        showToast("⚔️ Joined duel successfully!", "success");
+        if (typeof fetchOnchainDuels === 'function') fetchOnchainDuels();
+        if (typeof renderAllDuels === 'function') renderAllDuels();
       } catch (err) {
-        console.error("Accept duel failed:", err);
-        showToast("❌ Accept cancelled or failed: " + (err.message || "Rejected"), "error");
-        return;
+        console.error("Accept duel error:", err);
+        const msg = err.reason || err.message || "Transaction failed";
+        showToast("❌ " + msg, "error");
       }
-
-      duelData.status = "active";
-      duelData.opponent = activeWallet;
-      duelData.opponentOption = duelData.requiredOpponentOption;
-      duelData.matchedAt = Date.now();
-      duelData.acceptTxHash = txHash;
-
-      store[duelId] = duelData;
-      saveLocalDuels(store);
-
-      try {
-        let myJoined = JSON.parse(localStorage.getItem("my_joined_duel_ids") || "[]");
-        if (!myJoined.includes(duelId)) {
-          myJoined.push(duelId);
-          localStorage.setItem("my_joined_duel_ids", JSON.stringify(myJoined));
-        }
-      } catch(e) {}
-
-      renderActiveDuels();
-      if (typeof renderMyDuels === "function") renderMyDuels();
-      showToast("⚔️ Match Locked! Duel " + (duelData.displayId || duelId) + " is now ACTIVE!", "success");
     }
+
+    
 
     async function cancelDuel(duelId) {
+      if (!window.ethereum) {
+        showToast("🦊 MetaMask not detected.", "error");
+        return;
+      }
+
       try {
-        let store = getLocalDuels();
-        let duelData = store[duelId];
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
 
-        if (!duelData) {
-          const all = Object.values(store);
-          duelData = all.find(d => d.id === duelId || d.displayId === duelId);
-        }
+        showToast("🦊 Confirm cancellation in MetaMask...", "info");
+        const contract = new ethers.Contract(GIWA_PVP_CONTRACT, GIWA_PVP_ABI, signer);
 
-        const provider = getGiwaProvider();
-        if (!provider) {
-          showToast("⚠️ Please connect MetaMask / Web3 wallet to cancel onchain!", "warning");
-          return;
-        }
+        const tx = await contract.cancelDuel(duelId);
+        showToast("🚀 Cancelling duel: " + tx.hash.slice(0, 10) + "...", "info");
+        await tx.wait();
 
-        let activeWallet = provider.publicKey ? provider.publicKey.toString() : null;
-        if (!activeWallet) {
-          activeWallet = await connectWallet(true);
-          if (!activeWallet) return;
-        }
-
-        if (duelData && duelData.creator && activeWallet) {
-          if (duelData.creator.toLowerCase() !== activeWallet.toLowerCase()) {
-            showToast("⚠️ Only the creator can cancel this duel on-chain!", "error");
-            return;
-          }
-        }
-
-        if (duelData && duelData.status && duelData.status !== "open" && duelData.status !== "cancelled") {
-          showToast("⚠️ Cannot cancel an active or completed duel", "warning");
-          return;
-        }
-
-        showToast("⚔️ Opening Web3 Wallet: Approve Onchain Cancel & Refund Transaction...", "info");
-
-        let txHash = "";
-        let txSuccess = false;
-
-        // 1. Submit Real GIWA Onchain Cancel & Reclaim Transaction
-        if (window.giwaWeb3 && provider.signAndSendTransaction) {
-          try {
-            const connection = new giwaWeb3.Connection("https://devnet.helius-rpc.com/?api-key=3205a2eb-9e55-4779-b400-a0db3f45f1ca", "confirmed");
-            const { blockhash } = await getFastRecentBlockhash(connection);
-            const senderPubkey = provider.publicKey;
-
-            const transaction = new giwaWeb3.Transaction({
-              recentBlockhash: blockhash,
-              feePayer: senderPubkey
-            });
-            // GIWA L2 EIP-1559 gas handled automatically
-
-            // Execute 100% Non-Custodial Anchor Escrow Refund if numeric duelId exists
-            try {
-              let numId = null;
-              if (duelData && duelData.numericDuelId) {
-                numId = duelData.numericDuelId;
-              } else if (duelData && duelData.onchainDuelId && duelData.onchainDuelId.startsWith("sol_")) {
-                const parsed = parseInt(duelData.onchainDuelId.replace("sol_", ""), 10);
-                if (!isNaN(parsed)) numId = parsed;
-              }
-              if (numId) {
-                const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
-                const anchorCancelIx = createAnchorCancelDuelInstruction(senderPubkey, senderAta, numId);
-                transaction.add(anchorCancelIx);
-              }
-            } catch(aErr) {
-              console.warn("Anchor cancel ix notice:", aErr);
-            }
-  
-            // 1. Reclaim stake by revoking SPL Token approval on-chain
-            try {
-              const senderAta = await getAssociatedTokenAddress(senderPubkey, DEVNET_USDC_MINT);
-              transaction.add(
-                createSplRevokeInstruction(senderAta, senderPubkey)
-              );
-            } catch (ataErr) {
-              console.warn("Could not add revoke instruction:", ataErr);
-            }
-
-            // 2. If Treasury/Founder is connected and cancelling on behalf of a player, send direct refund
-            if (duelData && duelData.creator && activeWallet.toLowerCase() === TREASURY_PUBKEY.toString().toLowerCase() && duelData.creator.toLowerCase() !== TREASURY_PUBKEY.toString().toLowerCase()) {
-              try {
-                const treasuryAta = await getAssociatedTokenAddress(TREASURY_PUBKEY, DEVNET_USDC_MINT);
-                const creatorPubkey = new giwaWeb3.PublicKey(duelData.creator);
-                const creatorAta = await getAssociatedTokenAddress(creatorPubkey, DEVNET_USDC_MINT);
-                const refundUnits = Math.round((duelData.tier || 1) * 1000000);
-                transaction.add(
-                  createSplTransferInstruction(treasuryAta, creatorAta, senderPubkey, refundUnits)
-                );
-              } catch(refErr) {
-                console.warn("Direct treasury refund instruction error:", refErr);
-              }
-            }
-
-            // 3. Link cancel transaction to TREASURY_PUBKEY with 0 lamports transfer so GIWA indexes the cancel under Treasury
-            transaction.add(
-              giwaWeb3.SystemProgram.transfer({
-                fromPubkey: senderPubkey,
-                toPubkey: TREASURY_PUBKEY,
-                lamports: 0
-              })
-            );
-
-            // 4. On-chain cancel proof via SPL Memo Program
-            const MEMO_PROGRAM_ID = new giwaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
-            const memoData = new TextEncoder().encode(`pvphub:cancel_duel:${duelId}:reclaim_deposit`);
-            
-            transaction.add(
-              new giwaWeb3.TransactionInstruction({
-                keys: [
-                  { pubkey: senderPubkey, isSigner: true, isWritable: true }
-                ],
-                programId: MEMO_PROGRAM_ID,
-                data: memoData
-              })
-            );
-
-            const { signature } = await provider.signAndSendTransaction(transaction);
-            txHash = signature;
-            txSuccess = true;
-            console.log("Onchain Cancel Tx Signature:", signature);
-            showToast("✅ Onchain Cancel Confirmed! Tx: " + signature.slice(0, 8) + "...", "success");
-          } catch(txErr) {
-            console.warn("Devnet onchain tx failed or rejected, checking signature fallback:", txErr);
-            if (txErr.message && (txErr.message.includes("User rejected") || txErr.message.includes("rejected"))) {
-              showToast("❌ Cancellation rejected by user in Web3 wallet.", "error");
-              return;
-            }
-          }
-        }
-
-        // 2. Cryptographic Fallback Signature if fee payer has 0 BTC
-        if (!txSuccess) {
-          try {
-            const cancelMsg = `⚔️ pvphub.fun Onchain Duel Cancellation\nAction: Cancel Duel & 100% Refund\nDuel ID: ${duelId}\nWallet: ${activeWallet}\nTimestamp: ${Date.now()}`;
-            const msg = new TextEncoder().encode(cancelMsg);
-            const sig = await provider.signMessage(msg, "utf8");
-            const sigBytes = sig.signature || sig;
-            txHash = "sig_" + Array.from(sigBytes).slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
-            txSuccess = true;
-            showToast("✅ Onchain Cancellation cryptographically signed!", "success");
-          } catch(sigErr) {
-            console.error("Signature rejected:", sigErr);
-            showToast("❌ Cancellation rejected in wallet: " + (sigErr.message || "User cancelled"), "error");
-            return;
-          }
-        }
-
-        // Apply cancellation state only after onchain confirmation
-        if (duelData) {
-          duelData.status = "cancelled";
-          duelData.cancelTxHash = txHash;
-          store[duelId] = duelData;
-          saveLocalDuels(store);
-        }
-
-        // Broadcast cancellation across all connected devices & tabs
-        if (typeof broadcastDuel === "function") {
-          try {
-            broadcastDuel({
-              id: duelId,
-              status: "cancelled",
-              cancelTxHash: txHash,
-              action: "cancel_duel"
-            });
-          } catch(e) {}
-        }
-
-        // Update duel in UI & re-render so it shows in Expired tab with Reclaim button
-        if (typeof renderAllDuels === "function") renderAllDuels();
-        if (typeof updateDuelCounter === "function") updateDuelCounter();
-        if (typeof window.renderActiveDuels === "function") window.renderActiveDuels();
-        if (typeof renderMyDuels === "function") renderMyDuels();
-
-        showToast("✅ Duel cancelled on-chain! 100% deposit refunded.", "success");
-      } catch(err) {
+        showToast("✅ Duel cancelled and refund processed!", "success");
+        if (typeof fetchOnchainDuels === 'function') fetchOnchainDuels();
+        if (typeof renderAllDuels === 'function') renderAllDuels();
+      } catch (err) {
         console.error("Cancel duel error:", err);
-        showToast("❌ Error: " + (err.message || "Transaction failed"), "error");
+        const msg = err.reason || err.message || "Cancellation failed";
+        showToast("❌ " + msg, "error");
       }
     }
+
+    
 
     async function resolveDuelMatch(duelId, winningOption) {
       const store = getLocalDuels();
