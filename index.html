@@ -9,7 +9,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>pvphub.fun | Onchain Skill & Duel Hub on Solana</title>
+  <title>pvphub.fun | Onchain 1v1 PvP Duel Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -609,7 +609,7 @@
       try {
         if (!tabId) tabId = "duel";
         if (tabId === "whitepaper") tabId = "docs";
-        const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"];
+        const tabs = ["duel", "jackpot", "leaderboard", "history", "docs", "admin"];
         
         // Hide all views, display selected view
         tabs.forEach(function(t) {
@@ -645,8 +645,7 @@
 
         const titles = {
           "duel": { title: "PvP Duels Arena", icon: "⚔️", sub: "" },
-          "vault2048": { title: "2048 Skill Challenge", icon: "🎮", sub: "Proof of Play & Daily Rewards" },
-          "jackpot": { title: "Grand Jackpot", icon: "🎯", sub: "Verifiable Weekly Prize Pool" },
+                    "jackpot": { title: "Grand Jackpot", icon: "🎯", sub: "Verifiable Weekly Prize Pool" },
           "leaderboard": { title: "Hall of Fame", icon: "🏆", sub: "Top Traders & Volume Rank" },
           "history": { title: "Duel History", icon: "📜", sub: "Settled Trades & Claimable Rewards" },
           "docs": { title: "Protocol Documentation", icon: "📖", sub: "Smart Contracts & Verification" },
@@ -671,11 +670,6 @@
         }
 
         // Trigger tab-specific initialization
-        if (tabId === "vault2048") { 
-          if (typeof update2048TicketsUI === "function") update2048TicketsUI(); 
-          if (typeof syncInitial2048History === "function") syncInitial2048History();
-          if (typeof window.render2048 === "function") window.render2048(); 
-        }
         if (tabId === "jackpot") {
           if (typeof window.renderJackpotSubmissions === "function") window.renderJackpotSubmissions();
       setInterval(() => { if (typeof updateJackpotMetrics === "function") updateJackpotMetrics(); }, 3000);
@@ -694,7 +688,7 @@
     // Auto-load route from hash
     window.addEventListener("DOMContentLoaded", function() {
       const hash = window.location.hash.replace("#", "");
-      if (hash && ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"].includes(hash)) {
+      if (hash && ["duel", "jackpot", "leaderboard", "history", "docs", "admin"].includes(hash)) {
         window.switchTab(hash);
       }
     });
@@ -712,7 +706,7 @@
   
     window.addEventListener("hashchange", function() {
       const hash = window.location.hash.replace("#", "");
-      if (hash && ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"].includes(hash)) {
+      if (hash && ["duel", "jackpot", "leaderboard", "history", "docs", "admin"].includes(hash)) {
         window.switchTab(hash);
       }
     });
@@ -809,13 +803,6 @@ buffer/index.js:
             <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
           </div>
         </button>
-        <button onclick="switchTab('vault2048')" id="btn-tab-vault2048" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
-          <span class="flex items-center gap-3 text-sm"><span>🎮</span> 2048 Skill</span>
-          <div class="flex items-center gap-2">
-            <span class="badge-tag px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400">SOON</span>
-            <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
-          </div>
-        </button>
         <button onclick="switchTab('leaderboard')" id="btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left cursor-pointer text-[#94a3b8] hover:bg-[#131b27] hover:text-white">
           <span class="flex items-center gap-3 text-sm"><span>🏆</span> Leaderboard</span>
           <div class="flex items-center gap-2">
@@ -877,10 +864,6 @@ buffer/index.js:
         </button>
         <button onclick="switchTab('jackpot')" id="m-btn-tab-jackpot" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#94a3b8] hover:text-white">
           <span class="flex items-center gap-3"><span>🎯</span> Grand Jackpot</span>
-          <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
-        </button>
-        <button onclick="switchTab('vault2048')" id="m-btn-tab-vault2048" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#94a3b8] hover:text-white">
-          <span class="flex items-center gap-3"><span>🎮</span> 2048 Skill</span>
           <span class="tab-dot w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
         </button>
         <button onclick="switchTab('leaderboard')" id="m-btn-tab-leaderboard" class="tab-btn w-full px-3.5 py-3 rounded-xl text-xs font-bold font-mono transition-all flex items-center justify-between text-left text-[#94a3b8] hover:text-white">
@@ -1230,587 +1213,6 @@ buffer/index.js:
       </div>
 
     </div>
-
-    <!-- 2. 2048 SKILL TAB -->
-    <div id="tab-vault2048" class="tab-content hidden space-y-6">
-
-    <div class="max-w-2xl mx-auto my-10 p-8 sm:p-10 rounded-3xl bg-[#131b27] shadow-sm border border-[#334155] bg-gradient-to-b from-cyan-950/40 to-slate-950/80 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
-      <div class="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#182230] blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 rounded-full hidden"></div>
-      
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#182230] border border-[#334155] text-[#cbd5e1] text-xs font-mono font-bold mb-6">
-        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
-        🔒 COMING SOON • PHASE 2
-      </div>
-
-      <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-[#131b27]/90 border border-[#334155] flex items-center justify-center text-4xl shadow-inner shadow-black/60">
-        🎮
-      </div>
-
-      <h2 class="text-2xl sm:text-3xl font-black font-mono text-white mb-3 tracking-tight">
-        2048 Tournament Skill Vaults
-      </h2>
-
-      <p class="text-sm sm:text-base text-neutral-700 max-w-lg mx-auto mb-6 leading-relaxed">
-        The onchain anti-cheat 2048 tournament engine is currently undergoing final audits and optimization. Only PvP Duels are open during Phase 1.
-      </p>
-
-      <div class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] max-w-md mx-auto mb-8 text-left text-xs text-slate-400 space-y-2 font-mono">
-        <div class="flex items-center justify-between text-neutral-700">
-          <span>Status:</span>
-          <span class="text-[#cbd5e1] font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping"></span>Under Audit & Development</span>
-        </div>
-        <div class="flex items-center justify-between text-neutral-700">
-          <span>Target Network:</span>
-          <span class="text-[#cbd5e1] font-bold">Solana</span>
-        </div>
-        <div class="flex items-center justify-between text-neutral-700">
-          <span>Active Flagship Mode:</span>
-          <span class="text-[#cbd5e1] font-bold">PvP Duels (LIVE )</span>
-        </div>
-      </div>
-
-      <button onclick="switchTab('duel')" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-black text-white hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-mono text-sm tracking-wide shadow-lg shadow-none transition-all transform hover:-translate-y-0.5">
-        <span>⚔️</span> PLAY PVP DUELS NOW
-      </button>
-    </div>
-  
-<div id="locked-vault2048-content" style="display:none !important;" class="hidden pointer-events-none opacity-0 select-none">
-      
-      <!-- HORIZONTAL TICKET TIERS SELECTION (5 COLUMNS ACROSS) -->
-      <div>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-          <h3 class="font-black text-white font-mono text-sm uppercase tracking-wider flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse shadow-sm shadow-blue-500/50"></span>
-            SELECT TOURNAMENT TIER & BUY TICKETS
-          </h3>
-          <!-- USER INVENTORY BADGE CONTAINER -->
-          <div id="user-tickets-badge" class="flex items-center gap-1.5 flex-wrap">
-            <span class="text-[11px] font-mono text-slate-400">🎟️ Stored Tickets: <b class="text-[#cbd5e1]">0</b></span>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-          
-          <!-- TIER 1 () -->
-          <div onclick="select2048Tier(1)" id="tier-card-2048-1" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] bg-[#182230] cursor-pointer transition-all flex flex-col justify-between space-y-3 hover:border-[#334155]">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-black text-white text-base">$0.0001 TIER <span class="text-[10px] text-[#cbd5e1] font-normal">($1 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-1" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-1" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">ACTIVE</span></div>
-              </div>
-              <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDC POOL -->
-                <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
-                  <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
-                    <span id="tier-pool-usdg-gross-1" class="text-white font-mono">$0.00 (0 Tix)</span>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
-                    <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-1" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
-                  </div>
-                </div>
-
-                
-              </div>
-            </div>
-            
-            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
-                <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-1" value="1" min="1" max="100" step="1" oninput="update2048Price(1)" onchange="update2048Price(1)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <button onclick="select2048Tier(1); startNew2048Game(true);" id="buy-btn-usdc-1" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-1">1</span> TICKET ($<span id="cost-usdc-1">0.0001</span> USDC)
-                </button>
-                
-              </div>
-            </div>
-          </div>
-
-          <!-- TIER 5 () -->
-          <div onclick="select2048Tier(5)" id="tier-card-2048-5" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] cursor-pointer transition-all flex flex-col justify-between space-y-3">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-black text-white text-base">$0.0005 TIER <span class="text-[10px] text-[#cbd5e1] font-normal">($5 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-5" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-5" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">ACTIVE</span></div>
-              </div>
-              <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDC POOL -->
-                <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
-                  <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
-                    <span id="tier-pool-usdg-gross-5" class="text-white font-mono">$0.00 (0 Tix)</span>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
-                    <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-5" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
-                  </div>
-                </div>
-
-                
-              </div>
-            </div>
-            
-            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
-                <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-5" value="1" min="1" max="100" step="1" oninput="update2048Price(5)" onchange="update2048Price(5)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <button onclick="select2048Tier(5); startNew2048Game(true);" id="buy-btn-usdc-5" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-5">1</span> TICKET ($<span id="cost-usdc-5">0.0005</span> USDC)
-                </button>
-                
-              </div>
-            </div>
-          </div>
-
-          <!-- TIER 10 (0) -->
-          <div onclick="select2048Tier(10)" id="tier-card-2048-10" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] cursor-pointer transition-all flex flex-col justify-between space-y-3">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-black text-white text-base">$0.001 TIER <span class="text-[10px] text-[#cbd5e1] font-normal">($10 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-10" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-10" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">ACTIVE</span></div>
-              </div>
-              <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDC POOL -->
-                <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
-                  <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
-                    <span id="tier-pool-usdg-gross-10" class="text-white font-mono">$0.00 (0 Tix)</span>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
-                    <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-10" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
-                  </div>
-                </div>
-
-                
-              </div>
-            </div>
-            
-            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
-                <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-10" value="1" min="1" max="100" step="1" oninput="update2048Price(10)" onchange="update2048Price(10)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <button onclick="select2048Tier(10); startNew2048Game(true);" id="buy-btn-usdc-10" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-10">1</span> TICKET ($<span id="cost-usdc-10">0.001</span> USDC)
-                </button>
-                
-              </div>
-            </div>
-          </div>
-
-          <!-- TIER 100 (00) -->
-          <div onclick="select2048Tier(100)" id="tier-card-2048-100" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] cursor-pointer transition-all flex flex-col justify-between space-y-3">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-black text-white text-base">$0.01 TIER <span class="text-[10px] text-[#cbd5e1] font-normal">($100 ÷ 10,000)</span></span>
-                <div class="flex items-center gap-1.5"><span id="tier-user-tix-100" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#131b27] border border-[#334155] text-slate-400">0 Tix</span><span id="tier-tag-100" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#cbd5e1] border border-[#334155]">ACTIVE</span></div>
-              </div>
-              <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDC POOL -->
-                <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
-                  <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
-                    <span id="tier-pool-usdg-gross-100" class="text-white font-mono">$0.00 (0 Tix)</span>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
-                    <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-100" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
-                  </div>
-                </div>
-
-                
-              </div>
-            </div>
-            
-            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
-                <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-100" value="1" min="1" max="100" step="1" oninput="update2048Price(100)" onchange="update2048Price(100)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <button onclick="select2048Tier(100); startNew2048Game(true);" id="buy-btn-usdc-100" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-100">1</span> TICKET ($<span id="cost-usdc-100">0.01</span> USDC)
-                </button>
-                
-              </div>
-            </div>
-          </div>
-
-          <!-- TIER 1000 (,000) -->
-          <div onclick="select2048Tier(1000)" id="tier-card-2048-1000" class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] cursor-pointer transition-all flex flex-col justify-between space-y-3">
-            <div>
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-black text-[#f8fafc] text-base">$1,000 TIER</span>
-                <span id="tier-tag-1000" class="hidden px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#182230] text-[#f8fafc] border border-[#334155]">ACTIVE</span>
-              </div>
-              <div class="mt-2 space-y-1.5 text-[11px] font-mono">
-                <!-- USDC POOL -->
-                <div class="p-1.5 rounded-lg bg-[#182230] border border-[#334155]">
-                  <div class="flex items-center justify-between text-neutral-700 font-bold text-[10px]">
-                    <span class="flex items-center gap-1 text-[#cbd5e1]">💵 USDC Pool:</span>
-                    <span id="tier-pool-usdg-gross-1000" class="text-white font-mono">$0.00 (0 Tix)</span>
-                  </div>
-                  <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5">
-                    <span>1st Prize (80%):</span>
-                    <span id="tier-pool-usdg-prize-1000" class="text-[#cbd5e1] font-bold font-mono">$0.00 USDC</span>
-                  </div>
-                </div>
-
-                
-              </div>
-            </div>
-            
-            <div class="pt-2 border-t border-[#334155] flex flex-col gap-2" onclick="event.stopPropagation()">
-              <div class="flex items-center justify-between bg-[#131b27]/90 px-2.5 py-1 rounded-xl border border-[#334155] text-xs font-mono">
-                <span class="text-slate-400 text-[11px]">Qty:</span>
-                <input type="number" id="qty-2048-1000" value="1" min="1" max="100" step="1" oninput="update2048Price(1000)" onchange="update2048Price(1000)" class="w-14 px-1.5 py-0.5 bg-[#131b27] border border-[#cbd5e1] rounded text-center font-mono font-bold text-[#f8fafc] text-xs focus:outline-none focus:border-[#334155]" />
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <button onclick="select2048Tier(1000); startNew2048Game(true);" id="buy-btn-usdc-1000" class="w-full py-2 px-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] text-[11px] font-mono font-black transition-all text-center shadow-sm">
-                  BUY <span id="lbl-qty-usdc-1000">1</span> TICKET ($<span id="cost-usdc-1000">0.1</span>)
-                </button>
-                
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- PLAYABLE 2048 HERO BOARD (CENTERED & PROMINENT) -->
-      <div class="max-w-2xl mx-auto w-full bg-[#131b27] shadow-sm p-6 rounded-3xl border border-[#334155] flex flex-col items-center relative shadow-2xl">
-        
-        <div class="w-full flex items-center justify-between mb-4 flex-wrap gap-2">
-          <div>
-            <span class="text-xs text-slate-400 font-mono">Active Run Metric:</span>
-            <p class="text-xs text-[#cbd5e1] font-mono font-bold">Single High Score (No Accumulation)</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#334155] font-mono text-center">
-              <span class="text-[10px] text-slate-400 block">CURRENT SCORE</span>
-              <span id="game-score" class="text-lg font-black text-white">0</span>
-            </div>
-            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#334155] font-mono text-center">
-              <span class="text-[10px] text-[#cbd5e1] block font-bold">BEST SCORE</span>
-              <span id="game-best" class="text-lg font-black text-[#cbd5e1]">0</span>
-            </div>
-            <!-- ACTIVE TIER BADGE -->
-            <div class="px-3 py-1.5 rounded-xl bg-[#131b27] border border-[#334155] font-mono text-center">
-              <span class="text-[10px] text-slate-400 block font-bold">SELECTED TIER</span>
-              <span id="board-selected-tier-badge" class="text-sm font-black text-[#cbd5e1] block">TIER 1 ($0.0001)</span>
-            </div>
-            <!-- USER TICKETS INVENTORY BOX -->
-            <div class="px-3 py-1.5 rounded-xl bg-[#182230] border border-[#334155] font-mono text-center shadow-lg shadow-none">
-              <span class="text-[10px] text-[#cbd5e1] block font-bold flex items-center justify-center gap-1">🎟️ TIER TICKETS</span>
-              <span id="tickets-count" class="text-lg font-black text-[#cbd5e1]">0</span>
-            </div>
-            <button id="btn-top-game-action" onclick="startNew2048Game(true)" class="p-2.5 px-4 rounded-xl bg-[#182230] text-slate-950 font-mono text-xs font-black shadow-lg shadow-none active:scale-95 transition-all">▶ START TIER 1 ($0.0001)</button>
-          </div>
-        </div>
-
-        <!-- THE 4X4 PLAYABLE GRID -->
-        <div class="relative w-full flex justify-center">
-          <div class="grid-2048 relative" id="board-container">
-            <!-- Tiles rendered dynamically by JS -->
-          </div>
-
-          <!-- BOARD LOCK OVERLAY (NO TICKETS) -->
-          <div id="board-lock-overlay" class="absolute inset-0 bg-[#131b27]/90 backdrop-blur-md z-20 flex flex-col items-center justify-center p-5 text-center space-y-3.5">
-            <div class="flex items-center gap-2">
-              <span class="text-2xl">🎮</span>
-              <h3 class="text-lg font-black text-white font-mono">SELECT TIER TO PLAY</h3>
-            </div>
-
-            <!-- QUICK TIER SELECTOR PILLS -->
-            <div class="flex flex-wrap items-center justify-center gap-1.5 max-w-xs">
-              <button type="button" onclick="select2048Tier(1)" id="tier-pill-1" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#182230] text-[#f8fafc] border border-[#334155] shadow transition-all">Tier 1: $0.0001</button>
-              <button type="button" onclick="select2048Tier(5)" id="tier-pill-5" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#334155] hover:border-[#334155] transition-all">Tier 5: $0.0005</button>
-              <button type="button" onclick="select2048Tier(10)" id="tier-pill-10" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#334155] hover:border-[#334155] transition-all">Tier 10: $0.001</button>
-              <button type="button" onclick="select2048Tier(100)" id="tier-pill-100" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-neutral-700 border border-[#334155] hover:border-[#334155] transition-all">Tier 100: $0.01</button>
-              <button type="button" onclick="select2048Tier(1000)" id="tier-pill-1000" class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-[#131b27] text-[#f8fafc] border border-[#334155] hover:border-[#334155] transition-all">Tier 1000: $0.1</button>
-            </div>
-
-            <p id="overlay-tier-desc" class="text-xs text-neutral-700 max-w-xs">
-              Playing in <b class="text-[#cbd5e1] font-mono">Tier 1</b>. Entry cost is <b class="text-[#cbd5e1] font-mono">$0.0001 USDC</b> which goes directly into Tier 1 Prize Pool.
-            </p>
-
-            <button id="overlay-start-btn" onclick="startNew2048Game(true)" class="w-full max-w-xs py-2.5 px-4 rounded-xl bg-black text-white hover:bg-neutral-800 text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all flex items-center justify-center gap-2">
-              ▶ START TIER 1 ($0.0001 USDC)
-            </button>
-          </div>
-
-          <!-- GAME OVER OVERLAY -->
-          <div id="game-over-overlay" class="hidden absolute inset-0 bg-[#131b27]/90 rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-4 backdrop-blur-sm z-20">
-            <span class="text-4xl">🎮</span>
-            <div>
-              <h3 class="text-2xl font-black text-white font-mono">ROUND COMPLETED</h3>
-              <p class="text-xs text-slate-400 mt-1">Single Run High Score Recorded Onchain</p>
-            </div>
-            <div class="p-3 rounded-xl bg-[#131b27] border border-[#334155] font-mono">
-              <span class="text-xs text-slate-400">Final Score:</span>
-              <span id="overlay-final-score" class="text-2xl font-black text-[#cbd5e1] block">0</span>
-            </div>
-            
-            <!-- ANTI-CHEAT & ONCHAIN SCORE RECORD -->
-            <div id="overlay-anticheat-proof" class="w-full max-w-xs">
-              <div class="bg-[#182230] border border-[#334155] rounded-xl p-3 text-left">
-                <div class="flex items-center justify-between text-xs text-[#cbd5e1] font-bold mb-2">
-                  <span>🛡️ ANTI-CHEAT FAIR RUN</span>
-                  <span class="text-[10px] text-slate-400 font-mono">Solana</span>
-                </div>
-                <button onclick="submit2048ScoreOnchain()" id="btn-submit-score-onchain" class="w-full py-2 px-3 rounded-lg bg-black text-white text-slate-950 font-black text-xs hover:from-cyan-300 hover:to-blue-400 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-none">
-                  ⚡ RECORD SCORE ONCHAIN
-                </button>
-                <div id="score-onchain-status" class="text-[10px] text-center text-slate-400 mt-2 font-mono"></div>
-              </div>
-            </div>
-            <div class="flex gap-3">
-              <button id="overlay-play-again-btn" onclick="startNew2048Game(true)" class="px-5 py-2.5 rounded-xl bg-[#182230] text-[#f8fafc] font-mono font-bold text-xs hover:bg-[#182230]">▶ PLAY AGAIN (START NEW RUN)</button>
-              <button onclick="switchTab('leaderboard'); setLeaderboardCategory('2048');" class="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-mono font-bold text-xs hover:bg-slate-700">VIEW LEADERBOARD</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- CONTROLS & D-PAD -->
-        <div class="w-full flex flex-col items-center mt-4 space-y-3">
-          <div class="w-full flex justify-between items-center text-xs font-mono text-slate-400">
-            <span>⌨️ Use Arrow Keys / WASD or Click Buttons Below</span>
-            <span class="text-[#cbd5e1] font-bold" id="board-status-text">🎮 Ready To Play</span>
-          </div>
-
-          <div class="grid grid-cols-3 gap-2 w-48 pt-1">
-            <div></div>
-            <button onclick="handle2048Move('up')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-[#cbd5e1] text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▲</button>
-            <div></div>
-            <button onclick="handle2048Move('left')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-[#cbd5e1] text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">◀</button>
-            <button onclick="handle2048Move('down')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-[#cbd5e1] text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▼</button>
-            <button onclick="handle2048Move('right')" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-[#cbd5e1] text-white font-mono font-black text-base flex items-center justify-center active:scale-90 transition-all shadow-lg">▶</button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- LIVE TOP 3 RECORD HOLDERS -->
-      <div class="bg-[#131b27] shadow-sm p-6 rounded-3xl border border-[#334155] space-y-5 mt-6">
-        <div class="flex items-center justify-between flex-wrap gap-3">
-          <div class="flex items-center gap-2">
-            <span class="text-xl">🏆</span>
-            <div>
-              <h3 class="font-black text-white font-mono text-base">LIVE TOP 3 RECORD HOLDERS (ALL TIERS)</h3>
-              <p class="text-xs text-slate-400">Single Highest Record in Current 20-Min Tournament Cycle • 80% Net Pool to #1 Winner</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span id="cycle-countdown-2048" class="text-xs font-mono font-bold text-[#cbd5e1] bg-[#182230] border border-[#334155] px-3 py-1 rounded-full">⏳ 20M CYCLE: 19m 59s</span>
-            <span class="text-xs font-mono font-bold text-[#cbd5e1] bg-[#182230] border border-[#334155] px-3 py-1 rounded-full">⚡ Live Sync Online</span>
-          </div>
-        </div>
-        <!-- 2048 WINNER CLAIM BANNER (SHOWN WHEN USER WON 1ST PLACE) -->
-        <div id="banner-claim-2048" class="hidden p-4 rounded-2xl bg-black text-white border-2 border-[#334155] shadow-xl shadow-none flex items-center justify-between flex-wrap gap-3">
-          <div class="flex items-center gap-3">
-            <span class="text-3xl">🎉</span>
-            <div>
-              <div class="font-mono font-black text-[#cbd5e1] text-sm md:text-base" id="claim-banner-title">YOU WON #1 SPOT IN TIER $5!</div>
-              <div class="text-xs text-neutral-700" id="claim-banner-sub">80% Net Prize Pool Ready to Claim • 20% Protocol Fee Deducted</div>
-            </div>
-          </div>
-          <button id="claim-banner-btn" onclick="claim2048WinnerPrize()" class="px-5 py-2.5 rounded-xl bg-[#182230] hover:bg-[#182230] text-slate-950 font-mono font-black text-xs transition-all shadow-lg shadow-none active:scale-95">
-            💰 CLAIM 1ST PRIZE
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-start">
-          <div id="top3-tier-1" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
-              <span class="font-mono font-black text-white text-sm">$1 TIER</span>
-              <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-1" class="text-[#cbd5e1]">$0.00 USDC</span>
-                
-              </div>
-            </div>
-            <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#182230] p-2 rounded-lg border border-[#334155] text-slate-400">
-                <span>🥇 #1 No active record</span>
-                <span class="text-slate-500">0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥈 #2 Empty</span>
-                <span>0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥉 #3 Empty</span>
-                <span>0 pts</span>
-              </div>
-            </div>
-            <div id="my-card-status-1" class="pt-2 border-t border-[#334155] mt-2">
-              <div class="p-2 rounded-xl bg-[#182230] border border-[#334155] flex items-center justify-between text-[11px] font-mono">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
-                  <span id="my-rank-1" class="font-black text-[#f8fafc]">#--</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-slate-400">Best:</span>
-                  <span id="my-score-1" class="font-black text-[#cbd5e1]">0 pts</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="top3-tier-5" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
-              <span class="font-mono font-black text-white text-sm">$5 TIER</span>
-              <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-5" class="text-[#cbd5e1]">$0.00 USDC</span>
-                
-              </div>
-            </div>
-            <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#182230] p-2 rounded-lg border border-[#334155] text-slate-400">
-                <span>🥇 #1 No active record</span>
-                <span class="text-slate-500">0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥈 #2 Empty</span>
-                <span>0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥉 #3 Empty</span>
-                <span>0 pts</span>
-              </div>
-            </div>
-            <div id="my-card-status-5" class="pt-2 border-t border-[#334155] mt-2">
-              <div class="p-2 rounded-xl bg-[#182230] border border-[#334155] flex items-center justify-between text-[11px] font-mono">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
-                  <span id="my-rank-5" class="font-black text-[#f8fafc]">#--</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-slate-400">Best:</span>
-                  <span id="my-score-5" class="font-black text-[#cbd5e1]">0 pts</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="top3-tier-10" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
-              <span class="font-mono font-black text-white text-sm">$10 TIER</span>
-              <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-10" class="text-[#cbd5e1]">$0.00 USDC</span>
-                
-              </div>
-            </div>
-            <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#182230] p-2 rounded-lg border border-[#334155] text-slate-400">
-                <span>🥇 #1 No active record</span>
-                <span class="text-slate-500">0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥈 #2 Empty</span>
-                <span>0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥉 #3 Empty</span>
-                <span>0 pts</span>
-              </div>
-            </div>
-            <div id="my-card-status-10" class="pt-2 border-t border-[#334155] mt-2">
-              <div class="p-2 rounded-xl bg-[#182230] border border-[#334155] flex items-center justify-between text-[11px] font-mono">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
-                  <span id="my-rank-10" class="font-black text-[#f8fafc]">#--</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-slate-400">Best:</span>
-                  <span id="my-score-10" class="font-black text-[#cbd5e1]">0 pts</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="top3-tier-100" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
-              <span class="font-mono font-black text-white text-sm">$100 TIER</span>
-              <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-100" class="text-[#cbd5e1]">$0.00 USDC</span>
-                
-              </div>
-            </div>
-            <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#182230] p-2 rounded-lg border border-[#334155] text-slate-400">
-                <span>🥇 #1 No active record</span>
-                <span class="text-slate-500">0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥈 #2 Empty</span>
-                <span>0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥉 #3 Empty</span>
-                <span>0 pts</span>
-              </div>
-            </div>
-            <div id="my-card-status-100" class="pt-2 border-t border-[#334155] mt-2">
-              <div class="p-2 rounded-xl bg-[#182230] border border-[#334155] flex items-center justify-between text-[11px] font-mono">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
-                  <span id="my-rank-100" class="font-black text-[#f8fafc]">#--</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-slate-400">Best:</span>
-                  <span id="my-score-100" class="font-black text-[#cbd5e1]">0 pts</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="top3-tier-1000" class="p-4 rounded-2xl bg-[#131b27] border border-[#334155] space-y-3">
-            <div class="flex items-center justify-between pb-2 border-b border-[#334155]">
-              <span class="font-mono font-black text-[#f8fafc] text-sm">$1,000 TIER</span>
-              <div class="flex flex-col text-[10px] font-mono font-bold text-right leading-tight">
-                <span id="top3-prize-usdg-1000" class="text-[#cbd5e1]">$0.00 USDC</span>
-                
-              </div>
-            </div>
-            <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between bg-[#182230] p-2 rounded-lg border border-[#334155] text-slate-400">
-                <span>🥇 #1 No active record</span>
-                <span class="text-slate-500">0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥈 #2 Empty</span>
-                <span>0 pts</span>
-              </div>
-              <div class="flex items-center justify-between bg-[#182230] p-1.5 rounded-lg border border-white/5 text-slate-500">
-                <span>🥉 #3 Empty</span>
-                <span>0 pts</span>
-              </div>
-            </div>
-            <div id="my-card-status-1000" class="pt-2 border-t border-[#334155] mt-2">
-              <div class="p-2 rounded-xl bg-[#182230] border border-[#334155] flex items-center justify-between text-[11px] font-mono">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[#cbd5e1] font-bold">👤 Your Rank:</span>
-                  <span id="my-rank-1000" class="font-black text-[#f8fafc]">#--</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-slate-400">Best:</span>
-                  <span id="my-score-1000" class="font-black text-[#cbd5e1]">0 pts</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-</div>
 
     <!-- 3. GRAND JACKPOT TAB -->
     <div id="tab-jackpot" class="tab-content hidden space-y-8">
@@ -2310,11 +1712,6 @@ buffer/index.js:
           <h4 class="font-black text-white font-mono text-sm">1. PVP DUELS</h4>
           <p class="text-xs text-slate-400 mt-1">Wins & Streaks</p>
         </div>
-        <div onclick="setLeaderboardCategory('2048')" id="lb-cat-2048" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
-          <span class="text-2xl block mb-2">🎮</span>
-          <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
-          <p class="text-xs text-slate-400 mt-1">Single High Score Records</p>
-        </div>
         <div onclick="setLeaderboardCategory('jackpot')" id="lb-cat-jackpot" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎯</span>
           <h4 class="font-black text-white font-mono text-sm">3. GRAND JACKPOT</h4>
@@ -2407,11 +1804,6 @@ buffer/index.js:
           <h4 class="font-black text-white font-mono text-sm">1. PVP DUELS</h4>
           <p class="text-xs text-slate-400 mt-1">Verified 90% Duel Champions</p>
         </div>
-        <div onclick="setHistoryCategory('2048')" id="hist-cat-2048" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
-          <span class="text-2xl block mb-2">🎮</span>
-          <h4 class="font-black text-white font-mono text-sm">2. 2048 SKILL</h4>
-          <p class="text-xs text-slate-400 mt-1">Verified 80% 24h Top Record Holders</p>
-        </div>
         <div onclick="setHistoryCategory('jackpot')" id="hist-cat-jackpot" class="bg-[#131b27] shadow-sm p-5 rounded-2xl border border-[#334155] hover:border-[#cbd5e1] cursor-pointer transition-all text-center">
           <span class="text-2xl block mb-2">🎯</span>
           <h4 class="font-black text-white font-mono text-sm">3. GRAND JACKPOT</h4>
@@ -2471,11 +1863,7 @@ buffer/index.js:
                 <span class="text-xs font-bold text-[#cbd5e1] font-mono block">2. Chance</span>
                 <span class="text-[11px] text-slate-400 font-mono mt-1 block">Grand Jackpot pools with fair outcome distribution and rollover prize vaults.</span>
               </div>
-              <div class="p-3 rounded-xl bg-[#131b27] border border-[#334155]">
-                <span class="text-xs font-bold text-[#cbd5e1] font-mono block">3. Skill</span>
-                <span class="text-[11px] text-slate-400 font-mono mt-1 block">Tournament Skill Vaults & competitive daily leaderboards (24H UTC single top score record).</span>
               </div>
-            </div>
           </div>
         </div>
 
@@ -2544,20 +1932,7 @@ buffer/index.js:
           </ul>
         </div>
 
-        <div class="space-y-4 border-t border-[#334155] pt-8">
-          <h2 class="text-xl font-bold text-white font-mono">3. Skill (2048 Tournament Skill Vaults)</h2>
-          <p class="text-sm text-slate-300 leading-relaxed">
-            Players compete with each other based on skill. Skill tournaments run in continuous 24 hour cycles ending at 00:00 UTC every day.
-          </p>
-          <ul class="list-disc list-inside text-sm text-slate-300 space-y-2 pl-2">
-            <li><strong class="text-white">Single High Score Record (No Accumulation):</strong> Scores from multiple games are never summed together. Only a player highest single run record qualifies.</li>
-            <li><strong class="text-white">Unlimited Ticket Purchases:</strong> Players may buy as many tickets as desired to improve their top record.</li>
-            <li><strong class="text-white">SPECIAL $PVP PERK: 2X TICKETS BONUS:</strong> Buy tickets using the native $PVP token and get 2x tickets per 1 ticket fee!</li>
-            <li><strong class="text-white">Reward Distribution:</strong> 80% of the entire tier vault is transferred to the top verified record holder, with 20% allocated as protocol fee.</li>
-          </ul>
         </div>
-
-      </div>
 
                 
           <!-- 4. OFFICIAL PVP TOKEN CONTRACT -->
@@ -2804,7 +2179,7 @@ buffer/index.js:
     function switchTab(tabId) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       try {
-        const tabs = ["duel", "vault2048", "jackpot", "leaderboard", "history", "docs", "admin"];
+        const tabs = ["duel", "jackpot", "leaderboard", "history", "docs", "admin"];
         tabs.forEach(t => {
           const el = document.getElementById("tab-" + t);
           if (el) {
@@ -2831,7 +2206,6 @@ buffer/index.js:
 
         try {
           if (tabId === "admin") { if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable(); if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats(); }
-          if (tabId === "vault2048" && typeof render2048 === "function") render2048();
           if (tabId === "jackpot") {
             if (typeof renderJackpotSubmissions === "function") renderJackpotSubmissions();
             if (typeof updateJackpotMetrics === "function") updateJackpotMetrics();
@@ -2886,19 +2260,6 @@ buffer/index.js:
     } catch(e) { return null; }
   })();
     var SOLANA_CHAIN_ID = "0x1237"; // 4663 in hex (Solana)
-    var TOURNAMENT_2048_CONTRACT = "0xddef71f4e631a73476ebd9efa7770d810d51e8a8";
-    var TOURNAMENT_2048_ABI = [
-      "function getCurrentCycleId() view returns (uint256)",
-      "function getCycleEndTimestamp(uint256 cycleId) view returns (uint256)",
-      "function buyTicketNative(uint16 tier, uint256 quantity) external payable",
-      "function buyTicketToken(address token, uint16 tier, uint256 quantity, uint256 amount) external",
-      "function submitVerifiedScore(uint16 tier, uint256 cycleId, uint256 score, uint256 movesCount, bytes32 boardHash, uint256 deadline, bytes32 nonce, bytes signature) external",
-      "function claimPrize(uint256 cycleId, uint16 tier, address token) external",
-      "function leaders(uint256 cycleId, uint16 tier) view returns (address winner, uint256 score, uint256 movesCount, bytes32 boardHash, uint256 timestamp, bool claimed)",
-      "function nativePools(uint256 cycleId, uint16 tier) view returns (uint256)",
-      "function tokenPools(uint256 cycleId, uint16 tier, address token) view returns (uint256)",
-      "function personalBests(address player, uint16 tier) view returns (uint256)"
-    ];
 
     var DUEL_CONTRACT_ADDRESS = "Fn1G1zpiiZk5ZXL27tcyG5FgVjSVP7ZUL3TainYfWFJK";
     var QUESTION_REGISTRY_ADDRESS = "0xfd0266e7c27a96b7cffa00d1c3cae08e03e9c3f5";
@@ -2957,8 +2318,6 @@ buffer/index.js:
         if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50";
         showToast("Solana Wallet Disconnected", "info");
         if (typeof renderAllDuels === "function") renderAllDuels();
-        if (typeof update2048TicketsUI === "function") update2048TicketsUI();
-        if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
         return;
       }
 
@@ -3003,8 +2362,6 @@ buffer/index.js:
           if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
           if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats();
           if (typeof renderAllDuels === "function") renderAllDuels();
-          if (typeof update2048TicketsUI === "function") update2048TicketsUI();
-          if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
           if (typeof updateLeaderboardUI === "function") updateLeaderboardUI();
           if (typeof fetchSolanaUsdcBalance === "function") fetchSolanaUsdcBalance(userAddress);
           return;
@@ -3043,8 +2400,6 @@ buffer/index.js:
           if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
           if (typeof checkAdminAccess === "function") checkAdminAccess(userAddress);
           if (typeof renderAllDuels === "function") renderAllDuels();
-          if (typeof update2048TicketsUI === "function") update2048TicketsUI();
-          if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
           if (typeof updateLeaderboardUI === "function") updateLeaderboardUI();
           if (typeof fetchSolanaUsdcBalance === "function") fetchSolanaUsdcBalance(userAddress);
         }
@@ -4034,366 +3389,6 @@ buffer/index.js:
       console.error("Jackpot init error:", e);
     }
     
-    // 2048 SKILL VAULT & TOURNAMENT ENGINE
-    let board2048 = [
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    let score2048 = 0;
-    let bestScore2048 = 0;
-    let is2048GameOver = false;
-        let selected2048Tier = 1;
-    let is2048RunActive = false;
-
-    // Anti-Cheat Cryptographic Proof & Move Verification Engine
-    let active2048RunProof = null;
-
-    // Unified Ticket & Run ID Lifecycle Manager
-    function getNext2048TicketId(wallet, tier) {
-      const key = "pvp_2048_ticket_counter_" + (wallet ? wallet.toLowerCase() : "anon") + "_t" + tier;
-      let cur = 0;
-      try {
-        cur = parseInt(localStorage.getItem(key) || "0") || 0;
-      } catch(e){}
-      cur += 1;
-      try {
-        localStorage.setItem(key, cur.toString());
-      } catch(e){}
-      return cur;
-    }
-
-    function getCurrent2048TicketId(wallet, tier) {
-      const key = "pvp_2048_ticket_counter_" + (wallet ? wallet.toLowerCase() : "anon") + "_t" + tier;
-      try {
-        return parseInt(localStorage.getItem(key) || "1") || 1;
-      } catch(e){
-        return 1;
-      }
-    }
-    
-    let lastVerified2048Proof = null;
-
-
-    // Per-Tier Ticket Store: { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 }
-    function get2048TicketsStore() {
-      let addr = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
-      if (!addr) {
-        try { addr = (localStorage.getItem("pvp_last_active_wallet") || "").toLowerCase(); } catch(e){}
-      }
-      let store = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
-      if (addr) {
-        try {
-          const raw = localStorage.getItem("pvp_2048_tier_tickets_" + addr);
-          if (raw) store = Object.assign(store, JSON.parse(raw));
-        } catch(e){}
-      }
-      // Global fallback (strictly per-wallet, no fake leakage)
-      if (!addr) {
-        try {
-          const rawG = localStorage.getItem("pvp_2048_tier_tickets_global");
-          if (rawG) {
-            const parsedG = JSON.parse(rawG);
-            [1, 5, 10, 100, 1000].forEach(t => {
-              if (parsedG[t]) store[t] = parsedG[t];
-            });
-          }
-        } catch(e){}
-      }
-
-      // Pure Real Environment: PURGE ALL LEGACY MOCK/TEST TICKETS
-      try {
-        const purgeKey = "pvp_real_mode_pure_accounting_v1";
-        if (!localStorage.getItem(purgeKey)) {
-          localStorage.removeItem("pvp_2048_tier_tickets_global");
-          if (addr) localStorage.removeItem("pvp_2048_tier_tickets_" + addr);
-          for (let i = 0; i < localStorage.length; i++) {
-            const k = localStorage.key(i);
-            if (k && (k.startsWith("pvp_ticket_tier_migrated_") || k.startsWith("pvp_mock_"))) {
-              localStorage.removeItem(k);
-            }
-          }
-          localStorage.setItem(purgeKey, "true");
-          store = { 1: 0, 5: 0, 10: 0, 100: 0, 1000: 0 };
-        }
-      } catch(e){}
-
-      return store;
-    }
-
-    function save2048TicketsStore(store, customAddr) {
-      let addr = customAddr || ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || null) || "").toLowerCase();
-      if (!addr) {
-        try { addr = (localStorage.getItem("pvp_last_active_wallet") || "").toLowerCase(); } catch(e){}
-      }
-      if (addr) {
-        try { localStorage.setItem("pvp_2048_tier_tickets_" + addr, JSON.stringify(store)); } catch(e){}
-      }
-      try { localStorage.setItem("pvp_2048_tier_tickets_global", JSON.stringify(store)); } catch(e){}
-    }
-
-    function get2048TierTickets(tier) {
-      const store = get2048TicketsStore();
-      const t = parseInt(tier) || 1;
-      return parseInt(store[t], 10) || 0;
-    }
-
-    function set2048TierTickets(tier, count) {
-      const store = get2048TicketsStore();
-      const t = parseInt(tier) || 1;
-      store[t] = Math.max(0, parseInt(count, 10) || 0);
-      save2048TicketsStore(store);
-      update2048TicketsUI();
-    }
-
-    function add2048TierTickets(tier, count) {
-      const store = get2048TicketsStore();
-      const t = parseInt(tier) || 1;
-      store[t] = (store[t] || 0) + Math.max(0, parseInt(count, 10) || 0);
-      save2048TicketsStore(store);
-      update2048TicketsUI();
-    }
-
-    function getTotal2048Tickets() {
-      const store = get2048TicketsStore();
-      return (store[1] || 0) + (store[5] || 0) + (store[10] || 0) + (store[100] || 0) + (store[1000] || 0);
-    }
-
-    function get2048Tickets(tier) {
-      const t = tier !== undefined ? tier : selected2048Tier;
-      return get2048TierTickets(t);
-    }
-
-    function set2048Tickets(count) {
-      set2048TierTickets(selected2048Tier, count);
-    }
-
-    function init2048BoardPreview() {
-      board2048 = [
-        [2, 0, 0, 2],
-        [0, 4, 0, 0],
-        [0, 0, 8, 0],
-        [0, 0, 0, 0]
-      ];
-      score2048 = 0;
-      is2048GameOver = false;
-      render2048();
-    }
-
-    function update2048TicketsUI() {
-      const store = get2048TicketsStore();
-      const activeTickets = get2048TierTickets(selected2048Tier);
-      const totalTickets = getTotal2048Tickets();
-
-      // 1. Update individual Tier Card ticket badges
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const badge = document.getElementById("tier-user-tix-" + t);
-        const tix = store[t] || 0;
-        if (badge) {
-          if (tix > 0) {
-            badge.innerHTML = `🎟️ ${tix} Ticket${tix > 1 ? 's' : ''} Ready`;
-            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#182230] text-neutral-800 border border-[#334155] font-bold";
-          } else {
-            badge.innerText = "0 Tickets";
-            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white border border-[#334155] text-slate-500";
-          }
-        }
-      });
-
-      // 2. Update Header Badge
-      const countEl = document.getElementById("tickets-count");
-      if (countEl) countEl.innerText = activeTickets;
-      
-      const startBtn = document.getElementById("start-2048-btn");
-      if (startBtn) {
-        if (activeTickets > 0) {
-          startBtn.innerHTML = "▶ START GAME (USE 1 TICKET • " + activeTickets + " READY)";
-          startBtn.className = "w-full py-2.5 rounded-xl bg-black text-white hover:bg-neutral-800 text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all flex items-center justify-center gap-1.5";
-        } else {
-          const unitPrice = (selected2048Tier / 10000).toFixed(4);
-          startBtn.innerHTML = "▶ BUY TICKET & START ($" + unitPrice + " USDC)";
-          startBtn.className = "w-full py-2.5 rounded-xl bg-[#182230] hover:bg-[#182230] text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all flex items-center justify-center gap-1.5";
-        }
-      }
-      
-      const badgeEl = document.getElementById("user-tickets-badge");
-      if (badgeEl) {
-        if (totalTickets > 0) {
-          let list = [];
-          [1, 5, 10, 100, 1000].forEach(t => {
-            const count = store[t] || 0;
-            if (count > 0) {
-              list.push(`<span class="px-2 py-0.5 rounded-lg bg-[#182230] text-[#cbd5e1] border border-[#334155] font-bold">${count}x ${t} Ticket${count > 1 ? 's' : ''}</span>`);
-            }
-          });
-          badgeEl.innerHTML = `<div class="flex items-center gap-1.5 flex-wrap"><span class="text-white font-bold">🎟️ Your Tickets:</span> ${list.join("<span class='text-slate-500'>+</span>")} <span class="text-slate-400 text-[11px] font-normal">(${totalTickets} Total)</span></div>`;
-          badgeEl.className = "text-xs font-mono bg-white/90 border border-[#334155] px-3.5 py-1.5 rounded-xl shadow-sm";
-        } else {
-          badgeEl.innerHTML = "🎟️ <span id='tickets-count'>0</span> Tickets (Buy Above)";
-          badgeEl.className = "text-xs font-mono text-slate-400 bg-white border border-[#334155] px-3 py-1.5 rounded-xl";
-        }
-      }
-
-      // 3. Update Top Action Button beside New Game
-      const topStartBtn = document.getElementById("btn-top-game-action");
-      if (topStartBtn) {
-        if (is2048RunActive) {
-          topStartBtn.innerText = "↻ RESTART RUN";
-          topStartBtn.className = "p-2 px-3 rounded-xl bg-[#182230] text-neutral-800 hover:bg-[#182230] border border-[#334155] font-mono text-xs font-bold transition-all";
-          topStartBtn.onclick = function() { startNew2048Game(true); };
-        } else if (activeTickets > 0) {
-          topStartBtn.innerText = "▶ START TIER $" + selected2048Tier;
-          topStartBtn.className = "p-2 px-3 rounded-xl bg-[#182230] hover:bg-[#182230] text-black font-mono text-xs font-black shadow-lg shadow-none transition-all active:scale-95 animate-pulse";
-          topStartBtn.onclick = function() { startNew2048Game(true); };
-        } else {
-          topStartBtn.innerText = "🎟️ BUY TICKET"; topStartBtn.className = "p-2 px-3 rounded-xl bg-[#182230] hover:bg-[#182230] text-black font-mono text-xs font-bold transition-all active:scale-95";
-          topStartBtn.className = "p-2 px-3 rounded-xl bg-[#182230] text-neutral-800 hover:bg-[#182230] border border-[#334155] font-mono text-xs font-bold transition-all";
-          topStartBtn.onclick = function() { buy2048Ticket(selected2048Tier, "USDC"); };
-        }
-      }
-
-      // 4. Update Board Lock Overlay & Stage 1 Enforcement
-      const lockOverlay = document.getElementById("board-lock-overlay");
-      const statusText = document.getElementById("board-status-text");
-      const cycle = get2048CycleInfo();
-      const currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
-      const isOwner = currentWallet.toLowerCase() === "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase();
-
-      // If round has ended, force is2048RunActive to false and lock everything
-      if (cycle.isEnded) {
-        is2048RunActive = false;
-        if (startBtn) {
-          startBtn.innerHTML = "🔒 ROUND " + cycle.cycleIndex + " ENDED (NO ACTIVE ROUND)";
-          startBtn.className = "w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 font-mono font-bold text-xs border border-[#334155] cursor-not-allowed flex items-center justify-center gap-1.5";
-        }
-        if (lockOverlay) {
-          lockOverlay.classList.remove("hidden");
-          lockOverlay.innerHTML = `
-            <div class="flex flex-col items-center justify-center p-6 text-center space-y-4">
-              <span class="text-5xl">🔒</span>
-              <div>
-                <div class="inline-block px-3 py-1 rounded-full bg-[#182230] text-[#cbd5e1] border border-[#334155] text-xs font-mono font-bold mb-2">
-                  STAGE 1: ROUND ${cycle.cycleIndex} ENDED
-                </div>
-                <h3 class="text-2xl font-black text-white font-mono tracking-wide">NO ACTIVE ROUND</h3>
-                <p class="text-xs text-neutral-700 max-w-sm mt-2">
-                  Round ${cycle.cycleIndex} has concluded. All game starts, ticket purchases, and active sessions are paused until the next round starts.
-                </p>
-              </div>
-              ${isOwner ? `
-                <div class="pt-2 flex flex-col items-center gap-2">
-                  <button onclick="startNext2048Round()" class="px-6 py-2.5 rounded-xl bg-black text-white hover:bg-neutral-800 text-slate-950 font-black font-mono text-sm shadow-xl shadow-none active:scale-95 transition-all cursor-pointer">
-                    🚀 START ROUND ${cycle.cycleIndex + 1} NOW
-                  </button>
-                  <span class="text-[10px] text-slate-400 font-mono">Host Control: Start new 20-minute tournament round</span>
-                </div>
-              ` : `
-                <div class="px-4 py-2 rounded-xl bg-[#131b27] border border-[#334155] text-slate-400 font-mono text-xs">
-                  ⏳ Waiting for host to start Round ${cycle.cycleIndex + 1}...
-                </div>
-              `}
-            </div>
-          `;
-        }
-        if (statusText) {
-          statusText.innerText = "🔒 Round " + cycle.cycleIndex + " Ended • Awaiting Next Round";
-          statusText.className = "text-neutral-800 font-bold";
-        }
-        return;
-      }
-
-      if (lockOverlay) {
-        if (is2048RunActive) {
-          lockOverlay.classList.add("hidden");
-          if (statusText) {
-            statusText.innerText = "🎮 Active Run in Progress (Tier $" + selected2048Tier + ") | Remaining: " + activeTickets + " tickets";
-            statusText.className = "text-neutral-800 font-bold";
-          }
-        } else if (activeTickets > 0) {
-          lockOverlay.classList.remove("hidden");
-          let otherTiersHtml = "";
-          [1, 5, 10, 100, 1000].forEach(ot => {
-            if (ot !== selected2048Tier && (store[ot] || 0) > 0) {
-              otherTiersHtml += `<button onclick="select2048Tier(${ot})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-[#cbd5e1] text-[#cbd5e1] text-[11px] font-mono font-bold transition-all">Switch to Tier $${ot} (${store[ot]} Tix)</button>`;
-            }
-          });
-
-          lockOverlay.innerHTML = `
-            <div class="flex flex-col items-center justify-center p-6 text-center space-y-4">
-              <span class="text-4xl">🎟️</span>
-              <div>
-                <h3 class="text-xl font-black text-[#cbd5e1] font-mono">READY TO PLAY TIER $${selected2048Tier}</h3>
-                <p class="text-xs text-neutral-700 max-w-xs mt-1">You have <strong class="text-[#cbd5e1]">${activeTickets} Ticket(s)</strong> available for Tier $${selected2048Tier}. Click Start to burn 1 ticket and unlock the board.</p>
-              </div>
-              <button onclick="startNew2048Game()" class="px-6 py-2.5 rounded-xl bg-black text-white hover:bg-neutral-800 text-slate-950 font-mono font-black text-sm shadow-lg shadow-none active:scale-95 transition-all cursor-pointer">
-                ▶ START GAME (USE 1 OF ${activeTickets} TIX)
-              </button>
-              ${otherTiersHtml ? `<div class="flex flex-wrap items-center justify-center gap-2 pt-2">${otherTiersHtml}</div>` : ''}
-            </div>
-          `;
-        } else {
-          lockOverlay.classList.remove("hidden");
-          const unitPrice = (selected2048Tier / 10000).toFixed(4);
-          lockOverlay.innerHTML = `
-            <div class="flex flex-col items-center justify-center p-6 text-center space-y-4">
-              <span class="text-4xl">🔒</span>
-              <div>
-                <h3 class="text-xl font-black text-white font-mono">SELECTED: TIER $${selected2048Tier}</h3>
-                <p class="text-xs text-neutral-700 max-w-xs mt-1">You have 0 tickets in inventory for Tier $${selected2048Tier}. Click below to pay entry ($${unitPrice} USDC on Solana) and unlock the board.</p>
-              </div>
-              <div class="flex flex-col sm:flex-row items-center gap-2.5">
-                <button onclick="startNew2048Game()" class="px-5 py-2.5 rounded-xl bg-[#182230] hover:bg-[#182230] text-slate-950 font-mono font-black text-xs shadow-lg shadow-none active:scale-95 transition-all cursor-pointer">
-                  ▶ START TIER $${selected2048Tier} ($${unitPrice} USDC)
-                </button>
-                <button onclick="document.getElementById('tier-card-${selected2048Tier}')?.scrollIntoView({behavior:'smooth'})" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-neutral-700 font-mono text-xs border border-[#334155] transition-all cursor-pointer">
-                  🛒 Buy Tickets in Bulk
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-    }
-
-    function select2048Tier(tier) {
-      selected2048Tier = parseInt(tier) || 1;
-      setTimeout(update2048TicketsUI, 10);
-      [1, 5, 10, 100, 1000].forEach(t => {
-        const card = document.getElementById("tier-card-2048-" + t);
-        const tag = document.getElementById("tier-tag-" + t);
-        const top3Card = document.getElementById("top3-tier-" + t);
-
-        if (t === tier) {
-          if (card) card.className = t >= 1000
-            ? "bg-white shadow-sm p-4 rounded-2xl border-2 border-[#334155] bg-[#182230] cursor-pointer transition-all space-y-3"
-            : "bg-white shadow-sm p-4 rounded-2xl border-2 border-[#334155] bg-[#182230] cursor-pointer transition-all space-y-3";
-          if (tag) {
-            tag.innerText = "ACTIVE TIER";
-            tag.className = t >= 1000
-              ? "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#182230] text-black"
-              : "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#182230] text-black";
-          }
-          if (top3Card) {
-            top3Card.className = t >= 1000
-              ? "p-4 rounded-2xl bg-white/90 border-2 border-[#334155] space-y-3 shadow-lg shadow-none"
-              : "p-4 rounded-2xl bg-white/90 border-2 border-[#334155] space-y-3 shadow-lg shadow-none";
-          }
-        } else {
-          if (card) card.className = t >= 1000
-            ? "bg-white shadow-sm p-4 rounded-2xl border border-[#334155] bg-[#182230] hover:border-[#334155] cursor-pointer transition-all space-y-3"
-            : "bg-white shadow-sm p-4 rounded-2xl border border-[#334155] hover:border-[#334155] bg-white cursor-pointer transition-all space-y-3";
-          if (tag) {
-            tag.innerText = "SELECT";
-            tag.className = "px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#e2e8f0] text-slate-400";
-          }
-          if (top3Card) {
-            top3Card.className = "p-4 rounded-2xl bg-white border border-[#334155] space-y-3";
-          }
-        }
-      });
-    }
-
         // ==========================================
     // DYNAMIC LIVE NATIVE TOKEN PRICING ENGINE
     // Token: CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7
@@ -4553,7 +3548,6 @@ buffer/index.js:
       // NOTE: Tickets are safely hoarded in player's inventory.
       // They ONLY enter the active round pool when the player clicks 'START GAME' to burn a ticket!
       showToast("✅ Purchased & stored " + ticketsPurchased + " Ticket(s) for Tier $" + tier + " in inventory!", "success");
-      update2048TicketsUI();
       showToast("🎟️ " + ticketsPurchased + " Tier $" + tier + " Ticket(s) added to wallet! Click 'START GAME' when you are ready to play.", "info");
     }
 
@@ -4597,14 +3591,13 @@ buffer/index.js:
       if (!tbody) return;
       tbody.innerHTML = '';
       
-      const catNames = { duel: 'PvP Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
+      const catNames = { duel: 'PvP Duels', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('lb-table-title');
       if (title) {
-        if (curLbCat === "2048") {
           const cInfo = get2048CycleInfo();
           const selectedRound = window.selectedLb2048Round !== undefined ? window.selectedLb2048Round : cInfo.cycleIndex;
           const isRoundActive = selectedRound === cInfo.cycleIndex;
-          title.innerHTML = "Top 100 Players , 2048 Skill ($" + curLbTier + " Tier) , Round #" + (selectedRound + 1) + (isRoundActive ? " <span class=\"text-neutral-800 text-xs px-2 py-0.5 rounded-full bg-[#182230] border border-[#334155] ml-2\">● ACTIVE</span>" : " <span class=\"text-slate-400 text-xs px-2 py-0.5 rounded-full bg-slate-800 border border-[#cbd5e1] ml-2\">ENDED</span>");
+          title.innerText = "Top 100 Players , " + (catNames[curLbCat] || "PvP Duels") + " ($" + curLbTier + " Tier)";
         } else {
           title.innerText = "Top 100 Players , " + catNames[curLbCat] + " ($" + curLbTier + " Tier)";
         }
@@ -4613,7 +3606,7 @@ buffer/index.js:
       const colMetric = document.getElementById('lb-col-metric');
       if (colMetric) {
         if (curLbCat === 'duel') colMetric.innerText = 'Wins / Streak';
-        else if (curLbCat === '2048') colMetric.innerText = 'Single High Score';
+        
         else colMetric.innerText = 'Closest Target';
       }
 
@@ -4725,7 +3718,7 @@ buffer/index.js:
       if (!tbody) return;
       tbody.innerHTML = '';
       
-      const catNames = { duel: 'PvP Duels', '2048': '2048 Skill', jackpot: 'Grand Jackpot' };
+      const catNames = { duel: 'PvP Duels', jackpot: 'Grand Jackpot' };
       const title = document.getElementById('hist-table-title');
       if (title) title.innerText = `Verified Reward Winners , ${catNames[curHistCat]} (${curHistTier} Tier)`;
 
@@ -4764,7 +3757,6 @@ buffer/index.js:
     // INITIAL LOAD
     window.addEventListener("DOMContentLoaded", () => {
       init2048BoardPreview();
-      update2048TicketsUI();
       updateJackpotTimer();
       renderJackpotSubmissions();
       updateLeaderboardUI();
@@ -4804,10 +3796,6 @@ buffer/index.js:
     <button onclick="switchTab('jackpot')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-[#f8fafc] flex flex-col items-center gap-0.5">
       <span class="text-sm">🎯</span>
       <span>Jackpot <span class="text-[8px] text-[#cbd5e1]">🔒</span></span>
-    </button>
-    <button onclick="switchTab('vault2048')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-[#f8fafc] flex flex-col items-center gap-0.5">
-      <span class="text-sm">🎮</span>
-      <span>2048 <span class="text-[8px] text-[#cbd5e1]">🔒</span></span>
     </button>
     <button onclick="switchTab('leaderboard')" class="tab-btn px-2.5 py-1.5 rounded-xl text-[10px] font-bold font-mono text-neutral-700 hover:text-[#f8fafc] flex flex-col items-center gap-0.5">
       <span class="text-sm">🏆</span>
@@ -8752,11 +7740,9 @@ buffer/index.js:
       renderAllDuels();
       syncOnchainDuelsFromContract(); // startup
       setTimeout(initGlobalDuelsListener, 300);
-      renderAll2048PoolsAndCards();
       update2048CountdownTimer();
       setInterval(update2048CountdownTimer, 1000);
       setTimeout(init2048RelayListener, 500);
-      setTimeout(function() { if (typeof update2048TicketsUI === 'function') update2048TicketsUI(); }, 200);
     });
   
 
@@ -9445,8 +8431,6 @@ window.handleCreateQuestion = async function(e) {
       if (syncChannel2048) {
         try { syncChannel2048.postMessage({ type: "ROUND_STARTED", round: newRound }); } catch(e){}
       }
-      if (typeof renderAll2048PoolsAndCards === "function") renderAll2048PoolsAndCards();
-      if (typeof update2048TicketsUI === "function") update2048TicketsUI();
       if (typeof render2048Leaderboard === "function") render2048Leaderboard();
       if (typeof update2048CountdownTimer === "function") update2048CountdownTimer();
       showToast("🚀 Round " + nextIndex + " started! 20-minute countdown active.", "success");
@@ -9597,7 +8581,6 @@ window.handleCreateQuestion = async function(e) {
       if (!data.processedEvents) data.processedEvents = {};
       data.processedEvents[evId] = true;
       save2048CycleData(data);
-      renderAll2048PoolsAndCards();
       
       const eventPayload = {
         eventId: evId,
@@ -9675,7 +8658,6 @@ window.handleCreateQuestion = async function(e) {
       
       data.scores[t].sort((a, b) => b.score - a.score);
       save2048CycleData(data);
-      renderAll2048PoolsAndCards();
       
       if (typeof updateLeaderboardUI === "function") {
         updateLeaderboardUI();
@@ -9728,7 +8710,6 @@ window.handleCreateQuestion = async function(e) {
           } catch(e){}
         });
         last2048PollTime = Math.floor(Date.now() / 1000);
-        renderAll2048PoolsAndCards();
         if (typeof updateLeaderboardUI === "function") {
           updateLeaderboardUI();
         }
@@ -9808,7 +8789,6 @@ window.handleCreateQuestion = async function(e) {
           data.pools[t].ticketsUsdg = (data.pools[t].ticketsUsdg || 0) + q;
         }
         save2048CycleData(data);
-        renderAll2048PoolsAndCards();
       } else if (payload.type === "NEW_2048_SCORE") {
         const t = payload.tier;
         const w = payload.wallet;
@@ -9837,7 +8817,6 @@ window.handleCreateQuestion = async function(e) {
         }
         data.scores[t].sort((a, b) => b.score - a.score);
         save2048CycleData(data);
-        renderAll2048PoolsAndCards();
 
         // If user is viewing the leaderboard tab, update it live immediately!
         if (typeof updateLeaderboardUI === "function") {
@@ -9846,7 +8825,6 @@ window.handleCreateQuestion = async function(e) {
       }
     }
 
-    function renderAll2048PoolsAndCards() {
       const tiers = [1, 5, 10, 100, 1000];
       const data = get2048CycleData();
       let currentWallet = ((typeof userAddress !== "undefined" && userAddress) ? userAddress : (window.userAddress || "")) || "";
