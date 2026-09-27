@@ -3920,65 +3920,33 @@ window.addUsdcToWallet = addUsdcToWallet;
 
     // Pre-seeded with confirmed on-chain GIWA Sepolia transactions (updated dynamically by RPC)
     const DUEL_QUESTIONS = (function() {
-      // Clean GIWA Sepolia production questions - 0 ended questions pre-seeded
-      const now = Date.now();
-      const hourMs = 3600000;
-      // Next 1-Hour candle (UTC boundary)
-      const nextCandleStart = Math.ceil((now + 120000) / hourMs) * hourMs;
-      const nextCandleEnd = nextCandleStart + hourMs;
-      const formatTime = (ts) => {
-        const d = new Date(ts);
-        return String(d.getUTCHours()).padStart(2, "0") + ":" + String(d.getUTCMinutes()).padStart(2, "0") + " UTC";
-      };
-      const wStr = formatTime(nextCandleStart) + " - " + formatTime(nextCandleEnd);
+      // 100% On-Chain Architecture: 0 pre-seeded / mock questions!
+      // Questions ONLY exist when deployed on-chain by the Admin.
+      try {
+        localStorage.removeItem("pvp_onchain_q1");
+        localStorage.removeItem("pvp_onchain_q2");
+        localStorage.removeItem("pvp_custom_q1");
+        localStorage.removeItem("pvp_custom_q2");
+      } catch(e) {}
 
-      return [
-        {
-          id: 1,
-          qNum: 1,
-          asset: "BTC",
-          tfText: "1-Hour",
-          tfLabel: "1H",
-          category: "crypto",
-          symbol: "BTC-USD",
-          title: "BTC/USD Duel #1 • Upcoming 1-Hour Candle (" + wStr + ")",
-          desc: "Oracle: Coinbase Exchange BTC-USD 1-Hour candle (" + wStr + "). Target is upcoming candle. Entry closes strictly at candle open (" + formatTime(nextCandleStart) + "). Green = Close >= Open. Red = Close < Open.",
-          resolutionSource: "Coinbase Exchange (BTC-USD 1H)",
-          deadlineDesc: "Entry Closes at " + formatTime(nextCandleStart),
-          candleStartTime: nextCandleStart,
-          deadline: nextCandleStart,
-          settlementTime: nextCandleEnd,
-          opt1: "GREEN",
-          opt2: "RED",
-          isEnded: false,
-          creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c"
-        },
-        {
-          id: 2,
-          qNum: 2,
-          asset: "ETH",
-          tfText: "1-Hour",
-          tfLabel: "1H",
-          category: "crypto",
-          symbol: "ETH-USD",
-          title: "ETH/USD Duel #2 • Upcoming 1-Hour Candle (" + wStr + ")",
-          desc: "Oracle: Coinbase Exchange ETH-USD 1-Hour candle (" + wStr + "). Target is upcoming candle. Entry closes strictly at candle open (" + formatTime(nextCandleStart) + "). Green = Close >= Open. Red = Close < Open.",
-          resolutionSource: "Coinbase Exchange (ETH-USD 1H)",
-          deadlineDesc: "Entry Closes at " + formatTime(nextCandleStart),
-          candleStartTime: nextCandleStart,
-          deadline: nextCandleStart,
-          settlementTime: nextCandleEnd,
-          opt1: "GREEN",
-          opt2: "RED",
-          isEnded: false,
-          creator: "0xd8c09b380e1d8120aac2188653b68f1209ee883c"
+      const list = [];
+      try {
+        for (let i = 1; i <= 200; i++) {
+          const stored = localStorage.getItem("pvp_onchain_q" + i);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed && (parsed.onchainTxSignature || parsed.isConfirmedOnchain)) {
+              list.push({
+                ...parsed,
+                getDeadline: function() { return this.deadline; }
+              });
+            }
+          }
         }
-      ];
-    })().map(q => ({
-      ...q,
-      getDeadline: function() { return this.deadline; }
-    }));
-    let selectedDuelQuestionId = 15;
+      } catch(e) {}
+      return list;
+    })();
+    let selectedDuelQuestionId = (typeof DUEL_QUESTIONS !== 'undefined' && DUEL_QUESTIONS[0]) ? DUEL_QUESTIONS[0].id : null;
     var selectedDuelTier = 1;
     var selectedTier = 1;
     window.selectedDuelTier = 1;
@@ -7137,6 +7105,10 @@ function renderDuelCard(duelData) {
     if (!tbody) return;
 
     tbody.innerHTML = "";
+    if (DUEL_QUESTIONS.length === 0) {
+      tbody.innerHTML = "<tr><td colspan='6' class='py-6 text-center text-xs text-slate-500 font-mono'>No questions created yet. Use the form above to deploy Question #1 on-chain.</td></tr>";
+      return;
+    }
     DUEL_QUESTIONS.forEach((q, idx) => {
       const tr = document.createElement("tr");
       tr.className = "hover:bg-[#182230] transition-colors";
