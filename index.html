@@ -2106,72 +2106,6 @@ window.addUsdcToWallet = addUsdcToWallet;
         </div>
       </div>
 
-      <!-- SECTION 1: CREATE NEW DUEL QUESTION -->
-      <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#334155] space-y-5">
-        <div class="border-b border-[#334155] pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg bg-[#182230] text-[#cbd5e1] font-mono text-xs font-bold border border-[#334155]">STEP 1</span>
-              <h3 class="text-base font-black text-[#f8fafc] font-mono uppercase tracking-wide">Publish New Duel Question</h3>
-            </div>
-            <p class="text-xs text-slate-400 font-mono mt-1">Add a new prediction question to the live Step 1 question list across all 5 tiers.</p>
-          </div>
-          <span class="text-xs font-mono text-[#cbd5e1] bg-[#182230] px-3 py-1 rounded-full border border-[#334155]">Instant Live Feed</span>
-        </div>
-
-        <form id="createQuestionForm" onsubmit="handleCreateQuestion(event)" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Question Title / Prompt</label>
-              <input type="text" id="newQTitle" required placeholder="e.g. #18: Will BTC Break $95,000 Before Friday?" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Category Badge</label>
-              <input type="text" id="newQCategory" onchange="handleCategoryChange(this.value)" required placeholder="e.g. CRYPTO 12H, GIWA ECOSYSTEM, MACRO" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Entry Window Duration</label>
-              <select id="newQDuration" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
-                <option value="1800">30 Minutes</option>
-                <option value="3600" selected>1 Hour</option>
-                <option value="7200">2 Hours</option>
-                <option value="21600">6 Hours</option>
-                <option value="43200">12 Hours</option>
-                <option value="86400">24 Hours</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Option A (Label / Subtext)</label>
-              <div class="flex gap-2">
-                <input type="text" id="newQOptA" value="GREEN" placeholder="GREEN / YES" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#cbd5e1] font-mono text-xs focus:border-[#334155] outline-none">
-                <input type="text" id="newQOptASub" value="Green Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-slate-300 font-mono text-xs focus:border-[#334155] outline-none">
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Option B (Label / Subtext)</label>
-              <div class="flex gap-2">
-                <input type="text" id="newQOptB" value="RED" placeholder="RED / NO" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#cbd5e1] font-mono text-xs focus:border-[#334155] outline-none">
-                <input type="text" id="newQOptBSub" value="Red Close" placeholder="Subtext" class="w-1/2 px-3 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-slate-300 font-mono text-xs focus:border-[#334155] outline-none">
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-mono text-slate-300 font-bold mb-1">Description / Settlement Note</label>
-            <input type="text" id="newQDesc" placeholder="e.g. 1-Hour Entry Window | Resolves upon 12H Candle Close" class="w-full px-4 py-2.5 rounded-xl bg-[#131b27] border border-[#334155] text-[#f8fafc] font-mono text-xs focus:border-[#334155] outline-none">
-          </div>
-
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-            <span id="createQStatus" class="text-xs font-mono text-[#cbd5e1] font-bold"></span>
-            <button type="submit" class="px-6 py-2.5 rounded-xl font-mono text-xs font-bold bg-black text-white text-[#f8fafc] hover:from-amber-400 hover:to-yellow-500 transition-all shadow-lg shadow-none flex items-center gap-2">
-              <span>🚀</span> Publish Question Live
-            </button>
-          </div>
-        </form>
-      </div>
 
       <!-- SECTION 2: QUESTIONS REGISTRY MANAGER TABLE -->
       <div class="bg-[#131b27] shadow-sm p-5 sm:p-6 rounded-3xl border border-[#334155] space-y-4">
@@ -7258,8 +7192,10 @@ function renderDuelCard(duelData) {
 
 
 window.handleCreateQuestion = async function(e) {
-    e.preventDefault();
-    const title = document.getElementById("newQTitle").value.trim();
+    if (e && e.preventDefault) e.preventDefault();
+    const titleEl = document.getElementById("newQTitle");
+    if (!titleEl) return;
+    const title = titleEl.value.trim();
     const category = (document.getElementById("newQCategory").value.trim() || "GENERAL").toUpperCase();
     const duration = parseInt(document.getElementById("newQDuration").value) || 3600;
     const optA = document.getElementById("newQOptA") ? document.getElementById("newQOptA").value.trim() || "GREEN" : "GREEN";
