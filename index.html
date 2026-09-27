@@ -1868,7 +1868,7 @@ buffer/index.js:
               <br>
               • <strong>5% Referral Cash Reward:</strong> Instantly routed to the referrer wallet if entered via referral.
               <br>
-              • <strong>Unreferred Match Policy:</strong> If a participant entered without an active referral code, the 5% referral allocation is automatically routed to the Protocol Treasury, resulting in a <strong>7% total protocol fee</strong> (CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7).
+              • <strong>Unreferred Match Policy:</strong> If a participant entered without an active referral code, the 5% referral allocation is automatically routed to the Protocol Treasury, resulting in a <strong>7% total protocol fee</strong> .
           </p>
           <div class="p-4 rounded-2xl bg-[#182230] border border-[#334155] space-y-3">
             <h4 class="text-xs font-bold font-mono text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -1922,22 +1922,7 @@ buffer/index.js:
         </div>
 
                 
-          <!-- 4. OFFICIAL PVP TOKEN CONTRACT -->
-        <div class="bg-[#131b27] shadow-sm p-6 sm:p-8 rounded-2xl border border-[#334155] bg-[#182230] space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <span class="text-xs font-bold text-[#cbd5e1] font-mono block">OFFICIAL $PVP TOKEN CONTRACT</span>
-              <span class="text-[11px] text-slate-400 font-mono">GIWA (Verified)</span>
-            </div>
-            <button onclick="copyPvpContract()" class="px-4 py-2 rounded-xl bg-[#182230] hover:bg-[#182230] text-[#f8fafc] font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-none active:scale-95">
-              <span>📋</span>
-              <span id="copy-btn-text">Copy Contract</span>
-            </button>
-          </div>
-          <div class="p-3 rounded-xl bg-black/60 border border-[#334155] font-mono text-xs text-[#cbd5e1] break-all select-all flex items-center justify-between">
-            <span id="pvp-contract-address">0xB464f766028C1d4Face359592a2127272C2C7750</span>
-          </div>
-        </div>
+          
       </div>
   
     <!-- 7. ADMIN PANEL TAB -->
@@ -2138,7 +2123,7 @@ buffer/index.js:
   <script>
 
     function copyPvpContract() {
-      const addr = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7";
+      const addr = "";
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(addr).then(() => {
           showToast("✅ Contract address copied to clipboard!", "success");
@@ -2582,7 +2567,7 @@ buffer/index.js:
 
     // ONCHAIN TRANSACTION EXECUTOR (GIWA L2)
     var USDC_TOKEN_ADDRESS = "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168"; // Official USDC on GIWA
-    var PVP_TOKEN_ADDRESS = "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7"; // Native $PVP token
+    var PVP_TOKEN_ADDRESS = ""; // Native $PVP token
     var ESCROW_CONTRACT = "0xB464f766028C1d4Face359592a2127272C2C7750";
 
         async function executeOnchainPayment(totalCostUSD, paymentMethod = "USDC", purpose = "Game Entry", customRecipient = null) {
@@ -3409,7 +3394,7 @@ buffer/index.js:
     
         // ==========================================
     // DYNAMIC LIVE NATIVE TOKEN PRICING ENGINE
-    // Token: CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7
+    // Token: 
     // ==========================================
     let liveNativeTokenPriceUSD = 0.005; // Default / base price ($0.005 per 1 PVP -> $5 = 1,000 PVP)
     let isFetchingLivePrice = false;
@@ -3420,7 +3405,7 @@ buffer/index.js:
       isFetchingLivePrice = true;
       try {
         // Try DexScreener API
-        const dexRes = await fetch("https://api.dexscreener.com/latest/dex/tokens/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7");
+        const dexRes = await fetch("https://api.dexscreener.com/latest/dex/tokens/");
         if (dexRes.ok) {
           const dexJson = await dexRes.json();
           if (dexJson.pairs && dexJson.pairs.length > 0 && dexJson.pairs[0].priceUsd) {
@@ -3438,7 +3423,7 @@ buffer/index.js:
         }
 
         // Try GeckoTerminal GIWA token API
-        const geckoRes = await fetch("https://api.geckoterminal.com/api/v2/networks/giwa/tokens/CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7");
+        const geckoRes = await fetch("https://api.geckoterminal.com/api/v2/networks/giwa/tokens/");
         if (geckoRes.ok) {
           const geckoJson = await geckoRes.json();
           if (geckoJson.data && geckoJson.data.attributes && geckoJson.data.attributes.price_usd) {
@@ -5597,7 +5582,7 @@ buffer/index.js:
             id: Date.now(),
             method: "eth_getLogs",
             params: [{
-              address: "CLJCLi6HMssn6CCAbiBzD9b4VmcyoJPCrF5Qecyz8mf7",
+              address: "",
               fromBlock: "0x3300000",
               toBlock: "latest"
             }]
