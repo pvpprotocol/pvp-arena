@@ -1127,68 +1127,58 @@ window.addUsdcToWallet = addUsdcToWallet;
               <span class="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-400 font-mono text-xs font-black border border-emerald-500/40 flex items-center gap-1.5 shadow-sm">
                 <span>👑</span><span>FOUNDER DASHBOARD</span>
               </span>
-              <span class="text-xs font-mono text-slate-400 font-bold hidden sm:inline">PROPOSE ON-CHAIN DUEL QUESTION</span>
+              <span class="text-xs font-mono text-slate-400 font-bold hidden sm:inline">CREATE DUEL QUESTION</span>
             </div>
             <div class="flex items-center gap-2">
               <span id="founder-auth-status-badge" class="text-[11px] font-mono text-emerald-400 font-bold flex items-center gap-1 bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>FOUNDER DASHBOARD
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>FOUNDER AUTHENTICATED
               </span>
             </div>
           </div>
 
-          <!-- Selection Controls Grid (Asset & Timeframe - Deadline is 100% Automated) -->
+          <!-- Simplified 2-Column Controls (Asset Buttons & Timeframe Dropdown) -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono">
-            <!-- 1. Crypto Asset Selection -->
+            <!-- 1. Crypto Asset Selection: BTC, ETH, SOL, BNB -->
             <div class="p-3.5 rounded-xl bg-[#151f30] border border-slate-700/60 space-y-2.5">
               <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
                 <span>1. Select Asset</span>
                 <span id="selected-asset-display" class="text-emerald-400 font-black">BTC</span>
               </label>
-              <div class="grid grid-cols-3 gap-1.5" id="founder-asset-buttons">
-                <button type="button" onclick="setFounderAsset('BTC')" class="founder-asset-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1">
+              <div class="grid grid-cols-4 gap-2" id="founder-asset-buttons">
+                <button type="button" onclick="setFounderAsset('BTC')" class="founder-asset-btn active-founder-btn px-2 py-2.5 rounded-xl text-xs font-bold border-2 border-emerald-500 bg-emerald-500/20 text-emerald-300 transition-all flex items-center justify-center gap-1 cursor-pointer">
                   <span>₿</span><span>BTC</span>
                 </button>
-                <button type="button" onclick="setFounderAsset('ETH')" class="founder-asset-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1">
+                <button type="button" onclick="setFounderAsset('ETH')" class="founder-asset-btn px-2 py-2.5 rounded-xl text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1 cursor-pointer">
                   <span>⟠</span><span>ETH</span>
                 </button>
-                <button type="button" onclick="setFounderAsset('BTC')" class="founder-asset-btn active-founder-btn px-2 py-2 rounded-lg text-xs font-bold border-2 border-emerald-500 bg-emerald-500/20 text-emerald-300 transition-all flex items-center justify-center gap-1">
-                  <span>₿</span><span>BTC</span>
+                <button type="button" onclick="setFounderAsset('SOL')" class="founder-asset-btn px-2 py-2.5 rounded-xl text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1 cursor-pointer">
+                  <span>◎</span><span>SOL</span>
                 </button>
-                <button type="button" onclick="setFounderAsset('BNB')" class="founder-asset-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1">
+                <button type="button" onclick="setFounderAsset('BNB')" class="founder-asset-btn px-2 py-2.5 rounded-xl text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1 cursor-pointer">
                   <span>🔶</span><span>BNB</span>
                 </button>
-                <button type="button" onclick="setFounderAsset('HYPE')" class="founder-asset-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center gap-1 col-span-2">
-                  <span>⚡</span><span>HYPE</span>
-                </button>
               </div>
             </div>
 
-            <!-- 2. Candle Close Timeframe Selection -->
+            <!-- 2. Candle Close Timeframe Selection (Dropdown / کشویی) -->
             <div class="p-3.5 rounded-xl bg-[#151f30] border border-slate-700/60 space-y-2.5">
               <label class="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                <span>2. Candle Close</span>
+                <span>2. Select Timeframe (Candle Duration)</span>
                 <span id="selected-timeframe-display" class="text-teal-400 font-black">15M</span>
               </label>
-              <div class="grid grid-cols-3 gap-1.5" id="founder-timeframe-buttons">
-                <button type="button" onclick="setFounderTimeframe(15, '15M')" class="founder-tf-btn active-founder-btn px-2 py-2 rounded-lg text-xs font-bold border-2 border-teal-500 bg-teal-500/20 text-teal-300 transition-all flex items-center justify-center">
-                  15m
-                </button>
-                <button type="button" onclick="setFounderTimeframe(60, '1H')" class="founder-tf-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center">
-                  1h
-                </button>
-                <button type="button" onclick="setFounderTimeframe(360, '6H')" class="founder-tf-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center">
-                  6h
-                </button>
-                <button type="button" onclick="setFounderTimeframe(720, '12H')" class="founder-tf-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center">
-                  12h
-                </button>
-                <button type="button" onclick="setFounderTimeframe(1440, '1D')" class="founder-tf-btn px-2 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-[#1c283c] text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center justify-center col-span-2">
-                  1 Day (24h)
-                </button>
+              <div class="relative">
+                <select id="founder-timeframe-select" onchange="onFounderTimeframeSelectChange(this.value)" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1c283c] border border-slate-700 text-teal-300 font-mono text-xs font-bold focus:outline-none focus:border-teal-500 cursor-pointer appearance-none">
+                  <option value="15" selected>⏱️ 15 Minutes (15m Candle)</option>
+                  <option value="60">⏱️ 1 Hour (1h Candle)</option>
+                  <option value="360">⏱️ 6 Hours (6h Candle)</option>
+                  <option value="720">⏱️ 12 Hours (12h Candle)</option>
+                  <option value="1440">⏱️ 24 Hours (1 Day Candle)</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-teal-400">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                </div>
               </div>
             </div>
-
-
           </div>
 
           <!-- Live Preview Box -->
@@ -1217,7 +1207,6 @@ window.addUsdcToWallet = addUsdcToWallet;
             </button>
           </div>
         </div>
-
 
         <!-- Interactive Questions Grid -->
         <div id="duel-questions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -4206,6 +4195,16 @@ window.addUsdcToWallet = addUsdcToWallet;
     let founderSelectedDeadlineMinutes = 0; // 0 = AUTO (exact candle open)
     let founderSelectedDeadlineLabel = "AUTO";
 
+    window.onFounderTimeframeSelectChange = function(val) {
+      const mins = parseInt(val, 10);
+      let label = "15M";
+      if (mins === 60) label = "1H";
+      else if (mins === 360) label = "6H";
+      else if (mins === 720) label = "12H";
+      else if (mins === 1440) label = "24H";
+      window.setFounderTimeframe(mins, label);
+    };
+
     window.setFounderAsset = function(asset) {
       founderSelectedAsset = asset;
       const buttons = document.querySelectorAll(".founder-asset-btn");
@@ -4223,19 +4222,12 @@ window.addUsdcToWallet = addUsdcToWallet;
     window.setFounderTimeframe = function(mins, label) {
       founderSelectedTimeframeMinutes = mins;
       founderSelectedTimeframeLabel = label;
-      const buttons = document.querySelectorAll(".founder-tf-btn");
-      buttons.forEach(btn => {
-        btn.classList.remove("active-founder-btn", "border-2", "border-teal-500", "bg-teal-500/20", "text-teal-300");
-        btn.classList.add("border", "border-slate-700", "bg-[#1c283c]", "text-slate-300");
-        const txt = btn.textContent.trim().toLowerCase();
-        if (txt === label.toLowerCase() || txt.startsWith(label.toLowerCase())) {
-          btn.classList.add("active-founder-btn", "border-2", "border-teal-500", "bg-teal-500/20", "text-teal-300");
-          btn.classList.remove("border-slate-700", "bg-[#1c283c]", "text-slate-300");
-        }
-      });
+      const selectEl = document.getElementById("founder-timeframe-select");
+      if (selectEl && selectEl.value !== String(mins)) {
+        selectEl.value = String(mins);
+      }
       updateFounderPreview();
     };
-
 
     function computeUnopenedCandleSchedule(tfMinutes, dlMinutes) {
       const now = Date.now();
@@ -4301,7 +4293,7 @@ window.addUsdcToWallet = addUsdcToWallet;
       const descEl = document.getElementById("preview-q-desc");
       const oracleEl = document.getElementById("preview-q-oracle");
 
-      let tfText = tfMinutes >= 1440 ? "1-Day" : (tfMinutes >= 60 ? (tfMinutes / 60) + "-Hour" : tfMinutes + "-Min");
+      let tfText = tfMinutes >= 1440 ? "24-Hour" : (tfMinutes >= 60 ? (tfMinutes / 60) + "-Hour" : tfMinutes + "-Min");
       let dlText = dlMinutes >= 60 ? (dlMinutes / 60) + "h" : dlMinutes + "m";
 
       if (titleEl) {
@@ -4313,6 +4305,7 @@ window.addUsdcToWallet = addUsdcToWallet;
       if (oracleEl) {
         let source = "Coinbase Exchange";
         if (asset === "BNB") source = "Binance Market API";
+        if (asset === "SOL") source = "Pyth Oracle / Binance";
         if (asset === "HYPE") source = "Hyperliquid Oracle";
         oracleEl.textContent = `Oracle: ${source} (${asset}-USD) • Unopened Candle: ${sched.windowStr}`;
       }
@@ -4408,6 +4401,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
         let oracleSource = "Coinbase Exchange";
         if (asset === "BNB") oracleSource = "Binance Market API";
+        if (asset === "SOL") oracleSource = "Pyth Oracle / Binance";
         if (asset === "HYPE") oracleSource = "Hyperliquid Oracle";
 
         const newQuestion = {
