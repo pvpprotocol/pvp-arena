@@ -4366,28 +4366,48 @@ window.addUsdcToWallet = addUsdcToWallet;
 
         showToast(`⚔️ Opening Web3 Wallet: Deploy Question #${nextQId} (${asset} ${tfLabel})...`, "info");
 
-        let signature = "0x" + Date.now().toString(16);
+        let signature = null;
+        let minedBlock = null;
         try {
-          if (window.ethereum) {
-            await ensureGiwaNetwork();
-            const web3Provider = new ethers.BrowserProvider(window.ethereum);
-            const signer = await web3Provider.getSigner();
-            const payload = `pvphub:create_question:q${nextQId}:${asset}_${tfLabel}_CANDLE:GREEN_RED:dl_${dlMinutes}m:creator:${activeWallet}`;
-            const tx = await signer.sendTransaction({
-              to: "0xB464f766028C1d4Face359592a2127272C2C7750",
-              data: ethers.hexlify(ethers.toUtf8Bytes(payload)),
-              value: 0
-            });
-            showToast(`⏳ Confirming Question #${nextQId} on GIWA Sepolia... Tx: ${tx.hash.slice(0, 8)}...`, "info");
-            await tx.wait(1);
-            signature = tx.hash;
+          if (!window.ethereum) {
+            showToast("⛔ No Web3 wallet found! Please connect MetaMask or Rabby.", "error");
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = `<span>⚡</span> SIGN & DEPLOY QUESTION ON-CHAIN (GIWA SEPOLIA)`;
+            }
+            return;
           }
+          await ensureGiwaNetwork();
+          const web3Provider = new ethers.BrowserProvider(window.ethereum);
+          const signer = await web3Provider.getSigner();
+          const payload = `pvphub:create_question:q${nextQId}:${asset}_${tfLabel}_CANDLE:GREEN_RED:dl_${dlMinutes}m:creator:${activeWallet}`;
+          
+          showToast(`⏳ Please sign transaction in wallet to record Question #${nextQId} on-chain...`, "info");
+          const tx = await signer.sendTransaction({
+            to: "0xB464f766028C1d4Face359592a2127272C2C7750",
+            data: ethers.hexlify(ethers.toUtf8Bytes(payload)),
+            value: 0
+          });
+          
+          showToast(`⛏️ Question #${nextQId} tx submitted! Waiting for block confirmation... Tx: ${tx.hash.slice(0, 10)}...`, "info");
+          const receipt = await tx.wait(1);
+          if (!receipt || receipt.status === 0) {
+            throw new Error("Transaction reverted on-chain");
+          }
+          signature = tx.hash;
+          minedBlock = receipt.blockNumber;
         } catch(evmErr) {
-          console.warn("EVM onchain tx fallback:", evmErr);
-          signature = "0x" + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,"0")).join("");
+          console.error("EVM onchain tx error:", evmErr);
+          const msg = evmErr?.reason || evmErr?.shortMessage || evmErr?.message || "Transaction cancelled by user";
+          showToast(`❌ On-Chain Tx Cancelled / Failed: Question #${nextQId} was NOT created. (${msg})`, "error");
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<span>⚡</span> SIGN & DEPLOY QUESTION ON-CHAIN (GIWA SEPOLIA)`;
+          }
+          return; // STRICT ARCHITECTURE: Question is NEVER created without on-chain block confirmation!
         }
 
-        showToast(`✅ Question #${nextQId} (${asset} ${tfLabel}) deployed ON-CHAIN! Tx: ${signature.slice(0, 8)}...`, "success");
+        showToast(`✅ Question #${nextQId} (${asset} ${tfLabel}) confirmed in block #${minedBlock}! Tx: ${signature.slice(0, 10)}...`, "success");
 
         let oracleSource = "Coinbase Exchange";
         if (asset === "BNB") oracleSource = "Binance Market API";
