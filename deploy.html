@@ -3,139 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deploy PvPArenaGIWA | pvphub.fun</title>
+    <title>Deploy & Manage GIWA Contracts | pvphub.fun</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 font-sans">
-    <div class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl">
-        <div class="flex items-center space-x-3 mb-6">
+    <div class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+        <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center font-bold text-white text-xl">P</div>
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-white">Deploy PvPArenaGIWA</h1>
-                <p class="text-xs text-slate-400">Network: GIWA Sepolia Testnet (Chain ID: 91342)</p>
+                <h1 class="text-xl font-bold tracking-tight text-white">GIWA Sepolia Management Hub</h1>
+                <p class="text-xs text-slate-400">Chain ID: 91342 | Currency: USDC & ETH</p>
             </div>
         </div>
 
-        <div id="statusBox" class="mb-6 p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 text-sm space-y-2">
-            <div class="flex justify-between"><span class="text-slate-400">Wallet:</span> <span id="walletAddr" class="font-mono text-emerald-400 font-medium">Not Connected</span></div>
-            <div class="flex justify-between"><span class="text-slate-400">Network:</span> <span id="netName" class="font-mono text-slate-300">-</span></div>
-            <div class="flex justify-between"><span class="text-slate-400">Balance:</span> <span id="ethBal" class="font-mono text-cyan-400 font-medium">-</span></div>
+        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs font-mono">
+            <div class="flex justify-between"><span class="text-slate-400">Wallet:</span><span id="wallet-address" class="text-emerald-400 font-bold truncate max-w-[220px]">Not Connected</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Network:</span><span id="network-name" class="text-slate-200">-</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">ETH Gas:</span><span id="eth-balance" class="text-slate-200">-</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">USDC Balance:</span><span id="usdc-balance" class="text-cyan-400 font-bold">-</span></div>
         </div>
 
-        <div class="space-y-4 mb-6">
-            <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Resolver / Oracle Address</label>
-                <input id="resolverAddr" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="0x...">
+        <button id="connect-btn" onclick="connect()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm rounded-xl transition cursor-pointer flex items-center justify-center space-x-2">
+            <span>🦊 Connect MetaMask</span>
+        </button>
+
+        <!-- CARD 1: PVP ARENA -->
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-300">1. PvP Arena Contract</span>
+                <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-mono">VERIFIED</span>
             </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Treasury Address</label>
-                <input id="treasuryAddr" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="0x...">
+            <p class="text-xs font-mono text-slate-400 break-all select-all">0xB464f766028C1d4Face359592a2127272C2C7750</p>
+            <a href="https://sepolia-explorer.giwa.io/address/0xB464f766028C1d4Face359592a2127272C2C7750#code" target="_blank" class="text-[11px] text-emerald-400 hover:underline inline-block font-mono">View on Explorer ↗</a>
+        </div>
+
+        <!-- CARD 2: USDC CONTRACT -->
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-300">2. Official Test USDC Token</span>
+                <span id="usdc-status-badge" class="px-2 py-0.5 rounded text-[10px] bg-slate-700 text-slate-300 font-mono">ERC-20 (6 Decimals)</span>
+            </div>
+            <p id="usdc-contract-display" class="text-xs font-mono text-slate-400 break-all select-all">Click below to deploy or connect USDC</p>
+            
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button id="deploy-usdc-btn" onclick="deployMockUSDC()" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl transition cursor-pointer">
+                    Deploy Test USDC
+                </button>
+                <button id="faucet-usdc-btn" onclick="claimFaucet()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition cursor-pointer">
+                    Mint 1,000 USDC
+                </button>
             </div>
         </div>
 
-        <div class="space-y-3">
-            <button id="connectBtn" onclick="connectWallet()" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium transition text-sm flex items-center justify-center space-x-2 border border-slate-700">
-                <span>Connect MetaMask</span>
-            </button>
-            <button id="deployBtn" onclick="deployContract()" disabled class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-bold transition text-sm shadow-lg shadow-emerald-500/20">
-                Deploy PvP Contract on GIWA
-            </button>
-        </div>
-
-        <div id="deployResult" class="hidden mt-6 p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-sm space-y-2">
-            <div class="text-emerald-400 font-bold flex items-center space-x-2">
-                <span>Contract Successfully Deployed!</span>
-            </div>
-            <div class="text-xs text-slate-300 break-all font-mono" id="deployedAddress"></div>
-            <div class="text-xs text-slate-400 mt-2">
-                <a id="explorerLink" href="#" target="_blank" class="text-cyan-400 underline hover:text-cyan-300">View in GIWA Explorer</a>
-            </div>
-        </div>
+        <div id="status" class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 hidden"></div>
     </div>
 
     <script>
-        const GIWA_CHAIN_ID = '0x164ce'; // 91342
-        const GIWA_PARAMS = {
-            chainId: GIWA_CHAIN_ID,
-            chainName: 'GIWA Sepolia Testnet',
-            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-            rpcUrls: ['https://sepolia-rpc.giwa.io'],
-            blockExplorerUrls: ['https://sepolia-explorer.giwa.io']
-        };
-        const BYTECODE = "0x6080604052600160035560016005553480156200001a575f80fd5b50604051620019b6380380620019b68339810160408190526200003d9162000095565b5f80546001600160a01b03199081163317909155600180546001600160a01b0394851690831617905560028054929093169116179055620000cb565b80516001600160a01b038116811462000090575f80fd5b919050565b5f8060408385031215620000a7575f80fd5b620000b28362000079565b9150620000c26020840162000079565b90509250929050565b6118dd80620000d95f395ff3fe6080604052600436106100fa575f3560e01c806370e5deb9116100925780638f43598b116100625780638f43598b14610282578063d9c312f414610297578063e1a45218146102b6578063e8097b7e146102cb578063f0f44260146102de575f80fd5b806370e5deb9146101f957806383389ef514610218578063859a62d01461022d5780638da5cb5b14610264575f80fd5b8063549ec614116100cd578063549ec6141461019157806354fbebf8146101a657806359cf0f00146101c557806361d027b3146101da575f80fd5b806304f3bcec146100fe578063179796f51461013a5780634c25d1971461015b5780634e543b2614610170575b5f80fd5b348015610109575f80fd5b5060015461011d906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b61014d610148366004611427565b6102fd565b604051908152602001610131565b348015610166575f80fd5b5061014d6102bc81565b34801561017b575f80fd5b5061018f61018a3660046114da565b610782565b005b34801561019c575f80fd5b5061014d60035481565b3480156101b1575f80fd5b5061018f6101c03660046114fa565b6107e9565b3480156101d0575f80fd5b5061014d61012c81565b3480156101e5575f80fd5b5060025461011d906001600160a01b031681565b348015610204575f80fd5b5061018f610213366004611524565b610baa565b348015610223575f80fd5b5061014d61232881565b348015610238575f80fd5b5061024c610247366004611524565b610d13565b6040516101319c9b9a99989796959493929190611592565b34801561026f575f80fd5b505f5461011d906001600160a01b031681565b34801561028d575f80fd5b5061014d61546081565b3480156102a2575f80fd5b5061018f6102b1366004611524565b610e13565b3480156102c1575f80fd5b5061014d61271081565b61018f6102d9366004611524565b610f53565b3480156102e9575f80fd5b5061018f6102f83660046114da565b611227565b5f6005546001146103295760405162461bcd60e51b81526004016103209061163c565b60405180910390fd5b60026005558761036b5760405162461bcd60e51b815260206004820152600d60248201526c494e56414c49445f5354414b4560981b6044820152606401610320565b4285116103ad5760405162461bcd60e51b815260206004820152601060248201526f494e56414c49445f444541444c494e4560801b6044820152606401610320565b848410156103f25760405162461bcd60e51b81526020600482015260126024820152711253959053125117d4d1551513115351539560721b6044820152606401610320565b6001600160a01b038916610448578734146104435760405162461bcd60e51b8152602060048201526011602482015270494e56414c49445f4554485f56414c554560781b6044820152606401610320565b61053b565b34156104895760405162461bcd60e51b815260206004820152601060248201526f11551217d393d517d050d0d15415115160821b6044820152606401610320565b6040516323b872dd60e01b8152336004820152306024820152604481018990526001600160a01b038a16906323b872dd906064016020604051808303815f875af11580156104d9573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906104fd9190611660565b61053b5760405162461bcd60e51b815260206004820152600f60248201526e1514905394d1915497d19052531151608a1b6044820152606401610320565b600380545f918261054b8361168f565b919050559050604051806101800160405280828152602001336001600160a01b031681526020015f6001600160a01b031681526020018b6001600160a01b031681526020018a815260200189815260200188151581526020018781526020018681526020015f60048111156105c2576105c261153b565b81526020015f6001600160a01b0316815260200185858080601f0160208091040260200160405190810160405280939291908181526020018383808284375f920182905250939094525050838152600460208181526040928390208551815590850151600180830180546001600160a01b039384166001600160a01b03199182161790915594870151600284018054918416918716919091179055606087015160038401805491909316951694909417905560808501518183015560a0850151600582015560c085015160068201805491151560ff1992831617905560e08601516007830155610100860151600883015561012086015160098301805493965090949093929091169184908111156106dc576106dc61153b565b02179055506101408201516009820180546001600160a01b0390921661010002610100600160a81b0319909216919091179055610160820151600a820190610724908261173e565b50905050336001600160a01b0316817f4be3680c2c544d8262bb544fafa8baa1619aea4c93585fae6da5dcf3d64c393f8c8c888860405161076894939291906117fe565b60405180910390a360016005559998505050505050505050565b5f546001600160a01b031633146107c75760405162461bcd60e51b81526020600482015260096024820152682727aa2fa7aba722a960b91b6044820152606401610320565b600180546001600160a01b0319166001600160a01b0392909216919091179055565b6001546001600160a01b031633148061080b57505f546001600160a01b031633145b6108465760405162461bcd60e51b815260206004820152600c60248201526b2727aa2fa922a9a7a62b22a960a11b6044820152606401610320565b6005546001146108685760405162461bcd60e51b81526004016103209061163c565b60026005555f8281526004602052604090206001600982015460ff1660048111156108955761089561153b565b146108d55760405162461bcd60e51b815260206004820152601060248201526f1115515317d393d517d3505510d2115160821b6044820152606401610320565b80600801544210156109155760405162461bcd60e51b8152602060048201526009602482015268544f4f5f4541524c5960b81b6044820152606401610320565b60018101546001600160a01b0383811691161480610942575060028101546001600160a01b038381169116145b8061095457506001600160a01b038216155b6109915760405162461bcd60e51b815260206004820152600e60248201526d24a72b20a624a22faba4a72722a960911b6044820152606401610320565b60098101805460026001600160a81b03199091166101006001600160a01b0386160217811790915560048201545f916109ca9190611845565b90506001600160a01b038316610a5757600382015460018301546004840154610a00926001600160a01b0390811692169061128e565b600382015460028301546004840154610a26926001600160a01b0390811692169061128e565b60405184907f883eca3e9ab70b8840e57cd17fef3e1dd5c4f451b6433c617c0e5a557ff25131905f90a25050610ba1565b60018201545f906001600160a01b03858116911614610a835760018301546001600160a01b0316610a92565b60028301546001600160a01b03165b90505f612710610aa461232885611845565b610aae9190611862565b90505f612710610ac061012c86611845565b610aca9190611862565b90505f81610ad88487611881565b610ae29190611881565b6003870154909150610afe906001600160a01b0316888561128e565b6003860154610b17906001600160a01b0316858461128e565b5f81118015610b3057506002546001600160a01b031615155b15610b54576003860154600254610b54916001600160a01b0390811691168361128e565b60408051848152602081018490526001600160a01b038916918a917ff9e5faa392103eda96b2355f57f9e195bf994f2938d848b54a88c890e34d3a6b910160405180910390a35050505050505b50506001600555565b600554600114610bcc5760405162461bcd60e51b81526004016103209061163c565b60026005555f8181526004602052604090206001600982015460ff166004811115610bf957610bf961153b565b14610c345760405162461bcd60e51b815260206004820152600b60248201526a1393d517d3505510d2115160aa1b6044820152606401610320565b6154608160080154610c469190611894565b4211610c835760405162461bcd60e51b815260206004820152600c60248201526b47524143455f41435449564560a01b6044820152606401610320565b60098101805460ff191660049081179091556003820154600183015491830154610cba926001600160a01b0392831692169061128e565b600381015460028201546004830154610ce0926001600160a01b0390811692169061128e565b60405182907f883eca3e9ab70b8840e57cd17fef3e1dd5c4f451b6433c617c0e5a557ff25131905f90a250506001600555565b600460208190525f918252604090912080546001820154600283015460038401549484015460058501546006860154600787015460088801546009890154600a8a018054999b6001600160a01b03998a169b988a169a908a16999798969760ff96871697959694959484169461010090940416929190610d92906116bb565b80601f0160208091040260200160405190810160405280929190818152602001828054610dbe906116bb565b8015610e095780601f10610de057610100808354040283529160200191610e09565b820191905f5260205f20905b815481529060010190602001808311610dec57829003601f168201915b505050505090508c565b600554600114610e355760405162461bcd60e51b81526004016103209061163c565b60026005555f81815260046020526040902060018101546001600160a01b03163314610e915760405162461bcd60e51b815260206004820152600b60248201526a2727aa2fa1a922a0aa27a960a91b6044820152606401610320565b5f600982015460ff166004811115610eab57610eab61153b565b14610ee85760405162461bcd60e51b815260206004820152600d60248201526c222aa2a62fa727aa2fa7a822a760991b6044820152606401610320565b60098101805460ff1916600390811790915581015460018201546004830154610f1e926001600160a01b0390811692169061128e565b604051339083907ff23018098ba2c323e6c8ee5657b8805051f16431a10b69d98455375a4250c88b905f90a350506001600555565b600554600114610f755760405162461bcd60e51b81526004016103209061163c565b60026005555f81815260046020526040812090600982015460ff166004811115610fa157610fa161153b565b14610fde5760405162461bcd60e51b815260206004820152600d60248201526c222aa2a62fa727aa2fa7a822a760991b6044820152606401610320565b80600701544211156110225760405162461bcd60e51b815260206004820152600d60248201526c115395149657d1561412549151609a1b6044820152606401610320565b60018101546001600160a01b031633036110715760405162461bcd60e51b815260206004820152601060248201526f21a0a72727aa2fa82620acafa9a2a62360811b6044820152606401610320565b60038101546001600160a01b03166110cf57806004015434146110ca5760405162461bcd60e51b8152602060048201526011602482015270494e56414c49445f4554485f56414c554560781b6044820152606401610320565b6111ce565b34156111105760405162461bcd60e51b815260206004820152601060248201526f11551217d393d517d050d0d15415115160821b6044820152606401610320565b60038101546004808301546040516323b872dd60e01b8152339281019290925230602483015260448201526001600160a01b03909116906323b872dd906064016020604051808303815f875af115801561116c573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906111909190611660565b6111ce5760405162461bcd60e51b815260206004820152600f60248201526e1514905394d1915497d19052531151608a1b6044820152606401610320565b6002810180546001600160a01b0319163390811790915560098201805460ff1916600117905560405183907f2be0d3826f37a8de3c1b301652c7dab4429fc3dfe5685e6ce0947666cb32401d905f90a350506001600555565b5f546001600160a01b0316331461126c5760405162461bcd60e51b81526020600482015260096024820152682727aa2fa7aba722a960b91b6044820152606401610320565b600280546001600160a01b0319166001600160a01b0392909216919091179055565b805f0361129a57505050565b6001600160a01b038316611343575f826001600160a01b0316826040515f6040518083038185875af1925050503d805f81146112f1576040519150601f19603f3d011682016040523d82523d5f602084013e6112f6565b606091505b505090508061133d5760405162461bcd60e51b815260206004820152601360248201527211551217d514905394d1915497d19052531151606a1b6044820152606401610320565b50505050565b60405163a9059cbb60e01b81526001600160a01b0383811660048301526024820183905284169063a9059cbb906044016020604051808303815f875af115801561138f573d5f803e3d5ffd5b505050506040513d601f19601f820116820180604052508101906113b39190611660565b6113f75760405162461bcd60e51b81526020600482015260156024820152741513d2d15397d514905394d1915497d19052531151605a1b6044820152606401610320565b505050565b80356001600160a01b0381168114611412575f80fd5b919050565b8015158114611424575f80fd5b50565b5f805f805f805f8060e0898b03121561143e575f80fd5b611447896113fc565b97506020890135965060408901359550606089013561146581611417565b94506080890135935060a0890135925060c089013567ffffffffffffffff8082111561148f575f80fd5b818b0191508b601f8301126114a2575f80fd5b8135818111156114b0575f80fd5b8c60208285010111156114c1575f80fd5b6020830194508093505050509295985092959890939650565b5f602082840312156114ea575f80fd5b6114f3826113fc565b9392505050565b5f806040838503121561150b575f80fd5b8235915061151b602084016113fc565b90509250929050565b5f60208284031215611534575f80fd5b5035919050565b634e487b7160e01b5f52602160045260245ffd5b5f81518084525f5b8181101561157357602081850181015186830182015201611557565b505f602082860101526020601f19601f83011685010191505092915050565b8c81526001600160a01b038c811660208301528b811660408301528a1660608201526080810189905260a0810188905286151560c082015260e0810186905261010081018590525f610180600586106115f957634e487b7160e01b5f52602160045260245ffd5b856101208401526116166101408401866001600160a01b03169052565b806101608401526116298184018561154f565b9f9e505050505050505050505050505050565b6020808252600a90820152695245454e5452414e435960b01b604082015260600190565b5f60208284031215611670575f80fd5b81516114f381611417565b634e487b7160e01b5f52601160045260245ffd5b5f600182016116a0576116a061167b565b5060010190565b634e487b7160e01b5f52604160045260245ffd5b600181811c908216806116cf57607f821691505b6020821081036116ed57634e487b7160e01b5f52602260045260245ffd5b50919050565b601f8211156113f757805f5260205f20601f840160051c810160208510156117185750805b601f840160051c820191505b81811015611737575f8155600101611724565b5050505050565b815167ffffffffffffffff811115611758576117586116a7565b61176c8161176684546116bb565b846116f3565b602080601f83116001811461179f575f84156117885750858301515b5f19600386901b1c1916600185901b1785556117f6565b5f85815260208120601f198616915b828110156117cd578886015182559484019460019091019084016117ae565b50858210156117ea57878501515f19600388901b60f8161c191681555b505060018460011b0185555b505050505050565b6001600160a01b0385168152602081018490526060604082018190528101829052818360808301375f818301608090810191909152601f909201601f191601019392505050565b808202811582820484141761185c5761185c61167b565b92915050565b5f8261187c57634e487b7160e01b5f52601260045260245ffd5b500490565b8181038181111561185c5761185c61167b565b8082018082111561185c5761185c61167b56fea2646970667358221220a677b25d08a8eda92d1891839bac44ea4d8eb182d09ccd03aa6d270ee323204d64736f6c63430008180033";
+        const GIWA_CHAIN_ID = 91342;
+        const GIWA_RPC = "https://sepolia-rpc.giwa.io";
+        const USDC_ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"faucet","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}];
+        const USDC_BYTECODE = "0x60c0604052601260809081527155534420436f696e2028546573746e65742960701b60a0525f9061003090826101b2565b506040805180820190915260048152635553444360e01b602082015260019061005990826101b2565b506002805460ff19166006179055348015610072575f5ffd5b506100823364e8d4a51000610087565b610295565b6001600160a01b0382165f90815260046020526040812080548392906100ae908490610270565b925050819055508060035f8282546100c69190610270565b90915550506040518181526001600160a01b038316905f907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9060200160405180910390a35050565b634e487b7160e01b5f52604160045260245ffd5b600181811c9082168061013757607f821691505b60208210810361015557634e487b7160e01b5f52602260045260245ffd5b50919050565b601f8211156101ad57828211156101ad57805f5260205f20601f840160051c602085101561018657505f5b90810190601f840160051c035f5b818110156101a9575f83820155600101610194565b5050505b505050565b81516001600160401b038111156101cb576101cb61010f565b6101df816101d98454610123565b8461015b565b6020601f821160018114610211575f83156101fa5750848201515b5f19600385901b1c1916600184901b178455610269565b5f84815260208120601f198516915b828110156102405787850151825560209485019460019092019101610220565b508482101561025d57868401515f19600387901b60f8161c191681555b505060018360011b0184555b5050505050565b8082018082111561028f57634e487b7160e01b5f52601160045260245ffd5b92915050565b6107e8806102a25f395ff3fe608060405234801561000f575f5ffd5b506004361061009b575f3560e01c80635791589711610063578063579158971461012957806370a082311461013e57806395d89b411461015d578063a9059cbb14610165578063dd62ed3e14610178575f5ffd5b806306fdde031461009f578063095ea7b3146100bd57806318160ddd146100e057806323b872dd146100f7578063313ce5671461010a575b5f5ffd5b6100a76101a2565b6040516100b49190610626565b60405180910390f35b6100d06100cb366004610676565b61022d565b60405190151581526020016100b4565b6100e960035481565b6040519081526020016100b4565b6100d061010536600461069e565b610299565b6002546101179060ff1681565b60405160ff90911681526020016100b4565b61013c6101373660046106d8565b61044f565b005b6100e961014c3660046106ef565b60046020525f908152604090205481565b6100a76104b0565b6100d0610173366004610676565b6104bd565b6100e961018636600461070f565b600560209081525f928352604080842090915290825290205481565b5f80546101ae90610740565b80601f01602080910402602001604051908101604052809291908181526020018280546101da90610740565b80156102255780601f106101fc57610100808354040283529160200191610225565b820191905f5260205f20905b81548152906001019060200180831161020857829003601f168201915b505050505081565b335f8181526005602090815260408083206001600160a01b038716808552925280832085905551919290917f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925906102879086815260200190565b60405180910390a35060015b92915050565b6001600160a01b0383165f908152600460205260408120548211156102fc5760405162461bcd60e51b8152602060048201526014602482015273696e73756666696369656e742062616c616e636560601b60448201526064015b60405180910390fd5b6001600160a01b0384165f9081526005602090815260408083203384529091529020548211156103675760405162461bcd60e51b8152602060048201526016602482015275696e73756666696369656e7420616c6c6f77616e636560501b60448201526064016102f3565b6001600160a01b0384165f9081526005602090815260408083203384529091528120805484929061039990849061078c565b90915550506001600160a01b0384165f90815260046020526040812080548492906103c590849061078c565b90915550506001600160a01b0383165f90815260046020526040812080548492906103f190849061079f565b92505081905550826001600160a01b0316846001600160a01b03167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef8460405161043d91815260200190565b60405180910390a35060019392505050565b633b9aca008111156104a35760405162461bcd60e51b815260206004820152601d60248201527f4d61782031303030205553444320706572206661756365742063616c6c00000060448201526064016102f3565b6104ad338261059e565b50565b600180546101ae90610740565b335f908152600460205260408120548211156105125760405162461bcd60e51b8152602060048201526014602482015273696e73756666696369656e742062616c616e636560601b60448201526064016102f3565b335f908152600460205260408120805484929061053090849061078c565b90915550506001600160a01b0383165f908152600460205260408120805484929061055c90849061079f565b90915550506040518281526001600160a01b0384169033907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef90602001610287565b6001600160a01b0382165f90815260046020526040812080548392906105c590849061079f565b925050819055508060035f8282546105dd919061079f565b90915550506040518181526001600160a01b038316905f907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9060200160405180910390a35050565b602081525f82518060208401528060208501604085015e5f604082850101526040601f19601f83011684010191505092915050565b80356001600160a01b0381168114610671575f5ffd5b919050565b5f5f60408385031215610687575f5ffd5b6106908361065b565b946020939093013593505050565b5f5f5f606084860312156106b0575f5ffd5b6106b98461065b565b92506106c76020850161065b565b929592945050506040919091013590565b5f602082840312156106e8575f5ffd5b5035919050565b5f602082840312156106ff575f5ffd5b6107088261065b565b9392505050565b5f5f60408385031215610720575f5ffd5b6107298361065b565b91506107376020840161065b565b90509250929050565b600181811c9082168061075457607f821691505b60208210810361077257634e487b7160e01b5f52602260045260245ffd5b50919050565b634e487b7160e01b5f52601160045260245ffd5b8181038181111561029357610293610778565b808201808211156102935761029361077856fea2646970667358221220ab958fe098677824f568c814650e32b816fd5bf094574b44725163a2db0d8b8c64736f6c63430008250033";
+        
+        let provider, signer, userAddress;
+        let usdcContractAddress = localStorage.getItem("GIWA_USDC_ADDRESS") || "";
 
-        let signer = null;
-        let provider = null;
+        window.addEventListener('DOMContentLoaded', () => {
+            if (usdcContractAddress) {
+                document.getElementById('usdc-contract-display').innerText = usdcContractAddress;
+                document.getElementById('usdc-status-badge').innerText = "CONNECTED";
+                document.getElementById('usdc-status-badge').className = "px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-mono";
+            }
+        });
 
-        async function connectWallet() {
-            if (!window.ethereum) return alert('MetaMask or EVM Web3 wallet not detected');
-            provider = new ethers.BrowserProvider(window.ethereum);
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            
+        async function connect() {
+            if (!window.ethereum) {
+                alert('Please install MetaMask!');
+                return;
+            }
             try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: GIWA_CHAIN_ID }]
-                });
-            } catch (switchError) {
-                if (switchError.code === 4902) {
+                provider = new ethers.BrowserProvider(window.ethereum);
+                const network = await provider.getNetwork();
+                if (Number(network.chainId) !== GIWA_CHAIN_ID) {
                     await window.ethereum.request({
                         method: 'wallet_addEthereumChain',
-                        params: [GIWA_PARAMS]
+                        params: [{
+                            chainId: '0x' + GIWA_CHAIN_ID.toString(16),
+                            chainName: 'GIWA Sepolia Testnet',
+                            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+                            rpcUrls: [GIWA_RPC],
+                            blockExplorerUrls: ['https://sepolia-explorer.giwa.io']
+                        }]
                     });
+                    provider = new ethers.BrowserProvider(window.ethereum);
                 }
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
+                document.getElementById('wallet-address').innerText = userAddress;
+                document.getElementById('network-name').innerText = 'GIWA Sepolia (' + GIWA_CHAIN_ID + ')';
+                
+                const bal = await provider.getBalance(userAddress);
+                document.getElementById('eth-balance').innerText = parseFloat(ethers.formatEther(bal)).toFixed(4) + ' ETH';
+                
+                if (usdcContractAddress) {
+                    try {
+                        const usdcContract = new ethers.Contract(usdcContractAddress, USDC_ABI, signer);
+                        const usdcBal = await usdcContract.balanceOf(userAddress);
+                        document.getElementById('usdc-balance').innerText = (Number(usdcBal) / 1000000).toLocaleString() + ' USDC';
+                    } catch(e) {}
+                }
+                document.getElementById('connect-btn').innerText = '✓ Connected (' + userAddress.slice(0, 6) + '...' + userAddress.slice(-4) + ')';
+                document.getElementById('connect-btn').className = 'w-full py-3 bg-slate-800 text-emerald-400 font-bold text-sm rounded-xl cursor-default';
+            } catch(err) {
+                alert('Connection error: ' + err.message);
             }
-
-            signer = await provider.getSigner();
-            const addr = await signer.getAddress();
-            const network = await provider.getNetwork();
-            const bal = await provider.getBalance(addr);
-
-            document.getElementById('walletAddr').innerText = addr.slice(0,6) + '...' + addr.slice(-4);
-            document.getElementById('netName').innerText = network.name + ' (' + network.chainId + ')';
-            document.getElementById('ethBal').innerText = parseFloat(ethers.formatEther(bal)).toFixed(4) + ' ETH';
-
-            if (!document.getElementById('resolverAddr').value) document.getElementById('resolverAddr').value = addr;
-            if (!document.getElementById('treasuryAddr').value) document.getElementById('treasuryAddr').value = addr;
-
-            document.getElementById('connectBtn').classList.add('hidden');
-            document.getElementById('deployBtn').disabled = false;
         }
 
-        async function deployContract() {
-            const btn = document.getElementById('deployBtn');
-            const resolver = document.getElementById('resolverAddr').value.trim();
-            const treasury = document.getElementById('treasuryAddr').value.trim();
-
-            if (!ethers.isAddress(resolver) || !ethers.isAddress(treasury)) {
-                return alert('Please enter valid Ethereum addresses for Resolver and Treasury');
-            }
-
+        async function deployMockUSDC() {
+            if (!signer) await connect();
+            const btn = document.getElementById('deploy-usdc-btn');
+            const status = document.getElementById('status');
             btn.disabled = true;
-            btn.innerText = 'Confirm in MetaMask...';
-
+            btn.innerText = 'Deploying...';
+            status.classList.remove('hidden');
+            status.innerText = 'Creating Test USDC transaction on GIWA...';
             try {
-                const abiCoder = new ethers.AbiCoder();
-                const encodedArgs = abiCoder.encode(['address', 'address'], [resolver, treasury]).slice(2);
-                const fullBytecode = BYTECODE + encodedArgs;
-
-                const tx = await signer.sendTransaction({
-                    data: fullBytecode
-                });
-
-                btn.innerText = 'Deploying... waiting for block confirmation';
-                const receipt = await tx.wait(1);
-
-                document.getElementById('deployResult').classList.remove('hidden');
-                document.getElementById('deployedAddress').innerText = 'Contract: ' + receipt.contractAddress;
-                document.getElementById('explorerLink').href = 'https://sepolia-explorer.giwa.io/address/' + receipt.contractAddress;
+                const factory = new ethers.ContractFactory(USDC_ABI, USDC_BYTECODE, signer);
+                const contract = await factory.deploy();
+                status.innerText = 'Waiting for block confirmation... Tx: ' + contract.deploymentTransaction().hash;
+                await contract.waitForDeployment();
+                const addr = await contract.getAddress();
+                usdcContractAddress = addr;
+                localStorage.setItem("GIWA_USDC_ADDRESS", addr);
+                document.getElementById('usdc-contract-display').innerText = addr;
+                document.getElementById('usdc-status-badge').innerText = "DEPLOYED";
+                document.getElementById('usdc-status-badge').className = "px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-mono";
+                status.innerHTML = '✅ <strong>Test USDC Deployed:</strong> ' + addr + '<br><a href="https://sepolia-explorer.giwa.io/address/' + addr + '" target="_blank" class="underline text-cyan-400 font-mono">View on GIWA Explorer</a>';
                 btn.innerText = 'Deployed!';
-            } catch (err) {
-                console.error(err);
-                alert('Deployment failed: ' + (err.reason || err.message));
+                await claimFaucet();
+            } catch(err) {
+                status.innerText = '❌ Error: ' + err.message;
                 btn.disabled = false;
-                btn.innerText = 'Deploy PvP Contract on GIWA';
+                btn.innerText = 'Deploy Test USDC';
+            }
+        }
+
+        async function claimFaucet() {
+            if (!signer) await connect();
+            const addr = usdcContractAddress || localStorage.getItem("GIWA_USDC_ADDRESS");
+            if (!addr) {
+                alert('Please deploy or enter a USDC contract address first!');
+                return;
+            }
+            const status = document.getElementById('status');
+            status.classList.remove('hidden');
+            status.innerText = 'Minting 1,000 USDC...';
+            try {
+                const usdcContract = new ethers.Contract(addr, USDC_ABI, signer);
+                const tx = await usdcContract.faucet(userAddress, ethers.parseUnits("1000", 6));
+                status.innerText = 'Faucet transaction sent: ' + tx.hash;
+                await tx.wait();
+                status.innerHTML = '✅ Successfully minted 1,000 USDC to ' + userAddress + '!';
+                const usdcBal = await usdcContract.balanceOf(userAddress);
+                document.getElementById('usdc-balance').innerText = (Number(usdcBal) / 1000000).toLocaleString() + ' USDC';
+            } catch(err) {
+                status.innerText = '❌ Faucet Error: ' + err.message;
             }
         }
     </script>
