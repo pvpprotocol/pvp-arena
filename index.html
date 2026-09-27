@@ -4232,14 +4232,21 @@ window.addUsdcToWallet = addUsdcToWallet;
             return;
           }
           await ensureGiwaNetwork();
-          const web3Provider = new ethers.BrowserProvider(window.ethereum);
-          const signer = await web3Provider.getSigner();
+          const web3Provider = (ethers.providers && ethers.providers.Web3Provider)
+            ? new ethers.providers.Web3Provider(window.ethereum)
+            : new ethers.BrowserProvider(window.ethereum);
+          const signer = (typeof web3Provider.getSigner === "function")
+            ? await web3Provider.getSigner()
+            : web3Provider.getSigner();
           const payload = `pvphub:create_question:q${nextQId}:${asset}_${tfLabel}_CANDLE:GREEN_RED:dl_${dlMinutes}m:creator:${activeWallet}`;
           
           showToast(`⏳ Please sign transaction in wallet to record Question #${nextQId} on-chain...`, "info");
+          const hexData = (ethers.utils && ethers.utils.hexlify)
+            ? ethers.utils.hexlify(ethers.utils.toUtf8Bytes(payload))
+            : ethers.hexlify(ethers.toUtf8Bytes(payload));
           const tx = await signer.sendTransaction({
             to: "0xB464f766028C1d4Face359592a2127272C2C7750",
-            data: ethers.hexlify(ethers.toUtf8Bytes(payload)),
+            data: hexData,
             value: 0
           });
           
