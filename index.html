@@ -4018,7 +4018,10 @@ buffer/index.js:
       getDeadline: function() { return this.deadline; }
     }));
     let selectedDuelQuestionId = 15;
-    let selectedDuelTier = 1;
+    var selectedDuelTier = 1;
+    var selectedTier = 1;
+    window.selectedDuelTier = 1;
+    window.selectedTier = 1;
     let selectedDuelOption = "GREEN";
     let activeQuestionTab = "live";
     let activeDuelCategory = "crypto"; // "crypto" | "football" | "nba"
@@ -4742,6 +4745,9 @@ buffer/index.js:
 
     function selectDuelTier(tier) {
       selectedDuelTier = tier;
+      selectedTier = tier;
+      window.selectedDuelTier = tier;
+      window.selectedTier = tier;
       const tiers = [1, 5, 10, 100, 1000];
       tiers.forEach(t => {
         const btnId = "tier-btn-" + t;
@@ -6609,26 +6615,14 @@ buffer/index.js:
       }
 
       if (!window.ethereum) {
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-          window.location.href = "https://metamask.app.link/dapp/" + window.location.host + window.location.pathname;
-        } else {
-          showToast("🦊 MetaMask not detected. Please install MetaMask to create a duel.", "error");
-        }
+        showToast("🦊 MetaMask not detected. Please install MetaMask.", "error");
         return;
       }
 
-      const activeWallet = window.selectedAccount || window.currentAccount || (window.ethereum.selectedAddress);
-      if (!activeWallet) {
-        showToast("⚠️ Please connect your MetaMask wallet first.", "warning");
-        try { await connectWallet(); } catch(e) {}
-        return;
-      }
-
-      const btn = document.getElementById("confirm-create-duel-btn");
+      const btn = document.getElementById('create-duel-btn');
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<span class="animate-spin mr-2">⏳</span> Confirming on GIWA...';
+        btn.innerText = '⏳ Preparing...';
       }
 
       try {
@@ -6637,6 +6631,7 @@ buffer/index.js:
         const signer = provider.getSigner();
         const userAddress = await signer.getAddress();
 
+        // Ensure GIWA network
         const network = await provider.getNetwork();
         if (network.chainId !== 91342) {
           try {
@@ -6664,44 +6659,65 @@ buffer/index.js:
         const isLong = selectedSide.toUpperCase() === 'LONG';
         const targetPriceVal = Math.floor(Number(window.targetPrice || 0) * 100);
         const symbol = window.selectedDuelSymbol || 'BTC';
-        const stakeUsd = Number(selectedTier || window.selectedTier || 1);
+        const stakeUsd = Number(window.selectedDuelTier || window.selectedTier || (typeof selectedDuelTier !== 'undefined' ? selectedDuelTier : 1));
 
-        // Calculate ETH stake (approximate testnet conversion: 1 ETH = 2500 USD)
-        const ethPrice = 2500;
-        const stakeEth = (stakeUsd / ethPrice).toFixed(6);
-        const stakeWei = ethers.utils.parseEther(stakeEth);
+        // Use USDC contract on GIWA
+        const usdcAddress = window.GIWA_USDC_CONTRACT || "0x3471010ad619f2ED0F897dc5C7cCa8FdD25A8172";
+        const entryStake = ethers.utils.parseUnits(stakeUsd.toString(), 6); // 6 decimals for USDC
+
+        showToast("🦊 Checking USDC balance...", "info");
+        const erc20Abi = [
+          "function balanceOf(address account) view returns (uint256)",
+          "function allowance(address owner, address spender) view returns (uint256)",
+          "function approve(address spender, uint256 amount) returns (bool)"
+        ];
+        const usdcContract = new ethers.Contract(usdcAddress, erc20Abi, signer);
+
+        const bal = await usdcContract.balanceOf(userAddress);
+        if (bal.lt(entryStake)) {
+          showToast("❌ Insufficient USDC. You have " + ethers.utils.formatUnits(bal, 6) + " USDC. Get free USDC at /deploy.html", "error");
+          if (btn) { btn.disabled = false; btn.innerText = "⚔️ Create Duel"; }
+          return;
+        }
+
+        const allow = await usdcContract.allowance(userAddress, GIWA_PVP_CONTRACT);
+        if (allow.lt(entryStake)) {
+          showToast("🦊 Approve USDC in MetaMask first...", "info");
+          const approveTx = await usdcContract.approve(GIWA_PVP_CONTRACT, ethers.constants.MaxUint256);
+          showToast("⏳ Approving USDC on GIWA...", "info");
+          await approveTx.wait();
+          showToast("✅ USDC approved!", "success");
+        }
 
         const nowSec = Math.floor(Date.now() / 1000);
         const entryDeadline = nowSec + (window.selectedEntryDurationSec || 900);
         const settlementTime = nowSec + (window.selectedDurationSec || 3600);
 
-        showToast("🦊 Confirm transaction in MetaMask...", "info");
+        showToast("🦊 Confirm duel creation in MetaMask...", "info");
         const contract = new ethers.Contract(GIWA_PVP_CONTRACT, GIWA_PVP_ABI, signer);
 
-        const ref = getStoredReferrer ? getStoredReferrer() : null;
+        const ref = (typeof getStoredReferrer === 'function') ? getStoredReferrer() : null;
         let tx;
         if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase()) {
           tx = await contract.createDuelWithReferral(
-            ethers.constants.AddressZero,
-            stakeWei,
+            usdcAddress,
+            entryStake,
             targetPriceVal,
             isLong,
             entryDeadline,
             settlementTime,
             symbol,
-            ref,
-            { value: stakeWei }
+            ref
           );
         } else {
           tx = await contract.createDuel(
-            ethers.constants.AddressZero,
-            stakeWei,
+            usdcAddress,
+            entryStake,
             targetPriceVal,
             isLong,
             entryDeadline,
             settlementTime,
-            symbol,
-            { value: stakeWei }
+            symbol
           );
         }
 
@@ -6722,12 +6738,10 @@ buffer/index.js:
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = '⚔️ Create Duel';
+          btn.innerText = "⚔️ Create Duel";
         }
       }
     }
-
-    
 
     async function acceptDuel(duelId, tier) {
       if (window.duelsPaused) {
@@ -6753,24 +6767,56 @@ buffer/index.js:
         const signer = provider.getSigner();
         const userAddress = await signer.getAddress();
 
-        const stakeUsd = Number(tier || 1);
-        const ethPrice = 2500;
-        const stakeEth = (stakeUsd / ethPrice).toFixed(6);
-        const stakeWei = ethers.utils.parseEther(stakeEth);
-
-        showToast("🦊 Confirm join transaction in MetaMask...", "info");
+        showToast("🦊 Fetching duel details...", "info");
         const contract = new ethers.Contract(GIWA_PVP_CONTRACT, GIWA_PVP_ABI, signer);
+        const duel = await contract.duels(duelId);
+        const token = duel.token;
+        const entryStake = duel.entryStake;
 
-        const ref = getStoredReferrer ? getStoredReferrer() : null;
-        let tx;
-        if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase()) {
-          tx = await contract.joinDuelWithReferral(duelId, ref, { value: stakeWei });
+        if (token && token !== ethers.constants.AddressZero) {
+          const erc20Abi = [
+            "function balanceOf(address account) view returns (uint256)",
+            "function allowance(address owner, address spender) view returns (uint256)",
+            "function approve(address spender, uint256 amount) returns (bool)"
+          ];
+          const usdcContract = new ethers.Contract(token, erc20Abi, signer);
+          const bal = await usdcContract.balanceOf(userAddress);
+          if (bal.lt(entryStake)) {
+            showToast("❌ Insufficient USDC balance to accept duel.", "error");
+            return;
+          }
+          const allow = await usdcContract.allowance(userAddress, GIWA_PVP_CONTRACT);
+          if (allow.lt(entryStake)) {
+            showToast("🦊 Approve USDC in MetaMask to join duel...", "info");
+            const approveTx = await usdcContract.approve(GIWA_PVP_CONTRACT, ethers.constants.MaxUint256);
+            await approveTx.wait();
+          }
+
+          const ref = (typeof getStoredReferrer === 'function') ? getStoredReferrer() : null;
+          let tx;
+          if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase()) {
+            tx = await contract.joinDuelWithReferral(duelId, ref);
+          } else {
+            tx = await contract.joinDuel(duelId);
+          }
+          showToast("🚀 Joining duel: " + tx.hash.slice(0, 10) + "...", "info");
+          await tx.wait();
         } else {
-          tx = await contract.joinDuel(duelId, { value: stakeWei });
-        }
+          const stakeUsd = Number(tier || 1);
+          const ethPrice = 2500;
+          const stakeEth = (stakeUsd / ethPrice).toFixed(6);
+          const stakeWei = ethers.utils.parseEther(stakeEth);
 
-        showToast("🚀 Joining duel: " + tx.hash.slice(0, 10) + "...", "info");
-        await tx.wait();
+          const ref = (typeof getStoredReferrer === 'function') ? getStoredReferrer() : null;
+          let tx;
+          if (ref && ethers.utils.isAddress(ref) && ref.toLowerCase() !== userAddress.toLowerCase()) {
+            tx = await contract.joinDuelWithReferral(duelId, ref, { value: stakeWei });
+          } else {
+            tx = await contract.joinDuel(duelId, { value: stakeWei });
+          }
+          showToast("🚀 Joining duel: " + tx.hash.slice(0, 10) + "...", "info");
+          await tx.wait();
+        }
 
         showToast("⚔️ Joined duel successfully!", "success");
         if (typeof fetchOnchainDuels === 'function') fetchOnchainDuels();
@@ -6781,8 +6827,6 @@ buffer/index.js:
         showToast("❌ " + msg, "error");
       }
     }
-
-    
 
     async function cancelDuel(duelId) {
       if (!window.ethereum) {
