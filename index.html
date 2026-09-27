@@ -4245,9 +4245,10 @@ window.addUsdcToWallet = addUsdcToWallet;
             ? ethers.utils.hexlify(ethers.utils.toUtf8Bytes(payload))
             : ethers.hexlify(ethers.toUtf8Bytes(payload));
           const tx = await signer.sendTransaction({
-            to: "0xB464f766028C1d4Face359592a2127272C2C7750",
+            to: activeWallet,
             data: hexData,
-            value: 0
+            value: 0,
+            gasLimit: 60000
           });
           
           showToast(`⛏️ Question #${nextQId} tx submitted! Waiting for block confirmation... Tx: ${tx.hash.slice(0, 10)}...`, "info");
