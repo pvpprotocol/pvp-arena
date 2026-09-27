@@ -4631,7 +4631,7 @@ window.addUsdcToWallet = addUsdcToWallet;
     
     // Clear any legacy unconfirmed local items
     try {
-      localStorage.clear(); // Clear all stale questions and caches
+      // localStorage.clear(); kept safe
       localStorage.removeItem("pvp_onchain_q2");
       localStorage.removeItem("pvp_arena_questions_v1");
       localStorage.removeItem("pvp_questions_devnet");
@@ -4972,8 +4972,8 @@ window.addUsdcToWallet = addUsdcToWallet;
               opponent: null,
               status: "open",
               createdAt: Date.now() - (dId * 60000),
-              deadline: Date.now() + 86400000,
-              expiresAt: Date.now() + 86400000,
+              deadline: (DUEL_QUESTIONS[0] ? DUEL_QUESTIONS[0].deadline : Date.now() + 1800000),
+              expiresAt: (DUEL_QUESTIONS[0] ? DUEL_QUESTIONS[0].deadline : Date.now() + 1800000),
               tokenType: "USDC",
               tokenAddress: "0x3471010ad619f2ED0F897dc5C7cCa8FdD25A8172",
               onChain: true
@@ -5104,10 +5104,9 @@ window.addUsdcToWallet = addUsdcToWallet;
     }
 
     function getDuelCategory(duelData) {
-      if (!duelData) return 'open';
-      if (duelData.status === 'cancelled') return 'expired';
+      if (!duelData) return "open";
+      if (duelData.status === "cancelled") return "expired";
 
-      // Identify question and its exact entry deadline
       const qId = getDuelQuestionId(duelData);
       const q = getQuestionById(qId);
       const entryDeadline = q ? (typeof q.getDeadline === "function" ? q.getDeadline() : Number(q.deadline)) : getQuestionEntryDeadline(qId);
@@ -5115,44 +5114,29 @@ window.addUsdcToWallet = addUsdcToWallet;
       const now = Date.now();
 
       const hasOpponent = !!(duelData.opponent && duelData.opponent !== "0x0000000000000000000000000000000000000000");
-      const isMatched = hasOpponent || duelData.status === 'in_progress';
+      const isMatched = hasOpponent || duelData.status === "in_progress";
 
-      // =========================================================================
-      // LAW 1 (PERMANENT SYSTEM RULE):
-      // Upon the expiration of the question's entry deadline:
-      // If no opponent was found for a duel request matching that question ID,
-      // that request MUST IMMEDIATELY move to the EXPIRED tab!
-      // =========================================================================
+      // LAW 1: Unmatched duel request expires as soon as question entry deadline is reached
       if (!isMatched) {
+        // If question is ended or entry deadline has arrived/passed, move to expired!
+        if (q && q.isEnded) return "expired";
+        if (entryDeadline > 0 && now >= entryDeadline) return "expired";
+
+        // Also check if direct deadline is set and passed
         const directDeadline = (duelData.deadline && Number(duelData.deadline) > 0) ? Number(duelData.deadline) : 0;
-        const effectiveDeadline = directDeadline || entryDeadline;
-        if (effectiveDeadline > 0 && now >= effectiveDeadline) {
-          return 'expired';
+        if (directDeadline > 0 && directDeadline < (now + 7200000) && now >= directDeadline) {
+          return "expired";
         }
-        if (q && (q.isEnded || (entryDeadline > 0 && now >= entryDeadline))) {
-          return 'expired';
-        }
-        return 'open';
+        return "open";
       }
 
-      // =========================================================================
-      // LAW 2 (MATCHED DUEL RULE):
-      // A matched duel (with opponent) strictly remains in the MATCHED tab
-      // until the official resolution time of that question is reached.
-      // =========================================================================
+      // LAW 2: Matched duel stays in matched until resolution time
       if (now < resolutionTime) {
-        if (duelData.status === 'completed') {
-          duelData.status = 'in_progress';
-          delete duelData.winner;
-          delete duelData.loser;
-          if (typeof saveLocalDuel === "function") saveLocalDuel(duelData);
-        }
-        return 'matched';
+        return "matched";
       }
 
-      return 'completed';
+      return "completed";
     }
-
     async function syncOnchainDuelsFromContract() {
       try {
         const rpcUrl = "https://sepolia-rpc.giwa.io";
@@ -6871,7 +6855,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
     async function cancelDuel(duelId) {
       if (!window.ethereum) {
-        showToast("🦊 MetaMask not detected.", "error");
+        showToast("🦊 MetaMask / Rabby not detected.", "error");
         return;
       }
 
@@ -6880,25 +6864,47 @@ window.addUsdcToWallet = addUsdcToWallet;
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
 
-        showToast("🦊 Confirm cancellation in MetaMask...", "info");
+        let numId = duelId;
+        if (typeof duelId === "string") {
+          numId = duelId.replace(/^duel_/, "");
+        }
+        numId = parseInt(numId, 10);
+        if (isNaN(numId) || numId <= 0) {
+          showToast("❌ Invalid duel identifier", "error");
+          return;
+        }
+
+        showToast("🦊 Confirm cancellation of Duel #" + numId + " in wallet...", "info");
         const contract = new ethers.Contract(GIWA_PVP_CONTRACT, GIWA_PVP_ABI, signer);
 
-        const tx = await contract.cancelDuel(duelId);
+        const tx = await contract.cancelDuel(numId);
         showToast("🚀 Cancelling duel: " + tx.hash.slice(0, 10) + "...", "info");
         await tx.wait();
 
-        showToast("✅ Duel cancelled and refund processed!", "success");
-        if (typeof fetchOnchainDuels === 'function') fetchOnchainDuels();
-        if (typeof renderAllDuels === 'function') renderAllDuels();
+        // Update local store immediately so UI reflects cancellation & refund
+        const store = getLocalDuels();
+        const fullKey = "duel_" + numId;
+        if (store[fullKey]) {
+          store[fullKey].status = "cancelled";
+          store[fullKey].cancelledAt = Date.now();
+          saveLocalDuels(store);
+        }
+        if (store[duelId]) {
+          store[duelId].status = "cancelled";
+          store[duelId].cancelledAt = Date.now();
+          saveLocalDuels(store);
+        }
+
+        showToast("✅ Duel #" + numId + " cancelled and 100% refund processed!", "success");
+        if (typeof syncOnchainDuelsFromContract === "function") syncOnchainDuelsFromContract();
+        if (typeof renderAllDuels === "function") renderAllDuels();
+        if (typeof updateDuelCounter === "function") updateDuelCounter();
       } catch (err) {
         console.error("Cancel duel error:", err);
-        const msg = err.reason || err.message || "Cancellation failed";
+        const msg = err.reason || (err.data && err.data.message) || err.message || "Cancellation failed";
         showToast("❌ " + msg, "error");
       }
     }
-
-    
-
     async function resolveDuelMatch(duelId, winningOption) {
       const store = getLocalDuels();
       let duelData = store[duelId];
