@@ -5137,187 +5137,118 @@ window.addUsdcToWallet = addUsdcToWallet;
     async function syncOnchainDuelsFromContract() {
       try {
         const rpcUrl = "https://sepolia-rpc.giwa.io";
-        const res = await fetch(rpcUrl, {
+        const contractAddr = (typeof GIWA_PVP_CONTRACT !== "undefined" ? GIWA_PVP_CONTRACT : "0xB464f766028C1d4Face359592a2127272C2C7750");
+
+        // 1. Get current block number
+        fetch(rpcUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            id: Date.now(),
-            method: "eth_getLogs",
-            params: [{
-              address: "",
-              fromBlock: "0x3300000",
-              toBlock: "latest"
-            }]
-          })
-        });
-        const rpcData = await res.json();
-        if (rpcData && rpcData.result && Array.isArray(rpcData.result)) {
-          const store = getLocalDuels();
-          let updated = false;
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] })
+        })
+        .then(r => r.json())
+        .then(bData => {
+          if (!bData || !bData.result) return;
+          const currentBlock = parseInt(bData.result, 16);
+          const fromBlock = "0x" + Math.max(0, currentBlock - 5000).toString(16);
 
-          rpcData.result.forEach(log => {
-            try {
-              const topic0 = log.topics[0];
-              // Event 1: DuelCreated(uint256,address,address,uint256,uint8,uint256,string)
-              if (topic0 === "0x47fa409e45059ca4351d26c2b17c41f29d4500f90684401d0bdf7d2952bf9a32") {
-                const dId = parseInt(log.topics[1], 16);
-                // Clean onchain event sync
-                const creator = "0x" + log.topics[2].slice(26).toLowerCase();
-                const token = "0x" + log.topics[3].slice(26).toLowerCase();
-                const isUsdg = (token === "0x5fc5360d0400a0fd4f2af552add042d716f1d168");
-                
-                const wagerRaw = parseInt(log.data.slice(2, 66), 16);
-                const choiceRaw = parseInt(log.data.slice(66, 130), 16);
-                const creatorChoice = choiceRaw === 1 ? "YES" : "NO";
-                const oppChoice = creatorChoice === "YES" ? "NO" : "YES";
-                const onchainDeadlineSec = parseInt(log.data.slice(130, 194), 16);
-                const exactOnchainDeadlineMs = (onchainDeadlineSec > 0 && onchainDeadlineSec < 2500000000) ? (onchainDeadlineSec * 1000) : (Date.now() + 900000);
-
-                let tierStr = "1";
-                if (isUsdg) {
-                  tierStr = (wagerRaw / 1000000).toString();
-                } else {
-                  tierStr = "1";
-                }
-
-                let decodedTopic = "";
-                try {
-                  const rawData = log.data.slice(2);
-                  if (rawData.length >= 320) {
-                    const topicByteLen = parseInt(rawData.slice(256, 320), 16);
-                    const hexBytes = rawData.slice(320, 320 + topicByteLen * 2);
-                    let str = "";
-                    for (let b = 0; b < hexBytes.length; b += 2) {
-                      str += String.fromCharCode(parseInt(hexBytes.substr(b, 2), 16));
-                    }
-                    decodedTopic = decodeURIComponent(escape(str));
-                  }
-                } catch(e) {}
-
-                let qIdAssigned = 18;
-                let qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
-                if (decodedTopic) {
-                  const dtUpper = decodedTopic.toUpperCase();
-                  if (dtUpper.includes("SEP 6") || dtUpper.includes("DAILY CANDLE") || dtUpper.includes("#1")) {
-                    qIdAssigned = 1;
-                    qTitleAssigned = "Bitcoin Daily Candle (Sep 6, 2026) Close: GREEN or RED?";
-                  } else if (dtUpper.includes("#18") || dtUpper.includes("1-HOUR") || dtUpper.includes("1H")) {
-                    qIdAssigned = 18;
-                    qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
-                  } else if (dtUpper.includes("BTC") || dtUpper.includes("#3") || dtUpper.includes("#17")) {
-                    qIdAssigned = 17;
-                    qTitleAssigned = "#17: Will the 12-Hour BTC Candle Close GREEN or RED?";
-                  } else if (dtUpper.includes("ETH") || dtUpper.includes("#2") || dtUpper.includes("#16")) {
-                    qIdAssigned = 16;
-                    qTitleAssigned = "#16: Will the 12-Hour ETH Candle Close GREEN or RED?";
-                  } else if (dtUpper.includes("#15") || (dtUpper.includes("BTC") && dtUpper.includes("12"))) {
-                    qIdAssigned = 15;
-                    qTitleAssigned = "#15: Will the 12-Hour BTC Candle Close GREEN or RED?";
-                  } else if (dtUpper.includes("BTC")) {
-                    qIdAssigned = 18;
-                    qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
-                  }
-                } else {
-                  if (dId >= 24) {
-                    qIdAssigned = 1;
-                    qTitleAssigned = "Bitcoin Daily Candle (Sep 6, 2026) Close: GREEN or RED?";
-                  } else if (dId >= 21) {
-                    qIdAssigned = 18;
-                    qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
-                  } else if (dId === 17 || dId === 20) {
-                    qIdAssigned = 17;
-                    qTitleAssigned = "#17: Will the 12-Hour BTC Candle Close GREEN or RED?";
-                  } else if (dId === 18) {
-                    qIdAssigned = 18;
-                    qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle (08:00 - 09:00 UTC) Close GREEN or RED?";
-                  } else if (dId === 19) {
-                    qIdAssigned = 15;
-                    qTitleAssigned = "#15: Will the 12-Hour BTC Candle Close GREEN or RED?";
-                  }
-                }
-
-                const duelKey = "duel_" + dId;
-                if (store[duelKey]) {
-                  const entryDeadline = getQuestionEntryDeadline(qIdAssigned);
-                  store[duelKey].deadline = entryDeadline;
-                  store[duelKey].expiresAt = entryDeadline;
-                }
-
-                if (!store[duelKey]) {
-                  store[duelKey] = {
-                    id: duelKey,
-                    onchainDuelId: dId.toString(),
-                    questionId: qIdAssigned,
-                    questionText: qTitleAssigned,
-                    creatorOption: creatorChoice,
-                    requiredOpponentOption: oppChoice,
-                    tier: tierStr,
-                    creator: creator,
-                    opponent: null,
-                    status: "open",
-                    createdAt: Date.now() - (55002000 - parseInt(log.blockNumber, 16)) * 2000,
-                    deadline: getQuestionDeadline(qIdAssigned),
-                    expiresAt: exactOnchainDeadlineMs,
-                    tokenType: isUsdg ? "USDC" : "ETH",
-                    tokenAddress: token,
-                    onChain: true
-                  };
-                  updated = true;
-                } else {
-                  store[duelKey].questionId = qIdAssigned;
-                  store[duelKey].questionText = qTitleAssigned;
-                  store[duelKey].onchainDuelId = dId.toString();
-                  const entryDeadline = getQuestionEntryDeadline(qIdAssigned);
-                  store[duelKey].deadline = entryDeadline;
-                  store[duelKey].expiresAt = entryDeadline;
-                  updated = true;
-                }
-              }
-              // Event 2: DuelAccepted(uint256,address,uint8)
-              else if (topic0 === "0xc12a9a753ba5697e032f6fa08aaaf85f4ff76d6ea4e6f78767af34cb9c55f842") {
-                const dId = parseInt(log.topics[1], 16);
-                const challenger = "0x" + log.topics[2].slice(26).toLowerCase();
-                const duelKey = "duel_" + dId;
-                if (store[duelKey] && store[duelKey].status !== "in_progress") {
-                  store[duelKey].status = "in_progress";
-                  store[duelKey].opponent = challenger;
-                  updated = true;
-                }
-              }
-              // Event 3: DuelCancelled(uint256,address,uint256)
-              else if (topic0 === "0x12fbd4d0ced605187ec0aec913abe6b5b06912ae3b634c6add28e9a92d1f2d0a") {
-                const dId = parseInt(log.topics[1], 16);
-                const duelKey = "duel_" + dId;
-                if (store[duelKey] && store[duelKey].status !== "cancelled") {
-                  store[duelKey].status = "cancelled";
-                  updated = true;
-                }
-              }
-              // Event 4: DuelSettled(uint256,address,address,uint256,uint256)
-              else if (topic0 === "0x69efb388ae84cd83c69503f1b6fcbf7671a8618573434d68a70a198c166492eb") {
-                const dId = parseInt(log.topics[1], 16);
-                const duelKey = "duel_" + dId;
-                const winAddr = "0x" + log.topics[2].slice(26).toLowerCase();
-                const loseAddr = "0x" + log.topics[3].slice(26).toLowerCase();
-                if (store[duelKey]) {
-                  store[duelKey].status = "completed";
-                  store[duelKey].winner = winAddr;
-                  store[duelKey].loser = loseAddr;
-                  store[duelKey].claimed = true;
-                  store[duelKey].cashbackClaimed = true;
-                  store[duelKey].settledTx = log.transactionHash;
-                  updated = true;
-                }
-              }
-            } catch (err) {}
+          // 2. Fetch logs with safe block range (<= 5000)
+          return fetch(rpcUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              id: Date.now(),
+              method: "eth_getLogs",
+              params: [{
+                address: contractAddr,
+                fromBlock: fromBlock,
+                toBlock: "latest"
+              }]
+            })
           });
+        })
+        .then(r => r ? r.json() : null)
+        .then(rpcData => {
+          if (rpcData && rpcData.result && Array.isArray(rpcData.result)) {
+            const store = getLocalDuels();
+            let updated = false;
 
-          if (updated) {
-            saveLocalDuels(store);
-            if (typeof renderAllDuels === "function") renderAllDuels();
+            rpcData.result.forEach(log => {
+              try {
+                const topic0 = log.topics[0];
+                // Event 1: DuelCreated topic: 0x4be3680c2c544d8262bb544fafa8baa1619aea4c93585fae6da5dcf3d64c393f or legacy
+                if (topic0 === "0x4be3680c2c544d8262bb544fafa8baa1619aea4c93585fae6da5dcf3d64c393f" || topic0 === "0x47fa409e45059ca4351d26c2b17c41f29d4500f90684401d0bdf7d2952bf9a32") {
+                  const dId = parseInt(log.topics[1], 16);
+                  const creator = "0x" + log.topics[2].slice(26).toLowerCase();
+                  
+                  let token = "0x3471010ad619f2ed0f897dc5c7cca8fdd25a8172";
+                  let wagerRaw = 1000000;
+                  let marketSymbol = "BTC";
+
+                  if (log.data && log.data.length >= 130) {
+                    token = "0x" + log.data.slice(26, 66).toLowerCase();
+                    wagerRaw = parseInt(log.data.slice(66, 130), 16);
+                  }
+
+                  const isUsdc = (token.toLowerCase() === "0x3471010ad619f2ed0f897dc5c7cca8fdd25a8172");
+                  const tierStr = isUsdc ? (wagerRaw / 1000000).toString() : "1";
+
+                  const duelKey = "duel_" + dId;
+                  const qIdAssigned = 18;
+                  const qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?";
+
+                  if (!store[duelKey]) {
+                    store[duelKey] = {
+                      id: duelKey,
+                      onchainDuelId: dId.toString(),
+                      questionId: qIdAssigned,
+                      questionText: qTitleAssigned,
+                      creatorOption: "YES",
+                      requiredOpponentOption: "NO",
+                      tier: tierStr,
+                      creator: creator,
+                      opponent: null,
+                      status: "open",
+                      createdAt: Date.now(),
+                      deadline: Date.now() + 3600000,
+                      expiresAt: Date.now() + 3600000,
+                      tokenType: isUsdc ? "USDC" : "ETH",
+                      tokenAddress: token,
+                      onChain: true
+                    };
+                    updated = true;
+                  }
+                }
+                // Event 2: DuelJoined
+                else if (topic0 === "0xc12a9a753ba5697e032f6fa08aaaf85f4ff76d6ea4e6f78767af34cb9c55f842" || topic0 === "0xa886c9eead9ee20297bb5bb6697b0a37de5066a3ae2db080ae299538c5b96792") {
+                  const dId = parseInt(log.topics[1], 16);
+                  const challenger = "0x" + log.topics[2].slice(26).toLowerCase();
+                  const duelKey = "duel_" + dId;
+                  if (store[duelKey] && store[duelKey].status !== "in_progress") {
+                    store[duelKey].status = "in_progress";
+                    store[duelKey].opponent = challenger;
+                    updated = true;
+                  }
+                }
+                // Event 3: DuelCancelled
+                else if (topic0 === "0x12fbd4d0ced605187ec0aec913abe6b5b06912ae3b634c6add28e9a92d1f2d0a") {
+                  const dId = parseInt(log.topics[1], 16);
+                  const duelKey = "duel_" + dId;
+                  if (store[duelKey] && store[duelKey].status !== "cancelled") {
+                    store[duelKey].status = "cancelled";
+                    updated = true;
+                  }
+                }
+              } catch (err) {}
+            });
+
+            if (updated) {
+              saveLocalDuels(store);
+              if (typeof renderAllDuels === "function") renderAllDuels();
+            }
           }
-        }
+        })
+        .catch(e => console.warn("syncOnchainDuels error:", e));
       } catch (e) {
         console.warn("syncOnchainDuelsFromContract failed:", e);
       }
@@ -6782,6 +6713,38 @@ window.addUsdcToWallet = addUsdcToWallet;
 
         showToast("🚀 Transaction submitted: " + tx.hash.slice(0, 10) + "...", "info");
         const receipt = await tx.wait();
+        
+        // Immediate local registration of on-chain duel
+        try {
+          let newDuelId = Date.now();
+          if (receipt.logs && receipt.logs.length > 0) {
+            const createdLog = receipt.logs.find(l => l.topics[0] === "0x4be3680c2c544d8262bb544fafa8baa1619aea4c93585fae6da5dcf3d64c393f");
+            if (createdLog && createdLog.topics[1]) {
+              newDuelId = parseInt(createdLog.topics[1], 16);
+            }
+          }
+          const duelKey = "duel_" + newDuelId;
+          const immediateDuel = {
+            id: duelKey,
+            onchainDuelId: newDuelId.toString(),
+            questionId: 18,
+            questionText: "#18: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
+            creatorOption: isLong ? "YES" : "NO",
+            requiredOpponentOption: isLong ? "NO" : "YES",
+            tier: stakeUsd.toString(),
+            creator: userAddress.toLowerCase(),
+            opponent: null,
+            status: "open",
+            createdAt: Date.now(),
+            deadline: Date.now() + 3600000,
+            expiresAt: Date.now() + 3600000,
+            tokenType: "USDC",
+            tokenAddress: usdcAddress,
+            onChain: true
+          };
+          saveLocalDuel(immediateDuel);
+        } catch(e) { console.warn("Immediate duel save error:", e); }
+
 
         showToast("⚔️ Duel created successfully on GIWA!", "success");
         if (typeof closeCreateDuelModal === "function") closeCreateDuelModal();
@@ -7137,7 +7100,7 @@ window.addUsdcToWallet = addUsdcToWallet;
       } catch(e) {}
     }
     window.loadOnchainDuels = loadOnchainDuels;
-    loadOnchainDuels(); setInterval(loadOnchainDuels, 12000);
+    syncOnchainDuelsFromContract(); setInterval(syncOnchainDuelsFromContract, 5000); loadOnchainDuels(); setInterval(loadOnchainDuels, 10000);
 
 
 window.handleCreateQuestion = async function(e) {
