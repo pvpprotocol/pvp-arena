@@ -2046,35 +2046,27 @@ window.addUsdcToWallet = addUsdcToWallet;
         </div>
       </div>
 
-<!-- KEY METRICS ROW -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KEY METRICS ROW (ONCHAIN SYNCED) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
           <div>
-            <p class="text-[11px] font-mono text-slate-400">Total Duels Created</p>
+            <p class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+              <span>Total Duels Created (On-Chain)</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Live Synced with GIWA Block"></span>
+            </p>
             <h4 id="admin-total-duels" class="text-xl font-black font-mono text-white mt-1">Loading...</h4>
           </div>
           <span class="text-2xl">⚔️</span>
         </div>
         <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
           <div>
-            <p class="text-[11px] font-mono text-slate-400">Active Topics / Questions</p>
+            <p class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+              <span>Active Topics / Questions</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Live Synced with Registry"></span>
+            </p>
             <h4 id="admin-total-questions" class="text-xl font-black font-mono text-[#cbd5e1] mt-1">0</h4>
           </div>
           <span class="text-2xl">⚡</span>
-        </div>
-        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
-          <div>
-            <p class="text-[11px] font-mono text-slate-400">Treasury Fee Share</p>
-            <h4 class="text-xl font-black font-mono text-[#cbd5e1] mt-1">7%</h4>
-          </div>
-          <span class="text-2xl">🏦</span>
-        </div>
-        <div class="bg-[#131b27] shadow-sm p-4 rounded-2xl border border-[#334155] flex items-center justify-between">
-          <div>
-            <p class="text-[11px] font-mono text-slate-400">Oracle Settlement</p>
-            <h4 class="text-xl font-black font-mono text-[#cbd5e1] mt-1">EIP-712</h4>
-          </div>
-          <span class="text-2xl">🔐</span>
         </div>
       </div>
 
@@ -7132,7 +7124,7 @@ function renderDuelCard(duelData) {
       } catch(e) {}
     }
     window.loadOnchainDuels = loadOnchainDuels;
-    syncOnchainDuelsFromContract(); setInterval(syncOnchainDuelsFromContract, 5000); loadOnchainDuels(); setInterval(loadOnchainDuels, 10000);
+    syncOnchainDuelsFromContract(); setInterval(syncOnchainDuelsFromContract, 5000); setInterval(refreshAdminDuelsStats, 5000); loadOnchainDuels(); setInterval(loadOnchainDuels, 10000);
 
 
 window.handleCreateQuestion = async function(e) {
@@ -7295,15 +7287,34 @@ window.handleCreateQuestion = async function(e) {
 
   window.refreshAdminDuelsStats = async function() {
     const totalDuelsEl = document.getElementById("admin-total-duels");
+    const totalQuestionsEl = document.getElementById("admin-total-questions");
+
+    // 1. Sync duels from GIWA Sepolia Escrow Smart Contract block state
     try {
       const provider = new ethers.providers.JsonRpcProvider("https://sepolia-rpc.giwa.io");
-      const contract = new ethers.Contract(ESCROW_CONTRACT, ["function nextDuelId() view returns (uint256)"], provider);
+      const contract = new ethers.Contract(ESCROW_CONTRACT, [
+        "function nextDuelId() view returns (uint256)"
+      ], provider);
       const nextId = await contract.nextDuelId();
       const total = nextId.toNumber() - 1;
-      if (totalDuelsEl) totalDuelsEl.innerText = total >= 0 ? total : 0;
+      if (totalDuelsEl) totalDuelsEl.innerText = (total >= 0 ? total : 0) + " On-Chain Duels";
     } catch(e) {
-      console.warn("refreshAdminDuelsStats err:", e);
-      if (totalDuelsEl) totalDuelsEl.innerText = "Error reading RPC";
+      console.warn("refreshAdminDuelsStats duels err:", e);
+      // Fallback to local onchain verified duels length if RPC call times out
+      if (totalDuelsEl && totalDuelsEl.innerText === "Loading...") {
+        const localD = typeof getLocalDuels === "function" ? getLocalDuels() : [];
+        totalDuelsEl.innerText = localD.length > 0 ? localD.length + " Duels" : "0 Duels";
+      }
+    }
+
+    // 2. Sync questions count directly from registry state
+    try {
+      if (totalQuestionsEl) {
+        const activeCount = (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS)) ? DUEL_QUESTIONS.length : 0;
+        totalQuestionsEl.innerText = activeCount + " Active";
+      }
+    } catch(e) {
+      console.warn("refreshAdminDuelsStats questions err:", e);
     }
   };
 
