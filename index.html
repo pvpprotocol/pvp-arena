@@ -870,6 +870,37 @@ buffer/index.js:
       }
     }
   </script>
+
+<script>
+async function addUsdcToWallet() {
+  if (!window.ethereum) {
+    alert("Please install MetaMask or Rabby");
+    return;
+  }
+  try {
+    const wasAdded = await window.ethereum.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: "0x3471010ad619f2ED0F897dc5C7cCa8FdD25A8172",
+          symbol: "USDC",
+          decimals: 6,
+          image: "https://cryptologos.cc/logos/usd-coin-usdc-logo.png"
+        }
+      }
+    });
+    if (wasAdded) {
+      alert("✅ USDC successfully added to wallet!");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Error adding token: " + (error.message || error));
+  }
+}
+window.addUsdcToWallet = addUsdcToWallet;
+</script>
+
 </head>
 <body class="bg-[#090d14] text-[#f8fafc] min-h-screen antialiased selection:bg-blue-500 selection:text-[#090d14] font-sans flex">
 
@@ -1009,6 +1040,11 @@ buffer/index.js:
           <span id="walletDot" class="w-2 h-2 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50"></span>
           <span id="walletBtnText">Connect Wallet</span>
         </button>
+
+<button id="addUsdcBtn" onclick="addUsdcToWallet()" style="background: rgba(37,99,235,0.2); border: 1px solid #3b82f6; color: #60a5fa; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-right: 8px; transition: all 0.2s;" onmouseover="this.style.background='rgba(37,99,235,0.4)'" onmouseout="this.style.background='rgba(37,99,235,0.2)'">
+  <img src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" style="width: 14px; height: 14px; border-radius: 50%;"> Add USDC to Wallet
+</button>
+
       </div>
     </header>
 
