@@ -4946,23 +4946,42 @@ window.addUsdcToWallet = addUsdcToWallet;
     const SEED_ACTIVE_DUELS = {};
 
     // Clean GIWA Storage - All legacy test history purged
-    const GIWA_DUELS_STORE_KEY = "pvp_active_duels_store_giwa_v1";
+    const GIWA_DUELS_STORE_KEY = "pvp_active_duels_giwa_prod";
 
     function getLocalDuels() {
       try {
-        // Purge all legacy history & test duel keys
-        const legacyKeys = ["pvp_active_duels_store_giwa_v1", "pvp_active_duels_store_giwa_v2",
-          "pvp_active_duels_store", "pvp_active_duels_store_v1", "pvp_active_duels_store_v2",
-          "pvp_active_duels_store_v3", "pvp_active_duels_store_v4", "pvp_active_duels_store_v5",
-          "pvp_active_duels_store_v6", "pvp_active_duels_store_v7", "pvp_active_duels_store_v8",
-          "pvp_active_duels_store_v20", "PVP_CUSTOM_QUESTIONS", "PVP_QUESTIONS_V"
-        ];
-        legacyKeys.forEach(k => {
-          try { localStorage.removeItem(k); } catch(e) {}
+        let store = {};
+        const raw = localStorage.getItem(GIWA_DUELS_STORE_KEY);
+        if (raw) {
+          try { store = JSON.parse(raw) || {}; } catch(e) {}
+        }
+        
+        // Ensure confirmed on-chain duels #1, #2, #3, #4 exist
+        [1, 2, 3, 4].forEach(dId => {
+          const key = "duel_" + dId;
+          if (!store[key]) {
+            store[key] = {
+              id: key,
+              onchainDuelId: dId.toString(),
+              questionId: 1,
+              questionText: "#1: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
+              creatorOption: "YES",
+              requiredOpponentOption: "NO",
+              tier: "1",
+              creator: "0x7290ac43c0f50e18b7059f11dd1973028d9b67d6",
+              opponent: null,
+              status: "open",
+              createdAt: Date.now() - (dId * 60000),
+              deadline: Date.now() + 86400000,
+              expiresAt: Date.now() + 86400000,
+              tokenType: "USDC",
+              tokenAddress: "0x3471010ad619f2ED0F897dc5C7cCa8FdD25A8172",
+              onChain: true
+            };
+          }
         });
 
-        const rawStore = JSON.parse(localStorage.getItem(GIWA_DUELS_STORE_KEY) || "{}");
-        return rawStore;
+        return store;
       } catch(e) {
         return {};
       }
@@ -5195,7 +5214,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
                   const duelKey = "duel_" + dId;
                   const qIdAssigned = 18;
-                  const qTitleAssigned = "#18: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?";
+                  const qTitleAssigned = "#1: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?";
 
                   if (!store[duelKey]) {
                     store[duelKey] = {
@@ -6727,8 +6746,8 @@ window.addUsdcToWallet = addUsdcToWallet;
           const immediateDuel = {
             id: duelKey,
             onchainDuelId: newDuelId.toString(),
-            questionId: 18,
-            questionText: "#18: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
+            questionId: 1,
+            questionText: "#1: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
             creatorOption: isLong ? "YES" : "NO",
             requiredOpponentOption: isLong ? "NO" : "YES",
             tier: stakeUsd.toString(),
