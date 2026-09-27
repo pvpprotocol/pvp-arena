@@ -4728,7 +4728,7 @@ window.addUsdcToWallet = addUsdcToWallet;
           : "border border-[#334155] bg-[#131b27] hover:border-[#38bdf8]/50 hover:shadow-sm";
         const dotClass = isSelected ? "bg-slate-700" : (isLive ? "bg-slate-400" : "bg-slate-300");
         const qDisplayId = q.id || q.qNum || (idx + 1);
-        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#182230] text-[#f8fafc] font-black shadow-md shadow-none ' : 'bg-[#182230] text-neutral-700 font-bold border border-[#334155] group-hover:border-[#334155]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">#${qDisplayId}</div>`;
+        const numBadge = `<div class="px-2.5 h-9 rounded-xl ${isSelected ? 'bg-[#182230] text-[#f8fafc] font-black shadow-md shadow-none ' : 'bg-[#182230] text-neutral-700 font-bold border border-[#334155] group-hover:border-[#334155]'} text-xs font-mono flex items-center justify-center shrink-0 transition-all font-bold tracking-tight">${qDisplayId}</div>`;
         
         const qDeadline = getQuestionDeadline(q.id);
         const timeObj = formatRemainingTime(qDeadline);
@@ -4964,7 +4964,7 @@ window.addUsdcToWallet = addUsdcToWallet;
               id: key,
               onchainDuelId: dId.toString(),
               questionId: 1,
-              questionText: "#1: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
+              questionText: "Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
               creatorOption: "YES",
               requiredOpponentOption: "NO",
               tier: "1",
@@ -5198,7 +5198,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
                   const duelKey = "duel_" + dId;
                   const qIdAssigned = 18;
-                  const qTitleAssigned = "#1: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?";
+                  const qTitleAssigned = "Will the upcoming 1-Hour BTC Candle Close GREEN or RED?";
 
                   if (!store[duelKey]) {
                     store[duelKey] = {
@@ -6195,7 +6195,7 @@ window.addUsdcToWallet = addUsdcToWallet;
             '<div>' +
               '<div class="flex items-center gap-2 flex-wrap">' +
                 '<span class="px-2.5 py-0.5 rounded-lg bg-[#182230] text-[#cbd5e1] border border-[#334155] text-[11px] font-mono font-black tracking-wider flex items-center gap-1 shadow-sm">' +
-                  '⚔️ DUEL #' + qId +
+                  qId +
                 '</span>' +
                 '<span class="text-xs font-mono font-bold text-[#f8fafc]">' + questionText + '</span>' +
                 countBadge +
@@ -6892,7 +6892,7 @@ function renderDuelCard(duelData) {
             id: duelKey,
             onchainDuelId: newDuelId.toString(),
             questionId: 1,
-            questionText: "#1: Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
+            questionText: "Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
             creatorOption: isLong ? "YES" : "NO",
             requiredOpponentOption: isLong ? "NO" : "YES",
             tier: stakeUsd.toString(),
@@ -7240,7 +7240,7 @@ function renderDuelCard(duelData) {
       tr.className = "hover:bg-[#182230] transition-colors";
       const isEnded = q.isEnded || (q.deadline && Date.now() > q.deadline);
       tr.innerHTML = `
-        <td class="py-3 px-3 font-bold text-neutral-700">#${q.id || q.qNum || idx + 1}</td>
+        <td class="py-3 px-3 font-bold text-neutral-700">${q.id || q.qNum || idx + 1}</td>
         <td class="py-3 px-3 text-white font-medium max-w-xs truncate">${q.title}</td>
         <td class="py-3 px-3 text-[#cbd5e1]">${q.category || 'GENERAL'}</td>
         <td class="py-3 px-3">
