@@ -1,3 +1,4 @@
+export const GIWA_PVP_CONTRACT_ADDRESS = "0xB464f766028C1d4Face359592a2127272C2C7750";
 /**
  * GIWA Sepolia Testnet Configuration & Frontend Integration
  * Supports viem / wagmi / ethers / window.ethereum
