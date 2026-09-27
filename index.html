@@ -11,6 +11,98 @@
   <meta http-equiv="Expires" content="0">
   <title>pvphub.fun | Onchain 1v1 PvP Duel Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // ── GLOBAL ADMIN & SAFE SHIM INITIALIZATION ──
+    window.AUTHORIZED_ADMINS = [
+      "0xd8c09b380e1d8120aac2188653b68f1209ee883c".toLowerCase(),
+      "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase(),
+      "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase(),
+      "GxA1LxnGCkfV1Hon94pnXYmE2Cyi5XEhUmomrvXdbVRa".toLowerCase()
+    ];
+    var AUTHORIZED_ADMINS = window.AUTHORIZED_ADMINS;
+
+    window.isFounderWallet = function(account) {
+      if (!account) return false;
+      return window.AUTHORIZED_ADMINS.includes(account.toLowerCase());
+    };
+    var isFounderWallet = window.isFounderWallet;
+
+    window.checkAdminAccess = function(account) {
+      try {
+        const isAdm = window.isFounderWallet(account);
+        const btn = document.getElementById("btn-tab-admin");
+        const badge = document.getElementById("adminConnectedBadge");
+        const btnDeployQ = document.getElementById("btn-deploy-next-q");
+        const founderPanel = document.getElementById("founder-question-panel");
+        const isExactFounder = account && (
+          account.toLowerCase() === "0xd8c09b380e1d8120aac2188653b68f1209ee883c".toLowerCase() ||
+          account.toLowerCase() === "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase() ||
+          account.toLowerCase() === "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase()
+        );
+
+        if (founderPanel) {
+          if (isExactFounder) {
+            founderPanel.classList.remove("hidden");
+            founderPanel.style.display = "block";
+            const authBadge = document.getElementById("founder-auth-status-badge");
+            if (authBadge) {
+              authBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>FOUNDER AUTHENTICATED';
+              authBadge.className = "text-[11px] font-mono text-emerald-400 font-bold flex items-center gap-1 bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-500/20";
+            }
+          } else {
+            founderPanel.classList.add("hidden");
+            founderPanel.style.display = "none";
+          }
+        }
+        if (btn) {
+          if (isAdm) {
+            btn.classList.remove("hidden");
+            btn.style.display = "flex";
+          }
+        }
+        if (badge) {
+          badge.classList.toggle("hidden", !isAdm);
+          badge.style.display = isAdm ? "inline-flex" : "none";
+        }
+        if (btnDeployQ) {
+          btnDeployQ.disabled = !isAdm;
+        }
+      } catch(e) {
+        console.warn("checkAdminAccess error:", e);
+      }
+    };
+    var checkAdminAccess = window.checkAdminAccess;
+
+    // Safety shim for legacy Solana web3 objects
+    window.giwaWeb3 = window.giwaWeb3 || {
+      PublicKey: function(k) {
+        this.k = k;
+        this.toBytes = function() { return new Uint8Array(32); };
+        this.toBase58 = function() { return String(k); };
+        this.toString = function() { return String(k); };
+      },
+      Connection: function() {
+        this.getBalance = async function() { return 0; };
+        this.getRecentBlockhash = async function() { return { blockhash: "11111111111111111111111111111111" }; };
+      },
+      Transaction: function() {
+        this.add = function() { return this; };
+      },
+      TransactionInstruction: function() {},
+      SystemProgram: {
+        programId: "11111111111111111111111111111111",
+        transfer: function() { return {}; }
+      },
+      ComputeBudgetProgram: {
+        setComputeUnitLimit: function() { return {}; },
+        setComputeUnitPrice: function() { return {}; }
+      }
+    };
+    window.giwaWeb3.PublicKey.findProgramAddressSync = function() { return [new window.giwaWeb3.PublicKey("11111111111111111111111111111111"), 0]; };
+    window.giwaWeb3.PublicKey.findProgramAddress = async function() { return [new window.giwaWeb3.PublicKey("11111111111111111111111111111111"), 0]; };
+    var giwaWeb3 = window.giwaWeb3;
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
@@ -2349,7 +2441,7 @@ buffer/index.js:
         if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50";
         showToast("Connected: " + shortAddr + " (GIWA)", "success");
 
-        if (typeof checkAdminAccess === "function") checkAdminAccess(userAddress);
+        try { if (typeof checkAdminAccess === "function") checkAdminAccess(userAddress); } catch(e){ console.warn(e); }
         if (typeof loadStoredQuestions === "function") loadStoredQuestions();
         if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
         if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats();
@@ -7764,12 +7856,7 @@ buffer/index.js:
     window.NO = "RED";
 
   // ── ADMIN PANEL LOGIC & ACCESS CONTROL ──
-  const AUTHORIZED_ADMINS = [
-    "4GwLwqjdqWXdNYKWYqqkniWX8vXPdTpa72QWxymtsaeV".toLowerCase(),
-    "GxA1LxnGCkfV1Hon94pnXYmE2Cyi5XEhUmomrvXdbVRa".toLowerCase(),
-    "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase(),
-    "0x0ce6a19992cd1cca54e83173bd0b5137f89b0f67".toLowerCase()
-  ];
+  // AUTHORIZED_ADMINS already initialized at head
   window.AUTHORIZED_ADMINS = AUTHORIZED_ADMINS;
 
   function isFounderWallet(account) {
