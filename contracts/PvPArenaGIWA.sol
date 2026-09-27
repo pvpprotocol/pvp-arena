@@ -13,7 +13,8 @@ contract PvPArenaGIWA {
         uint256 duelId;
         address creator;
         address challenger;
-        address token; // address(0) for native ETH
+        address referrer; // Referral recipient (if any)
+        address token;    // address(0) for native ETH, or ERC20 (e.g. USDC)
         uint256 entryStake;
         uint256 targetPrice;
         bool isCreatorLong;
@@ -28,9 +29,11 @@ contract PvPArenaGIWA {
     address public resolver;
     address public treasury;
 
-    uint256 public constant WINNER_SHARE_BPS = 9000; // 90% (1.8x)
-    uint256 public constant CASHBACK_BPS = 300;     // 3%
-    uint256 public constant TREASURY_BPS = 700;     // 7%
+    uint256 public constant WINNER_SHARE_BPS = 9000;         // 90% (1.8x)
+    uint256 public constant CASHBACK_BPS = 300;             // 3% rebate
+    uint256 public constant REFERRAL_SHARE_BPS = 500;       // 5% cash to referrer
+    uint256 public constant TREASURY_REFERRED_BPS = 200;    // 2% to treasury when referral active
+    uint256 public constant TREASURY_UNREFERRED_BPS = 700;  // 7% to treasury when unreferred
     uint256 public constant BPS_DENOMINATOR = 10000;
     uint256 public constant ORACLE_GRACE_PERIOD = 6 hours;
 
@@ -55,9 +58,9 @@ contract PvPArenaGIWA {
         _;
     }
 
-    event DuelCreated(uint256 indexed duelId, address indexed creator, address token, uint256 entryStake, string marketSymbol);
+    event DuelCreated(uint256 indexed duelId, address indexed creator, address referrer, address token, uint256 entryStake, string marketSymbol);
     event DuelJoined(uint256 indexed duelId, address indexed challenger);
-    event DuelResolved(uint256 indexed duelId, address indexed winner, uint256 winnerPayout, uint256 loserCashback);
+    event DuelResolved(uint256 indexed duelId, address indexed winner, uint256 winnerPayout, uint256 loserCashback, address referrer, uint256 referralReward, uint256 treasuryFee);
     event DuelCancelled(uint256 indexed duelId, address indexed creator);
     event DuelRefunded(uint256 indexed duelId);
 
@@ -76,6 +79,35 @@ contract PvPArenaGIWA {
         uint256 settlementTime,
         string calldata marketSymbol
     ) external payable nonReentrant returns (uint256) {
+        return _createDuelInternal(token, entryStake, targetPrice, isCreatorLong, entryDeadline, settlementTime, marketSymbol, address(0));
+    }
+
+    function createDuelWithReferral(
+        address token,
+        uint256 entryStake,
+        uint256 targetPrice,
+        bool isCreatorLong,
+        uint256 entryDeadline,
+        uint256 settlementTime,
+        string calldata marketSymbol,
+        address referrer
+    ) external payable nonReentrant returns (uint256) {
+        if (referrer == msg.sender) {
+            referrer = address(0);
+        }
+        return _createDuelInternal(token, entryStake, targetPrice, isCreatorLong, entryDeadline, settlementTime, marketSymbol, referrer);
+    }
+
+    function _createDuelInternal(
+        address token,
+        uint256 entryStake,
+        uint256 targetPrice,
+        bool isCreatorLong,
+        uint256 entryDeadline,
+        uint256 settlementTime,
+        string calldata marketSymbol,
+        address referrer
+    ) internal returns (uint256) {
         require(entryStake > 0, "INVALID_STAKE");
         require(entryDeadline > block.timestamp, "INVALID_DEADLINE");
         require(settlementTime >= entryDeadline, "INVALID_SETTLEMENT");
@@ -92,6 +124,7 @@ contract PvPArenaGIWA {
             duelId: duelId,
             creator: msg.sender,
             challenger: address(0),
+            referrer: referrer,
             token: token,
             entryStake: entryStake,
             targetPrice: targetPrice,
@@ -103,11 +136,15 @@ contract PvPArenaGIWA {
             marketSymbol: marketSymbol
         });
 
-        emit DuelCreated(duelId, msg.sender, token, entryStake, marketSymbol);
+        emit DuelCreated(duelId, msg.sender, referrer, token, entryStake, marketSymbol);
         return duelId;
     }
 
     function joinDuel(uint256 duelId) external payable nonReentrant {
+        joinDuelWithReferral(duelId, address(0));
+    }
+
+    function joinDuelWithReferral(uint256 duelId, address referrer) public payable nonReentrant {
         Duel storage duel = duels[duelId];
         require(duel.status == DuelStatus.Open, "DUEL_NOT_OPEN");
         require(block.timestamp <= duel.entryDeadline, "ENTRY_EXPIRED");
@@ -122,6 +159,10 @@ contract PvPArenaGIWA {
 
         duel.challenger = msg.sender;
         duel.status = DuelStatus.Matched;
+
+        if (duel.referrer == address(0) && referrer != address(0) && referrer != msg.sender && referrer != duel.creator) {
+            duel.referrer = referrer;
+        }
 
         emit DuelJoined(duelId, msg.sender);
     }
@@ -156,17 +197,31 @@ contract PvPArenaGIWA {
         }
 
         address loser = (winner == duel.creator) ? duel.challenger : duel.creator;
-        uint256 winnerPayout = (totalPot * WINNER_SHARE_BPS) / BPS_DENOMINATOR;
-        uint256 loserCashback = (totalPot * CASHBACK_BPS) / BPS_DENOMINATOR;
-        uint256 treasuryFee = totalPot - winnerPayout - loserCashback;
+        uint256 winnerPayout = (totalPot * WINNER_SHARE_BPS) / BPS_DENOMINATOR; // 90%
+        uint256 loserCashback = (totalPot * CASHBACK_BPS) / BPS_DENOMINATOR;    // 3%
+
+        uint256 referralReward = 0;
+        uint256 treasuryFee = 0;
+
+        if (duel.referrer != address(0)) {
+            referralReward = (totalPot * REFERRAL_SHARE_BPS) / BPS_DENOMINATOR; // 5%
+            treasuryFee = (totalPot * TREASURY_REFERRED_BPS) / BPS_DENOMINATOR; // 2%
+        } else {
+            treasuryFee = totalPot - winnerPayout - loserCashback;             // 7%
+        }
 
         _safeTransfer(duel.token, winner, winnerPayout);
         _safeTransfer(duel.token, loser, loserCashback);
+
+        if (referralReward > 0 && duel.referrer != address(0)) {
+            _safeTransfer(duel.token, duel.referrer, referralReward);
+        }
+
         if (treasuryFee > 0 && treasury != address(0)) {
             _safeTransfer(duel.token, treasury, treasuryFee);
         }
 
-        emit DuelResolved(duelId, winner, winnerPayout, loserCashback);
+        emit DuelResolved(duelId, winner, winnerPayout, loserCashback, duel.referrer, referralReward, treasuryFee);
     }
 
     function emergencyRefund(uint256 duelId) external nonReentrant {
