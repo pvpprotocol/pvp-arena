@@ -191,7 +191,7 @@
 
     
     
-    /* VIBRANT ACTIVE CREATE DUEL BUTTON */
+    /* VIBRANT ACTIVE CREATE DUEL BUTTON - COMPLETELY ROCK SOLID AND STEADY */
     #create-duel-btn {
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
       color: #ffffff !important;
@@ -201,13 +201,16 @@
       cursor: pointer !important;
       opacity: 1 !important;
       filter: none !important;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      transform: none !important;
+      min-width: 320px !important;
+      height: 52px !important;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
     }
     #create-duel-btn:hover {
       background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
       border-color: #93c5fd !important;
       box-shadow: 0 6px 25px rgba(37, 99, 235, 0.65) !important;
-      transform: translateY(-1px) scale(1.02) !important;
+      transform: none !important;
     }
     #create-duel-btn * {
       color: #ffffff !important;
@@ -1186,7 +1189,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
         <!-- SUMMARY & CREATE BUTTON -->
         <div class="mt-6 flex justify-center">
-          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-auto px-10 py-4 rounded-xl text-white font-extrabold font-mono text-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; color: #ffffff !important; border: 1px solid #60a5fa !important; cursor: pointer !important; opacity: 1 !important; box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45) !important;">
+          <button id="create-duel-btn" onclick="createDuel()" class="w-full sm:w-[320px] h-[52px] px-8 rounded-xl text-white font-extrabold font-mono text-sm flex items-center justify-center gap-2 cursor-pointer select-none" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; color: #ffffff !important; border: 1px solid #60a5fa !important; cursor: pointer !important; opacity: 1 !important; box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45) !important;">
             <span>⚔️</span> CREATE DUEL
           </button>
         </div>
@@ -5880,15 +5883,21 @@ window.addUsdcToWallet = addUsdcToWallet;
       if (createDuelBtn) {
         const hasLiveQ = DUEL_QUESTIONS.some(q => !q.isEnded && Date.now() < getQuestionDeadline(q.id));
         if (hasLiveQ && isSelectedQExpired) {
-          createDuelBtn.disabled = true;
-          createDuelBtn.classList.add("opacity-50", "cursor-not-allowed");
-          createDuelBtn.classList.remove("hover:from-emerald-400");
-          createDuelBtn.innerHTML = `<span>🔒</span><span>ENTRY WINDOW CLOSED (QUESTION ENDED)</span>`;
+          if (!createDuelBtn.disabled) {
+            createDuelBtn.disabled = true;
+            createDuelBtn.classList.add("opacity-50", "cursor-not-allowed");
+            createDuelBtn.innerHTML = "<span>🔒</span><span>ENTRY WINDOW CLOSED</span>";
+          }
         } else if (!window.duelsPaused) {
-          createDuelBtn.disabled = false;
-          createDuelBtn.classList.remove("opacity-50", "cursor-not-allowed");
-          createDuelBtn.classList.add("hover:from-emerald-400");
-          createDuelBtn.innerHTML = `<span>⚔️</span><span>CREATE DUEL ON-CHAIN</span>`;
+          if (createDuelBtn.disabled) {
+            createDuelBtn.disabled = false;
+            createDuelBtn.classList.remove("opacity-50", "cursor-not-allowed");
+            if (typeof updateOptionButtonsUI === "function") {
+              updateOptionButtonsUI();
+            } else {
+              createDuelBtn.innerHTML = "<span>⚔️</span><span>CREATE DUEL</span>";
+            }
+          }
         }
       }
 
