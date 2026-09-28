@@ -3892,6 +3892,8 @@ window.addUsdcToWallet = addUsdcToWallet;
     // Pre-seeded with confirmed on-chain GIWA Sepolia transactions (updated dynamically by RPC)
     const DUEL_QUESTIONS = (function() {
       // Direct On-Chain Architecture: GIWA Sepolia confirmed questions
+      const nowTopHour = Math.ceil(Date.now() / 3600000) * 3600000;
+      const btcDl = nowTopHour > Date.now() + 120000 ? nowTopHour : nowTopHour + 3600000;
       const defaultQ1 = {
         id: 1,
         qNum: 1,
@@ -3901,15 +3903,23 @@ window.addUsdcToWallet = addUsdcToWallet;
         opt1: "GREEN",
         opt2: "RED",
         category: "crypto",
-        status: "ended",
+        status: "open",
         oracle: "Coinbase Exchange",
         targetPrice: 0,
         isConfirmedOnchain: true,
-        candleStartTime: 1790535600000,
-        deadline: 1790535600000,
-        settlementTime: 1790539200000,
-        isEnded: true,
-        getDeadline: function() { return this.deadline; }
+        candleStartTime: btcDl,
+        deadline: btcDl,
+        settlementTime: btcDl + 3600000,
+        isEnded: false,
+        getDeadline: function() {
+          if (Date.now() >= this.deadline) {
+            const nextH = Math.ceil(Date.now() / 3600000) * 3600000;
+            this.deadline = (nextH > Date.now() + 60000) ? nextH : nextH + 3600000;
+            this.candleStartTime = this.deadline;
+            this.settlementTime = this.deadline + 3600000;
+          }
+          return this.deadline;
+        }
       };
 
       const defaultQ2 = {
@@ -3921,15 +3931,23 @@ window.addUsdcToWallet = addUsdcToWallet;
         opt1: "GREEN",
         opt2: "RED",
         category: "crypto",
-        status: "ended",
+        status: "open",
         oracle: "Coinbase Exchange",
         targetPrice: 0,
         isConfirmedOnchain: true,
-        candleStartTime: 1790539200000,
-        deadline: 1790539200000,
-        settlementTime: 1790542800000,
-        isEnded: true,
-        getDeadline: function() { return this.deadline; }
+        candleStartTime: btcDl,
+        deadline: btcDl,
+        settlementTime: btcDl + 3600000,
+        isEnded: false,
+        getDeadline: function() {
+          if (Date.now() >= this.deadline) {
+            const nextH = Math.ceil(Date.now() / 3600000) * 3600000;
+            this.deadline = (nextH > Date.now() + 60000) ? nextH : nextH + 3600000;
+            this.candleStartTime = this.deadline;
+            this.settlementTime = this.deadline + 3600000;
+          }
+          return this.deadline;
+        }
       };
 
       const list = [defaultQ1, defaultQ2];
@@ -6148,7 +6166,7 @@ window.addUsdcToWallet = addUsdcToWallet;
       if (myGreenDuels.length > 0) {
         const greenTargetIds = myGreenDuels.map(d => String(d.id || ("duel_" + d.onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "")).join(",");
         actionButtons.push(
-          '<button onclick="cancelDuel(\'' + greenTargetIds + \'\', ' + myGreenTotalStake + ')" class="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
+          '<button onclick="cancelDuel(\'' + greenTargetIds + '\', ' + myGreenTotalStake + ')" class="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
             '❌ CANCEL GREEN (' + myGreenTotalStake + ' USDC)' +
           '</button>'
         );
@@ -6157,7 +6175,7 @@ window.addUsdcToWallet = addUsdcToWallet;
       if (myRedDuels.length > 0) {
         const redTargetIds = myRedDuels.map(d => String(d.id || ("duel_" + d.onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "")).join(",");
         actionButtons.push(
-          '<button onclick="cancelDuel(\'' + redTargetIds + \'\', ' + myRedTotalStake + ')" class="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
+          '<button onclick="cancelDuel(\'' + redTargetIds + '\', ' + myRedTotalStake + ')" class="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
             '❌ CANCEL RED (' + myRedTotalStake + ' USDC)' +
           '</button>'
         );
