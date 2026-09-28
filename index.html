@@ -6021,14 +6021,6 @@ window.addUsdcToWallet = addUsdcToWallet;
         );
       }
 
-      // Add inspect IDs toggle
-      const safeGroupKey = String(group.groupKey).replace(/[^a-zA-Z0-9_]/g, "");
-      actionButtons.push(
-        '<button onclick="toggleGroupDetails(\'' + safeGroupKey + '\')" class="px-2.5 py-2 rounded-xl bg-[#182230] hover:bg-[#1e293b] text-sky-400 border border-[#334155] text-xs font-mono transition-all cursor-pointer">' +
-          '🔍 Show ' + count + ' IDs' +
-        '</button>'
-      );
-
       // Sub-list of individual duels
       const subListHtml = group.duels.map((d, i) => {
         const dId = String(d.id || ("duel_" + d.onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "");
@@ -6097,10 +6089,7 @@ window.addUsdcToWallet = addUsdcToWallet;
             actionButtons.join("") +
           '</div>' +
         '</div>' +
-        '<div id="group-details-' + safeGroupKey + '" class="hidden border-t border-[#334155] pt-2 space-y-1.5">' +
-          '<div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-1">Queue of ' + count + ' Active Requests in this Pool:</div>' +
-          subListHtml +
-        '</div>' +
+        
       '</div>';
 
       container.insertAdjacentHTML("beforeend", cardHtml);
