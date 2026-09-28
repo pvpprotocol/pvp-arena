@@ -6141,20 +6141,24 @@ window.addUsdcToWallet = addUsdcToWallet;
       // If user has both Green and Red requests, show TWO cancel buttons (one Green, one Red)!
       let actionButtons = [];
 
+      // Calculate TOTAL stakes for Green and Red so user sees exact total amount (e.g. 2 requests of 1 USDC = 2 USDC)
+      const myGreenTotalStake = myGreenDuels.reduce((sum, d) => sum + (Number(d.entryStake || d.wagerAmount || safeTier) || safeTier), 0);
+      const myRedTotalStake = myRedDuels.reduce((sum, d) => sum + (Number(d.entryStake || d.wagerAmount || safeTier) || safeTier), 0);
+
       if (myGreenDuels.length > 0) {
-        const targetId = String(myGreenDuels[0].id || ("duel_" + myGreenDuels[0].onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "");
+        const greenTargetIds = myGreenDuels.map(d => String(d.id || ("duel_" + d.onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "")).join(",");
         actionButtons.push(
-          '<button onclick="cancelDuel(\'' + targetId + '\', ' + safeTier + ')" class="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
-            '❌ CANCEL GREEN (' + safeTier + ' USDC)' +
+          '<button onclick="cancelDuel(\'' + greenTargetIds + \'\', ' + myGreenTotalStake + ')" class="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
+            '❌ CANCEL GREEN (' + myGreenTotalStake + ' USDC)' +
           '</button>'
         );
       }
 
       if (myRedDuels.length > 0) {
-        const targetId = String(myRedDuels[0].id || ("duel_" + myRedDuels[0].onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "");
+        const redTargetIds = myRedDuels.map(d => String(d.id || ("duel_" + d.onchainDuelId)).replace(/[^a-zA-Z0-9_]/g, "")).join(",");
         actionButtons.push(
-          '<button onclick="cancelDuel(\'' + targetId + '\', ' + safeTier + ')" class="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
-            '❌ CANCEL RED (' + safeTier + ' USDC)' +
+          '<button onclick="cancelDuel(\'' + redTargetIds + \'\', ' + myRedTotalStake + ')" class="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-500/50 text-xs font-extrabold font-mono transition-all cursor-pointer flex items-center gap-1 active:scale-95 shadow-sm">' +
+            '❌ CANCEL RED (' + myRedTotalStake + ' USDC)' +
           '</button>'
         );
       }
@@ -7075,9 +7079,15 @@ function renderDuelCard(duelData) {
       }
     }
 
-    async function cancelDuel(duelId) {
+    async function cancelDuel(duelId, totalStake) {
       if (!window.ethereum) {
         showToast("🦊 MetaMask / Rabby not detected.", "error");
+        return;
+      }
+
+      const rawIds = (typeof duelId === "string" ? duelId.split(",") : (Array.isArray(duelId) ? duelId : [duelId])).map(s => String(s).trim()).filter(Boolean);
+      if (!rawIds.length) {
+        showToast("❌ No duel selected", "error");
         return;
       }
 
@@ -7085,39 +7095,37 @@ function renderDuelCard(duelData) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
-
-        let numId = duelId;
-        if (typeof duelId === "string") {
-          numId = duelId.replace(/^duel_/, "");
-        }
-        numId = parseInt(numId, 10);
-        if (isNaN(numId) || numId <= 0) {
-          showToast("❌ Invalid duel identifier", "error");
-          return;
-        }
-
-        showToast("🦊 Confirm cancellation of Duel #" + numId + " in wallet...", "info");
         const contract = new ethers.Contract(GIWA_PVP_CONTRACT, GIWA_PVP_ABI, signer);
 
-        const tx = await contract.cancelDuel(numId);
-        showToast("🚀 Cancelling duel: " + tx.hash.slice(0, 10) + "...", "info");
-        await tx.wait();
+        for (let i = 0; i < rawIds.length; i++) {
+          let numId = rawIds[i].replace(/^duel_/, "");
+          numId = parseInt(numId, 10);
+          if (isNaN(numId) || numId <= 0) continue;
 
-        // Update local store immediately so UI reflects cancellation & refund
-        const store = getLocalDuels();
-        const fullKey = "duel_" + numId;
-        if (store[fullKey]) {
-          store[fullKey].status = "cancelled";
-          store[fullKey].cancelledAt = Date.now();
-          saveLocalDuels(store);
-        }
-        if (store[duelId]) {
-          store[duelId].status = "cancelled";
-          store[duelId].cancelledAt = Date.now();
-          saveLocalDuels(store);
+          const stepText = rawIds.length > 1 ? (" (" + (i + 1) + "/" + rawIds.length + ")") : "";
+          showToast("🦊 Confirm cancellation of Duel #" + numId + stepText + " in wallet...", "info");
+
+          const tx = await contract.cancelDuel(numId);
+          showToast("🚀 Cancelling duel #" + numId + ": " + tx.hash.slice(0, 10) + "...", "info");
+          await tx.wait();
+
+          // Update local store immediately so UI reflects cancellation & refund
+          const store = getLocalDuels();
+          const fullKey = "duel_" + numId;
+          if (store[fullKey]) {
+            store[fullKey].status = "cancelled";
+            store[fullKey].cancelledAt = Date.now();
+            saveLocalDuels(store);
+          }
+          if (store[rawIds[i]]) {
+            store[rawIds[i]].status = "cancelled";
+            store[rawIds[i]].cancelledAt = Date.now();
+            saveLocalDuels(store);
+          }
         }
 
-        showToast("✅ Duel #" + numId + " cancelled and 100% refund processed!", "success");
+        const refundText = totalStake ? (totalStake + " USDC") : "duel";
+        showToast("✅ Successfully cancelled and refunded " + refundText + "!", "success");
         if (typeof syncOnchainDuelsFromContract === "function") syncOnchainDuelsFromContract();
         if (typeof renderAllDuels === "function") renderAllDuels();
         if (typeof updateDuelCounter === "function") updateDuelCounter();
