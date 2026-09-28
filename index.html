@@ -5046,8 +5046,8 @@ window.addUsdcToWallet = addUsdcToWallet;
 
       // LAW 1: Unmatched duel request expires as soon as question entry deadline is reached
       if (!isMatched) {
-        // If question is ended or entry deadline has arrived/passed, move to expired!
-        if (q && q.isEnded) return "expired";
+        // If question is ended and its entry deadline has arrived/passed, move to expired!
+        if (q && q.isEnded && (entryDeadline <= 0 || now >= entryDeadline)) return "expired";
         if (entryDeadline > 0 && now >= entryDeadline) return "expired";
 
         // Also check if direct deadline is set and passed
@@ -5075,7 +5075,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
         const iface = new ethers.utils.Interface([
           "function nextDuelId() view returns (uint256)",
-          "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 wagerAmount, uint8 creatorChoice, uint256 duration, uint256 deadline, uint8 status, uint8 outcome, bytes32 marketFeedId, uint256 roundId, uint256 createdAt)"
+          "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 entryStake, uint256 targetPrice, bool isCreatorLong, uint256 entryDeadline, uint256 settlementTime, uint8 status, address winner, string marketSymbol)"
         ]);
         const contract = new ethers.Contract(contractAddr, iface, provider);
 
@@ -5118,7 +5118,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
           duelResults.forEach((d, index) => {
             if (!d) return;
-            const dId = index + 1;
+            const dId = Number(d.duelId || (index + 1));
             const duelKey = "duel_" + dId;
             const creator = d.creator ? d.creator.toLowerCase() : "";
             const challenger = d.challenger ? d.challenger.toLowerCase() : "";
@@ -5127,45 +5127,63 @@ window.addUsdcToWallet = addUsdcToWallet;
             // Wager
             let tierStr = "1";
             try {
-              tierStr = String(Math.round(Number(ethers.utils.formatUnits(d.wagerAmount, 6))));
+              tierStr = String(Math.round(Number(ethers.utils.formatUnits(d.entryStake, 6))));
             } catch(e) { tierStr = "1"; }
             
-            // Choice: 0 = GREEN, 1 = RED
-            const isGreen = (Number(d.creatorChoice) === 0);
-            const choice = isGreen ? "GREEN" : "RED";
-            const reqChoice = isGreen ? "RED" : "GREEN";
+            // Choice: isCreatorLong (boolean)
+            const isLong = !!d.isCreatorLong;
+            const choice = isLong ? "GREEN" : "RED";
+            const reqChoice = isLong ? "RED" : "GREEN";
 
-            // Status: 0 = Open
+            // Status: 0 = Open, 1 = Matched, 2 = Resolved, 3 = Cancelled
+            const statusCode = Number(d.status);
             let duelStatus = "open";
-            if (hasChallenger) {
-              duelStatus = (d.status === 2 || d.status === 3) ? "completed" : "in_progress";
-            } else if (d.status === 2 || d.status === 3) {
+            if (hasChallenger || statusCode === 1) {
+              duelStatus = (statusCode === 2) ? "completed" : "in_progress";
+            } else if (statusCode === 2) {
+              duelStatus = "completed";
+            } else if (statusCode === 3) {
               duelStatus = "cancelled";
+            } else if (statusCode === 0) {
+              duelStatus = "open";
             }
 
-            // Determine questionId
-            let qId = 1;
-            try {
-              const feedStr = ethers.utils.parseBytes32String(d.marketFeedId);
-              if (feedStr && feedStr.includes("ETH")) qId = 2;
-            } catch(e) {}
-
             const existing = store[duelKey];
-            if (!existing || existing.status !== duelStatus) {
+            let qId = (existing && existing.questionId) ? Number(existing.questionId) : null;
+            if (!qId && d.marketSymbol) {
+              const m = String(d.marketSymbol).match(/Q(\d+)/i);
+              if (m) qId = parseInt(m[1], 10);
+            }
+            if (!qId) {
+              const liveQ = (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS))
+                ? DUEL_QUESTIONS.find(x => !x.isEnded && Date.now() < getQuestionDeadline(x.id))
+                : null;
+              if (liveQ && (dId >= 14 || duelStatus === "open")) {
+                qId = Number(liveQ.id);
+              } else {
+                qId = (existing && existing.questionId) ? existing.questionId : (dId <= 11 ? 1 : (dId <= 13 ? 2 : (liveQ ? Number(liveQ.id) : 1)));
+              }
+            }
+
+            const qObj = getQuestionById(qId);
+            const qTitle = qObj ? (qObj.title || ("Contest #" + qId)) : (qId === 2 ? "ETH 1H" : "BTC 1H");
+            const entryDeadlineMs = Number(d.entryDeadline) > 0 ? (Number(d.entryDeadline) * 1000) : (qObj ? Number(qObj.deadline) : (Date.now() + 3600000));
+
+            if (!existing || existing.status !== duelStatus || existing.questionId !== qId) {
               store[duelKey] = {
                 id: duelKey,
                 onchainDuelId: dId.toString(),
                 questionId: qId,
-                questionText: qId === 2 ? "ETH 1H" : "BTC 1H",
-                topic: qId === 2 ? "ETH 1H" : "BTC 1H",
+                questionText: qTitle,
+                topic: qTitle,
                 creatorOption: choice,
                 requiredOpponentOption: reqChoice,
                 tier: tierStr,
                 creator: creator,
                 opponent: hasChallenger ? challenger : null,
                 status: duelStatus,
-                createdAt: Number(d.createdAt) * 1000 || Date.now(),
-                deadline: Date.now() + 3600000,
+                createdAt: Date.now(),
+                deadline: entryDeadlineMs,
                 tokenType: "USDC",
                 tokenAddress: d.token || "0x3471010ad619f2ED0F897dc5C7cCa8FdD25A8172",
                 onChain: true
@@ -6060,6 +6078,15 @@ window.addUsdcToWallet = addUsdcToWallet;
       let rawQText = repDuel.questionText || ("Contest #" + qId);
       const qIdx = rawQText.indexOf("?");
       const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
+      let duelShortTitle = "BTC 1H";
+      const aggCheck = (rawQText + " " + (repDuel.topic || "")).toLowerCase();
+      if (aggCheck.includes("eth")) {
+        duelShortTitle = "ETH 1H";
+      } else if (aggCheck.includes("sol")) {
+        duelShortTitle = "SOL 15M";
+      } else {
+        duelShortTitle = "BTC 1H";
+      }
 
       // Filter Green and Red duels in this pool
       const greenDuels = group.duels.filter(d => {
@@ -6202,7 +6229,7 @@ window.addUsdcToWallet = addUsdcToWallet;
                 '<span class="px-2.5 py-0.5 rounded-lg bg-[#182230] text-[#cbd5e1] border border-[#334155] text-[11px] font-mono font-black tracking-wider flex items-center gap-1 shadow-sm">' +
                   qId +
                 '</span>' +
-                '<span class="text-xs font-mono font-bold text-[#f8fafc]">' + questionText + '</span>' +
+                '<span class="text-xs font-mono font-bold text-[#f8fafc]">' + duelShortTitle + '</span>' +
                 poolBadge +
                 sideBreakdown +
                 userRoleBadge +
@@ -6270,6 +6297,15 @@ function renderDuelCard(duelData) {
       let rawQText = duelData.questionText || "Will BTC Daily Candle Close GREEN?";
       const qIdx = rawQText.indexOf("?");
       const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
+      let duelShortTitle = "BTC 1H";
+      const singleCheck = (rawQText + " " + (duelData.topic || "")).toLowerCase();
+      if (singleCheck.includes("eth")) {
+        duelShortTitle = "ETH 1H";
+      } else if (singleCheck.includes("sol")) {
+        duelShortTitle = "SOL 15M";
+      } else {
+        duelShortTitle = "BTC 1H";
+      }
       const creatorOption = duelData.creatorOption || "YES";
       const requiredOpponentOption = duelData.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
       const creatorColor = creatorOption === "YES" ? "text-[#f8fafc] font-black" : "text-neutral-600 font-bold";
@@ -6602,7 +6638,7 @@ function renderDuelCard(duelData) {
             <div>
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="px-2.5 py-0.5 rounded-lg bg-[#182230] text-[#cbd5e1] border border-[#334155] text-[11px] font-mono font-black tracking-wider flex items-center gap-1 shadow-sm">⚔️ DUEL #${dispNum}</span>
-                <span class="text-xs font-mono font-bold text-[#f8fafc]">${questionText}</span>
+                <span class="text-xs font-mono font-bold text-[#f8fafc]">${duelShortTitle}</span>
                 ${userRoleBadge}
               </div>
               ${completedDetailsHtml}
@@ -6896,11 +6932,19 @@ function renderDuelCard(duelData) {
             }
           }
           const duelKey = "duel_" + newDuelId;
+          const activeQ = (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS))
+            ? (DUEL_QUESTIONS.find(x => String(x.id) === String(selectedDuelQuestionId)) || DUEL_QUESTIONS.find(x => !x.isEnded && Date.now() < getQuestionDeadline(x.id)) || DUEL_QUESTIONS[0])
+            : null;
+          const activeQId = activeQ ? Number(activeQ.id) : (Number(selectedDuelQuestionId) || 1);
+          const activeQTitle = activeQ ? (activeQ.title || ("Contest #" + activeQId)) : "BTC 1H";
+          const activeDeadline = (activeQ && activeQ.deadline) ? Number(activeQ.deadline) : (Date.now() + (window.selectedEntryDurationSec || 900) * 1000);
+
           const immediateDuel = {
             id: duelKey,
             onchainDuelId: newDuelId.toString(),
-            questionId: 1,
-            questionText: "Will the upcoming 1-Hour BTC Candle Close GREEN or RED?",
+            questionId: activeQId,
+            questionText: activeQTitle,
+            topic: activeQTitle,
             creatorOption: isLong ? "GREEN" : "RED",
             requiredOpponentOption: isLong ? "RED" : "GREEN",
             tier: stakeUsd.toString(),
@@ -6908,8 +6952,8 @@ function renderDuelCard(duelData) {
             opponent: null,
             status: "open",
             createdAt: Date.now(),
-            deadline: Date.now() + 3600000,
-            expiresAt: Date.now() + 3600000,
+            deadline: activeDeadline,
+            expiresAt: activeDeadline,
             tokenType: "USDC",
             tokenAddress: usdcAddress,
             onChain: true
