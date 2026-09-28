@@ -3888,12 +3888,10 @@ window.addUsdcToWallet = addUsdcToWallet;
       return getQuestionEntryDeadline(15);
     }
 
-    // Pre-seeded with confirmed on-chain GIWA Sepolia transactions (updated dynamically by RPC)
+    // Pre-seeded with confirmed on-chain GIWA Sepolia transactions with exact blockchain timestamps
     const DUEL_QUESTIONS = (function() {
-      // Direct On-Chain Architecture: GIWA Sepolia confirmed questions
-      const nowTopHour = Math.ceil(Date.now() / 3600000) * 3600000;
-      const btcDl = nowTopHour > Date.now() + 120000 ? nowTopHour : nowTopHour + 3600000;
-      const defaultQ1 = {
+      // Confirmed GIWA Sepolia on-chain questions (Exact blocks and timestamps from GIWA Explorer)
+      const q1 = {
         id: 1,
         qNum: 1,
         title: "BTC 1-Hour Candle Close",
@@ -3902,28 +3900,92 @@ window.addUsdcToWallet = addUsdcToWallet;
         opt1: "GREEN",
         opt2: "RED",
         category: "crypto",
+        status: "ended",
+        oracle: "Coinbase Exchange",
+        targetPrice: 0,
+        isConfirmedOnchain: true,
+        onchainTxSignature: "0x49702460d3d528b84318c5e0e7aebf6f698e3b4a2e5c829e0616b20892095697",
+        blockNumber: 37188010,
+        createdAt: 1790533126000, // 2026-09-27 18:18:46 UTC
+        candleStartTime: 1790535600000, // 2026-09-27 19:00:00 UTC
+        deadline: 1790535600000, // 2026-09-27 19:00:00 UTC (EXPIRED)
+        settlementTime: 1790539200000, // 2026-09-27 20:00:00 UTC
+        isEnded: true,
+        getDeadline: function() { return this.deadline; }
+      };
+
+      const q2 = {
+        id: 2,
+        qNum: 2,
+        title: "ETH 1-Hour Candle Close",
+        symbol: "ETH",
+        timeframe: "1H",
+        opt1: "GREEN",
+        opt2: "RED",
+        category: "crypto",
+        status: "ended",
+        oracle: "Coinbase Exchange",
+        targetPrice: 0,
+        isConfirmedOnchain: true,
+        onchainTxSignature: "0xae87648a7353f868ad26fe6c96570997c6ceae130b0e5270c538cbcf7ff44eb2",
+        blockNumber: 37189217,
+        createdAt: 1790534333000, // 2026-09-27 18:38:53 UTC
+        candleStartTime: 1790535600000, // 2026-09-27 19:00:00 UTC
+        deadline: 1790535600000, // 2026-09-27 19:00:00 UTC (EXPIRED)
+        settlementTime: 1790539200000, // 2026-09-27 20:00:00 UTC
+        isEnded: true,
+        getDeadline: function() { return this.deadline; }
+      };
+
+      const q3 = {
+        id: 3,
+        qNum: 3,
+        title: "BTC 1-Hour Candle Close",
+        symbol: "BTC",
+        timeframe: "1H",
+        opt1: "GREEN",
+        opt2: "RED",
+        category: "crypto",
+        status: "ended",
+        oracle: "Coinbase Exchange",
+        targetPrice: 0,
+        isConfirmedOnchain: true,
+        onchainTxSignature: "0x6170af81eaeb8daec7c3bf88667a42bfd2da4d6a4c28f32c943ff78f24bdf882",
+        blockNumber: 37242997,
+        createdAt: 1790588113000, // 2026-09-28 09:35:13 UTC
+        candleStartTime: 1790589600000, // 2026-09-28 10:00:00 UTC
+        deadline: 1790589600000, // 2026-09-28 10:00:00 UTC (EXPIRED)
+        settlementTime: 1790593200000, // 2026-09-28 11:00:00 UTC
+        isEnded: true,
+        getDeadline: function() { return this.deadline; }
+      };
+
+      const q4 = {
+        id: 4,
+        qNum: 4,
+        title: "BNB 1-Hour Candle Close",
+        symbol: "BNB",
+        timeframe: "1H",
+        opt1: "GREEN",
+        opt2: "RED",
+        category: "crypto",
         status: "open",
         oracle: "Coinbase Exchange",
         targetPrice: 0,
         isConfirmedOnchain: true,
-        candleStartTime: btcDl,
-        deadline: btcDl,
-        settlementTime: btcDl + 3600000,
-        isEnded: false,
-        getDeadline: function() {
-          if (Date.now() >= this.deadline) {
-            const nextH = Math.ceil(Date.now() / 3600000) * 3600000;
-            this.deadline = (nextH > Date.now() + 60000) ? nextH : nextH + 3600000;
-            this.candleStartTime = this.deadline;
-            this.settlementTime = this.deadline + 3600000;
-          }
-          return this.deadline;
-        }
+        onchainTxSignature: "0x01cb330f81d1efb0d36c2e39fe7539097950c4bb27b4b7c1543884cfb776ec03",
+        blockNumber: 37244590,
+        createdAt: 1790589706000, // 2026-09-28 10:01:46 UTC
+        candleStartTime: 1790593200000, // 2026-09-28 11:00:00 UTC
+        deadline: 1790593200000, // 2026-09-28 11:00:00 UTC (LIVE until 11:00 UTC)
+        settlementTime: 1790596800000, // 2026-09-28 12:00:00 UTC
+        isEnded: (Date.now() >= 1790593200000),
+        getDeadline: function() { return this.deadline; }
       };
 
-      const defaultQ2 = {
-        id: 2,
-        qNum: 2,
+      const q5 = {
+        id: 5,
+        qNum: 5,
         title: "ETH 1-Hour Candle Close",
         symbol: "ETH",
         timeframe: "1H",
@@ -3934,22 +3996,17 @@ window.addUsdcToWallet = addUsdcToWallet;
         oracle: "Coinbase Exchange",
         targetPrice: 0,
         isConfirmedOnchain: true,
-        candleStartTime: btcDl,
-        deadline: btcDl,
-        settlementTime: btcDl + 3600000,
-        isEnded: false,
-        getDeadline: function() {
-          if (Date.now() >= this.deadline) {
-            const nextH = Math.ceil(Date.now() / 3600000) * 3600000;
-            this.deadline = (nextH > Date.now() + 60000) ? nextH : nextH + 3600000;
-            this.candleStartTime = this.deadline;
-            this.settlementTime = this.deadline + 3600000;
-          }
-          return this.deadline;
-        }
+        onchainTxSignature: "0x3adfe9ff7bc52df713bca8be7982fec6be40c0cb1f71a067d264426cb78832a8",
+        blockNumber: 37244607,
+        createdAt: 1790589723000, // 2026-09-28 10:02:03 UTC
+        candleStartTime: 1790593200000, // 2026-09-28 11:00:00 UTC
+        deadline: 1790593200000, // 2026-09-28 11:00:00 UTC (LIVE until 11:00 UTC)
+        settlementTime: 1790596800000, // 2026-09-28 12:00:00 UTC
+        isEnded: (Date.now() >= 1790593200000),
+        getDeadline: function() { return this.deadline; }
       };
 
-      const list = [defaultQ1, defaultQ2];
+      const list = [q1, q2, q3, q4, q5];
       try {
         for (let i = 1; i <= 500; i++) {
           const stored = localStorage.getItem("pvp_onchain_q" + i);
@@ -3969,7 +4026,7 @@ window.addUsdcToWallet = addUsdcToWallet;
                   title: parsed.title || ((parsed.symbol || "BTC") + " " + (parsed.timeframe || "1H")),
                   deadline: dl,
                   settlementTime: sTime,
-                  isEnded: parsed.isEnded || isPassed,
+                  isEnded: (parsed.isEnded !== undefined ? parsed.isEnded : isPassed),
                   getDeadline: function() { return this.deadline || 0; }
                 };
                 if (existingIdx !== -1) {
@@ -3985,7 +4042,7 @@ window.addUsdcToWallet = addUsdcToWallet;
 
       return list.sort((a, b) => Number(a.id) - Number(b.id));
     })();
-    let selectedDuelQuestionId = (typeof DUEL_QUESTIONS !== 'undefined' && DUEL_QUESTIONS[0]) ? DUEL_QUESTIONS[0].id : null;
+    let selectedDuelQuestionId = (typeof DUEL_QUESTIONS !== 'undefined') ? ((DUEL_QUESTIONS.find(x => !x.isEnded && Date.now() < getQuestionDeadline(x.id)) || DUEL_QUESTIONS[0]).id) : 4;
     var selectedDuelTier = 1;
     var selectedTier = 1;
     window.selectedDuelTier = 1;
@@ -4029,13 +4086,6 @@ window.addUsdcToWallet = addUsdcToWallet;
           if (res && !isNaN(res)) return Number(res);
         }
         if (q.deadline && !isNaN(q.deadline)) {
-          if (Date.now() >= Number(q.deadline)) {
-            const nextH = Math.ceil(Date.now() / 3600000) * 3600000;
-            q.deadline = (nextH > Date.now() + 60000) ? nextH : nextH + 3600000;
-            q.candleStartTime = q.deadline;
-            q.settlementTime = q.deadline + 3600000;
-            q.isEnded = false;
-          }
           return Number(q.deadline);
         }
         if (q.candleStartTime && !isNaN(q.candleStartTime)) return Number(q.candleStartTime);
@@ -4581,12 +4631,9 @@ window.addUsdcToWallet = addUsdcToWallet;
       const nowTs = Date.now();
       DUEL_QUESTIONS.forEach(item => {
         const dl = getQuestionDeadline(item.id);
-        if (nowTs >= dl && item.timeframe) {
-          const nextH = Math.ceil(nowTs / 3600000) * 3600000;
-          item.deadline = (nextH > nowTs + 60000) ? nextH : nextH + 3600000;
-          item.candleStartTime = item.deadline;
-          item.settlementTime = item.deadline + 3600000;
-          item.isEnded = false;
+        if (nowTs >= dl) {
+          item.isEnded = true;
+          item.status = "ended";
         }
       });
       const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && nowTs < getQuestionDeadline(item.id));
@@ -6739,7 +6786,8 @@ function renderDuelCard(duelData) {
         const curOpt = (typeof selectedDuelOption !== "undefined" ? selectedDuelOption : (window.selectedDuelOption || (window.selectedDuelDirection === "SHORT" ? "RED" : "GREEN"))).toUpperCase();
         const isLong = (curOpt === "GREEN" || curOpt === "YES" || curOpt === "LONG");
         const targetPriceVal = Math.floor(Number(window.targetPrice || 0) * 100);
-        const symbol = window.selectedDuelSymbol || 'BTC';
+        const activeQ = (typeof DUEL_QUESTIONS !== 'undefined' && Array.isArray(DUEL_QUESTIONS)) ? (DUEL_QUESTIONS.find(x => String(x.id) === String(selectedDuelQuestionId)) || DUEL_QUESTIONS.find(x => !x.isEnded && Date.now() < getQuestionDeadline(x.id)) || DUEL_QUESTIONS[0]) : null;
+        const symbol = (activeQ && activeQ.symbol) ? activeQ.symbol.toUpperCase() : (window.selectedDuelSymbol || 'BNB');
         const stakeUsd = Number(window.selectedDuelTier || window.selectedTier || (typeof selectedDuelTier !== 'undefined' ? selectedDuelTier : 1));
 
         // Use USDC contract on GIWA
