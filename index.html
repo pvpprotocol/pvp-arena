@@ -3848,8 +3848,12 @@ window.addUsdcToWallet = addUsdcToWallet;
 
     function getQuestionSettlementTime(qId) {
       const q = getQuestionById(qId);
-      if (q && q.settlementTime) return Number(q.settlementTime);
-      return 1788609600000; // 12:00 UTC Sep 5, 2026
+      if (q) {
+        if (q.settlementTime && !isNaN(q.settlementTime)) return Number(q.settlementTime);
+        if (q.candleEnd && !isNaN(q.candleEnd)) return Number(q.candleEnd);
+        if (q.deadline && !isNaN(q.deadline)) return Number(q.deadline) + 3600000;
+      }
+      return 1790540326000; // Past default
     }
 
     function get12HCandleCloseTimestamp() {
@@ -3884,39 +3888,82 @@ window.addUsdcToWallet = addUsdcToWallet;
 
     // Pre-seeded with confirmed on-chain GIWA Sepolia transactions (updated dynamically by RPC)
     const DUEL_QUESTIONS = (function() {
-      // Direct On-Chain Architecture
+      // Direct On-Chain Architecture: GIWA Sepolia confirmed questions
       const defaultQ1 = {
         id: 1,
+        qNum: 1,
         title: "BTC 1-Hour Candle Close",
         symbol: "BTC",
         timeframe: "1H",
         opt1: "GREEN",
         opt2: "RED",
-        category: "CRYPTO 1H",
-        status: "live",
-        oracle: "Coinbase / Pyth",
+        category: "crypto",
+        status: "ended",
+        oracle: "Coinbase Exchange",
         targetPrice: 0,
         isConfirmedOnchain: true,
-        getDeadline: function() { return Date.now() + 3600000; }
+        candleStartTime: 1790535600000,
+        deadline: 1790535600000,
+        settlementTime: 1790539200000,
+        isEnded: true,
+        getDeadline: function() { return this.deadline; }
       };
 
-      const list = [defaultQ1];
+      const defaultQ2 = {
+        id: 2,
+        qNum: 2,
+        title: "ETH 1-Hour Candle Close",
+        symbol: "ETH",
+        timeframe: "1H",
+        opt1: "GREEN",
+        opt2: "RED",
+        category: "crypto",
+        status: "ended",
+        oracle: "Coinbase Exchange",
+        targetPrice: 0,
+        isConfirmedOnchain: true,
+        candleStartTime: 1790539200000,
+        deadline: 1790539200000,
+        settlementTime: 1790542800000,
+        isEnded: true,
+        getDeadline: function() { return this.deadline; }
+      };
+
+      const list = [defaultQ1, defaultQ2];
       try {
-        for (let i = 2; i <= 200; i++) {
+        for (let i = 1; i <= 500; i++) {
           const stored = localStorage.getItem("pvp_onchain_q" + i);
           if (stored) {
-            const parsed = JSON.parse(stored);
-            if (parsed && (parsed.onchainTxSignature || parsed.isConfirmedOnchain)) {
-              list.push({
-                ...parsed,
-                title: parsed.title || ((parsed.symbol || "BTC") + " " + (parsed.timeframe || "1H")),
-                getDeadline: function() { return this.deadline || (Date.now() + 3600000); }
-              });
-            }
+            try {
+              const parsed = JSON.parse(stored);
+              if (parsed && (parsed.onchainTxSignature || parsed.isConfirmedOnchain || parsed.title)) {
+                const qId = Number(parsed.id || i);
+                const dl = Number(parsed.deadline || parsed.candleStartTime || parsed.candleDeadline || 0);
+                const sTime = Number(parsed.settlementTime || parsed.candleEnd || 0);
+                const isPassed = dl > 0 && Date.now() >= dl;
+                const existingIdx = list.findIndex(x => Number(x.id) === qId);
+                const item = {
+                  ...parsed,
+                  id: qId,
+                  qNum: qId,
+                  title: parsed.title || ((parsed.symbol || "BTC") + " " + (parsed.timeframe || "1H")),
+                  deadline: dl,
+                  settlementTime: sTime,
+                  isEnded: parsed.isEnded || isPassed,
+                  getDeadline: function() { return this.deadline || 0; }
+                };
+                if (existingIdx !== -1) {
+                  list[existingIdx] = item;
+                } else {
+                  list.push(item);
+                }
+              }
+            } catch(e) {}
           }
         }
       } catch(e) {}
-      return list;
+
+      return list.sort((a, b) => Number(a.id) - Number(b.id));
     })();
     let selectedDuelQuestionId = (typeof DUEL_QUESTIONS !== 'undefined' && DUEL_QUESTIONS[0]) ? DUEL_QUESTIONS[0].id : null;
     var selectedDuelTier = 1;
@@ -3957,10 +4004,14 @@ window.addUsdcToWallet = addUsdcToWallet;
       if (!qId) return 0;
       const q = DUEL_QUESTIONS.find(item => String(item.id) === String(qId));
       if (q) {
-        if (typeof q.getDeadline === "function") return q.getDeadline();
-        if (q.deadline) return Number(q.deadline);
+        if (typeof q.getDeadline === "function") {
+          const res = q.getDeadline();
+          if (res && !isNaN(res)) return Number(res);
+        }
+        if (q.deadline && !isNaN(q.deadline)) return Number(q.deadline);
+        if (q.candleStartTime && !isNaN(q.candleStartTime)) return Number(q.candleStartTime);
       }
-      return 0; // STRICT: Never return future time for missing or expired questions!
+      return 0; // STRICT: Never return future dynamic time!
     }
 
     function getDuelEffectiveDeadline(duelData) {
@@ -4554,6 +4605,13 @@ window.addUsdcToWallet = addUsdcToWallet;
                 ? "There are currently no live contests open for entry. Founder can deploy a new contest from the Admin panel, or you can browse completed contests in the ENDED tab."
                 : "No ended contests in this category yet."}
             </p>
+            ${activeQuestionTab === "live" && endedQuestions.length > 0 ? `
+              <div class="pt-2">
+                <button onclick="switchQuestionTab('ended')" class="px-4 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-mono font-bold transition-all inline-flex items-center gap-2 cursor-pointer shadow-lg shadow-blue-500/10">
+                  <span>📂</span> VIEW ENDED CONTESTS (${endedQuestions.length})
+                </button>
+              </div>
+            ` : ""}
           </div>
         `;
         return;
@@ -5727,11 +5785,17 @@ window.addUsdcToWallet = addUsdcToWallet;
     // Ticking interval to update live countdown timers across all cards
     setInterval(() => {
       // 1. Update questions grid timers - STRICT: Stay 100% stopped at 0 once target is reached
+      let questionStateChanged = false;
+      const nowClock = Date.now();
       DUEL_QUESTIONS.forEach(q => {
         const qDeadline = getQuestionDeadline(q.id);
-        const isQEnded = q.isEnded || (qDeadline > 0 && Date.now() >= qDeadline);
-        if (isQEnded) {
+        const isQEnded = q.isEnded || (qDeadline > 0 && nowClock >= qDeadline);
+        if (!q.isEnded && isQEnded) {
           q.isEnded = true; // Permanently lock
+          questionStateChanged = true;
+          try {
+            localStorage.setItem("pvp_onchain_q" + q.id, JSON.stringify(q));
+          } catch(e) {}
         }
 
         const el = document.querySelector(`.q-timer-display[data-qid="${q.id}"]`);
@@ -5776,6 +5840,9 @@ window.addUsdcToWallet = addUsdcToWallet;
           }
         }
       });
+      if (questionStateChanged && typeof renderDuelQuestions === "function") {
+        renderDuelQuestions();
+      }
 
       // 2. Update summary timer & lock duel creation if deadline expired
       const summaryTimerEl = document.getElementById("summary-deadline-timer");
