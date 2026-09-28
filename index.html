@@ -5923,17 +5923,47 @@ window.addUsdcToWallet = addUsdcToWallet;
       const totalPoolStake = (safeTier * count).toFixed(2);
       const safePayout = (safeTier * 1.9).toFixed(2);
 
+      // Calculate sequential display number (e.g. 5-3 when 3 duels exist for question 5)
+      let maxSubIndex = count;
+      try {
+        if (Array.isArray(group.duels)) {
+          group.duels.forEach((d) => {
+            if (typeof getDuelDisplayNumber === "function") {
+              const numStr = getDuelDisplayNumber(d);
+              if (numStr && numStr.includes("-")) {
+                const parts = numStr.split("-");
+                const sub = parseInt(parts[1], 10);
+                if (!isNaN(sub) && sub > maxSubIndex) maxSubIndex = sub;
+              }
+            }
+          });
+        }
+      } catch(e) {}
+      const groupDisplayId = qId + "-" + maxSubIndex;
+
       let rawQText = repDuel.questionText || ("Contest #" + qId);
       const qIdx = rawQText.indexOf("?");
       const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
       let duelShortTitle = "BTC 1H";
-      const aggCheck = (rawQText + " " + (repDuel.topic || "")).toLowerCase();
-      if (aggCheck.includes("eth")) {
-        duelShortTitle = "ETH 1H";
-      } else if (aggCheck.includes("sol")) {
-        duelShortTitle = "SOL 15M";
-      } else {
-        duelShortTitle = "BTC 1H";
+      try {
+        const qObj = (Array.isArray(DUEL_QUESTIONS) ? DUEL_QUESTIONS.find(q => q && (q.id === qId || q.qNum === qId)) : null);
+        if (qObj && qObj.symbol) {
+          duelShortTitle = qObj.symbol.toUpperCase() + " " + (qObj.timeframe || "1H").toUpperCase();
+        } else if (repDuel.symbol) {
+          duelShortTitle = repDuel.symbol.toUpperCase() + " " + (repDuel.timeframe || "1H").toUpperCase();
+        } else {
+          const checkStr = (rawQText + " " + (repDuel.topic || "")).toUpperCase();
+          const tokens = ["BTC", "ETH", "SOL", "BNB", "DOGE", "XRP", "ADA", "AVAX", "LINK", "SUI", "PEPE", "BASECAT", "GIWA"];
+          const found = tokens.find(t => checkStr.includes(t));
+          const tf = checkStr.includes("15M") ? "15M" : (checkStr.includes("24H") ? "24H" : (checkStr.includes("12H") ? "12H" : "1H"));
+          if (found) {
+            duelShortTitle = found + " " + tf;
+          } else {
+            duelShortTitle = "CONTEST #" + qId;
+          }
+        }
+      } catch(e) {
+        duelShortTitle = "CONTEST #" + qId;
       }
 
       // Filter Green and Red duels in this pool
@@ -6071,7 +6101,7 @@ window.addUsdcToWallet = addUsdcToWallet;
             '<div>' +
               '<div class="flex items-center gap-2 flex-wrap">' +
                 '<span class="px-2.5 py-0.5 rounded-lg bg-[#182230] text-[#cbd5e1] border border-[#334155] text-[11px] font-mono font-black tracking-wider flex items-center gap-1 shadow-sm">' +
-                  qId +
+                  groupDisplayId +
                 '</span>' +
                 '<span class="text-xs font-mono font-bold text-[#f8fafc]">' + duelShortTitle + '</span>' +
                 poolBadge +
@@ -6139,13 +6169,25 @@ function renderDuelCard(duelData) {
       const qIdx = rawQText.indexOf("?");
       const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
       let duelShortTitle = "BTC 1H";
-      const singleCheck = (rawQText + " " + (duelData.topic || "")).toLowerCase();
-      if (singleCheck.includes("eth")) {
-        duelShortTitle = "ETH 1H";
-      } else if (singleCheck.includes("sol")) {
-        duelShortTitle = "SOL 15M";
-      } else {
-        duelShortTitle = "BTC 1H";
+      try {
+        const qObj = (Array.isArray(DUEL_QUESTIONS) ? DUEL_QUESTIONS.find(q => q && (q.id === resolvedQId || q.qNum === resolvedQId)) : null);
+        if (qObj && qObj.symbol) {
+          duelShortTitle = qObj.symbol.toUpperCase() + " " + (qObj.timeframe || "1H").toUpperCase();
+        } else if (duelData.symbol) {
+          duelShortTitle = duelData.symbol.toUpperCase() + " " + (duelData.timeframe || "1H").toUpperCase();
+        } else {
+          const checkStr = (rawQText + " " + (duelData.topic || "")).toUpperCase();
+          const tokens = ["BTC", "ETH", "SOL", "BNB", "DOGE", "XRP", "ADA", "AVAX", "LINK", "SUI", "PEPE", "BASECAT", "GIWA"];
+          const found = tokens.find(t => checkStr.includes(t));
+          const tf = checkStr.includes("15M") ? "15M" : (checkStr.includes("24H") ? "24H" : (checkStr.includes("12H") ? "12H" : "1H"));
+          if (found) {
+            duelShortTitle = found + " " + tf;
+          } else {
+            duelShortTitle = "CONTEST #" + (resolvedQId || 1);
+          }
+        }
+      } catch(e) {
+        duelShortTitle = "CONTEST #" + (resolvedQId || 1);
       }
       const creatorOption = duelData.creatorOption || "YES";
       const requiredOpponentOption = duelData.requiredOpponentOption || (creatorOption === "YES" ? "NO" : "YES");
