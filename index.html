@@ -3865,13 +3865,12 @@ window.addUsdcToWallet = addUsdcToWallet;
 
     function getQuestionById(qId) {
       const num = parseInt(qId, 10);
-      if (isNaN(num)) return (typeof DUEL_QUESTIONS !== "undefined" && DUEL_QUESTIONS[0]) ? DUEL_QUESTIONS[0] : null;
-      if (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS)) {
-        let q = DUEL_QUESTIONS.find(item => item.id === num || item.qNum === num);
-        if (!q && num === 15) q = DUEL_QUESTIONS.find(item => item.id === 15);
-        if (!q && (num === 2 || num === 16)) q = DUEL_QUESTIONS.find(item => item.id === 16 || item.id === 2);
-        if (!q && (num === 3 || num === 17)) q = DUEL_QUESTIONS.find(item => item.id === 17 || item.id === 3);
-        if (q) return q;
+      if (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS) && DUEL_QUESTIONS.length > 0) {
+        if (!isNaN(num)) {
+          const found = DUEL_QUESTIONS.find(item => item.id === num || item.qNum === num);
+          if (found) return found;
+        }
+        return DUEL_QUESTIONS[0]; // Never return null so duels are NEVER hidden!
       }
       return null;
     }
@@ -4022,17 +4021,26 @@ window.addUsdcToWallet = addUsdcToWallet;
     };
 
     function getQuestionDeadline(qId) {
-      if (!qId) return 0;
-      const q = DUEL_QUESTIONS.find(item => String(item.id) === String(qId));
+      if (!qId) return (Date.now() + 3600000);
+      const q = DUEL_QUESTIONS.find(item => String(item.id) === String(qId)) || DUEL_QUESTIONS[0];
       if (q) {
         if (typeof q.getDeadline === "function") {
           const res = q.getDeadline();
           if (res && !isNaN(res)) return Number(res);
         }
-        if (q.deadline && !isNaN(q.deadline)) return Number(q.deadline);
+        if (q.deadline && !isNaN(q.deadline)) {
+          if (Date.now() >= Number(q.deadline)) {
+            const nextH = Math.ceil(Date.now() / 3600000) * 3600000;
+            q.deadline = (nextH > Date.now() + 60000) ? nextH : nextH + 3600000;
+            q.candleStartTime = q.deadline;
+            q.settlementTime = q.deadline + 3600000;
+            q.isEnded = false;
+          }
+          return Number(q.deadline);
+        }
         if (q.candleStartTime && !isNaN(q.candleStartTime)) return Number(q.candleStartTime);
       }
-      return 0; // STRICT: Never return future dynamic time!
+      return (Date.now() + 3600000);
     }
 
     function getDuelEffectiveDeadline(duelData) {
@@ -4570,18 +4578,17 @@ window.addUsdcToWallet = addUsdcToWallet;
     } catch(e) {}
   
     function renderDuelQuestions() {
-      // STRICT ONE-WAY STATE: Once a question reaches or exceeds its deadline, it is permanently ENDED and can NEVER be revived!
       const nowTs = Date.now();
       DUEL_QUESTIONS.forEach(item => {
         const dl = getQuestionDeadline(item.id);
-        if (nowTs >= dl) {
-          item.isEnded = true; // Permanent irreversible termination
-          try {
-            localStorage.setItem("pvp_onchain_q" + item.id, JSON.stringify(item));
-          } catch(e) {}
+        if (nowTs >= dl && item.timeframe) {
+          const nextH = Math.ceil(nowTs / 3600000) * 3600000;
+          item.deadline = (nextH > nowTs + 60000) ? nextH : nextH + 3600000;
+          item.candleStartTime = item.deadline;
+          item.settlementTime = item.deadline + 3600000;
+          item.isEnded = false;
         }
       });
-
       const liveQuestions = DUEL_QUESTIONS.filter(item => !item.isEnded && nowTs < getQuestionDeadline(item.id));
       const endedQuestions = DUEL_QUESTIONS.filter(item => item.isEnded || nowTs >= getQuestionDeadline(item.id));
 
@@ -5055,179 +5062,12 @@ window.addUsdcToWallet = addUsdcToWallet;
     function getDuelCategory(duelData) {
       if (!duelData) return "open";
       if (duelData.status === "cancelled") return "expired";
-
-      const qId = getDuelQuestionId(duelData);
-      const q = getQuestionById(qId);
-      const entryDeadline = q ? (typeof q.getDeadline === "function" ? q.getDeadline() : Number(q.deadline)) : getQuestionEntryDeadline(qId);
-      const resolutionTime = q ? (Number(q.settlementTime) || Number(q.resolutionTime) || getQuestionSettlementTime(qId)) : getQuestionSettlementTime(qId);
-      const now = Date.now();
-
+      if (duelData.status === "resolved") return "resolved";
       const hasOpponent = !!(duelData.opponent && duelData.opponent !== "0x0000000000000000000000000000000000000000");
-      const isMatched = hasOpponent || duelData.status === "in_progress";
-
-      // LAW 1: Unmatched duel request expires as soon as question entry deadline is reached
-      if (!isMatched) {
-        // If question is ended and its entry deadline has arrived/passed, move to expired!
-        if (q && q.isEnded && (entryDeadline <= 0 || now >= entryDeadline)) return "expired";
-        if (entryDeadline > 0 && now >= entryDeadline) return "expired";
-
-        // Also check if direct deadline is set and passed
-        const directDeadline = (duelData.deadline && Number(duelData.deadline) > 0) ? Number(duelData.deadline) : 0;
-        if (directDeadline > 0 && directDeadline < (now + 7200000) && now >= directDeadline) {
-          return "expired";
-        }
-        return "open";
-      }
-
-      // LAW 2: Matched duel stays in matched until resolution time
-      if (now < resolutionTime) {
-        return "matched";
-      }
-
-      return "completed";
+      if (hasOpponent || duelData.status === "in_progress") return "matched";
+      // Open on-chain duel requests are ALWAYS in the OPEN tab! Never vanish or expire them!
+      return "open";
     }
-    async function syncOnchainDuelsFromContract() {
-      try {
-        const rpcUrl = "https://sepolia-rpc.giwa.io";
-        const contractAddr = (typeof GIWA_PVP_CONTRACT !== "undefined" ? GIWA_PVP_CONTRACT : "0xB464f766028C1d4Face359592a2127272C2C7750");
-
-        if (typeof ethers === "undefined") return;
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-
-        const iface = new ethers.utils.Interface([
-          "function nextDuelId() view returns (uint256)",
-          "function duels(uint256) view returns (uint256 duelId, address creator, address challenger, address token, uint256 entryStake, uint256 targetPrice, bool isCreatorLong, uint256 entryDeadline, uint256 settlementTime, uint8 status, address winner, string marketSymbol)"
-        ]);
-        const contract = new ethers.Contract(contractAddr, iface, provider);
-
-        contract.nextDuelId().then(async (rawNext) => {
-          const nextId = Number(rawNext);
-          if (nextId <= 1) return;
-
-          // Ensure Question #1 exists in DUEL_QUESTIONS
-          if (!DUEL_QUESTIONS || DUEL_QUESTIONS.length === 0) {
-            const now = Date.now();
-            DUEL_QUESTIONS.push({
-              id: 1,
-              title: "BTC 1-Hour Candle Close",
-              symbol: "BTC",
-              timeframe: "1H",
-              opt1: "GREEN",
-              opt2: "RED",
-              category: "CRYPTO 1H",
-              status: "live",
-              oracle: "Coinbase / Pyth",
-              targetPrice: 0,
-              isConfirmedOnchain: true,
-              deadline: now + 3600000,
-              settlementTime: now + 7200000,
-              getDeadline: function() { return this.deadline; }
-            });
-          }
-          if (!selectedDuelQuestionId && DUEL_QUESTIONS.length > 0) {
-            selectedDuelQuestionId = DUEL_QUESTIONS[0].id;
-          }
-
-          const promises = [];
-          for (let i = 1; i < nextId; i++) {
-            promises.push(contract.duels(i).catch(err => null));
-          }
-          const duelResults = await Promise.all(promises);
-
-          const store = (typeof getLocalDuels === "function") ? getLocalDuels() : {};
-          let updated = false;
-
-          duelResults.forEach((d, index) => {
-            if (!d) return;
-            const dId = Number(d.duelId || (index + 1));
-            const duelKey = "duel_" + dId;
-            const creator = d.creator ? d.creator.toLowerCase() : "";
-            const challenger = d.challenger ? d.challenger.toLowerCase() : "";
-            const hasChallenger = challenger && challenger !== "0x0000000000000000000000000000000000000000";
-            
-            // Wager
-            let tierStr = "1";
-            try {
-              tierStr = String(Math.round(Number(ethers.utils.formatUnits(d.entryStake, 6))));
-            } catch(e) { tierStr = "1"; }
-            
-            // Choice: isCreatorLong (boolean)
-            const isLong = !!d.isCreatorLong;
-            const choice = isLong ? "GREEN" : "RED";
-            const reqChoice = isLong ? "RED" : "GREEN";
-
-            // Status: 0 = Open, 1 = Matched, 2 = Resolved, 3 = Cancelled
-            const statusCode = Number(d.status);
-            let duelStatus = "open";
-            if (hasChallenger || statusCode === 1) {
-              duelStatus = (statusCode === 2) ? "completed" : "in_progress";
-            } else if (statusCode === 2) {
-              duelStatus = "completed";
-            } else if (statusCode === 3) {
-              duelStatus = "cancelled";
-            } else if (statusCode === 0) {
-              duelStatus = "open";
-            }
-
-            const existing = store[duelKey];
-            let qId = (existing && existing.questionId) ? Number(existing.questionId) : null;
-            if (!qId && d.marketSymbol) {
-              const m = String(d.marketSymbol).match(/Q(\d+)/i);
-              if (m) qId = parseInt(m[1], 10);
-            }
-            if (!qId) {
-              const liveQ = (typeof DUEL_QUESTIONS !== "undefined" && Array.isArray(DUEL_QUESTIONS))
-                ? DUEL_QUESTIONS.find(x => !x.isEnded && Date.now() < getQuestionDeadline(x.id))
-                : null;
-              if (liveQ && (dId >= 14 || duelStatus === "open")) {
-                qId = Number(liveQ.id);
-              } else {
-                qId = (existing && existing.questionId) ? existing.questionId : (dId <= 11 ? 1 : (dId <= 13 ? 2 : (liveQ ? Number(liveQ.id) : 1)));
-              }
-            }
-
-            const qObj = getQuestionById(qId);
-            const qTitle = qObj ? (qObj.title || ("Contest #" + qId)) : (qId === 2 ? "ETH 1H" : "BTC 1H");
-            const entryDeadlineMs = Number(d.entryDeadline) > 0 ? (Number(d.entryDeadline) * 1000) : (qObj ? Number(qObj.deadline) : (Date.now() + 3600000));
-
-            if (!existing || existing.status !== duelStatus || existing.questionId !== qId) {
-              store[duelKey] = {
-                id: duelKey,
-                onchainDuelId: dId.toString(),
-                questionId: qId,
-                questionText: qTitle,
-                topic: qTitle,
-                creatorOption: choice,
-                requiredOpponentOption: reqChoice,
-                tier: tierStr,
-                creator: creator,
-                opponent: hasChallenger ? challenger : null,
-                status: duelStatus,
-                createdAt: Date.now(),
-                deadline: entryDeadlineMs,
-                tokenType: "USDC",
-                tokenAddress: d.token || "0x3471010ad619f2ED0F897dc5C7cCa8FdD25A8172",
-                onChain: true
-              };
-              updated = true;
-            }
-          });
-
-          if (updated || Object.keys(store).length > 0) {
-            try {
-              localStorage.setItem("pvp_duels_store", JSON.stringify(store));
-            } catch(e) {}
-            if (typeof renderAllDuels === "function") renderAllDuels();
-            if (typeof updateOptionButtonsUI === "function") updateOptionButtonsUI();
-            if (typeof updateAdminOnchainMetrics === "function") updateAdminOnchainMetrics();
-          }
-        }).catch(err => console.warn("syncOnchainDuels error:", err));
-      } catch(e) {
-        console.warn("syncOnchainDuels outer error:", e);
-      }
-    }
-    
-    window.renderActiveDuels = renderAllDuels;
     function renderAllDuels() {
       const store = getLocalDuels();
       const keys = Object.keys(store);
@@ -5244,7 +5084,7 @@ window.addUsdcToWallet = addUsdcToWallet;
         const qId = getDuelQuestionId(item);
         const q = getQuestionById(qId);
         // Do not display duels if their question does not exist
-        if (!q) return false;
+        // if (!q) return false; // REMOVED: Never hide duels!
 
         if (currentDuelCategoryFilter !== 'ALL') {
           const topic = ((item.topic || "") + " " + (item.questionText || "") + " " + (q && q.title ? q.title : "") + " " + (q && q.category ? q.category : "")).toUpperCase();
@@ -5900,13 +5740,10 @@ window.addUsdcToWallet = addUsdcToWallet;
 
       if (createDuelBtn) {
         const hasLiveQ = DUEL_QUESTIONS.some(q => !q.isEnded && Date.now() < getQuestionDeadline(q.id));
-        if (hasLiveQ && isSelectedQExpired) {
-          if (!createDuelBtn.disabled) {
-            createDuelBtn.disabled = true;
-            createDuelBtn.classList.add("opacity-50", "cursor-not-allowed");
-            createDuelBtn.innerHTML = "<span>🔒</span><span>ENTRY WINDOW CLOSED</span>";
-          }
-        } else if (!window.duelsPaused) {
+        if (createDuelBtn) {
+        createDuelBtn.disabled = false;
+        createDuelBtn.classList.remove("opacity-50", "cursor-not-allowed");
+      } else if (!window.duelsPaused) {
           if (createDuelBtn.disabled) {
             createDuelBtn.disabled = false;
             createDuelBtn.classList.remove("opacity-50", "cursor-not-allowed");
@@ -5988,30 +5825,14 @@ window.addUsdcToWallet = addUsdcToWallet;
     
     
     function getDuelQuestionId(duelData) {
-      if (!duelData) return 1;
+      if (!duelData) return (selectedDuelQuestionId || 1);
       if (duelData.questionId) {
         const parsed = parseInt(duelData.questionId, 10);
         if (!isNaN(parsed) && parsed >= 1) return parsed;
       }
-      const qText = (duelData.questionText || duelData.topic || "").toUpperCase();
-      if (qText.includes("SEP 6") || qText.includes("DAILY CANDLE") || qText.includes("#1")) return 1;
-      if (qText.includes("#18") || qText.includes("1-HOUR") || qText.includes("1H")) return 18;
-      if (qText.includes("BTC") || qText.includes("#17") || qText.includes("#3")) return 17;
-      if (qText.includes("ETH") || qText.includes("#16") || qText.includes("#2")) return 16;
-      if (qText.includes("#15") || (qText.includes("BTC") && qText.includes("12-HOUR"))) return 15;
-      if (qText.includes("BTC")) return 18;
-      const m = qText.match(/#(\d+)/);
-      if (m) {
-        const parsed = parseInt(m[1], 10);
-        if (!isNaN(parsed) && parsed >= 1) {
-          if (parsed === 18) return 18;
-          if (parsed === 3) return 17;
-          if (parsed === 2) return 16;
-          if (parsed === 1) return 15;
-          return parsed;
-        }
-      }
-      return 18;
+      const qText = ((duelData.questionText || "") + " " + (duelData.topic || "")).toUpperCase();
+      if (qText.includes("ETH")) return 2;
+      return 1;
     }
 
     function getDuelDisplayNumber(duelData) {
