@@ -5992,7 +5992,7 @@ window.addUsdcToWallet = addUsdcToWallet;
       let rawQText = repDuel.questionText || ("Contest #" + qId);
       const qIdx = rawQText.indexOf("?");
       const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
-      const resolvedQId = duelData.questionId || (duelData.questionText && String(duelData.questionText).toLowerCase().includes('giwa') ? 2 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('basecat') ? 4 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('round #2') ? 3 : null)));
+      const resolvedQId = qId || (repDuel && repDuel.questionId) || 1;
       let duelShortTitle = "BTC 1H";
       try {
         const qObj = (Array.isArray(DUEL_QUESTIONS) ? DUEL_QUESTIONS.find(q => q && (q.id === qId || q.qNum === qId)) : null);
