@@ -2370,12 +2370,12 @@ window.addUsdcToWallet = addUsdcToWallet;
         showToast("Connected: " + shortAddr + " (GIWA)", "success");
 
         try { if (typeof checkAdminAccess === "function") checkAdminAccess(userAddress); } catch(e){ console.warn(e); }
-        if (typeof loadStoredQuestions === "function") loadStoredQuestions();
-        if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable();
-        if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats();
-        if (typeof renderAllDuels === "function") renderAllDuels();
-        if (typeof updateLeaderboardUI === "function") updateLeaderboardUI();
-        if (typeof fetchGiwaBalance === "function") fetchGiwaBalance(userAddress);
+        try { if (typeof loadStoredQuestions === "function") loadStoredQuestions(); } catch(e){ console.warn(e); }
+        try { if (typeof renderAdminQuestionsTable === "function") renderAdminQuestionsTable(); } catch(e){ console.warn(e); }
+        try { if (typeof refreshAdminDuelsStats === "function") refreshAdminDuelsStats(); } catch(e){ console.warn(e); }
+        try { if (typeof renderAllDuels === "function") renderAllDuels(); } catch(e){ console.warn(e); }
+        try { if (typeof updateLeaderboardUI === "function") updateLeaderboardUI(); } catch(e){ console.warn(e); }
+        try { if (typeof fetchGiwaBalance === "function") fetchGiwaBalance(userAddress); } catch(e){ console.warn(e); }
 
         // Enable buttons
         const createDuelBtn = document.getElementById("create-duel-btn");
@@ -5987,10 +5987,12 @@ window.addUsdcToWallet = addUsdcToWallet;
         }
       } catch(e) {}
       const groupDisplayId = qId + "-" + maxSubIndex;
+      const safeGroupKey = String(group.groupKey || (qId + "_" + safeTier)).replace(/[^a-zA-Z0-9_]/g, "");
 
       let rawQText = repDuel.questionText || ("Contest #" + qId);
       const qIdx = rawQText.indexOf("?");
       const questionText = qIdx !== -1 ? rawQText.slice(0, qIdx + 1) : rawQText;
+      const resolvedQId = duelData.questionId || (duelData.questionText && String(duelData.questionText).toLowerCase().includes('giwa') ? 2 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('basecat') ? 4 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('round #2') ? 3 : null)));
       let duelShortTitle = "BTC 1H";
       try {
         const qObj = (Array.isArray(DUEL_QUESTIONS) ? DUEL_QUESTIONS.find(q => q && (q.id === qId || q.qNum === qId)) : null);
@@ -6261,7 +6263,7 @@ function renderDuelCard(duelData) {
         ? "bg-[#182230] text-black border-[#334155]" 
         : "bg-[#182230] text-neutral-800 border-[#334155]";
 
-      const resolvedQId = duelData.questionId || (duelData.questionText && String(duelData.questionText).toLowerCase().includes('giwa') ? 2 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('basecat') ? 4 : (duelData.questionText && String(duelData.questionText).toLowerCase().includes('round #2') ? 3 : null)));
+      // resolvedQId defined above
       const duelDeadline = getDuelEffectiveDeadline(duelData);
       const isExpired = Date.now() >= duelDeadline;
       const timeObj = formatRemainingTime(duelDeadline);
