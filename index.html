@@ -678,6 +678,242 @@
     .tab-btn.active .tab-dot {
       display: inline-block !important;
     }
+
+/* ============================================================
+   AEROSPACE-GRADE HYPER-MODERN DESIGN SYSTEM INJECTION
+   ============================================================ */
+:root {
+  --hero-blue: #7191d0;
+  --hero-blue-soft: #aab8d5;
+  --hero-cloud: #090d14;
+  --hero-max-width: 1820px;
+}
+
+.hero {
+  position: relative;
+  height: 140vh;
+  min-height: 950px;
+  overflow: clip;
+  background: var(--bg-page);
+}
+
+.hero__background {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 20%, rgba(113, 145, 208, 0.15) 0%, rgba(170, 184, 213, 0.05) 45%, #090d14 100%);
+}
+
+.hero__stars {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: 280px;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(56, 189, 248, 0.6) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(34, 197, 94, 0.7) 0 1px, transparent 1.7px);
+  background-position: 10% 24%, 38% 16%, 76% 32%;
+  background-size: 180px 94px, 260px 120px, 340px 150px;
+  opacity: 0.55;
+  animation: hero-stars-twinkle 4.8s ease-in-out infinite alternate;
+}
+
+@keyframes hero-stars-twinkle {
+  0% { opacity: 0.2; filter: brightness(0.9); }
+  50% { opacity: 0.7; filter: brightness(1.2); }
+  100% { opacity: 0.4; filter: brightness(1); }
+}
+
+.hero__content {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  width: min(100%, var(--hero-max-width));
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.hero__title {
+  position: fixed;
+  top: calc(50% - 70px - clamp(60px, 7vw, 110px));
+  left: 5%;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  width: 90vw;
+  color: #ffffff;
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  pointer-events: none;
+  transform: translate3d(0, var(--scroll-y, 0px), 0);
+  will-change: transform, opacity;
+}
+
+.hero__title-line {
+  display: block;
+  font-size: clamp(80px, 13vw, 210px);
+  white-space: nowrap;
+}
+
+.hero__title-row {
+  position: fixed;
+  top: calc(50% - 70px + clamp(40px, 4.5vw, 85px));
+  left: 5%;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: clamp(40px, 6vw, 120px);
+  color: #38bdf8;
+  font-weight: 300;
+  pointer-events: none;
+  transform: translate3d(8vw, var(--scroll-y, 0px), 0);
+  will-change: transform, opacity;
+}
+
+.engine-visual {
+  position: fixed;
+  z-index: 3;
+  left: 50%;
+  top: 10px;
+  width: auto;
+  height: calc((100% + 15px) * 1.15);
+  max-width: calc(100vw - 96px);
+  max-height: 820px;
+  aspect-ratio: 1;
+  transform: translate3d(-50%, var(--scroll-y, 0px), 0);
+  will-change: transform, opacity;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.7));
+  pointer-events: none;
+}
+
+.engine-visual__asset {
+  display: block;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.hero.is-past .hero__title,
+.hero.is-past .hero__title-row,
+.hero.is-past .engine-visual {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stats__chart {
+  position: relative;
+  max-width: var(--hero-max-width);
+  min-height: 480px;
+  margin: 24px auto 0;
+  padding: 0 0 22px;
+  overflow: hidden;
+  border: 1px solid #334155;
+  border-radius: 20px;
+  background-color: #131b27;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+}
+
+.stats__chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 28px;
+  border-bottom: 1px solid #334155;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.stats__chart-head span {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.stats__chart-head strong {
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stats__bars {
+  display: grid;
+  gap: 20px;
+  padding: 32px 28px 0;
+}
+
+.stats__bar-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.28fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+}
+
+.stats__bar-label strong {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  display: block;
+}
+
+.stats__bar-label span {
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 13px;
+  display: block;
+}
+
+.stats__track {
+  position: relative;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #0e141f;
+  border: 1px solid #334155;
+}
+
+.stats__range {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: var(--range-start);
+  width: var(--range-width);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.stats__bar {
+  position: relative;
+  z-index: 1;
+  width: var(--bar-value);
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb 0%, #38bdf8 100%);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+}
+
+.stats__value {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  right: 18px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  transform: translateY(-50%);
+}
+
 </style>
 
   <script>
@@ -8973,6 +9209,74 @@ window.handleCreateQuestion = async function(e) {
       </div>
     </div>
   </div>
+
+
+<script>
+class EngineHero extends HTMLElement {
+  scrollFrame = 0;
+  lastScrollY = 0;
+
+  connectedCallback() {
+    this.innerHTML = `
+      <section class="hero" id="heroScroll" aria-labelledby="hero-title">
+        <div class="hero__background" aria-hidden="true">
+          <div class="hero__stars"></div>
+        </div>
+
+        <div class="hero__content">
+          <h1 id="hero-title" class="hero__title" aria-label="1v1 PVP DUELS">
+            <span class="hero__title-line hero__title-line--one">1v1 PVP</span>
+          </h1>
+
+          <div class="hero__title-row" aria-hidden="true">
+            <span class="hero__title-line" style="font-size: clamp(48px, 8vw, 130px); font-weight: 800; color: #22c55e;">BULLISH</span>
+            <span class="hero__title-line" style="font-size: clamp(36px, 5vw, 80px); color: #94a3b8;">VS</span>
+            <span class="hero__title-line" style="font-size: clamp(48px, 8vw, 130px); font-weight: 800; color: #ef4444;">BEARISH</span>
+          </div>
+
+          <div class="engine-visual" aria-hidden="true">
+            <img class="engine-visual__asset" src="logo-large.png" alt="PVP Hub Emblem" onerror="this.src='logo.svg'" />
+          </div>
+        </div>
+      </section>
+    `;
+
+    this.initScrollHero();
+  }
+
+  initScrollHero() {
+    const hero = this.querySelector(".hero");
+    const title = this.querySelector(".hero__title");
+    const titleRow = this.querySelector(".hero__title-row");
+    const object = this.querySelector(".engine-visual");
+    if (!hero || !title || !titleRow || !object) return;
+
+    const animate = () => {
+      const rect = hero.getBoundingClientRect();
+      const scrollLength = Math.max(hero.offsetHeight - window.innerHeight, 1);
+      const scrollProgress = Math.max(Math.abs(rect.top) / scrollLength, 0);
+      const scrollY = Math.abs(rect.top);
+
+      title.style.setProperty("--scroll-y", `${(scrollProgress * -100).toFixed(2)}px`);
+      titleRow.style.setProperty("--scroll-y", `${(scrollProgress * -100).toFixed(2)}px`);
+      object.style.setProperty("--scroll-y", `${(scrollProgress * -220).toFixed(2)}px`);
+
+      hero.classList.toggle("is-past", rect.bottom <= 0);
+      this.scrollFrame = requestAnimationFrame(animate);
+    };
+
+    animate();
+  }
+
+  disconnectedCallback() {
+    cancelAnimationFrame(this.scrollFrame);
+  }
+}
+
+if (!customElements.get("engine-hero")) {
+  customElements.define("engine-hero", EngineHero);
+}
+</script>
 
 </body>
   
